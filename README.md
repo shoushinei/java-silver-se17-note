@@ -6,7 +6,7 @@ Oracle 認定 Java Programmer, Silver SE 17（1Z0-825）の試験範囲を、
 コード例はすべて **「コンパイルも実行も通る」「コンパイルエラー」「実行時に例外」** の
 3 つに色分けしてあります。この試験が実質その三択判定だからです。
 
-📖 **公開ページ:** https://<ユーザー名>.github.io/<リポジトリ名>/
+📖 **公開ページ:** https://shoushinei.github.io/java-silver-se17-note/
 
 ## 収録内容
 
@@ -151,7 +151,7 @@ DOM は 1 つのまま CSS で見た目だけを切り替えています。
 2. **Source** を `Deploy from a branch` にする
 3. **Branch** を `main` / `/docs` にして Save
 
-数十秒で `https://<ユーザー名>.github.io/<リポジトリ名>/` に公開されます。
+数十秒で https://shoushinei.github.io/java-silver-se17-note/ に公開されます。
 以降は `main` に push するたびに更新されます。
 
 ## ライセンス
