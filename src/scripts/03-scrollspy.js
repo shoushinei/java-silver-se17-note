@@ -23,9 +23,6 @@
   }
 
   function spy() {
-    // スマホで目次ドロワーを開いている間は本文を position:fixed で固定しており、
-    // window.scrollY が 0 になる。その値で計算すると現在地が先頭に戻ってしまう。
-    if (document.body.classList.contains("mnav-open")) return;
     var best = 0, y = window.scrollY + 120;
     secs.forEach(function (s, i) { if (s && s.offsetTop <= y) best = i; });
     links.forEach(function (a, i) { a.classList.toggle("on", i === best); });

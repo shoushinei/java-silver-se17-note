@@ -20,26 +20,6 @@
   var groups = Array.prototype.slice.call(nav.querySelectorAll(".toc-ch"));
   var mq = window.matchMedia("(max-width: 860px)");
   var lastFocus = null;
-  var savedY = 0;
-
-  /* 背後の本文を固定する。body を position:fixed にすると読んでいた位置を失うので、
-     いったん top に退避しておき、閉じるときに同じ位置へ戻す。 */
-  function lockBody() {
-    savedY = window.scrollY;
-    document.body.style.top = -savedY + "px";
-    document.body.classList.add("mnav-open");
-  }
-
-  function unlockBody() {
-    document.body.classList.remove("mnav-open");
-    document.body.style.top = "";
-    // html{scroll-behavior:smooth} が効くと戻る途中が見えてしまうので、ここだけ切る
-    var root = document.documentElement;
-    var keep = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-    window.scrollTo(0, savedY);
-    root.style.scrollBehavior = keep;
-  }
 
   /* ---- 開閉 ---- */
 
@@ -52,7 +32,6 @@
     // hidden を外した直後は transition が走らないので、1 フレーム待ってから効かせる
     requestAnimationFrame(function () { scrim.classList.add("open"); });
     nav.classList.add("open");
-    lockBody();
     openBtn.setAttribute("aria-expanded", "true");
     nav.removeAttribute("aria-hidden");
     revealActive();
@@ -65,7 +44,6 @@
     if (!isOpen()) return;
     nav.classList.remove("open");
     scrim.classList.remove("open");
-    unlockBody();
     openBtn.setAttribute("aria-expanded", "false");
     if (mq.matches) nav.setAttribute("aria-hidden", "true");
     var done = function () { scrim.hidden = true; };
@@ -80,7 +58,8 @@
     if (!on) return;
     var group = on.closest(".toc-ch");
     if (group) setOpen(group, true);
-    if (on.scrollIntoView) on.scrollIntoView({ block: "center" });
+    // scrollIntoView は先祖もまとめて動かしてしまうので、ドロワーだけを動かす
+    nav.scrollTop = Math.max(0, on.offsetTop - nav.clientHeight / 2);
   }
 
   /* ---- 章の折り畳み ---- */

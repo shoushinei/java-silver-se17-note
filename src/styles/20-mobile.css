@@ -105,8 +105,9 @@
     left: 0;
     bottom: 0;
     width: min(86vw, 330px);
-    height: 100%;
-    height: 100dvh;
+    /* 高さは top/bottom で伸ばす。PC 用の height:100vh を解除しておかないと、
+       vh の解決値が実際のビューポート高とずれた環境で下端に隙間ができる。 */
+    height: auto;
     z-index: 60;
     padding: 14px 12px 40px;
     border-right: 1px solid var(--rule);
@@ -132,16 +133,12 @@
   }
   .mscrim.open { opacity: 1; }
   .mscrim[hidden] { display: none; }
-  /* ドロワーを開いている間、背後の本文が動かないようにする。
-     overflow:hidden だけだと読んでいた位置が飛ぶので、位置ごと固定する。
-     元の位置は 07-mobile-nav.js が top に退避し、閉じるときに戻す。 */
-  body.mnav-open {
-    position: fixed;
-    left: 0;
-    right: 0;
-    width: 100%;
-    overflow: hidden;
-  }
+  /* 覆いをなぞっても背後が動かないようにする。
+     本文は 22 万 px あるので、body の position を切り替えて止める方法は取らない。
+     切り替えるたびに全体のレイアウトが再計算され、モバイルの Chrome が
+     メモリ不足で落ちる。ドロワー自身は overscroll-behavior:contain で
+     スクロールの連鎖を止めている。 */
+  .mscrim { touch-action: none; }
 
   .toc-brand { font-size: 14px; padding-right: 40px; }
   .toc-sub { margin-bottom: 16px; }
