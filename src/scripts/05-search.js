@@ -74,6 +74,12 @@ NoteApp.search = (function () {
     });
   }
 
+  /* 検索の開始・解除を他のモジュールに知らせる。
+     スマホの目次は章ごとに畳んであるので、検索中だけ全章を開く必要がある。 */
+  function notify(q) {
+    if (typeof NoteApp.onSearch === "function") NoteApp.onSearch(q);
+  }
+
   function apply(raw) {
     var q = (raw || "").trim().toLowerCase();
     unmark();
@@ -85,9 +91,10 @@ NoteApp.search = (function () {
         var b = a.querySelector(".cnt");
         if (b) b.remove();
       });
-      heads.forEach(function (h) { h.classList.remove("qhide"); });
+      heads.forEach(function (h) { h.parentNode.classList.remove("qhide"); });
       hits.style.display = "none";
       clr.style.display = "none";
+      notify("");
       return;
     }
     clr.style.display = "block";
@@ -109,16 +116,13 @@ NoteApp.search = (function () {
       }
     });
     heads.forEach(function (h) {
-      var el = h.nextElementSibling, any = false;
-      while (el && !el.classList.contains("toc-h")) {
-        if (el.tagName === "A" && !el.classList.contains("qhide")) { any = true; break; }
-        el = el.nextElementSibling;
-      }
-      h.classList.toggle("qhide", !any);
+      var group = h.parentNode;
+      group.classList.toggle("qhide", !group.querySelector("a:not(.qhide)"));
     });
     hits.style.display = "block";
     hits.textContent = nsec === 0 ? "該当なし" : nsec + " 節 / " + nhit + " 箇所";
     markAll(q);
+    notify(q);
   }
 
   function jump() {

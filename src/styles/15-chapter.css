@@ -3,8 +3,4 @@
 .chap-num{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--err);margin-bottom:10px}
 .chap-title{font-family:var(--disp);font-weight:800;font-size:clamp(26px,4.6vw,40px);line-height:1.3;margin:0 0 14px;letter-spacing:.01em}
 .chap-lead{max-width:54ch;color:var(--sumi-2);font-size:14.5px;margin:0}
-@media (max-width:860px){
-  .toc-h{display:none}
-  .chap{margin-top:56px}
-}
 hr.sep{border:none;border-top:1px solid var(--rule);margin:34px 0}

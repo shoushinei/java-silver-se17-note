@@ -34,9 +34,11 @@ async function concatDir(dir, ext) {
   return { text: parts.join("\n\n"), names };
 }
 
+/** サイドバーの目次。スマホではこの要素がそのままドロワーになる（20-mobile.css） */
 function buildNav(manifest) {
   const out = [];
-  out.push('<nav class="toc" aria-label="目次">');
+  out.push('<nav class="toc" id="toc-nav" aria-label="目次">');
+  out.push('  <button type="button" class="toc-close" id="mnav-close" aria-label="目次を閉じる">×</button>');
   out.push(`  <div class="toc-brand">${manifest.brand}</div>`);
   out.push(`  <div class="toc-sub">${manifest.brandSub}</div>`);
   out.push('  <div class="search">');
@@ -46,13 +48,33 @@ function buildNav(manifest) {
   out.push('  </div>');
   out.push('  <a href="#idx"><span class="tn">◎</span>論点インデックス</a>');
   for (const ch of manifest.chapters) {
-    out.push(`  <div class="toc-h">${ch.tocHeading}</div>`);
+    // 章ごとに包むのは、スマホで章単位に折り畳めるようにするため。
+    // PC では .toc-ch に見た目の指定がないので、素通しの div として振る舞う。
+    out.push(`  <div class="toc-ch" data-chapter="${ch.key}">`);
+    out.push(`    <div class="toc-h"><span class="mark" aria-hidden="true"></span>${ch.tocHeading}</div>`);
     for (const s of ch.sections) {
-      out.push(`  <a href="#${s.id}"><span class="tn">${s.tn}</span>${s.label}</a>`);
+      out.push(`    <a href="#${s.id}"><span class="tn">${s.tn}</span>${s.label}</a>`);
     }
+    out.push('  </div>');
   }
   out.push("</nav>");
   return out.join("\n");
+}
+
+/** スマホ用の上部バー。PC では 20-mobile.css が display:none にする */
+function buildMobileBar() {
+  return [
+    '<div class="mbar" id="mnav-bar">',
+    '  <button type="button" class="mbar-open" id="mnav-open" aria-controls="toc-nav" aria-expanded="false">',
+    '    <span class="bars" aria-hidden="true"></span>目次',
+    '  </button>',
+    '  <button type="button" class="mbar-now" id="mnav-now" aria-label="現在の位置。押すと目次を開く">',
+    '    <span class="ch"></span><span class="se"></span>',
+    '  </button>',
+    '  <button type="button" class="mbar-top" id="mnav-top" aria-label="先頭に戻る">▲</button>',
+    '</div>',
+    '<div class="mscrim" id="mnav-scrim" hidden></div>',
+  ].join("\n");
 }
 
 async function buildChapters(manifest) {
@@ -128,6 +150,7 @@ async function build() {
     "{{title}}": manifest.title,
     "{{description}}": manifest.description,
     "<!--{{styles}}-->": styles.text,
+    "<!--{{mobileBar}}-->": buildMobileBar(),
     "<!--{{nav}}-->": buildNav(manifest),
     "<!--{{hero}}-->": (await read("content", "hero.html")).trim(),
     "<!--{{topicIndex}}-->": (await read("content", "topic-index.html")).trim(),

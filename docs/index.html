@@ -147,28 +147,12 @@ footer{margin-top:70px;padding-top:22px;border-top:3px solid var(--sumi);font-si
 a{color:var(--sumi)}
 :focus-visible{outline:2.5px solid var(--err);outline-offset:2px;border-radius:3px}
 
-/* ---- styles/14-responsive.css ---- */
-@media (max-width:860px){
-  .shell{display:block}
-  .toc{position:sticky;top:0;height:auto;border-right:none;border-bottom:1px solid var(--rule);padding:11px 14px;background:rgba(252,251,248,.96);backdrop-filter:blur(8px);z-index:20;display:flex;gap:7px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-  .toc-brand,.toc-sub,.toc-gap{display:none}
-  .toc a{flex:none;border:1px solid var(--rule);padding:5px 11px;font-size:12.5px}
-  main{padding:0 18px 90px}
-  .hero{padding:44px 0 32px}
-  pre{font-size:12px}
-  .qa{padding-left:16px}
-}
-
 /* ---- styles/15-chapter.css ---- */
 .toc-h{font-family:var(--disp);font-weight:800;font-size:12px;letter-spacing:.06em;color:var(--sumi);margin:20px 0 7px;padding-left:8px;border-left:3px solid var(--err)}
 .chap{margin-top:86px;padding:30px 0 4px;border-top:3px solid var(--sumi)}
 .chap-num{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--err);margin-bottom:10px}
 .chap-title{font-family:var(--disp);font-weight:800;font-size:clamp(26px,4.6vw,40px);line-height:1.3;margin:0 0 14px;letter-spacing:.01em}
 .chap-lead{max-width:54ch;color:var(--sumi-2);font-size:14.5px;margin:0}
-@media (max-width:860px){
-  .toc-h{display:none}
-  .chap{margin-top:56px}
-}
 hr.sep{border:none;border-top:1px solid var(--rule);margin:34px 0}
 
 /* ---- styles/16-search.css ---- */
@@ -186,16 +170,291 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .chip b{font-weight:400;opacity:.45;margin-left:5px;font-size:11px}
 .idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
 .idx-h:first-child{margin-top:0}
-@media (max-width:860px){
-  .search{flex:none;min-width:200px;margin-bottom:0;order:-1}
-  .shits{display:none!important}
-  .toc a .cnt{margin-left:6px}
+
+/* ---- styles/20-mobile.css ---- */
+/* スマートフォン向けの見た目。狭い画面の調整はすべてこのファイルに集約する。
+   連結順が最後なので、ここに書いた指定が他のファイルより優先される。
+
+   PC ではサイドバーに置いている目次を、スマホでは左から出すドロワーにする。
+   以前は目次を上部の横スクロール1列に畳んでいたが、節が 75 個あるため
+   幅が 10,600px を超え、章見出しも隠れていて実質たどり着けなかった。 */
+
+/* --- 画面幅にかかわらず存在する要素。既定では出さない --- */
+.mbar,
+.mscrim,
+.toc-close { display: none; }
+
+@media (max-width: 860px) {
+
+  /* ---------------- 全体 ---------------- */
+  .shell { display: block; }
+  main { padding: 0 16px 96px; }
+  html { scroll-padding-top: 64px; }
+  body { line-height: 1.85; }
+
+  /* ---------------- 上部の固定バー ---------------- */
+  .mbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    height: 52px;
+    padding: 0 6px 0 4px;
+    background: rgba(252, 251, 248, .93);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .mbar button {
+    font: inherit;
+    color: var(--sumi);
+    background: none;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex: none;
+    min-width: 44px;              /* 指で押せる大きさを確保する */
+    padding: 0 10px;
+  }
+  .mbar button:active { background: var(--washi-2); }
+  .mbar-open { font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+  .mbar-open .bars {
+    width: 16px;
+    height: 11px;
+    flex: none;
+    border-top: 2px solid var(--sumi);
+    border-bottom: 2px solid var(--sumi);
+    position: relative;
+  }
+  .mbar-open .bars::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin-top: -1px;
+    border-top: 2px solid var(--sumi);
+  }
+  /* 現在地。章と節を出して、長い文書のどこにいるか分かるようにする */
+  .mbar-now {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1px;
+    padding: 0 4px;
+    line-height: 1.3;
+    text-align: left;
+    overflow: hidden;
+  }
+  .mbar-now .ch,
+  .mbar-now .se { max-width: 100%; }
+  .mbar-now .ch {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--err);
+  }
+  .mbar-now .se {
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mbar-top { font-size: 15px; color: var(--sumi-3); }
+
+  /* ---------------- 目次ドロワー ---------------- */
+  .toc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(86vw, 330px);
+    height: 100%;
+    height: 100dvh;
+    z-index: 60;
+    padding: 14px 12px 40px;
+    border-right: 1px solid var(--rule);
+    background: var(--washi);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(-101%);
+    visibility: hidden;
+    transition: transform .26s cubic-bezier(.22, .9, .3, 1), visibility .26s;
+    box-shadow: 0 0 40px rgba(26, 28, 35, .16);
+  }
+  .toc.open { transform: none; visibility: visible; }
+
+  .mscrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(26, 28, 35, .4);
+    opacity: 0;
+    transition: opacity .26s;
+  }
+  .mscrim.open { opacity: 1; }
+  .mscrim[hidden] { display: none; }
+  /* ドロワーを開いている間、背後の本文が動かないようにする。
+     overflow:hidden だけだと読んでいた位置が飛ぶので、位置ごと固定する。
+     元の位置は 07-mobile-nav.js が top に退避し、閉じるときに戻す。 */
+  body.mnav-open {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .toc-brand { font-size: 14px; padding-right: 40px; }
+  .toc-sub { margin-bottom: 16px; }
+  .toc-close {
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    font: inherit;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--sumi-3);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .search { margin-bottom: 4px; }
+  .search input { font-size: 16px; padding: 10px 30px 10px 11px; }  /* 16px 未満は iOS が拡大する */
+
+  /* 章ごとに折り畳む。全 75 項目を一度に出すと縦に長すぎる */
+  .toc-ch { border-bottom: 1px solid var(--rule); }
+  .toc-ch:last-child { border-bottom: none; }
+  .toc-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 13px 6px 13px 10px;
+    font-size: 13px;
+    border-left: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .toc-h::after {
+    content: "";
+    margin-left: auto;
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--sumi-3);
+    border-bottom: 2px solid var(--sumi-3);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform .18s;
+  }
+  .toc-ch.open .toc-h::after { transform: rotate(-135deg) translate(-2px, -2px); }
+  .toc-h .mark {
+    flex: none;
+    width: 3px;
+    align-self: stretch;
+    margin: -2px 0;
+    border-radius: 2px;
+    background: var(--err);
+  }
+  .toc-ch:not(.open) > a { display: none; }
+  /* 検索中は畳んだ章の中の結果も見えないと困るので、すべて開く */
+  .toc.searching .toc-ch > a { display: flex; }
+
+  .toc a {
+    font-size: 14px;
+    padding: 11px 10px 11px 22px;   /* 指で押せる高さにする */
+    border-radius: 6px;
+  }
+  .toc a .cnt { margin-left: auto; }
+  .toc-ch > a:last-child { margin-bottom: 8px; }
+
+  /* ---------------- 本文 ---------------- */
+  .hero { padding: 30px 0 28px; }
+  .hero p { margin-top: 20px; }
+  .chap { margin-top: 52px; }
+  section { padding-top: 44px; }
+
+  /* コード。横スクロールできることを、端の影で分かるようにする。
+     background-attachment:local を使うと、端まで送った時点で影が自然に消える。 */
+  pre {
+    font-size: 12px;
+    line-height: 1.7;
+    padding: 13px 14px;
+    background:
+      linear-gradient(to right, #fff 40%, rgba(255, 255, 255, 0)) left center,
+      linear-gradient(to left, #fff 40%, rgba(255, 255, 255, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 15px 100%, 15px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+  /* キャプションが折り返しても、右のタグが縦積みにならないようにする */
+  .cap { align-items: flex-start; padding: 8px 12px; line-height: 1.5; }
+  .cap .dot { margin-top: 6px; }
+  .cap .tag { flex: none; align-self: flex-start; margin-top: 1px; white-space: nowrap; }
+
+  /* 表。画面幅に収まるものは収める */
+  table { min-width: 0; font-size: 13.5px; }
+  th, td { padding: 8px 9px; line-height: 1.6; }
+  .tw {
+    background:
+      linear-gradient(to right, var(--washi) 40%, rgba(252, 251, 248, 0)) left center,
+      linear-gradient(to left, var(--washi) 40%, rgba(252, 251, 248, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 15px 100%, 15px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .qa { padding-left: 16px; }
+  .q > summary { padding: 13px 14px; }
+  .point { padding: 15px 14px; }
+  .legend { gap: 8px; }
+  .lg { padding: 7px 11px; font-size: 12px; }
+  .chip { padding: 8px 13px; font-size: 13px; margin: 0 6px 8px 0; }
+  .ck li { padding: 13px 12px; }
+}
+
+/* 極端に狭い端末 */
+@media (max-width: 380px) {
+  main { padding: 0 12px 96px; }
+  pre { font-size: 11.5px; padding: 12px 11px; }
+  .toc { width: 90vw; }
 }
 </style>
 </head>
 <body>
 <div class="shell">
-<nav class="toc" aria-label="目次">
+<div class="mbar" id="mnav-bar">
+  <button type="button" class="mbar-open" id="mnav-open" aria-controls="toc-nav" aria-expanded="false">
+    <span class="bars" aria-hidden="true"></span>目次
+  </button>
+  <button type="button" class="mbar-now" id="mnav-now" aria-label="現在の位置。押すと目次を開く">
+    <span class="ch"></span><span class="se"></span>
+  </button>
+  <button type="button" class="mbar-top" id="mnav-top" aria-label="先頭に戻る">▲</button>
+</div>
+<div class="mscrim" id="mnav-scrim" hidden></div>
+<nav class="toc" id="toc-nav" aria-label="目次">
+  <button type="button" class="toc-close" id="mnav-close" aria-label="目次を閉じる">×</button>
   <div class="toc-brand">Java Silver<br>SE 17 統合ノート</div>
   <div class="toc-sub">1Z0-825 / 全6章 完成版</div>
   <div class="search">
@@ -204,86 +463,98 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <p class="shits" id="qhits" aria-live="polite"></p>
   </div>
   <a href="#idx"><span class="tn">◎</span>論点インデックス</a>
-  <div class="toc-h">第1章　概要とプログラム作成</div>
-  <a href="#c1-s01"><span class="tn">01</span>mainのシグネチャ</a>
-  <a href="#c1-s02"><span class="tn">02</span>コマンドライン引数</a>
-  <a href="#c1-s03"><span class="tn">03</span>コンパイルと実行</a>
-  <a href="#c1-s04"><span class="tn">04</span>ファイル名とクラス</a>
-  <a href="#c1-s05"><span class="tn">05</span>パッケージ宣言</a>
-  <a href="#c1-s06"><span class="tn">06</span>importの規則</a>
-  <a href="#c1-s07"><span class="tn">07</span>アクセス修飾子</a>
-  <a href="#c1-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c1-check"><span class="tn">▸</span>直前チェック</a>
-  <div class="toc-h">第2章　基本データ型と文字列</div>
-  <a href="#c2-s01"><span class="tn">01</span>8つの基本データ型</a>
-  <a href="#c2-s02"><span class="tn">02</span>リテラルの書き方</a>
-  <a href="#c2-s03"><span class="tn">03</span>型変換</a>
-  <a href="#c2-s04"><span class="tn">04</span>宣言・初期化・スコープ</a>
-  <a href="#c2-s05"><span class="tn">05</span>var（型推論）</a>
-  <a href="#c2-s06"><span class="tn">06</span>Stringの不変性</a>
-  <a href="#c2-s07"><span class="tn">07</span>Stringのメソッド</a>
-  <a href="#c2-s08"><span class="tn">08</span>StringBuilder</a>
-  <a href="#c2-s09"><span class="tn">09</span>テキストブロック</a>
-  <a href="#c2-s10"><span class="tn">10</span>配列</a>
-  <a href="#c2-s11"><span class="tn">11</span>ArrayList</a>
-  <a href="#c2-s12"><span class="tn">12</span>nullとの付き合い方</a>
-  <a href="#c2-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c2-check"><span class="tn">▸</span>直前チェック</a>
-  <div class="toc-h">第3章　演算子と制御構造</div>
-  <a href="#c3-s01"><span class="tn">01</span>優先順位</a>
-  <a href="#c3-s02"><span class="tn">02</span>算術と++／--</a>
-  <a href="#c3-s03"><span class="tn">03</span>代入と複合代入</a>
-  <a href="#c3-s04"><span class="tn">04</span>比較と等価性</a>
-  <a href="#c3-s05"><span class="tn">05</span>論理演算子と短絡</a>
-  <a href="#c3-s06"><span class="tn">06</span>三項演算子</a>
-  <a href="#c3-s07"><span class="tn">07</span>if文</a>
-  <a href="#c3-s08"><span class="tn">08</span>switch文</a>
-  <a href="#c3-s09"><span class="tn">09</span>switch式 ★新</a>
-  <a href="#c3-s10"><span class="tn">10</span>繰り返しと2次元配列</a>
-  <a href="#c3-s11"><span class="tn">11</span>break / continue / ラベル</a>
-  <a href="#c3-s12"><span class="tn">12</span>進数とビット演算</a>
-  <a href="#c3-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c3-check"><span class="tn">▸</span>直前チェック</a>
-  <div class="toc-h">第4章　クラスとインスタンス</div>
-  <a href="#c4-s01"><span class="tn">01</span>定義とインスタンス化</a>
-  <a href="#c4-s02"><span class="tn">02</span>フィールドとライフサイクル</a>
-  <a href="#c4-s03"><span class="tn">03</span>メソッドと引数</a>
-  <a href="#c4-s04"><span class="tn">04</span>コンストラクタ</a>
-  <a href="#c4-s05"><span class="tn">05</span>this と this()</a>
-  <a href="#c4-s06"><span class="tn">06</span>オーバーロード</a>
-  <a href="#c4-s07"><span class="tn">07</span>static</a>
-  <a href="#c4-s08"><span class="tn">08</span>初期化の順序</a>
-  <a href="#c4-s09"><span class="tn">09</span>instanceof ★新</a>
-  <a href="#c4-s10"><span class="tn">10</span>record ★新</a>
-  <a href="#c4-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c4-check"><span class="tn">▸</span>直前チェック</a>
-  <div class="toc-h">第5章　継承とインタフェース</div>
-  <a href="#c5-s01"><span class="tn">01</span>継承の基本</a>
-  <a href="#c5-s02"><span class="tn">02</span>コンストラクタと super()</a>
-  <a href="#c5-s03"><span class="tn">03</span>オーバーライド</a>
-  <a href="#c5-s04"><span class="tn">04</span>オーバーロードとの区別</a>
-  <a href="#c5-s05"><span class="tn">05</span>宣言型か実体型か ★核心</a>
-  <a href="#c5-s06"><span class="tn">06</span>多態とキャスト</a>
-  <a href="#c5-s07"><span class="tn">07</span>抽象クラス</a>
-  <a href="#c5-s08"><span class="tn">08</span>final</a>
-  <a href="#c5-s09"><span class="tn">09</span>インタフェース</a>
-  <a href="#c5-s10"><span class="tn">10</span>default / static / private</a>
-  <a href="#c5-s11"><span class="tn">11</span>sealed ★新</a>
-  <a href="#c5-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c5-check"><span class="tn">▸</span>直前チェック</a>
-  <div class="toc-h">第6章　例外処理</div>
-  <a href="#c6-s01"><span class="tn">01</span>階層と3分類</a>
-  <a href="#c6-s02"><span class="tn">02</span>覚える例外名</a>
-  <a href="#c6-s03"><span class="tn">03</span>try-catch-finally</a>
-  <a href="#c6-s04"><span class="tn">04</span>catchの順序</a>
-  <a href="#c6-s05"><span class="tn">05</span>multi-catch</a>
-  <a href="#c6-s06"><span class="tn">06</span>finallyとreturn</a>
-  <a href="#c6-s07"><span class="tn">07</span>throw / throws</a>
-  <a href="#c6-s08"><span class="tn">08</span>カスタム例外</a>
-  <a href="#c6-s09"><span class="tn">09</span>try-with-resources</a>
-  <a href="#c6-s10"><span class="tn">10</span>オーバーライド</a>
-  <a href="#c6-quiz"><span class="tn">▸</span>一問一答</a>
-  <a href="#c6-check"><span class="tn">▸</span>直前チェック</a>
+  <div class="toc-ch" data-chapter="c1">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第1章　概要とプログラム作成</div>
+    <a href="#c1-s01"><span class="tn">01</span>mainのシグネチャ</a>
+    <a href="#c1-s02"><span class="tn">02</span>コマンドライン引数</a>
+    <a href="#c1-s03"><span class="tn">03</span>コンパイルと実行</a>
+    <a href="#c1-s04"><span class="tn">04</span>ファイル名とクラス</a>
+    <a href="#c1-s05"><span class="tn">05</span>パッケージ宣言</a>
+    <a href="#c1-s06"><span class="tn">06</span>importの規則</a>
+    <a href="#c1-s07"><span class="tn">07</span>アクセス修飾子</a>
+    <a href="#c1-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c1-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
+  <div class="toc-ch" data-chapter="c2">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第2章　基本データ型と文字列</div>
+    <a href="#c2-s01"><span class="tn">01</span>8つの基本データ型</a>
+    <a href="#c2-s02"><span class="tn">02</span>リテラルの書き方</a>
+    <a href="#c2-s03"><span class="tn">03</span>型変換</a>
+    <a href="#c2-s04"><span class="tn">04</span>宣言・初期化・スコープ</a>
+    <a href="#c2-s05"><span class="tn">05</span>var（型推論）</a>
+    <a href="#c2-s06"><span class="tn">06</span>Stringの不変性</a>
+    <a href="#c2-s07"><span class="tn">07</span>Stringのメソッド</a>
+    <a href="#c2-s08"><span class="tn">08</span>StringBuilder</a>
+    <a href="#c2-s09"><span class="tn">09</span>テキストブロック</a>
+    <a href="#c2-s10"><span class="tn">10</span>配列</a>
+    <a href="#c2-s11"><span class="tn">11</span>ArrayList</a>
+    <a href="#c2-s12"><span class="tn">12</span>nullとの付き合い方</a>
+    <a href="#c2-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c2-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
+  <div class="toc-ch" data-chapter="c3">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第3章　演算子と制御構造</div>
+    <a href="#c3-s01"><span class="tn">01</span>優先順位</a>
+    <a href="#c3-s02"><span class="tn">02</span>算術と++／--</a>
+    <a href="#c3-s03"><span class="tn">03</span>代入と複合代入</a>
+    <a href="#c3-s04"><span class="tn">04</span>比較と等価性</a>
+    <a href="#c3-s05"><span class="tn">05</span>論理演算子と短絡</a>
+    <a href="#c3-s06"><span class="tn">06</span>三項演算子</a>
+    <a href="#c3-s07"><span class="tn">07</span>if文</a>
+    <a href="#c3-s08"><span class="tn">08</span>switch文</a>
+    <a href="#c3-s09"><span class="tn">09</span>switch式 ★新</a>
+    <a href="#c3-s10"><span class="tn">10</span>繰り返しと2次元配列</a>
+    <a href="#c3-s11"><span class="tn">11</span>break / continue / ラベル</a>
+    <a href="#c3-s12"><span class="tn">12</span>進数とビット演算</a>
+    <a href="#c3-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c3-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
+  <div class="toc-ch" data-chapter="c4">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第4章　クラスとインスタンス</div>
+    <a href="#c4-s01"><span class="tn">01</span>定義とインスタンス化</a>
+    <a href="#c4-s02"><span class="tn">02</span>フィールドとライフサイクル</a>
+    <a href="#c4-s03"><span class="tn">03</span>メソッドと引数</a>
+    <a href="#c4-s04"><span class="tn">04</span>コンストラクタ</a>
+    <a href="#c4-s05"><span class="tn">05</span>this と this()</a>
+    <a href="#c4-s06"><span class="tn">06</span>オーバーロード</a>
+    <a href="#c4-s07"><span class="tn">07</span>static</a>
+    <a href="#c4-s08"><span class="tn">08</span>初期化の順序</a>
+    <a href="#c4-s09"><span class="tn">09</span>instanceof ★新</a>
+    <a href="#c4-s10"><span class="tn">10</span>record ★新</a>
+    <a href="#c4-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c4-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
+  <div class="toc-ch" data-chapter="c5">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第5章　継承とインタフェース</div>
+    <a href="#c5-s01"><span class="tn">01</span>継承の基本</a>
+    <a href="#c5-s02"><span class="tn">02</span>コンストラクタと super()</a>
+    <a href="#c5-s03"><span class="tn">03</span>オーバーライド</a>
+    <a href="#c5-s04"><span class="tn">04</span>オーバーロードとの区別</a>
+    <a href="#c5-s05"><span class="tn">05</span>宣言型か実体型か ★核心</a>
+    <a href="#c5-s06"><span class="tn">06</span>多態とキャスト</a>
+    <a href="#c5-s07"><span class="tn">07</span>抽象クラス</a>
+    <a href="#c5-s08"><span class="tn">08</span>final</a>
+    <a href="#c5-s09"><span class="tn">09</span>インタフェース</a>
+    <a href="#c5-s10"><span class="tn">10</span>default / static / private</a>
+    <a href="#c5-s11"><span class="tn">11</span>sealed ★新</a>
+    <a href="#c5-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c5-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
+  <div class="toc-ch" data-chapter="c6">
+    <div class="toc-h"><span class="mark" aria-hidden="true"></span>第6章　例外処理</div>
+    <a href="#c6-s01"><span class="tn">01</span>階層と3分類</a>
+    <a href="#c6-s02"><span class="tn">02</span>覚える例外名</a>
+    <a href="#c6-s03"><span class="tn">03</span>try-catch-finally</a>
+    <a href="#c6-s04"><span class="tn">04</span>catchの順序</a>
+    <a href="#c6-s05"><span class="tn">05</span>multi-catch</a>
+    <a href="#c6-s06"><span class="tn">06</span>finallyとreturn</a>
+    <a href="#c6-s07"><span class="tn">07</span>throw / throws</a>
+    <a href="#c6-s08"><span class="tn">08</span>カスタム例外</a>
+    <a href="#c6-s09"><span class="tn">09</span>try-with-resources</a>
+    <a href="#c6-s10"><span class="tn">10</span>オーバーライド</a>
+    <a href="#c6-quiz"><span class="tn">▸</span>一問一答</a>
+    <a href="#c6-check"><span class="tn">▸</span>直前チェック</a>
+  </div>
 </nav>
 <main>
 <header class="hero">
@@ -5721,19 +5992,44 @@ NoteApp.chapters = NoteApp.chapters || [];
 })();
 
 /* ---- scripts/03-scrollspy.js ---- */
-/* スクロール位置に追従して、目次の現在地に .on を付ける。*/
+/* スクロール位置に追従して、目次の現在地に .on を付ける。
+   スマホでは目次が畳まれていて見えないので、上部バーにも章と節を出す。 */
 (function () {
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
-  var secs = links.map(function(a){ return document.querySelector(a.getAttribute("href")); });
-  function spy(){
-    var best = 0, y = window.scrollY + 120;
-    secs.forEach(function(s,i){ if(s && s.offsetTop <= y) best = i; });
-    links.forEach(function(a,i){ a.classList.toggle("on", i === best); });
+  var secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+
+  var now = document.getElementById("mnav-now");
+  var nowCh = now && now.querySelector(".ch");
+  var nowSe = now && now.querySelector(".se");
+  var shown = -1;
+
+  function paintNow(a, i) {
+    if (!nowCh || i === shown) return;
+    shown = i;
+    var group = a.closest ? a.closest(".toc-ch") : null;
+    var head = group ? group.querySelector(".toc-h") : null;
+    // 「第3章　演算子と制御構造」→「第3章」
+    nowCh.textContent = head ? head.textContent.split("　")[0] : "INDEX";
+    var tn = a.querySelector(".tn");
+    nowSe.textContent = tn
+      ? tn.textContent + " " + a.textContent.slice(tn.textContent.length)
+      : a.textContent;
   }
+
+  function spy() {
+    // スマホで目次ドロワーを開いている間は本文を position:fixed で固定しており、
+    // window.scrollY が 0 になる。その値で計算すると現在地が先頭に戻ってしまう。
+    if (document.body.classList.contains("mnav-open")) return;
+    var best = 0, y = window.scrollY + 120;
+    secs.forEach(function (s, i) { if (s && s.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle("on", i === best); });
+    paintNow(links[best], best);
+  }
+
   var tick = false;
-  window.addEventListener("scroll", function(){
-    if(!tick){ tick = true; requestAnimationFrame(function(){ spy(); tick = false; }); }
-  }, {passive:true});
+  window.addEventListener("scroll", function () {
+    if (!tick) { tick = true; requestAnimationFrame(function () { spy(); tick = false; }); }
+  }, { passive: true });
   spy();
 })();
 
@@ -5917,6 +6213,12 @@ NoteApp.search = (function () {
     });
   }
 
+  /* 検索の開始・解除を他のモジュールに知らせる。
+     スマホの目次は章ごとに畳んであるので、検索中だけ全章を開く必要がある。 */
+  function notify(q) {
+    if (typeof NoteApp.onSearch === "function") NoteApp.onSearch(q);
+  }
+
   function apply(raw) {
     var q = (raw || "").trim().toLowerCase();
     unmark();
@@ -5928,9 +6230,10 @@ NoteApp.search = (function () {
         var b = a.querySelector(".cnt");
         if (b) b.remove();
       });
-      heads.forEach(function (h) { h.classList.remove("qhide"); });
+      heads.forEach(function (h) { h.parentNode.classList.remove("qhide"); });
       hits.style.display = "none";
       clr.style.display = "none";
+      notify("");
       return;
     }
     clr.style.display = "block";
@@ -5952,16 +6255,13 @@ NoteApp.search = (function () {
       }
     });
     heads.forEach(function (h) {
-      var el = h.nextElementSibling, any = false;
-      while (el && !el.classList.contains("toc-h")) {
-        if (el.tagName === "A" && !el.classList.contains("qhide")) { any = true; break; }
-        el = el.nextElementSibling;
-      }
-      h.classList.toggle("qhide", !any);
+      var group = h.parentNode;
+      group.classList.toggle("qhide", !group.querySelector("a:not(.qhide)"));
     });
     hits.style.display = "block";
     hits.textContent = nsec === 0 ? "該当なし" : nsec + " 節 / " + nhit + " 箇所";
     markAll(q);
+    notify(q);
   }
 
   function jump() {
@@ -6032,6 +6332,178 @@ NoteApp.search = (function () {
     });
     body.appendChild(wrap);
   });
+})();
+
+/* ---- scripts/07-mobile-nav.js ---- */
+/* スマホ用の目次ドロワー。
+
+   PC のサイドバーと同じ <nav class="toc"> を、左から出すパネルとして使い回す。
+   目次リンクを複製すると検索側の href → リンクの対応が壊れるため、DOM は 1 つのまま
+   CSS で見た目だけを切り替えている（20-mobile.css）。
+
+   章は既定で畳んでおき、開いたときに現在の章だけ開く。全 75 項目を一度に並べると
+   ドロワーが縦に長くなりすぎて、結局スワイプで探す羽目になるため。 */
+(function () {
+  var nav = document.getElementById("toc-nav");
+  var bar = document.getElementById("mnav-bar");
+  if (!nav || !bar) return;
+
+  var scrim = document.getElementById("mnav-scrim");
+  var openBtn = document.getElementById("mnav-open");
+  var closeBtn = document.getElementById("mnav-close");
+  var nowBtn = document.getElementById("mnav-now");
+  var topBtn = document.getElementById("mnav-top");
+  var input = document.getElementById("q");
+  var groups = Array.prototype.slice.call(nav.querySelectorAll(".toc-ch"));
+  var mq = window.matchMedia("(max-width: 860px)");
+  var lastFocus = null;
+  var savedY = 0;
+
+  /* 背後の本文を固定する。body を position:fixed にすると読んでいた位置を失うので、
+     いったん top に退避しておき、閉じるときに同じ位置へ戻す。 */
+  function lockBody() {
+    savedY = window.scrollY;
+    document.body.style.top = -savedY + "px";
+    document.body.classList.add("mnav-open");
+  }
+
+  function unlockBody() {
+    document.body.classList.remove("mnav-open");
+    document.body.style.top = "";
+    // html{scroll-behavior:smooth} が効くと戻る途中が見えてしまうので、ここだけ切る
+    var root = document.documentElement;
+    var keep = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, savedY);
+    root.style.scrollBehavior = keep;
+  }
+
+  /* ---- 開閉 ---- */
+
+  function isOpen() { return nav.classList.contains("open"); }
+
+  function openNav() {
+    if (isOpen()) return;
+    lastFocus = document.activeElement;
+    scrim.hidden = false;
+    // hidden を外した直後は transition が走らないので、1 フレーム待ってから効かせる
+    requestAnimationFrame(function () { scrim.classList.add("open"); });
+    nav.classList.add("open");
+    lockBody();
+    openBtn.setAttribute("aria-expanded", "true");
+    nav.removeAttribute("aria-hidden");
+    revealActive();
+    // クラスを付けた直後はまだ visibility:hidden のままで focus が乗らないので、
+    // 1 フレーム待ってから当てる
+    requestAnimationFrame(function () { closeBtn.focus(); });
+  }
+
+  function closeNav() {
+    if (!isOpen()) return;
+    nav.classList.remove("open");
+    scrim.classList.remove("open");
+    unlockBody();
+    openBtn.setAttribute("aria-expanded", "false");
+    if (mq.matches) nav.setAttribute("aria-hidden", "true");
+    var done = function () { scrim.hidden = true; };
+    setTimeout(done, 280);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    lastFocus = null;
+  }
+
+  /* 現在読んでいる節が入っている章を開いて、その位置まで目次をスクロールする */
+  function revealActive() {
+    var on = nav.querySelector("a.on");
+    if (!on) return;
+    var group = on.closest(".toc-ch");
+    if (group) setOpen(group, true);
+    if (on.scrollIntoView) on.scrollIntoView({ block: "center" });
+  }
+
+  /* ---- 章の折り畳み ---- */
+
+  function setOpen(group, open) {
+    group.classList.toggle("open", open);
+    var head = group.querySelector(".toc-h");
+    if (head) head.setAttribute("aria-expanded", String(open));
+  }
+
+  groups.forEach(function (group) {
+    var head = group.querySelector(".toc-h");
+    if (!head) return;
+    function toggle() {
+      if (!mq.matches) return;              // PC では常に全表示なので何もしない
+      setOpen(group, !group.classList.contains("open"));
+    }
+    head.addEventListener("click", toggle);
+    head.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+    });
+  });
+
+  /* 検索中は畳んだ章の中のヒットも見えなければ意味がないので、全章を開く */
+  NoteApp.onSearch = function (q) {
+    nav.classList.toggle("searching", !!q);
+  };
+
+  /* ---- 画面幅に応じた属性の付け外し ---- */
+
+  function syncMode() {
+    var mobile = mq.matches;
+    groups.forEach(function (group) {
+      var head = group.querySelector(".toc-h");
+      if (!head) return;
+      if (mobile) {
+        head.setAttribute("role", "button");
+        head.setAttribute("tabindex", "0");
+        head.setAttribute("aria-expanded", String(group.classList.contains("open")));
+      } else {
+        // PC では見出しはただの見出しに戻す
+        head.removeAttribute("role");
+        head.removeAttribute("tabindex");
+        head.removeAttribute("aria-expanded");
+      }
+    });
+    if (mobile) {
+      if (!isOpen()) nav.setAttribute("aria-hidden", "true");
+    } else {
+      nav.removeAttribute("aria-hidden");
+      closeNav();
+    }
+  }
+
+  /* ---- 配線 ---- */
+
+  openBtn.addEventListener("click", openNav);
+  nowBtn.addEventListener("click", openNav);
+  closeBtn.addEventListener("click", closeNav);
+  scrim.addEventListener("click", closeNav);
+
+  topBtn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // 目次から飛んだらドロワーは用済み
+  nav.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("a")) closeNav();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isOpen() && !input.value) closeNav();
+  });
+
+  // ドロワーの外にフォーカスが逃げないようにする
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab" || !isOpen()) return;
+    var f = nav.querySelectorAll("a, button, input");
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  if (mq.addEventListener) mq.addEventListener("change", syncMode);
+  else if (mq.addListener) mq.addListener(syncMode);
+  syncMode();
 })();
 </script>
 </body>

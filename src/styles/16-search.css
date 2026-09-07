@@ -12,8 +12,3 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .chip b{font-weight:400;opacity:.45;margin-left:5px;font-size:11px}
 .idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
 .idx-h:first-child{margin-top:0}
-@media (max-width:860px){
-  .search{flex:none;min-width:200px;margin-bottom:0;order:-1}
-  .shits{display:none!important}
-  .toc a .cnt{margin-left:6px}
-}

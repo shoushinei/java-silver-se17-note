@@ -1,0 +1,267 @@
+/* スマートフォン向けの見た目。狭い画面の調整はすべてこのファイルに集約する。
+   連結順が最後なので、ここに書いた指定が他のファイルより優先される。
+
+   PC ではサイドバーに置いている目次を、スマホでは左から出すドロワーにする。
+   以前は目次を上部の横スクロール1列に畳んでいたが、節が 75 個あるため
+   幅が 10,600px を超え、章見出しも隠れていて実質たどり着けなかった。 */
+
+/* --- 画面幅にかかわらず存在する要素。既定では出さない --- */
+.mbar,
+.mscrim,
+.toc-close { display: none; }
+
+@media (max-width: 860px) {
+
+  /* ---------------- 全体 ---------------- */
+  .shell { display: block; }
+  main { padding: 0 16px 96px; }
+  html { scroll-padding-top: 64px; }
+  body { line-height: 1.85; }
+
+  /* ---------------- 上部の固定バー ---------------- */
+  .mbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    height: 52px;
+    padding: 0 6px 0 4px;
+    background: rgba(252, 251, 248, .93);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .mbar button {
+    font: inherit;
+    color: var(--sumi);
+    background: none;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex: none;
+    min-width: 44px;              /* 指で押せる大きさを確保する */
+    padding: 0 10px;
+  }
+  .mbar button:active { background: var(--washi-2); }
+  .mbar-open { font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+  .mbar-open .bars {
+    width: 16px;
+    height: 11px;
+    flex: none;
+    border-top: 2px solid var(--sumi);
+    border-bottom: 2px solid var(--sumi);
+    position: relative;
+  }
+  .mbar-open .bars::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin-top: -1px;
+    border-top: 2px solid var(--sumi);
+  }
+  /* 現在地。章と節を出して、長い文書のどこにいるか分かるようにする */
+  .mbar-now {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1px;
+    padding: 0 4px;
+    line-height: 1.3;
+    text-align: left;
+    overflow: hidden;
+  }
+  .mbar-now .ch,
+  .mbar-now .se { max-width: 100%; }
+  .mbar-now .ch {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--err);
+  }
+  .mbar-now .se {
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mbar-top { font-size: 15px; color: var(--sumi-3); }
+
+  /* ---------------- 目次ドロワー ---------------- */
+  .toc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(86vw, 330px);
+    height: 100%;
+    height: 100dvh;
+    z-index: 60;
+    padding: 14px 12px 40px;
+    border-right: 1px solid var(--rule);
+    background: var(--washi);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(-101%);
+    visibility: hidden;
+    transition: transform .26s cubic-bezier(.22, .9, .3, 1), visibility .26s;
+    box-shadow: 0 0 40px rgba(26, 28, 35, .16);
+  }
+  .toc.open { transform: none; visibility: visible; }
+
+  .mscrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(26, 28, 35, .4);
+    opacity: 0;
+    transition: opacity .26s;
+  }
+  .mscrim.open { opacity: 1; }
+  .mscrim[hidden] { display: none; }
+  /* ドロワーを開いている間、背後の本文が動かないようにする。
+     overflow:hidden だけだと読んでいた位置が飛ぶので、位置ごと固定する。
+     元の位置は 07-mobile-nav.js が top に退避し、閉じるときに戻す。 */
+  body.mnav-open {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .toc-brand { font-size: 14px; padding-right: 40px; }
+  .toc-sub { margin-bottom: 16px; }
+  .toc-close {
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    font: inherit;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--sumi-3);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .search { margin-bottom: 4px; }
+  .search input { font-size: 16px; padding: 10px 30px 10px 11px; }  /* 16px 未満は iOS が拡大する */
+
+  /* 章ごとに折り畳む。全 75 項目を一度に出すと縦に長すぎる */
+  .toc-ch { border-bottom: 1px solid var(--rule); }
+  .toc-ch:last-child { border-bottom: none; }
+  .toc-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 13px 6px 13px 10px;
+    font-size: 13px;
+    border-left: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .toc-h::after {
+    content: "";
+    margin-left: auto;
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--sumi-3);
+    border-bottom: 2px solid var(--sumi-3);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform .18s;
+  }
+  .toc-ch.open .toc-h::after { transform: rotate(-135deg) translate(-2px, -2px); }
+  .toc-h .mark {
+    flex: none;
+    width: 3px;
+    align-self: stretch;
+    margin: -2px 0;
+    border-radius: 2px;
+    background: var(--err);
+  }
+  .toc-ch:not(.open) > a { display: none; }
+  /* 検索中は畳んだ章の中の結果も見えないと困るので、すべて開く */
+  .toc.searching .toc-ch > a { display: flex; }
+
+  .toc a {
+    font-size: 14px;
+    padding: 11px 10px 11px 22px;   /* 指で押せる高さにする */
+    border-radius: 6px;
+  }
+  .toc a .cnt { margin-left: auto; }
+  .toc-ch > a:last-child { margin-bottom: 8px; }
+
+  /* ---------------- 本文 ---------------- */
+  .hero { padding: 30px 0 28px; }
+  .hero p { margin-top: 20px; }
+  .chap { margin-top: 52px; }
+  section { padding-top: 44px; }
+
+  /* コード。横スクロールできることを、端の影で分かるようにする。
+     background-attachment:local を使うと、端まで送った時点で影が自然に消える。 */
+  pre {
+    font-size: 12px;
+    line-height: 1.7;
+    padding: 13px 14px;
+    background:
+      linear-gradient(to right, #fff 40%, rgba(255, 255, 255, 0)) left center,
+      linear-gradient(to left, #fff 40%, rgba(255, 255, 255, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 15px 100%, 15px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+  /* キャプションが折り返しても、右のタグが縦積みにならないようにする */
+  .cap { align-items: flex-start; padding: 8px 12px; line-height: 1.5; }
+  .cap .dot { margin-top: 6px; }
+  .cap .tag { flex: none; align-self: flex-start; margin-top: 1px; white-space: nowrap; }
+
+  /* 表。画面幅に収まるものは収める */
+  table { min-width: 0; font-size: 13.5px; }
+  th, td { padding: 8px 9px; line-height: 1.6; }
+  .tw {
+    background:
+      linear-gradient(to right, var(--washi) 40%, rgba(252, 251, 248, 0)) left center,
+      linear-gradient(to left, var(--washi) 40%, rgba(252, 251, 248, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(26, 28, 35, .17), rgba(26, 28, 35, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 15px 100%, 15px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .qa { padding-left: 16px; }
+  .q > summary { padding: 13px 14px; }
+  .point { padding: 15px 14px; }
+  .legend { gap: 8px; }
+  .lg { padding: 7px 11px; font-size: 12px; }
+  .chip { padding: 8px 13px; font-size: 13px; margin: 0 6px 8px 0; }
+  .ck li { padding: 13px 12px; }
+}
+
+/* 極端に狭い端末 */
+@media (max-width: 380px) {
+  main { padding: 0 12px 96px; }
+  pre { font-size: 11.5px; padding: 12px 11px; }
+  .toc { width: 90vw; }
+}
