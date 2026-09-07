@@ -1,0 +1,194 @@
+<section id="c2-s11">
+  <div class="sh"><span class="num">11</span><h2>ArrayList</h2></div>
+
+  <div class="point new"><p>公式チェックリストに「ArrayList の使用」が独立項目として明記されています。Bronze では出題されない範囲なので、ここも新規に固めてください。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>import java.util.ArrayList;
+import java.util.List;
+
+List&lt;String&gt; list = new ArrayList&lt;&gt;();</code></pre></div>
+
+  <p><code>java.util</code> パッケージなので、<span class="mk">import が必要</span>です。<code>java.lang</code> と違い自動 import されません。</p>
+
+  <h3>型引数のルール</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>4つの書き方はすべてコンパイルが通る<span class="tag">要注意</span></div><pre><code>ArrayList&lt;String&gt; a = new ArrayList&lt;&gt;();          // 標準形
+ArrayList&lt;String&gt; b = new ArrayList&lt;String&gt;();    // 冗長だが可
+ArrayList&lt;String&gt; c = new ArrayList();            // 右辺が raw。警告は出る
+ArrayList          d = new ArrayList&lt;&gt;();         // 左辺が raw。警告は出る
+
+ArrayList&lt;String&gt; e = new ArrayList&lt;Integer&gt;();   // コンパイルエラー: 不一致
+List&lt;int&gt;         f = new ArrayList&lt;&gt;();          // コンパイルエラー: 基本データ型は不可</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">「raw type だからコンパイルエラー」という選択肢は誤り</span>です。互換性のため許されており、警告が出るだけです。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>raw type は異なる型を混ぜられる<span class="tag">要注意</span></div><pre><code>ArrayList list = new ArrayList&lt;&gt;();
+list.add("x");        // OK
+list.add(10);         // OK。混ざる
+list.add(true);       // OK
+
+Object o = list.get(0);            // OK。安全
+String s = list.get(0);            // コンパイルエラー: Object が返る
+String t = (String) list.get(0);   // OK
+String u = (String) list.get(1);   // ClassCastException（実行時）</code></pre></div>
+
+  <p><code>Object</code> で受ければ安全ですが、<code>Object</code> のメソッドしか呼べません。<span class="mk">キャストが唯一のリスク源</span>です。</p>
+
+  <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
+
+  <h3>主要メソッド</h3>
+  <div class="tw"><table>
+    <thead><tr><th>メソッド</th><th>戻り値</th><th>動作</th></tr></thead>
+    <tbody>
+      <tr><td><code>add(e)</code></td><td>boolean</td><td>末尾に追加</td></tr>
+      <tr><td><code>add(int, e)</code></td><td>void</td><td>指定位置に<strong>割り込む</strong>。要素数 +1</td></tr>
+      <tr><td><code>get(int)</code></td><td>要素</td><td>取得</td></tr>
+      <tr><td><code>set(int, e)</code></td><td>元の要素</td><td><strong>上書き</strong>。要素数は変わらない</td></tr>
+      <tr><td><code>remove(int)</code></td><td><strong>元の要素</strong></td><td><strong>インデックス</strong>で削除</td></tr>
+      <tr><td><code>remove(Object)</code></td><td><strong>boolean</strong></td><td><strong>値</strong>で削除。無ければ false</td></tr>
+      <tr><td><code>size()</code></td><td>int</td><td>要素数</td></tr>
+      <tr><td><code>contains(e)</code></td><td>boolean</td><td>含むか</td></tr>
+      <tr><td><code>indexOf(e)</code></td><td>int</td><td>位置。<strong>なければ -1</strong></td></tr>
+      <tr><td><code>isEmpty()</code> / <code>clear()</code></td><td>boolean / void</td><td>空か / 全削除</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>add と set ── 割り込むか上書きするか</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>要素数が変わるかどうかで見分ける<span class="tag">最重要</span></div><pre><code>List&lt;String&gt; a = new ArrayList&lt;&gt;(List.of("A","B","C"));
+a.add(1, "X");
+System.out.println(a);          // [A, X, B, C]  ← B は消えず後ろへずれる
+System.out.println(a.size());   // 4
+
+List&lt;String&gt; b = new ArrayList&lt;&gt;(List.of("A","B","C"));
+b.set(1, "X");
+System.out.println(b);          // [A, X, C]     ← B が消える
+System.out.println(b.size());   // 3</code></pre></div>
+
+  <h3>位置の境界 ── add は size まで、set は size-1 まで</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>飛び地は作れない<span class="tag">最重要</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;();
+list.add("A");                 // [A]   size 1
+
+list.add(1, "B");              // OK。size と同じ位置＝末尾に追加と同義
+list.add(3, "C");              // IndexOutOfBoundsException
+
+list.set(1, "X");              // OK（size 2 なので 0〜1）
+list.set(2, "X");              // IndexOutOfBoundsException</code></pre></div>
+
+  <p>ArrayList は連続した並びなので、<span class="mk">途中に空きを作れません</span>。配列と違い「まだ存在しない位置」に代入することはできません。</p>
+
+  <h3>remove ── 引数の型で動作が変わる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>int リテラルだけが位置指定<span class="tag">最重要</span></div><pre><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;(List.of(10, 20, 30));
+
+list.remove(1);                     // [10, 30] ← インデックス1を削除
+list.remove(Integer.valueOf(10));   // [20, 30] ← 値10を削除
+list.remove(new Integer(10));       // 同上（Object 版が選ばれる）</code></pre></div>
+
+  <div class="point link"><p><code>remove(int)</code> と <code>remove(Object)</code> は<strong>オーバーロード</strong>です。<span class="mk pink">完全一致 → 拡大変換 → ボクシング → 可変長引数</span>という第4章の解決順序がそのまま効いています。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値と例外も違う<span class="tag">要注意</span></div><pre><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;(List.of(10, 20, 30));
+
+list.remove(Integer.valueOf(99));   // false。見つからなくても例外にならない
+list.remove(99);                    // IndexOutOfBoundsException</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>値の削除は equals で判定される<span class="tag">要注意</span></div><pre><code>class Item { int id; Item(int id) { this.id = id; } }
+
+List&lt;Item&gt; list = new ArrayList&lt;&gt;();
+list.add(new Item(1));
+list.remove(new Item(1));       // 削除されない！
+System.out.println(list.size());    // 1</code></pre></div>
+
+  <p><code>Item</code> は <code>equals()</code> をオーバーライドしていないので参照比較になります。<span class="mk">String なら中身が一致すれば削除されます</span>（equals がオーバーライドされているため）。第8節の StringBuilder と同じ構造です。</p>
+
+  <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
+
+  <h3>拡張for文の中で変更すると壊れる</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>ConcurrentModificationException<span class="tag">最重要</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("A","B","C","D","E"));
+for (String s : list) {
+    if ("C".equals(s)) list.remove(s);
+}
+// A, B を経て C を削除した次の周で例外</code></pre></div>
+
+  <div class="point"><p>名前に "Concurrent（並行）" と入っていますが、<span class="mk">スレッドとは無関係</span>です。「読んでいる最中に対象を作り変えた」ことを検知しているだけです。</p></div>
+
+  <h3>仕組み ── cursor と size の一致</h3>
+
+  <p>拡張for文は内部で <code>Iterator</code> を使っています。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実際の動き<span class="tag">仕組み</span></div><pre><code>Iterator&lt;String&gt; it = list.iterator();
+while (it.hasNext()) {          // ① cursor != size を見るだけ
+    String s = it.next();       // ② ここで初めて整合性をチェック
+    ...
+}</code></pre></div>
+
+  <p><span class="mk">整合性チェックは next() の中にしかありません。</span>だから <code>next()</code> に到達しなければ例外は起きません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>最後から2番目を削除すると例外にならない<span class="tag">要注意</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("A","B","C"));
+for (String s : list) {
+    if ("B".equals(s)) list.remove(s);
+    else System.out.println(s);
+}
+// 出力は "A" だけ。C は取りこぼされるが例外は起きない
+
+// B を取り出した直後: cursor = 2
+// remove 後:          size   = 2
+// hasNext(): 2 != 2 → false → ループ終了</code></pre></div>
+
+  <div class="point trap"><p>n 個の k 番目を取り出した直後の cursor は k。削除後の size は n-1。<span class="mk">一致するのは k = n-1、つまり「最後から2番目」を削除したときだけ</span>です。<br><br>判定手順：<strong>削除するのが最後から2番目か</strong> → Yes なら静かに終了（最後の要素は出力されない）／No なら次の周で例外。</p></div>
+
+  <h3>正しい削除の書き方</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>3つの方法<span class="tag">OK</span></div><pre><code>// ① Iterator の remove を使う
+Iterator&lt;String&gt; it = list.iterator();
+while (it.hasNext()) {
+    if ("C".equals(it.next())) it.remove();
+}
+
+// ② 通常の for 文で後ろから回す
+for (int i = list.size() - 1; i &gt;= 0; i--) {
+    if ("C".equals(list.get(i))) list.remove(i);
+}
+
+// ③ ループの外で削除する
+List&lt;String&gt; toRemove = new ArrayList&lt;&gt;();
+for (String s : list) if ("C".equals(s)) toRemove.add(s);
+list.removeAll(toRemove);</code></pre></div>
+
+  <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
+
+  <h3>リストの生成方法と変更可否</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>生成方法</th><th>add / remove</th><th>set</th><th>呼び名</th></tr></thead>
+    <tbody>
+      <tr><td><code>new ArrayList&lt;&gt;()</code></td><td>○</td><td>○</td><td>可変リスト</td></tr>
+      <tr><td><code>new ArrayList&lt;&gt;(3)</code></td><td>○</td><td>○</td><td>可変リスト（3は<strong>初期容量</strong>）</td></tr>
+      <tr><td><code>List.of(1,2,3)</code></td><td><strong>✗</strong></td><td><strong>✗</strong></td><td><strong>不変リスト</strong></td></tr>
+      <tr><td><code>Arrays.asList(...)</code></td><td><strong>✗</strong></td><td><strong>○</strong></td><td><strong>固定長リスト</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>変更しようとすると例外<span class="tag">最重要</span></div><pre><code>var a = List.of(1, 2, 3);
+a.add(4);          // UnsupportedOperationException
+a.set(0, 9);       // UnsupportedOperationException
+List.of(1, null);  // NullPointerException ← null も入れられない
+
+var b = Arrays.asList(new Integer[]{1, 2, 3});
+b.add(4);          // UnsupportedOperationException
+b.set(0, 9);       // OK ← サイズ変更ではないので通る</code></pre></div>
+
+  <div class="point trap"><p><code>new ArrayList&lt;&gt;(3)</code> の <code>3</code> を「要素3個」と読むと間違えます。<span class="mk">これは初期容量で、StringBuilder(16) と同じ意味</span>です。<code>size()</code> は 0 で、いくらでも追加できます。</p></div>
+
+  <p><code>Arrays.asList</code> が set だけ通るのは、<strong>元の配列をそのまま包んでいる</strong>からです。配列は「長さは変えられないが中身は書き換えられる」ので、その性質がそのまま出ています。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>元の配列と連動する<span class="tag">要注意</span></div><pre><code>Integer[] arr = {1, 2, 3};
+List&lt;Integer&gt; list = Arrays.asList(arr);
+list.set(0, 9);
+System.out.println(arr[0]);   // 9 ← 元の配列も変わる</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>可変リストに変換する<span class="tag">OK</span></div><pre><code>List&lt;Integer&gt; a = new ArrayList&lt;&gt;(List.of(1, 2, 3));
+a.add(4);      // OK</code></pre></div>
+</section>

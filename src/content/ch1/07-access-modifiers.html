@@ -1,0 +1,97 @@
+<section id="c1-s07">
+  <div class="sh"><span class="num">07</span><h2>アクセス修飾子の到達範囲</h2></div>
+
+  <p>アクセス修飾子は「どこまで名前が届くか」を決めます。<strong>パッケージという境界があって初めて意味を持つ</strong>ので、パッケージとセットで覚えるのが正しい順序です。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>修飾子</th><th>同じクラス</th><th>同じパッケージ</th><th>別パッケージの<br>サブクラス</th><th>それ以外</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+      <tr><td><code>protected</code></td><td>○</td><td>○</td><td><strong>△</strong></td><td>×</td></tr>
+      <tr><td>修飾子なし<br><span style="font-size:12px">（package private）</span></td><td>○</td><td>○</td><td>×</td><td>×</td></tr>
+      <tr><td><code>private</code></td><td>○</td><td>×</td><td>×</td><td>×</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>覚え方は<span class="mk">「クラス → パッケージ → 継承 → 全世界」の4段階</span>です。上から順に1段ずつ壁が広がっていきます。表を丸暗記するのではなく、<code>private</code> が最も狭く <code>public</code> が最も広い、その途中に「パッケージまで」と「パッケージ＋継承先まで」の2段があると理解してください。</p></div>
+
+  <h3>修飾子なし＝パッケージプライベート</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>パッケージの外からは見えない<span class="tag">NG</span></div><pre><code>// a/Base.java
+package a;
+public class Base {
+    int pkg = 3;                  // 修飾子なし
+}
+
+// b/Pkg.java
+package b;
+import a.Base;
+public class Pkg {
+    void t(Base x) { System.out.println(x.pkg); }
+}
+// error: pkg is not public in Base; cannot be accessed from outside package</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">default というアクセス修飾子は存在しません</span>。「デフォルト」「パッケージプライベート」と呼ばれますが、書くのは<strong>何も書かない</strong>ことです。<br><code>default</code> というキーワード自体は Java にありますが、それは <code>switch</code> のラベルとインタフェースのデフォルトメソッドの話で、アクセス修飾子ではありません。選択肢に <code>default int x = 3;</code> と出てきたらコンパイルエラーです。</p></div>
+
+  <h3>protected の△が意味すること</h3>
+
+  <p>ここがこの節で唯一ややこしい部分で、そのぶん頻出です。別パッケージのサブクラスは <code>protected</code> メンバに<strong>常にアクセスできるわけではありません</strong>。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>参照の型で結果が変わる<span class="tag">最重要</span></div><pre><code>// a/Base.java
+package a;
+public class Base {
+    protected int prot = 2;
+}
+
+// b/Sub.java
+package b;
+import a.Base;
+public class Sub extends Base {
+    void viaThis()       { System.out.println(this.prot); }   // OK
+    void viaSub(Sub s)   { System.out.println(s.prot); }      // OK
+    void viaBase(Base x) { System.out.println(x.prot); }      // コンパイルエラー
+}
+// error: prot has protected access in Base</code></pre></div>
+
+  <p>別パッケージのサブクラスが <code>protected</code> メンバに触れるのは、<strong>自分自身か、自分と同じ型（またはそのサブクラス）の参照を通したとき</strong>だけです。スーパークラス型の参照 <code>Base x</code> 経由では届きません。</p>
+
+  <div class="point"><p>理由は <code>protected</code> の目的にあります。これは「<span class="mk">継承した自分の部品として使ってよい</span>」という許可であって、「Base 型のオブジェクトなら誰でも中を覗いてよい」ではありません。<code>Base x</code> の中身が本当に <code>Sub</code> なのかは、コンパイル時にはわかりません。だから禁止されます。<br>同じパッケージ内であれば、そもそも<strong>パッケージの権限だけで</strong>アクセスできるので、この制限は関係ありません。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>サブクラスでなければ public 以外は届かない<span class="tag">NG</span></div><pre><code>package b;
+import a.Base;
+public class Other {                          // extends していない
+    void t(Base x) {
+        System.out.println(x.pub);            // OK
+        System.out.println(x.prot);           // コンパイルエラー
+    }
+}</code></pre></div>
+
+  <h3>トップレベルのクラスに付けられる修飾子</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2種類しか書けない<span class="tag">NG</span></div><pre><code>private   class Hidden  { }    // error: modifier private not allowed here
+protected class Guarded { }    // error: modifier protected not allowed here
+
+public class A { }             // OK
+class B { }                    // OK（修飾子なし＝同一パッケージから見える）</code></pre></div>
+
+  <div class="point trap"><p>トップレベルの型に付けられるのは <code>public</code> か<strong>修飾子なし</strong>の2択だけです。<code>private</code> と <code>protected</code> は<span class="mk">「外側に自分を囲むものがある」ことが前提</span>の修飾子なので、ファイル直下のクラスには意味を持ちません。<br>ネストしたクラス（クラスの中のクラス）なら4種類すべて使えます。</p></div>
+
+  <h3>フィールドとメソッド以外</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>対象</th><th>規則</th></tr></thead>
+    <tbody>
+      <tr><td>インタフェースのメソッド</td><td>暗黙に <code>public</code>。書かなくても public になる</td></tr>
+      <tr><td>インタフェースのフィールド</td><td>暗黙に <code>public static final</code></td></tr>
+      <tr><td>コンストラクタ</td><td>4種類すべて使える。<code>private</code> にすると外部から <code>new</code> できない</td></tr>
+      <tr><td>ローカル変数</td><td><strong>付けられない</strong>。スコープはブロックで決まる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ローカル変数に修飾子は不可<span class="tag">NG</span></div><pre><code>void m() {
+    private int x = 1;      // コンパイルエラー
+    final   int y = 2;      // OK。final はアクセス修飾子ではない
+}</code></pre></div>
+
+  <div class="point link"><p>第5章とつながります。オーバーライドでは<span class="mk">アクセス範囲を狭められません</span>。<code>protected</code> のメソッドを修飾子なしでオーバーライドすると <code>attempting to assign weaker access privileges; was protected</code> になります。広げる（<code>protected</code> → <code>public</code>）のは自由です。</p></div>
+</section>

@@ -1,0 +1,102 @@
+<section id="c3-s12">
+  <div class="sh"><span class="num">12</span><h2>進数リテラルとビット演算</h2></div>
+
+  <h3>接頭辞は「何進数として読むか」の指示</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>進数</th><th>由来</th><th>例（値は12）</th></tr></thead>
+    <tbody>
+      <tr><td><code>12</code></td><td>10進数</td><td>—</td><td><code>12</code></td></tr>
+      <tr><td><code>0b...</code></td><td><strong>2進数</strong></td><td>b = binary</td><td><code>0b1100</code></td></tr>
+      <tr><td><code>0x...</code></td><td><strong>16進数</strong></td><td>x = he<strong>x</strong>adecimal</td><td><code>0x0C</code></td></tr>
+      <tr><td><strong>先頭の <code>0</code></strong></td><td><strong>8進数</strong></td><td>印は 0 だけ</td><td><code>014</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>4つとも同じ値を表します。<span class="mk">接頭辞は「書くとき」の話で、出力は必ず10進数になります。</span></p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>出力はすべて10進数<span class="tag">OK</span></div><pre><code>System.out.println(12);        // 12
+System.out.println(0b1100);    // 12
+System.out.println(0x0C);      // 12
+System.out.println(014);       // 12</code></pre></div>
+
+  <h3>8進数だけ印がない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>先頭の 0 で値が変わる<span class="tag">最重要</span></div><pre><code>System.out.println(12);     // 12
+System.out.println(012);    // 10  ← 8進数として読まれる
+System.out.println(010);    // 8
+System.out.println(0x10);   // 16  ← 「じゅう」ではない</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>8進数に 8 と 9 は存在しない<span class="tag">NG</span></div><pre><code>int a = 08;    // コンパイルエラー
+int b = 09;    // コンパイルエラー
+int c = 07;    // OK（値は 7）</code></pre></div>
+
+  <div class="point trap"><p>桁を揃えるつもりで <code>007</code> と書くと8進数になります。<span class="mk">先頭に 0 が付いた整数リテラルは、それだけで8進数</span>という点が引っかけに使われます。</p></div>
+
+  <h3>2進数の読み方</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>各桁の重み<span class="tag">前提</span></div><pre><code>0b1011
+
+   1  0  1  1
+   8  4  2  1     ← 各桁が表す値
+   ↓     ↓  ↓
+   8  +  2 + 1  =  11</code></pre></div>
+
+  <h3>16進数は A〜F を使う</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>10〜15 は文字で表す<span class="tag">OK</span></div><pre><code>0xA     // 10
+0xF     // 15
+0x10    // 16
+0xFF    // 255
+0xff    // 255 ← 大文字小文字は区別しない</code></pre></div>
+
+  <hr class="sep">
+
+  <h3>ビット演算子 ── まず優先度を整理する</h3>
+
+  <div class="point"><p>公式チェックリストにビット演算の明記はありません。<span class="mk">最優先は次の2行だけ</span>です。これだけで多くの問題は選択肢が2つに絞れます。</p>
+  <ul class="tight" style="margin-top:10px">
+    <li><strong><code>&amp;&amp;</code> <code>||</code> は boolean 専用</strong> ── 整数に使うとコンパイルエラー</li>
+    <li><strong><code>&amp;</code> <code>|</code> <code>^</code> は boolean と整数の両方に使える</strong></li>
+  </ul></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>記号</th><th>名前</th><th>意味</th><th>優先度</th></tr></thead>
+    <tbody>
+      <tr><td><code>&amp;</code></td><td>AND</td><td>両方が1なら1</td><td>中</td></tr>
+      <tr><td><code>|</code></td><td>OR</td><td>どちらかが1なら1</td><td>中</td></tr>
+      <tr><td><code>^</code></td><td>XOR</td><td><strong>違えば</strong>1</td><td>中</td></tr>
+      <tr><td><code>~</code></td><td>NOT</td><td>全桁を反転（単項）。結果は <code>-(x+1)</code></td><td>低</td></tr>
+      <tr><td><code>&lt;&lt;</code></td><td>左シフト</td><td>桁を左へ。実質2倍</td><td>低</td></tr>
+      <tr><td><code>&gt;&gt;</code></td><td>右シフト</td><td>桁を右へ。実質半分。符号を保つ</td><td>低</td></tr>
+      <tr><td><code>&gt;&gt;&gt;</code></td><td>符号なし右シフト</td><td>左を0で埋める。負数でのみ <code>&gt;&gt;</code> と差が出る</td><td>低</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>桁ごとの計算は縦に並べる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>暗算せず紙に書く<span class="tag">コツ</span></div><pre><code>     1 1 0 0        1 1 0 0        1 1 0 0
+  &amp;  1 0 1 0     |  1 0 1 0     ^  1 0 1 0
+     -------        -------        -------
+     1 0 0 0        1 1 1 0        0 1 1 0
+     = 8            = 14           = 6</code></pre></div>
+
+  <p><code>1</code> を true、<code>0</code> を false に読み替えると、<span class="mk">boolean のときとまったく同じルール</span>です。boolean は1個ずつ、整数は32桁を一度に処理しているだけの違いです。</p>
+
+  <h3>フラグ管理という定番パターン</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>1つの int に複数のオン／オフを詰める<span class="tag">最重要</span></div><pre><code>private final static int FLAG_A = 0b0001;   // 1桁目
+private final static int FLAG_B = 0b0010;   // 2桁目
+private final static int FLAG_C = 0b0100;   // 3桁目
+private final static int FLAG_D = 0b1000;   // 4桁目
+
+int status = 0b1011;     // D と B と A が立っている状態
+
+status &amp; FLAG_C          // 0    → C は立っていない
+status &amp; FLAG_B          // 2    → B は立っている
+(status &amp; FLAG_C) != 0   // false ← 「そのフラグが立っているか」の判定</code></pre></div>
+
+  <p>各フラグは<strong>立っている桁が違う</strong>ので、<code>&amp;</code> を取ると「その桁だけ」を抜き出せます。末尾の <code>!= 0</code> は立っているかどうかの判定です。</p>
+
+  <div class="point trap"><p>この形の問題は<span class="mk">オペランドが int なので <code>&amp;&amp;</code> <code>||</code> が即座に消える</span>ところから解きます。残った <code>&amp;</code> と <code>|</code> を縦書きで計算すれば確定します。</p></div>
+</section>

@@ -1,0 +1,27 @@
+<section id="c6-s02">
+  <div class="sh"><span class="num">02</span><h2>名前を覚えるべき例外</h2></div>
+  <p>出題される例外は限られています。名前と「どんな場面で出るか」をセットで。</p>
+
+  <h3>非検査（RuntimeException 系）</h3>
+  <div class="tw"><table>
+    <thead><tr><th>例外</th><th>発生する場面</th></tr></thead>
+    <tbody>
+      <tr><td><code>NullPointerException</code></td><td>null に対してメソッド呼び出し・フィールドアクセス。null のアンボクシングも</td></tr>
+      <tr><td><code>ArrayIndexOutOfBoundsException</code></td><td>配列の範囲外アクセス</td></tr>
+      <tr><td><code>StringIndexOutOfBoundsException</code></td><td>文字列の範囲外アクセス</td></tr>
+      <tr><td><code>IndexOutOfBoundsException</code></td><td>上2つの<strong>親</strong>。ArrayList の範囲外はこれ</td></tr>
+      <tr><td><code>ArithmeticException</code></td><td>整数の 0 除算。<code>1.0/0</code> は例外にならず Infinity</td></tr>
+      <tr><td><code>ClassCastException</code></td><td>不正なキャスト</td></tr>
+      <tr><td><code>NumberFormatException</code></td><td><code>Integer.parseInt("abc")</code>。<code>IllegalArgumentException</code> の子</td></tr>
+      <tr><td><code>UnsupportedOperationException</code></td><td><code>List.of()</code> に add した場合など</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>検査例外 / エラー</h3>
+  <ul class="tight">
+    <li><strong>検査例外</strong> ── <code>Exception</code> / <code>IOException</code> / <code>FileNotFoundException</code>（IOException の子）/ <code>SQLException</code></li>
+    <li><strong>エラー</strong> ── <code>OutOfMemoryError</code> / <code>StackOverflowError</code> / <code>NoClassDefFoundError</code></li>
+  </ul>
+
+  <div class="point trap"><p>親子関係そのものが問われます。とくに <span class="mk">FileNotFoundException は IOException の子</span>、<span class="mk">NumberFormatException は IllegalArgumentException の子</span>、<span class="mk">ArrayIndexOutOfBoundsException は IndexOutOfBoundsException の子</span>。catch の順序問題と multi-catch 問題は、この関係を知らないと解けません。</p></div>
+</section>

@@ -1,0 +1,45 @@
+<section id="c2-s01">
+  <div class="sh"><span class="num">01</span><h2>8つの基本データ型</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>型</th><th>サイズ</th><th>既定値</th><th>範囲・特徴</th></tr></thead>
+    <tbody>
+      <tr><td><code>byte</code></td><td>8bit</td><td>0</td><td>-128 〜 127</td></tr>
+      <tr><td><code>short</code></td><td>16bit</td><td>0</td><td>-32768 〜 32767</td></tr>
+      <tr><td><code>int</code></td><td>32bit</td><td>0</td><td><strong>整数リテラルの既定の型</strong></td></tr>
+      <tr><td><code>long</code></td><td>64bit</td><td>0L</td><td><code>L</code> が必要な場面がある</td></tr>
+      <tr><td><code>float</code></td><td>32bit</td><td>0.0f</td><td><strong><code>f</code> は必須</strong>。有効桁数 約7桁</td></tr>
+      <tr><td><code>double</code></td><td>64bit</td><td>0.0d</td><td><strong>小数リテラルの既定の型</strong>。約15桁</td></tr>
+      <tr><td><code>char</code></td><td>16bit</td><td><code>'\u0000'</code></td><td><strong>符号なし</strong>。0 〜 65535</td></tr>
+      <tr><td><code>boolean</code></td><td>未定義</td><td>false</td><td>数値との相互変換は不可</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><span class="mk">既定の型は int と double。</span>これを外すには接尾辞が必要になります。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>接尾辞の付け忘れ<span class="tag">NG</span></div><pre><code>long  a = 10000000000;   // エラー: int として評価され範囲を超える
+float b = 1.5;           // エラー: 1.5 は double なので float に入らない</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>接尾辞を付ける<span class="tag">OK</span></div><pre><code>long  a = 10000000000L;
+float b = 1.5f;
+long  c = 10;            // OK。範囲内なら L は不要（int → long は拡大変換）</code></pre></div>
+
+  <h3>char は符号なし</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>char の性質<span class="tag">要注意</span></div><pre><code>char a = 65;         // OK。'A' になる
+char b = 'a' + 1;    // OK。定数式なので 'b'
+char c = -1;         // コンパイルエラー: 負の値は不可</code></pre></div>
+
+  <div class="point trap"><p><code>char</code> と <code>short</code> はどちらも16bitですが、<span class="mk">表現範囲が重ならないため双方向で明示キャストが必要</span>です。「サイズが同じだから代入できる」と考えると落とします。</p></div>
+
+  <h3>浮動小数点の特殊値</h3>
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>整数の 0 除算は例外<span class="tag">実行時</span></div><pre><code>System.out.println(1 / 0);      // ArithmeticException</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>浮動小数点の 0 除算は例外にならない<span class="tag">要注意</span></div><pre><code>System.out.println(1.0 / 0);    // Infinity
+System.out.println(-1.0 / 0);   // -Infinity
+System.out.println(0.0 / 0);    // NaN
+
+System.out.println(Double.NaN == Double.NaN);   // false
+// NaN の判定は Double.isNaN() を使う</code></pre></div>
+
+  <div class="point link"><p>第6章とつながります。<span class="mk pink">整数の 0 除算だけが ArithmeticException</span>。小数の 0 除算は例外を投げません。「実行時に例外がスローされる」という選択肢を選ばせる引っかけに使われます。</p></div>
+</section>

@@ -1,0 +1,132 @@
+<section id="c6-s09">
+  <div class="sh"><span class="num">09</span><h2>try-with-resources</h2></div>
+
+  <p>リソースを自動的に閉じる構文です（Java 7〜）。SE 11 Silver の範囲外だったため、ここは完全な新規範囲です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>try (BufferedReader br = new BufferedReader(new FileReader("a.txt"))) {
+    // 処理
+} catch (IOException e) {
+}
+// finally に close() を書かなくても自動で閉じられる</code></pre></div>
+
+  <h3>ルール</h3>
+  <ul>
+    <li>リソースは <strong><code>AutoCloseable</code> を実装したクラス</strong>でなければならない</li>
+    <li>複数書くときは <strong><code>;</code> 区切り</strong></li>
+    <li>閉じられる順序は<strong>宣言と逆順</strong>（後ろから閉じる）</li>
+    <li>リソース変数は<strong>暗黙的に final</strong>。中で再代入するとコンパイルエラー</li>
+    <li><code>catch</code> も <code>finally</code> も<strong>省略可能</strong>（通常の try と違い、try 単体で成立する）</li>
+  </ul>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>閉じる順は b → a<span class="tag">要注意</span></div><pre><code>try (A a = new A(); B b = new B()) {
+    // 宣言は a → b、close は b → a
+}</code></pre></div>
+
+  <h3>実行順序の罠</h3>
+  <p><span class="mk">close() は catch や finally より先に実行されます。</span></p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>try → close → catch → finally<span class="tag">最重要</span></div><pre><code>try (Res r = new Res()) {
+    System.out.println("try");
+    throw new Exception();
+} catch (Exception e) {
+    System.out.println("catch");
+} finally {
+    System.out.println("finally");
+}
+// 出力: try → (close の中身) → catch → finally</code></pre></div>
+
+  <div class="point trap"><p>「close と catch のどちらが先か」は定番の出題です。<strong>リソースの後始末が終わってから例外処理に入る</strong>、と覚えてください。</p></div>
+
+  <h3>Java 9 からの拡張</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>宣言済みの final 変数を書ける<span class="tag">OK</span></div><pre><code>Res r = new Res();
+try (r) {           // Java 9 以降は OK
+}</code></pre></div>
+
+  <h3>AutoCloseable の正体</h3>
+
+  <p><code>try(...)</code> の括弧に書けるのは、<strong><code>AutoCloseable</code> を実装した型だけ</strong>です。このインタフェースの中身はこれだけです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>抽象メソッド1つだけのインタフェース<span class="tag">最重要</span></div><pre><code>public interface AutoCloseable {
+    void close() throws Exception;        // これ1つだけ
+}
+
+// java.io.Closeable は AutoCloseable のサブインタフェース
+public interface Closeable extends AutoCloseable {
+    void close() throws IOException;      // 例外を IOException に狭めている
+}</code></pre></div>
+
+  <div class="point link"><p><code>Closeable</code> が例外を <code>IOException</code> に絞れているのは、第5章 節03の<span class="mk">「オーバーライドで検査例外は狭められる」</span>規則によります。<code>IOException</code> は <code>Exception</code> のサブクラスなので合法です。</p></div>
+
+  <h3>括弧の中は何をしているか</h3>
+
+  <p><code>try (Res r = new Res())</code> の括弧の中は、<strong>ただの変数宣言</strong>です。<code>close()</code> はここには書かれていません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>コンパイラが生成するコード<span class="tag">図</span></div><pre><code>// 書いたコード
+try (Res r = new Res()) {
+    処理;
+}
+
+// コンパイラが生成するもの（イメージ）
+Res r = new Res();                    // ① 括弧の中＝リソースを開く
+try {
+    処理;                              // ② 本体
+} finally {
+    if (r != null) r.close();         // ③ 自動で足される
+}</code></pre></div>
+
+  <div class="point"><p>つまり <code>try(...)</code> の括弧は<span class="mk">「この変数を宣言して、ブロックを抜けるときに close() を呼んでおいて」</span>という指示です。<br>自分のコードに <code>close()</code> は<strong>一度も登場しません</strong>。呼び出しを書き忘れないよう、コンパイラに生成させるための構文です。</p></div>
+
+  <h3>close() の中身は自分で書く</h3>
+
+  <p>Java は「何を閉じるか」を知らないので、<code>close()</code> に決まった処理はありません。<strong>コンストラクタで開いたものを閉じる</strong>のが典型です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>開く処理と対になるものを書く<span class="tag">OK</span></div><pre><code>class Res implements AutoCloseable {
+    private FileWriter w;
+
+    Res() throws IOException {
+        w = new FileWriter("out.txt");    // 開く
+    }
+
+    @Override
+    public void close() throws IOException {
+        w.close();                         // 閉じる
+    }
+}</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>標準クラス</th><th><code>close()</code> がやること</th></tr></thead>
+    <tbody>
+      <tr><td><code>FileWriter</code></td><td>バッファの内容をファイルに書き出し、<strong>ファイルハンドルを OS に返す</strong></td></tr>
+      <tr><td><code>FileInputStream</code></td><td>ファイルハンドルを OS に返す</td></tr>
+      <tr><td><code>Connection</code>（JDBC）</td><td>DB との接続を切る／プールに返却する</td></tr>
+      <tr><td><code>Socket</code></td><td>通信を終了しポートを解放する</td></tr>
+      <tr><td><code>Scanner</code></td><td>内部の入力ストリームを閉じる</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>なぜ返す必要があるのか。ガベージコレクションが回収するのは<span class="mk">Java のメモリだけ</span>だからです。<br>ファイルを開くと <strong>OS 側にも記録（ファイルディスクリプタ）が作られます</strong>。Java 側のオブジェクトが GC で消えても、OS 側の記録は残ったまま。これが溜まると上限に達し、新しくファイルを開けなくなります。<br><code>FileWriter</code> にはもう1つ役割があり、<strong><code>close()</code> しないとバッファの内容がファイルに書かれません</strong>。</p></div>
+
+  <h3>実装しないと2通りのエラーになる</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>implements を書き忘れた<span class="tag">NG</span></div><pre><code>class Res { public void close(){} }        // close() はあるが implements が無い
+
+try (Res r = new Res()) { }
+// error: try-with-resources not applicable to variable type
+//        (Res cannot be converted to AutoCloseable)</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>close() を書き忘れた<span class="tag">NG</span></div><pre><code>class Res implements AutoCloseable { }
+// error: Res is not abstract and does not override
+//        abstract method close() in AutoCloseable</code></pre></div>
+
+  <div class="point trap"><p>コンパイラは「<code>close()</code> という名前のメソッドがあるか」ではなく、<span class="mk">AutoCloseable 型として扱えるか</span>で判断します。第5章の「宣言型が呼べる範囲を決める」と同じ理屈です。<br><code>try(...)</code> を見たら、<strong>そのクラスが AutoCloseable を実装しているか最初に確認</strong>してください。実装が無い選択肢で「コンパイルエラー」を選ばせる問題が出ます。</p></div>
+
+  <h3>Java 9 の形には条件がある</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>再代入された変数は書けない<span class="tag">要注意</span></div><pre><code>Res r = new Res();
+r = new Res();          // 再代入した
+try (r) { }
+// error: variable r used as a try-with-resources resource
+//        neither final nor effectively final</code></pre></div>
+
+  <p>閉じる対象が途中ですり替わると、どれを閉じるべきか決まりません。そのため <code>final</code> または<strong>実質 final</strong>（一度も再代入していない）である必要があります。</p>
+</section>

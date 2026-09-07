@@ -1,0 +1,30 @@
+<section id="c1-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>この章は暗記で確実に取れます。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c1-barfill"></i></div>
+  <div class="barlab" id="c1-barlab">0 / 19</div>
+
+  <ul class="ck" id="c1-cklist">
+    <li><span class="box">✓</span><span class="cktx">main は public static void、引数は String[]。修飾子の順序と引数名は自由</span></li>
+    <li><span class="box">✓</span><span class="cktx">String... と String args[] も可。main の形が違うエラーは実行時に出る</span></li>
+    <li><span class="box">✓</span><span class="cktx">args[0] は最初の引数。クラス名は含まれない</span></li>
+    <li><span class="box">✓</span><span class="cktx">引数なしなら args は null ではなく長さ0の配列</span></li>
+    <li><span class="box">✓</span><span class="cktx">args の中身は全部 String。+ は連結、数値化は Integer.parseInt</span></li>
+    <li><span class="box">✓</span><span class="cktx">javac にはファイル名（.java 付き）、java にはクラス名（拡張子なし）</span></li>
+    <li><span class="box">✓</span><span class="cktx">java は引数が .java で終わるかでモードが変わる。ソース実行モードは .class 不要</span></li>
+    <li><span class="box">✓</span><span class="cktx">ソース実行モードもバイトコードは経由する。保存しないだけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">public なトップレベル型は1ファイルに1つ、ファイル名と一致必須</span></li>
+    <li><span class="box">✓</span><span class="cktx">package → import → 型宣言。package はコメント以外の何よりも前で最大1つ</span></li>
+    <li><span class="box">✓</span><span class="cktx">java.lang と同一パッケージは import 不要</span></li>
+    <li><span class="box">✓</span><span class="cktx">ワイルドカードはサブパッケージを含まない。単一型インポートが優先される</span></li>
+    <li><span class="box">✓</span><span class="cktx">import static の語順。パッケージ付きクラスは完全修飾名で実行する</span></li>
+    <li><span class="box">✓</span><span class="cktx">public → protected → 修飾子なし → private。default という修飾子は存在しない</span></li>
+    <li><span class="box">✓</span><span class="cktx">別パッケージのサブクラスは、自分と同じ型の参照でしか protected に触れない</span></li>
+    <li><span class="box">✓</span><span class="cktx">トップレベル型は public か修飾子なしのみ。ローカル変数に修飾子は不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">javac はファイルを扱いバイトコードを吐く。java はクラス名を受け取り JVM を起動する</span></li>
+    <li><span class="box">✓</span><span class="cktx">ソースが提示された「実行して〜と表示」問題では、java クラス名だけでは足りない</span></li>
+    <li><span class="box">✓</span><span class="cktx">引数の区切りは引用の外の空白だけ。" はスイッチ、\" は文字</span></li>
+  </ul>
+  <button class="reset" id="c1-ckreset" type="button">チェックをすべて外す</button>
+</section>

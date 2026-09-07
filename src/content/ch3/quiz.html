@@ -1,0 +1,67 @@
+<section id="c3-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span><code>int i = 1; i = i++;</code> の後、i は？</span></summary>
+    <div class="qa"><p><strong>1のまま。</strong>i++ が今の値1を退避してから i を2にしますが、直後に「i = 退避した1」の代入が走って上書きされます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>int i = 1; i++ + ++i</code> の値は？</span></summary>
+    <div class="qa"><p><strong>4。</strong>i++ が1を返して i は2、++i が i を3にして3を返す。1 + 3 = 4。<strong>左から1つずつ書き出す</strong>のが確実です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span><code>-5 / 2</code> と <code>-5 % 2</code> は？</span></summary>
+    <div class="qa"><p><strong>-2 と -1。</strong>除算はゼロ方向に切り捨て（-3 ではない）、剰余の符号は左オペランドに従います。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span><code>a *= 3 + 4</code> はどう展開される？</span></summary>
+    <div class="qa"><p><strong><code>a = a * (3 + 4)</code>。</strong>右辺全体が括弧で囲まれます。a*3+4 ではありません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span><code>if (false && i++ > 0)</code> の後、i は増えている？</span></summary>
+    <div class="qa"><p><strong>増えていない。</strong>&& は左が false なら右辺を評価しません。<code>&</code> なら評価されるので i は増えます。<strong>記号が2つなら短絡</strong>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>boolean b = false; if (b = true)</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルが通り、true 側が実行される。</strong>代入の結果が boolean なので条件として成立します。b も書き換わります。<code>int</code> なら同じ形でコンパイルエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span><code>true ? 1 : 2.0</code> は何が出力される？</span></summary>
+    <div class="qa"><p><strong>1.0。</strong>選ばれなかった側の型も結果の型に影響し、int と double が double に昇格します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span>switch に使えない型は？</span></summary>
+    <div class="qa"><p><strong>long / float / double / boolean とそのラッパー。</strong>使えるのは byte・short・char・int とそのラッパー、String、enum です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span>case ラベルに変数を書けるのはどんなとき？</span></summary>
+    <div class="qa"><p><strong>final でコンパイル時に値が確定するときだけ。</strong>非 final の変数はコンパイルエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span>default は必ず最後に書く必要がある？</span></summary>
+    <div class="qa"><p><strong>ない。</strong>どこに書いてもよく、そこからもフォールスルーします。「最後に書かなければいけない」という選択肢は誤りです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span>switch 式のアロー構文で break を書くと？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>アロー構文はフォールスルーしないので break は不要かつ不可です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span>switch 式で複数行の処理をして値を返すには？</span></summary>
+    <div class="qa"><p><strong><code>{ }</code> で囲んで <code>yield</code> で返す。</strong>return は使えません。1行なら <code>case 1 -&gt; 10;</code> のように式をそのまま書きます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13</span><span>値を返す switch 式で default を省略できるのは？</span></summary>
+    <div class="qa"><p><strong>enum のすべての定数を網羅したときだけ。</strong>int や String では default が必須です。値を返さない場合は網羅性を要求されません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q14</span><span>switch 式の閉じ波括弧の後に必要なものは？</span></summary>
+    <div class="qa"><p><strong>セミコロン。</strong>値を返す switch 式は「式」なので、代入文の一部として <code>};</code> で終わります。switch 文には不要です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15</span><span><code>while (i < 3);</code> と書くと？</span></summary>
+    <div class="qa"><p><strong>本体が空文になり無限ループ。</strong>逆に do-while の末尾にはセミコロンが<strong>必須</strong>です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q16</span><span>while の中で continue すると危険なのはなぜ？</span></summary>
+    <div class="qa"><p><strong>更新処理を飛ばして無限ループになるから。</strong>for なら更新部が必ず実行されますが、while では自分で書いた i++ がスキップされます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q17</span><span><code>break outer</code> と <code>continue outer</code> の違いは？</span></summary>
+    <div class="qa"><p><strong>break はそのループごと抜け、continue は外側のループの次の周へ進む。</strong>ラベルは抜けたいループの直前に置きます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18</span><span><code>String s = null; s instanceof String</code> は？</span></summary>
+    <div class="qa"><p><strong>false。</strong>例外にはなりません。null は常に false を返します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q19</span><span><code>System.out.println(012)</code> は何が出る？</span></summary>
+    <div class="qa"><p><strong>10。</strong>先頭の 0 が8進数の印です。<code>0b</code>=2進数、<code>0x</code>=16進数、<strong>先頭の 0 だけ</strong>=8進数。出力は必ず10進数になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q20</span><span><code>int a=1, b=2;</code> のとき <code>a && b</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong><code>&&</code> と <code>||</code> は boolean 専用です。<code>&</code> ならビット演算として動きます（結果は 0）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span><code>yield</code> と <code>return</code> の違いは？</span></summary>
+    <div class="qa"><p><strong>yield は switch 式だけを抜け、return はメソッドごと抜ける。</strong>だから switch 式の中で return は書けません。yield は予約語ではないので変数名にも使えます。</p></div></details>
+</section>

@@ -1,0 +1,23 @@
+<section id="c5-s04">
+  <div class="sh"><span class="num">04</span><h2>オーバーライドとオーバーロードの区別</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>オーバーライド</th><th>オーバーロード</th></tr></thead>
+    <tbody>
+      <tr><td>場所</td><td><strong>親子関係</strong>の間</td><td>同じクラス内でもよい</td></tr>
+      <tr><td>引数リスト</td><td><strong>完全一致</strong></td><td><strong>違う</strong></td></tr>
+      <tr><td>戻り値型</td><td>同じかサブ型</td><td>無関係（区別に使われない）</td></tr>
+      <tr><td>どれが呼ばれるか</td><td><strong>実行時</strong>の実体型で決まる</td><td><strong>コンパイル時</strong>の宣言型で決まる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>引数を1文字変えるとオーバーロードになる<span class="tag">最頻出</span></div><pre><code>class A { void m(int x){ System.out.println("A"); } }
+class B extends A {
+    void m(long x){ System.out.println("B"); }     // 引数が違う → オーバーロード
+}
+
+A a = new B();
+a.m(5);        // A ← オーバーライドされていないので親のものが動く</code></pre></div>
+
+  <div class="point trap"><p>オーバーライドのつもりで<span class="mk">引数の型を書き間違える</span>と、静かにオーバーロードになります。コンパイルは通り、出力だけが変わる。<br><code>@Override</code> を付けていればここで止まります。黒本はこの引っかけを多用します。</p></div>
+</section>

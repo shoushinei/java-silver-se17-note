@@ -1,0 +1,59 @@
+<section id="c6-s06">
+  <div class="sh"><span class="num">06</span><h2>finally と return ── この章の山場</h2></div>
+
+  <p>黒本の章末で最も差がつくのがここです。ルールを3段階に分けます。</p>
+
+  <h3>原則 ── finally は必ず実行される</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>return があっても finally は動く<span class="tag">出力あり</span></div><pre><code>int m() {
+    try {
+        return 1;
+    } finally {
+        System.out.println("finally");   // 実行される
+    }
+}
+// "finally" が出力されたあと、1 が返る</code></pre></div>
+
+  <h3>罠1 ── return の値は finally より前に確定する</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値は 0（100 ではない）<span class="tag">要注意</span></div><pre><code>int m() {
+    int val = 0;
+    try {
+        return val;      // ここで「0」が退避される
+    } finally {
+        val = 100;       // 退避済みの値には影響しない
+    }
+}
+// 戻り値は 0</code></pre></div>
+
+  <p><span class="mk"><code>return val;</code> の時点で val の値がコピーされて退避されます。</span>その後 finally で val を書き換えても、退避された値は変わりません。</p>
+
+  <h3>罠2 ── finally の return は上書きする</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値は 2<span class="tag">要注意</span></div><pre><code>int m() {
+    try {
+        return 1;
+    } finally {
+        return 2;        // こちらが最終的な戻り値
+    }
+}
+// 戻り値は 2</code></pre></div>
+
+  <h3>罠3 ── finally の return は例外すら握りつぶす</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>例外は消える。戻り値は 2<span class="tag">最重要</span></div><pre><code>int m() {
+    try {
+        throw new RuntimeException();
+    } finally {
+        return 2;        // 例外がもみ消される
+    }
+}
+// 例外はスローされず、2 が返る</code></pre></div>
+
+  <div class="point trap"><p>選択肢に「実行時に例外がスローされる」があると、つい選びたくなります。<span class="mk">finally に return があるなら例外は外に出ません。</span>実務では絶対に書いてはいけないコードですが、試験には出ます。</p></div>
+
+  <h3>finally が実行されない唯一のケース</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>System.exit で JVM ごと終了<span class="tag">例外的</span></div><pre><code>try {
+    System.exit(0);
+} finally {
+    System.out.println("これは出ない");
+}</code></pre></div>
+
+  <div class="point link"><p>第4章（値渡し）とつながります。<code>return val</code> で「値がコピーされる」のは、メソッド呼び出しで引数がコピーされるのと同じ仕組みです。<span class="mk pink">Java は基本データ型を必ずコピーで扱う</span>、という一貫した性質の別の現れ方だと考えると覚えやすくなります。</p></div>
+</section>

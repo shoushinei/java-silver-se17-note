@@ -1,0 +1,70 @@
+<section id="c3-s08">
+  <div class="sh"><span class="num">08</span><h2>switch 文（従来の形）</h2></div>
+
+  <h3>使える型・使えない型</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>使える</th><th>使えない</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>byte</code> <code>short</code> <code>char</code> <code>int</code><br>
+            <code>Byte</code> <code>Short</code> <code>Character</code> <code>Integer</code><br>
+            <code>String</code> / <code>enum</code></td>
+        <td><strong><code>long</code> <code>float</code> <code>double</code> <code>boolean</code></strong><br>
+            <code>Long</code> <code>Float</code> <code>Double</code> <code>Boolean</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><span class="mk">int より大きい整数型（long）と、小数、boolean は使えません。</span>「int に収まる整数系＋String＋enum」と覚えると確実です。</p></div>
+
+  <h3>case ラベルは定数でなければならない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>final の有無で結果が変わる<span class="tag">最重要</span></div><pre><code>final int A = 1;
+int b = 2;
+
+switch (x) {
+    case A:  break;      // OK。コンパイル時に確定する定数
+    case b:  break;      // コンパイルエラー: 変数は使えない
+    case 1 + 2: break;   // OK。定数式
+}</code></pre></div>
+
+  <div class="point link"><p>第2章の縮小変換や String の定数プールと同じ判定基準です。<span class="mk pink">コンパイル時に値が確定するか</span>が問われています。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>重複と範囲外<span class="tag">NG</span></div><pre><code>byte x = 1;
+switch (x) {
+    case 1: break;
+    case 1: break;       // コンパイルエラー: 重複
+    case 200: break;     // コンパイルエラー: byte の範囲外
+}</code></pre></div>
+
+  <h3>break がないとフォールスルーする</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>一致した位置から下へ流れる<span class="tag">最重要</span></div><pre><code>int x = 2;
+switch (x) {
+    case 1: System.out.println("A");
+    case 2: System.out.println("B");
+    case 3: System.out.println("C");
+    default: System.out.println("D");
+}
+// 出力: B C D ← break がないので下まで流れる</code></pre></div>
+
+  <p>一致した case から<strong>下のすべてが実行されます</strong>。<code>break</code> があればそこで抜けます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>default は最後でなくてもよい<span class="tag">要注意</span></div><pre><code>int x = 5;
+switch (x) {
+    default: System.out.println("D");
+    case 1:  System.out.println("A");
+}
+// 出力: D A ← default から下へ流れる</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">default はどこに書いてもよく、そこからもフォールスルーします。</span>「default は最後に書かなければいけない」という選択肢は誤りです。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>switch に null を渡すと<span class="tag">実行時</span></div><pre><code>String s = null;
+switch (s) {                 // NullPointerException
+    case "a": break;
+    default: break;
+}</code></pre></div>
+
+  <p>SE 17 の switch 文では <code>case null</code> は書けません。null が来ると実行時に落ちます。</p>
+</section>

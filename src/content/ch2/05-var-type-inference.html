@@ -1,0 +1,38 @@
+<section id="c2-s05">
+  <div class="sh"><span class="num">05</span><h2>var（ローカル変数型推論）</h2></div>
+
+  <p>右辺から型を推論して、宣言を省略できる仕組みです（Java 10〜）。<strong>動的型付けではありません。</strong>型はコンパイル時に確定します。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">OK</span></div><pre><code>var i = 10;                          // int と推論される
+var list = new ArrayList&lt;String&gt;();  // ArrayList&lt;String&gt;
+var s = "hello";                     // String</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>型は後から変えられない<span class="tag">NG</span></div><pre><code>var i = 10;
+i = "hello";     // コンパイルエラー: i は int で確定済み</code></pre></div>
+
+  <h3>使えない場所</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>宣言のパターン<span class="tag">NG</span></div><pre><code>var a;                   // エラー: 初期化が必須
+var b = null;            // エラー: 型を推論できない
+var[] c = {1, 2};        // エラー: 配列型の宣言には使えない
+var d = {1, 2};          // エラー: 配列初期化子は不可
+var e = 1, f = 2;        // エラー: 複数宣言は不可</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ローカル変数以外<span class="tag">NG</span></div><pre><code>class Sample {
+    var field = 10;              // エラー: フィールドは不可
+    void m(var x) { }            // エラー: 引数は不可
+    var n() { return 1; }        // エラー: 戻り値は不可
+}</code></pre></div>
+
+  <h3>使える場所</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ローカル変数の位置なら可<span class="tag">OK</span></div><pre><code>for (var i = 0; i < 3; i++) { }              // OK
+for (var s : list) { }                       // OK（拡張for）
+try (var r = new Res()) { }                  // OK（try-with-resources）</code></pre></div>
+
+  <h3>var は予約語ではない</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変数名やメソッド名に使える<span class="tag">最重要</span></div><pre><code>int var = 10;            // OK。var は「予約型名」であって予約語ではない
+System.out.println(var); // 10
+
+var var = 10;            // OK。これも通る</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">「var は予約語なので識別子に使えない」という選択肢は誤り</span>です。互換性のため予約語にはされておらず、変数名・メソッド名・パッケージ名に使えます（クラス名とインタフェース名には使えません）。これは狙われます。</p></div>
+</section>

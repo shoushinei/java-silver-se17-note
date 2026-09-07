@@ -1,0 +1,7 @@
+# 改行は LF に統一する。
+# docs/index.html は src/ から生成した成果物で、CI が
+# `node build.mjs --check` で 1 バイト単位に突き合わせるため、
+# 環境ごとに改行が変わると比較が壊れる。
+* text=auto eol=lf
+*.png binary
+*.jpg binary

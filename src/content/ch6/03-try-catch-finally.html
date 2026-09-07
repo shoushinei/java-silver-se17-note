@@ -1,0 +1,38 @@
+<section id="c6-s03">
+  <div class="sh"><span class="num">03</span><h2>try-catch-finally の構文</h2></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>try {
+    // 例外が発生するかもしれない処理
+} catch (ExceptionType e) {
+    // 例外が起きたときの処理
+} finally {
+    // 起きても起きなくても必ず実行
+}</code></pre></div>
+
+  <h3>構文ルール</h3>
+  <ul>
+    <li><code>try</code> 単体は不可。<strong>catch か finally が最低1つ</strong>必要</li>
+    <li><code>try { } finally { }</code>（catch なし）は<strong>合法</strong></li>
+    <li><code>catch</code> は複数書ける。<code>finally</code> は<strong>1つだけ</strong>、かつ最後</li>
+    <li>波括弧は<strong>省略できない</strong>（if 文と違う）</li>
+  </ul>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>try 単体 / 順序が逆<span class="tag">NG</span></div><pre><code>try { }                              // エラー: catch も finally もない
+
+try { } finally { } catch (Exception e) { }   // エラー: 順序が逆</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>catch なしは合法<span class="tag">OK</span></div><pre><code>try {
+    doSomething();
+} finally {
+    cleanup();
+}</code></pre></div>
+
+  <h3>スコープの罠</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>try 内の変数は catch から見えない<span class="tag">NG</span></div><pre><code>try {
+    int x = 10;
+} catch (Exception e) {
+    System.out.println(x);   // コンパイルエラー
+}</code></pre></div>
+
+  <p><code>try</code> のブロック内で宣言した変数は、そのブロックを出た時点で消えます。catch や finally でも使いたいなら、try の<strong>外</strong>で宣言してください。</p>
+</section>

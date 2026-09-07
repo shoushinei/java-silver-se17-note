@@ -1,0 +1,70 @@
+<section id="c2-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span><code>float f = 1.5;</code> はなぜエラー？</span></summary>
+    <div class="qa"><p><strong>小数リテラルの既定の型は double</strong>だから。double → float は縮小変換なので、<code>1.5f</code> と書くか <code>(float)</code> でキャストする必要があります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>int a = 012;</code> の値は？</span></summary>
+    <div class="qa"><p><strong>10。</strong>先頭に 0 が付いた整数リテラルは8進数として解釈されます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span><code>byte a=1,b=2; byte c=a+b;</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>byte・short・char の演算結果は int に昇格します。<code>(byte)(a+b)</code> が必要。ただし <code>a += b</code> なら暗黙のキャストが入るので通ります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span><code>final int x=10; byte b=x;</code> は通る？</span></summary>
+    <div class="qa"><p><strong>通る。</strong>final なのでコンパイル時に値が確定し、範囲内の定数として縮小変換が許されます。final を外すとエラーになります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span><code>Long a = 5;</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>int → long（拡大変換）→ Long（ボクシング）の2段階は許されません。<code>5L</code> と書けば通ります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>int var = 10;</code> は書ける？</span></summary>
+    <div class="qa"><p><strong>書ける。</strong>var は予約語ではなく「予約型名」なので、変数名やメソッド名に使えます。クラス名・インタフェース名には使えません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span><code>String s="Hello"; s.concat("!");</code> の後、s は？</span></summary>
+    <div class="qa"><p><strong>"Hello" のまま。</strong>String は不変なので、メソッドは新しいインスタンスを返すだけです。<code>s = s.concat("!")</code> と代入が必要。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span><code>"Hello" == new String("Hello")</code> は？</span></summary>
+    <div class="qa"><p><strong>false。</strong>リテラルは定数プールで共有されますが、<code>new</code> は必ず別のインスタンスを作ります。中身の比較は <code>equals()</code> で。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span><code>"abcdef".substring(2, 4)</code> は？</span></summary>
+    <div class="qa"><p><strong>"cd"。</strong>第2引数の位置は含みません。<code>substring(2,2)</code> は空文字列で、例外にはなりません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span>StringBuilder の <code>equals()</code> は中身を比較する？</span></summary>
+    <div class="qa"><p><strong>しない。</strong>オーバーライドされていないので参照比較のままです。中身を比べるには <code>toString().equals(...)</code>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span>テキストブロックのインデントは何を基準に除去される？</span></summary>
+    <div class="qa"><p><strong>最も浅い行の位置。終了の """ の位置も判定に含まれます。</strong>終了 """ を左端に置くと、インデントが除去されなくなります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span><code>List&lt;Integer&gt;</code> に 10,20,30。<code>remove(1)</code> の結果は？</span></summary>
+    <div class="qa"><p><strong>[10, 30]。</strong>引数が int なので <code>remove(int)</code>（インデックス指定）が選ばれます。値10を消すなら <code>remove(Integer.valueOf(10))</code>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13</span><span><code>int e[], f;</code> のとき f の型は？</span></summary>
+    <div class="qa"><p><strong>int（配列ではない）。</strong>角括弧を変数側に書くと、その変数だけが配列になります。<code>int[] e, f;</code> なら両方が配列です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q14</span><span><code>new int[2][]</code> と <code>new int[][3]</code>、通るのは？</span></summary>
+    <div class="qa"><p><strong>前者だけ。</strong>後ろの次元は省略できますが、前の次元は省略できません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15</span><span><code>System.out.println(new int[3])</code> は何が出る？</span></summary>
+    <div class="qa"><p><strong><code>[I@</code> で始まるハッシュ形式。</strong>配列は toString() をオーバーライドしていないためです。中身を出すには <code>Arrays.toString()</code>。<code>char[]</code> だけは専用オーバーロードがあるので中身が出ます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q16</span><span><code>Item[] items = new Item[3];</code> の後 <code>items[0].price</code> は？</span></summary>
+    <div class="qa"><p><strong>NullPointerException。</strong>箱を3つ用意しただけで、インスタンスは1つも生成されていません。参照型の配列は <code>new Item()</code> を別途書く<strong>2段階</strong>が必要です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q17</span><span><code>String[][] a</code> を <code>for (String[] tmp : a)</code> で回すとき、<code>tmp.length</code> は？</span></summary>
+    <div class="qa"><p><strong><code>a[i]</code> の要素数。</strong>tmp は取り出された1行そのものです。全体の行数が欲しいなら <code>a.length</code> と書きます。<strong>ドットの左の変数の型</strong>で決まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18</span><span><code>int[] b = a;</code> と <code>int[] c = a.clone();</code> の違いは？</span></summary>
+    <div class="qa"><p><strong>b は同じ配列を指し、c は別の配列。</strong>b を書き換えると a も変わりますが、c は独立しています。ただし clone は<strong>浅いコピー</strong>なので、2次元配列では中の行が共有されたままです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q19</span><span>size 1 のリストに <code>add(2, "X")</code> は？</span></summary>
+    <div class="qa"><p><strong>IndexOutOfBoundsException。</strong>add で許されるのは <strong>0〜size</strong> まで。飛び地は作れません。set はさらに狭く 0〜size-1 です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q20</span><span>拡張for文の中で remove して、例外にならないのはどんなとき？</span></summary>
+    <div class="qa"><p><strong>最後から2番目の要素を削除したとき。</strong>削除後に cursor == size となり <code>hasNext()</code> が false を返してループが終わるためです。整合性チェックは <code>next()</code> の中にしかありません。ただし<strong>最後の要素は取りこぼされます</strong>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span><code>new ArrayList&lt;Integer&gt;(3)</code> の size は？</span></summary>
+    <div class="qa"><p><strong>0。</strong>3 は<strong>初期容量</strong>であって要素数ではありません。StringBuilder(16) と同じ意味で、いくらでも追加できます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span><code>List.of</code> と <code>Arrays.asList</code> の違いは？</span></summary>
+    <div class="qa"><p><strong>List.of は set も不可（不変）、Arrays.asList は set だけ可（固定長）。</strong>asList は元の配列を包んでいるだけなので、set すると<strong>元の配列も変わります</strong>。どちらも add / remove は UnsupportedOperationException。</p></div></details>
+</section>

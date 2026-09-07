@@ -1,0 +1,28 @@
+<section id="c3-s01">
+  <div class="sh"><span class="num">01</span><h2>演算子の優先順位</h2></div>
+
+  <p>丸暗記は不要ですが、<strong>順位が問われる組み合わせは決まっています</strong>。上ほど先に評価されます。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>順位</th><th>演算子</th><th>結合</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>後置 <code>i++</code> <code>i--</code></td><td>左→右</td></tr>
+      <tr><td>2</td><td>前置 <code>++i</code> <code>--i</code> <code>!</code> <code>~</code> 単項 <code>+ -</code></td><td>右→左</td></tr>
+      <tr><td>3</td><td>キャスト <code>(int)</code></td><td>右→左</td></tr>
+      <tr><td>4</td><td><code>*</code> <code>/</code> <code>%</code></td><td>左→右</td></tr>
+      <tr><td>5</td><td><code>+</code> <code>-</code></td><td>左→右</td></tr>
+      <tr><td>6</td><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code> <code>instanceof</code></td><td>左→右</td></tr>
+      <tr><td>7</td><td><code>==</code> <code>!=</code></td><td>左→右</td></tr>
+      <tr><td>8〜10</td><td><code>&amp;</code> → <code>^</code> → <code>|</code></td><td>左→右</td></tr>
+      <tr><td>11</td><td><code>&amp;&amp;</code></td><td>左→右</td></tr>
+      <tr><td>12</td><td><code>||</code></td><td>左→右</td></tr>
+      <tr><td>13</td><td><code>? :</code></td><td><strong>右→左</strong></td></tr>
+      <tr><td>14</td><td><code>=</code> <code>+=</code> <code>-=</code> など</td><td><strong>右→左</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>覚えるべきは3点です。<span class="mk">算術 → 比較 → 論理 → 三項 → 代入の順</span>。<code>&amp;&amp;</code> は <code>||</code> より先。そして<strong>代入と三項演算子だけが右から左</strong>に結合します。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>代入は右から左<span class="tag">OK</span></div><pre><code>int a, b, c;
+a = b = c = 5;      // c=5 → b=5 → a=5 の順。全部 5 になる</code></pre></div>
+</section>

@@ -1,0 +1,59 @@
+<section id="c1-s01">
+  <div class="sh"><span class="num">01</span><h2>main メソッドのシグネチャ</h2></div>
+
+  <p>JVM が実行の起点として探すメソッドは、<strong>この形と完全に一致</strong>していなければなりません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基準となる形<span class="tag">最重要</span></div><pre><code>public static void main(String[] args) { }</code></pre></div>
+
+  <p>JVM は「クラス名を受け取り、そのクラスから <code>main</code> という名前で、public かつ static で、戻り値が void で、String の配列を1つ受け取るメソッド」を探します。この4条件のどれか1つでも外れると起動できません。</p>
+
+  <h3>変えてよい部分</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>すべて正しく実行できる<span class="tag">OK</span></div><pre><code>static public void main(String[] args) { }   // public と static は順不同
+public static void main(String... args) { }  // 可変長引数でもよい
+public static void main(String args[]) { }   // 括弧を変数名の後ろに置いてもよい
+public static void main(String[] x) { }      // 引数名は自由
+public static final void main(String[] args) { }   // final を付けてもよい</code></pre></div>
+
+  <div class="point"><p><code>String...</code> が通るのは、<span class="mk">可変長引数の実体が配列だから</span>です。コンパイル後のシグネチャは <code>String[]</code> と同一になります。<code>String args[]</code> が通るのは C 由来の古い記法が残っているためで、意味は <code>String[] args</code> とまったく同じです。</p></div>
+
+  <h3>変えてはいけない部分</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th><th>エラーが出るタイミング</th></tr></thead>
+    <tbody>
+      <tr><td><code>private static void main(...)</code></td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+      <tr><td><code>public void main(...)</code>（static なし）</td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+      <tr><td><code>public static int main(...)</code></td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+      <tr><td><code>public static void main()</code>（引数なし）</td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+      <tr><td><code>public static void main(int[] args)</code></td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+      <tr><td><code>public static void Main(String[] args)</code></td><td>起動できない</td><td><strong>実行時</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>ここが最頻出です。<span class="mk">main の形が違ってもコンパイルは通ります</span>。ただのメソッドとして文法上は正しいからです。エラーになるのは <code>java</code> コマンドで起動しようとした瞬間。<br>選択肢に「コンパイルエラー」と「実行時エラー」が並んでいたら、<strong>実行時エラー</strong>が正解です。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>コンパイルは通り、実行で落ちる<span class="tag">実行時</span></div><pre><code>public class Main {
+    public static void main(String[] args, int x) { }   // 引数が2つ
+}
+
+// javac Main.java  → 成功
+// java Main        → 失敗
+// Error: Main method not found in class Main, please define the main method as:
+//    public static void main(String[] args)</code></pre></div>
+
+  <h3>main のオーバーロード</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>共存できるが、呼ばれるのは1つだけ<span class="tag">要注意</span></div><pre><code>public class Main {
+    public static void main(String[] args) {
+        System.out.println("A");
+        main(10);                      // 明示的に呼べば動く
+    }
+    public static void main(int x) {
+        System.out.println("B");
+    }
+}
+// 出力: A B</code></pre></div>
+
+  <p><code>main(int)</code> は<strong>ただのメソッド</strong>です。JVM が起点として選ぶのは常に <code>String[]</code> を取る方だけ。オーバーロードされた <code>main</code> は、自分で呼ばない限り実行されません。</p>
+</section>

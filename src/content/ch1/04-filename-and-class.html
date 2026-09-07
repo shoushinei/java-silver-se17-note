@@ -1,0 +1,34 @@
+<section id="c1-s04">
+  <div class="sh"><span class="num">04</span><h2>ファイル名とクラス宣言の規則</h2></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>public クラスはファイル名と一致必須<span class="tag">NG</span></div><pre><code>// ファイル名: Hello.java
+public class Main { }      // コンパイルエラー
+                           // class Main is public, should be declared in a file named Main.java</code></pre></div>
+
+  <h3>1ファイルに複数クラス</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>public でなければ何個でも書ける<span class="tag">OK</span></div><pre><code>// ファイル名: Main.java
+public class Main {                       // public は1つだけ、ファイル名と一致
+    public static void main(String[] a) {
+        new Helper().hello();
+    }
+}
+class Helper {                            // public を付けなければ同居できる
+    void hello() { System.out.println("hi"); }
+}
+class Another { }                          // 何個でも可
+
+// javac Main.java → Main.class, Helper.class, Another.class の3つが生成される</code></pre></div>
+
+  <div class="point"><p>ルールは2つだけです。<span class="mk">public なトップレベル型は1ファイルに1つまで</span>、そして<span class="mk">その名前がファイル名と一致</span>していること。public を付けないクラスは、いくつ書いても、名前が何でも構いません。<br><code>.class</code> ファイルは<strong>クラスごとに1つ</strong>作られます。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>public クラスが1つもない場合<span class="tag">要注意</span></div><pre><code>// ファイル名: Foo.java
+class Main {
+    public static void main(String[] a) { System.out.println("ok"); }
+}
+
+// javac Foo.java   → Main.class が生成される
+// java Main        → 実行できる（java に渡すのはクラス名。ファイル名は無関係）</code></pre></div>
+
+  <p>public がなければファイル名は自由です。実行時に指定するのは<strong>クラス名</strong>なので、ファイル名が何であっても <code>java Main</code> で起動します。</p>
+</section>

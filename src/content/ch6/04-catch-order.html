@@ -1,0 +1,27 @@
+<section id="c6-s04">
+  <div class="sh"><span class="num">04</span><h2>catch の順序</h2></div>
+
+  <p><span class="mk">サブクラスを先に、スーパークラスを後に。</span>これが唯一のルールです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>子 → 親 の順<span class="tag">OK</span></div><pre><code>try {
+} catch (IOException e) {      // 子
+} catch (Exception e) {        // 親
+}</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親 → 子 の順<span class="tag">NG</span></div><pre><code>try {
+} catch (Exception e) {        // 親が先に全部捕まえる
+} catch (IOException e) {      // コンパイルエラー: 到達不能
+}</code></pre></div>
+
+  <p>後者がエラーになるのは、<code>Exception</code> が先に全部を捕まえてしまい、下の <code>IOException</code> が<strong>到達不能</strong>になるからです。エラーメッセージにも「到達できない catch ブロック」と出ます。</p>
+
+  <div class="point"><p>上から順に評価され、<span class="mk">最初にマッチした1つだけ</span>が実行されます。複数の catch が続けて動くことはありません。<br><br>また、<strong>継承関係にない例外どうしなら順序は自由</strong>です。<code>IOException</code> と <code>SQLException</code> に親子関係はないので、どちらが先でも通ります。</p></div>
+
+  <h3>発生し得ない検査例外を catch すると</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>投げられない検査例外の catch<span class="tag">NG</span></div><pre><code>try {
+    System.out.println("x");   // IOException を投げる可能性がない
+} catch (IOException e) {      // コンパイルエラー
+}</code></pre></div>
+
+  <p>ただし <code>Exception</code> と <code>RuntimeException</code>（およびその子孫）は<strong>常に catch してよい</strong>という例外扱いです。非検査例外はどこでも発生し得るためです。</p>
+</section>

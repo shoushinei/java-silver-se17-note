@@ -1,0 +1,124 @@
+<section id="c3-s10">
+  <div class="sh"><span class="num">10</span><h2>繰り返し文</h2></div>
+
+  <h3>for 文</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>3つの部分はすべて省略できる<span class="tag">要注意</span></div><pre><code>for (int i = 0; i &lt; 3; i++) { }
+
+for (;;) { }              // 無限ループ。セミコロン2つは必須
+for (int i = 0; ; i++) { }   // 条件省略も無限ループ</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化部・更新部はカンマで複数書ける<span class="tag">OK</span></div><pre><code>for (int i = 0, j = 10; i &lt; j; i++, j--) { }   // OK</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>型は1つだけ<span class="tag">NG</span></div><pre><code>for (int i = 0, long j = 0; ; ) { }   // コンパイルエラー: 型を2つ書けない
+for (int i = 0; i &lt; 3; i++, j = 1) { }   // 更新部に代入は OK</code></pre></div>
+
+  <p>ループ変数のスコープは<strong>for 文の中だけ</strong>です。第2章で扱った通り、外では使えません。</p>
+
+  <h3>while と do-while</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>do-while は最低1回実行される<span class="tag">要注意</span></div><pre><code>int i = 10;
+
+while (i &lt; 5) {
+    System.out.println("A");     // 一度も実行されない
+}
+
+do {
+    System.out.println("B");     // 1回は実行される
+} while (i &lt; 5);                 // ← セミコロンが必須</code></pre></div>
+
+  <div class="point trap"><p><code>do-while</code> の末尾には<span class="mk">セミコロンが必須</span>です。無いとコンパイルエラー。逆に <code>while</code> 文の <code>while (...)</code> の直後にセミコロンを書くと<strong>本体が空文</strong>になり、無限ループになります。</p></div>
+
+  <h3>拡張for文</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>配列とコレクションで使える<span class="tag">OK</span></div><pre><code>int[] arr = {1, 2, 3};
+for (int n : arr) { }
+
+List&lt;String&gt; list = new ArrayList&lt;&gt;();
+for (String s : list) { }
+
+for (var s : list) { }        // var も使える</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>インデックスは使えない<span class="tag">NG</span></div><pre><code>for (int n : arr) {
+    System.out.println(n);    // 値は取れる
+    // i のような添字は存在しない
+}
+
+for (int i = 0 : arr) { }     // コンパイルエラー: 初期値は書けない</code></pre></div>
+
+  <div class="point link"><p>第2章の内容を再確認してください。<span class="mk pink">ループ変数はコピー</span>なので代入しても元は変わらず、<span class="mk pink">走査中にコレクションを変更すると ConcurrentModificationException</span> になります。</p></div>
+
+  <h3>拡張for文で2次元配列を回す</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>取り出される型に注意<span class="tag">最重要</span></div><pre><code>int[][] array = {{1, 2}, {2, 3, 4}};
+
+for (int[] row : array) {          // ← 外側が取り出すのは int ではなく int[]
+    for (int n : row) {
+        System.out.print(n + " ");
+    }
+}
+// 出力: 1 2 2 3 4</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>型を間違えるとコンパイルエラー<span class="tag">NG</span></div><pre><code>for (int n : array) { }        // コンパイルエラー: int[] を int に代入できない
+for (var row : array) { }      // OK。var なら int[] と推論される</code></pre></div>
+
+  <div class="point"><p>2次元配列を拡張for文で回すとき、<span class="mk">外側のループ変数は「行」の型</span>になります。<code>int[][]</code> から取り出されるのは <code>int[]</code>。ここで <code>int</code> と書いた選択肢は必ず誤りです。<code>var</code> を使えば正しく推論されます。</p></div>
+
+  <hr class="sep">
+
+  <h3>多重ループと2次元配列</h3>
+
+  <p>この組み合わせが第3章の実質的な山場です。まず<strong>2次元配列の実体</strong>を正しく捉えます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2次元配列は「配列を指す参照の配列」<span class="tag">図</span></div><pre><code>int[][] array = {{1, 2}, {2, 3, 4}};
+
+array ──┬──→ [ 1 ][ 2 ]                array[0].length は 2
+        │
+        └──→ [ 2 ][ 3 ][ 4 ]           array[1].length は 3
+
+array.length は 2   ← 矢印の本数（行の本数）</code></pre></div>
+
+  <p>Java の2次元配列は、メモリ上の長方形ではありません。<strong>行ごとに独立した配列があり、それを指す参照が並んでいる</strong>だけです。だから行ごとに長さが違ってよく（ジャグ配列）、長さを聞く相手も行ごとに変わります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>意味</th><th>使う場所</th></tr></thead>
+    <tbody>
+      <tr><td><code>array.length</code></td><td>行の本数</td><td><strong>外側</strong>ループの条件</td></tr>
+      <tr><td><code>array[i].length</code></td><td><strong>今いる行</strong>の要素数</td><td><strong>内側</strong>ループの条件</td></tr>
+      <tr><td><code>array[j].length</code></td><td>j 番目の行の要素数</td><td><strong>誤り</strong>。列カウンタで行を選んでいる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>内側の条件を array[j] にすると落ちる<span class="tag">実行時</span></div><pre><code>for (int i = 0; i &lt; array.length; i++) {
+    for (int j = 0; j &lt; array[j].length; j++) {   // ← 誤り
+        total += array[i][j];
+    }
+}
+// i=0, j=0 → array[0].length は 2   0 &lt; 2 で続行
+// i=0, j=1 → array[1].length は 3   1 &lt; 3 で続行
+// i=0, j=2 → array[2] は存在しない
+// ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2</code></pre></div>
+
+  <div class="point trap"><p>例外メッセージの <code>for length 2</code> は<strong>行の本数</strong>を指しています。内側の要素数の話ではありません。<br>覚え方は単純で、<span class="mk">array[i][j] の左の添字と、条件式の添字を一致させる</span>。読む場所と長さを聞く相手が同じ行になっていれば間違えません。</p></div>
+
+  <h3>内側の開始位置をずらす形</h3>
+
+  <p>黒本では、内側ループの<strong>初期化部</strong>に仕掛けを入れた空欄問題が出ます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>j を i から始める<span class="tag">頻出</span></div><pre><code>int[][] array = {{1, 2}, {2, 3, 4}};
+int total = 0;
+
+for (int i = 0; i &lt; array.length; i++) {
+    for (int j = i; j &lt; array[i].length; j++) {   // ← j = 0 ではなく j = i
+        total += array[i][j];
+    }
+}
+System.out.println(total);
+
+// i=0 → j は 0,1     array[0][0]=1, array[0][1]=2
+// i=1 → j は 1,2     array[1][1]=3, array[1][2]=4   ← array[1][0] の 2 を飛ばす
+// 出力: 10（全部足すと 12 なので、2 が1つ落ちている）</code></pre></div>
+
+  <div class="point"><p>この型の解き方は<strong>逆算</strong>です。<br>① まず全要素を足していくつになるか出す（ここでは 12）<br>② 目標値との差を見る（12 − 10 = 2）<br>③ 「2 を1つだけ落とす選択肢はどれか」で絞る<br><span class="mk">選択肢を1つずつトレースするより速い</span>ので、必ずこの順序で。</p></div>
+
+</section>

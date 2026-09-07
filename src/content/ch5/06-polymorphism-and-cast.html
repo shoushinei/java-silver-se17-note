@@ -1,0 +1,32 @@
+<section id="c5-s06">
+  <div class="sh"><span class="num">06</span><h2>ポリモーフィズムと参照型のキャスト</h2></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>アップキャストは暗黙、ダウンキャストは明示<span class="tag">基本</span></div><pre><code>P p = new C();            // アップキャスト。暗黙に行われる
+C c = (C) p;              // ダウンキャスト。明示的に書く必要がある</code></pre></div>
+
+  <div class="point"><p>アップキャスト（子→親）が安全なのは、<span class="mk">子は必ず親の性質をすべて持っている</span>からです。逆は保証されないので、書き手が「これは C のはずだ」と明示する必要があります。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>実体が違えば実行時例外<span class="tag">実行時</span></div><pre><code>P p2 = new P();
+C c2 = (C) p2;
+// ClassCastException: class P cannot be cast to class C
+
+// コンパイルは通る。落ちるのは実行時</code></pre></div>
+
+  <div class="point trap"><p>継承関係が<strong>ある</strong>のにキャストが失敗するのは実行時。継承関係が<strong>まったく無い</strong>型どうしのキャストはコンパイルエラー。<span class="mk">この2つを区別して選択肢を切ります</span>。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>安全な書き方<span class="tag">OK</span></div><pre><code>if (p instanceof C c) {          // 第4章 節09のパターンマッチング
+    c.only();
+}</code></pre></div>
+
+  <h3>宣言型が「呼べる範囲」を決める</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>子固有のメソッドは親型からは呼べない<span class="tag">最頻出</span></div><pre><code>class P { void m(){} }
+class C extends P { void only(){} }
+
+P p = new C();
+p.m();          // OK
+p.only();       // error: cannot find symbol ── P に only() は無い
+((C)p).only();  // OK。キャストして宣言型を変える</code></pre></div>
+
+  <div class="point"><p><span class="mk">「どのメソッドを書けるか」は宣言型、「どの実装が動くか」は実体型</span>。この2軸の分離がポリモーフィズムの本体です。<br>コンパイラは実行時に何が入るかを知らないので、変数の型に書かれているものしか許可できません。</p></div>
+</section>

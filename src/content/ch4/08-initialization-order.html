@@ -1,0 +1,68 @@
+<section id="c4-s08">
+  <div class="sh"><span class="num">08</span><h2>初期化の順序</h2></div>
+
+  <p>出力順を問う問題が出ます。<strong>static は最初に1回だけ、インスタンス側は new のたび</strong>と覚えます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実行して確認した順序<span class="tag">最重要</span></div><pre><code>class Init {
+    static int s = p("① static変数");
+    static { p("② static初期化ブロック"); }
+    int i = p("④ インスタンス変数");
+    { p("⑤ インスタンス初期化ブロック"); }
+    Init() { p("⑥ コンストラクタ"); }
+
+    public static void main(String[] a) {
+        p("③ main開始");
+        new Init();
+        p("--- 2個目 ---");
+        new Init();
+    }
+}
+
+// 出力:
+// ① ② ③ ④ ⑤ ⑥
+// --- 2個目 ---
+// ④ ⑤ ⑥          ← static 側は2回目には走らない</code></pre></div>
+
+  <div class="point"><p>順序の原理は<span class="mk">「クラスの準備 → 実体の準備」</span>です。<br><strong>1回目</strong>：クラスがロードされ、static 変数と static ブロックが<strong>書いた順に</strong>実行される（クラスにつき1回だけ）。<br><strong>new のたび</strong>：インスタンス変数と初期化ブロックが<strong>書いた順に</strong>実行され、最後にコンストラクタ本体が走ります。<br>変数とブロックは種類でまとめられるのではなく、<strong>ソース上の並び順</strong>で実行されます。</p></div>
+
+  <h3>罠① 書いた位置とコンストラクタの関係</h3>
+
+  <p>初期化ブロックが<strong>コンストラクタより下に書かれていても</strong>、実行はコンストラクタ本体より先です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>順序は位置で決まらない<span class="tag">最頻出</span></div><pre><code>class Sample {
+    Sample() { System.out.println("A"); }     // ソース上は先
+    { System.out.println("B"); }              // ソース上は後
+}
+
+new Sample();
+
+// 出力:
+// B      ← 初期化ブロックが先
+// A      ← コンストラクタ本体は最後</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">コンストラクタ本体は常に最後</span>です。ソース上の並び順が効くのは<strong>初期化子どうしの間だけ</strong>（インスタンス変数の初期化と初期化ブロックの相対順）で、コンストラクタとの前後関係には影響しません。<br>コンパイラは初期化ブロックの中身を<strong>各コンストラクタの先頭にコピーする</strong>、と考えると腑に落ちます。だから位置は無関係で、コンストラクタが複数あればそのすべてで実行されます。</p></div>
+
+  <h3>罠② new しなければ走らない</h3>
+
+  <p>インスタンス初期化ブロックは、名前のとおり<strong>インスタンスを作るときにしか動きません</strong>。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>static フィールドを読むだけでは動かない<span class="tag">最頻出</span></div><pre><code>class Sample {
+    static int num;                   // 既定値 0
+    { num = 10; }                     // インスタンス初期化ブロック
+    public Sample() { num = 100; }
+}
+
+System.out.println(Sample.num);       // 0
+
+// new していないので、初期化ブロックもコンストラクタも一度も実行されない</code></pre></div>
+
+  <div class="point"><p><code>Sample.num</code> という参照は<span class="mk">クラスの初期化（static 側）しか引き起こしません</span>。static 変数と static ブロックは走りますが、<strong>インスタンスは1つも作られない</strong>ので、インスタンス初期化ブロックとコンストラクタは動きようがありません。<br>結果、<code>num</code> は既定値の <code>0</code> のままです。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>new すれば動く<span class="tag">要注意</span></div><pre><code>System.out.println(Sample.num);       // 0
+new Sample();                         // 初期化ブロック → コンストラクタ の順
+System.out.println(Sample.num);       // 100</code></pre></div>
+
+  <p>インスタンス初期化ブロックの中から <code>static</code> 変数を書き換えること自体は<strong>合法</strong>です。ただし <code>new</code> されるまでは反映されません。「静的な変数を触っているから静的に動く」と考えると間違えます。<strong>ブロックの種類が実行タイミングを決める</strong>ので、中身が何を触っているかは無関係です。</p>
+
+  <div class="point trap"><p>この2問は組で出ます。判定手順は次の2段階です。<br>① <span class="mk">new があるか</span> ── 無ければインスタンス側は一切動かない<br>② <span class="mk">初期化ブロック → コンストラクタ本体</span> ── 位置に関係なくこの順<br>選択肢に「コンパイルエラー」が並びますが、どちらも文法上は正しいコードです。</p></div>
+</section>

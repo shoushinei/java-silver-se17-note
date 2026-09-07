@@ -1,0 +1,24 @@
+<section id="c5-s08">
+  <div class="sh"><span class="num">08</span><h2>final</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>付ける先</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><strong>クラス</strong></td><td>継承できない（<code>cannot inherit from final</code>）</td></tr>
+      <tr><td><strong>メソッド</strong></td><td>オーバーライドできない</td></tr>
+      <tr><td><strong>変数</strong></td><td>再代入できない</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>final 変数は「参照が固定される」だけ<span class="tag">要注意</span></div><pre><code>final int[] arr = {1, 2};
+arr[0] = 100;              // OK。中身は変えられる
+arr = new int[]{3};        // error: cannot assign a value to final variable arr
+
+final StringBuilder sb = new StringBuilder("a");
+sb.append("b");            // OK
+sb = new StringBuilder();  // error</code></pre></div>
+
+  <div class="point trap"><p>参照型の <code>final</code> が固定するのは<span class="mk">矢印であって、指す先の中身ではありません</span>。「<code>final</code> なら中身も変えられない」は誤りで、選択肢に出ます。<br>本当に中身も不変にしたければ <code>record</code> や不変クラスを使います。</p></div>
+
+  <div class="point"><p><code>final</code> クラスの例は <code>String</code>、<code>Integer</code> などのラッパークラス、そして <code>record</code>（暗黙）。<br><code>abstract</code> とは<strong>正反対の意味</strong>なので同時には付けられません。「継承を強制する」と「継承を禁止する」は両立しません。</p></div>
+</section>

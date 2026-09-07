@@ -1,0 +1,75 @@
+<section id="c1-s02">
+  <div class="sh"><span class="num">02</span><h2>コマンドライン引数</h2></div>
+
+  <p><code>args</code> には、<strong>クラス名より後ろに書いた文字列</strong>が順に入ります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>添字は 0 から<span class="tag">要注意</span></div><pre><code>public class Main {
+    public static void main(String[] args) {
+        System.out.println(args.length);
+        System.out.println(args[0]);
+    }
+}
+
+// java Main red green blue
+// 出力: 3
+//       red</code></pre></div>
+
+  <div class="point trap"><p>C 言語と違い、<span class="mk">args[0] はクラス名ではなく最初の引数</span>です。<code>args.length</code> にクラス名は含まれません。ここを間違えさせる問題が必ず出ます。</p></div>
+
+  <h3>引数を渡さなかった場合</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>null ではなく空の配列<span class="tag">実行時</span></div><pre><code>// java Main   （引数なし）
+
+System.out.println(args == null);     // false
+System.out.println(args.length);      // 0
+System.out.println(args[0]);          // ArrayIndexOutOfBoundsException</code></pre></div>
+
+  <p><code>args</code> が <code>null</code> になることはありません。引数がなければ<strong>長さ 0 の配列</strong>が渡されます。したがって <code>args.length</code> は安全に呼べますが、<code>args[0]</code> は例外になります。</p>
+
+  <h3>中身はすべて String</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>数値も文字列として届く<span class="tag">実行時</span></div><pre><code>// java Main 10 20
+
+int a = args[0];                          // コンパイルエラー: String は int に代入できない
+int b = Integer.parseInt(args[0]);        // 正しい変換
+System.out.println(args[0] + args[1]);    // "1020"（文字列連結）
+
+// java Main abc
+Integer.parseInt(args[0]);                // NumberFormatException</code></pre></div>
+
+  <div class="point"><p>引数はすべて <code>String</code> です。<code>+</code> は連結になり、数値として使うには <code>Integer.parseInt</code> が必要。変換に失敗すると <code>NumberFormatException</code>（第6章・非検査例外）になります。</p></div>
+
+  <h3>引用符とエスケープ ── 引数の数え方</h3>
+
+  <div class="point"><p>規則はこの3行がすべてです。<br>① 基本は<span class="mk">空白で区切る</span><br>② ただし <code>"</code> と <code>"</code> に挟まれた区間の空白は<span class="mk">無視する</span><br>③ <code>\"</code> は引用符ではなく <span class="mk"><code>"</code> という文字</span></p></div>
+
+  <p>大事なのは、<strong><code>"</code> は引数の区切りではない</strong>ということです。空白を無効化するスイッチでしかありません。</p>
+
+  <h3>数え方は3ステップ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>この順に潰すと迷わない<span class="tag">最重要</span></div><pre><code>java Sample a \" a\" "a "b c
+
+① \" を「" という文字」に確定させる（以後、区切り判定に関与しない）
+
+   a ● a● "a "b c                     ● = " という文字
+
+② " 〜 " の間の空白を無効化し、" 自体を消す
+
+   a ● a● a_b c                       _ = 死んだ空白
+
+③ 残った（生きている）空白で切る
+
+   a / ● / a● / a_b / c               → 5個</code></pre></div>
+
+  <p>結果は <code>args[0]=a</code>、<code>args[1]="</code>、<code>args[2]=a"</code>、<code>args[3]=a b</code>、<code>args[4]=c</code> です。</p>
+
+  <h3>引っかかるのはここだけ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>閉じた後に空白があるか<span class="tag">頻出</span></div><pre><code>"a "b     →  引用符を消すと  a_b   →  1個（args[0] は "a b"）
+"a " b    →  引用符を消すと  a_ b  →  2個（"a " と "b"）</code></pre></div>
+
+  <div class="point trap"><p><code>"a "b</code> が1個になるのは、<span class="mk">引用を閉じた直後の <code>b</code> が空白を挟まずに続いている</span>からです。<br>引用符を「引数の袋」だと思うと2個に数えてしまいます。<strong>袋ではなく、空白を殺すマーカー</strong>。マーカーを消してから、生き残った空白で切る。</p></div>
+
+  <p>なお、これは Java の文法ではなく <strong>OS 側のコマンドライン解釈</strong>です。日本語環境の教材では <code>\</code> が <code>¥</code> と表示されるので、<code>¥"</code> とあれば <code>\"</code> のことです。</p>
+
+</section>

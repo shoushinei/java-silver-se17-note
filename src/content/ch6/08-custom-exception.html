@@ -1,0 +1,23 @@
+<section id="c6-s08">
+  <div class="sh"><span class="num">08</span><h2>カスタム例外の作成</h2></div>
+
+  <p>自分で例外クラスを作るには、<code>Exception</code> か <code>RuntimeException</code> を継承します。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>検査例外になる<span class="tag">OK</span></div><pre><code>class MyException extends Exception {
+    public MyException(String message) {
+        super(message);
+    }
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>非検査例外になる<span class="tag">OK</span></div><pre><code>class MyRuntimeException extends RuntimeException {
+    public MyRuntimeException(String message) {
+        super(message);
+    }
+}</code></pre></div>
+
+  <div class="point"><p><span class="mk">どちらを継承したかで、検査か非検査かが決まります。</span>コードの見た目はほとんど同じで <code>extends</code> の後ろだけが違う、という形で出題されます。ここを見落とすと「catch が必要か不要か」の判断を全部間違えます。</p></div>
+
+  <div class="point link"><p>第4章とつながります。<span class="mk pink">コンストラクタは継承されない</span>ので、<code>MyException(String)</code> は自分で書く必要があります。書かなければ引数なしのデフォルトコンストラクタだけが使え、<code>new MyException("msg")</code> はコンパイルエラーになります。</p></div>
+
+  <p><code>super(message)</code> を呼んでおくと、<code>getMessage()</code> でその文字列を取り出せます。</p>
+</section>

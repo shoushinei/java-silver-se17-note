@@ -1,0 +1,51 @@
+<section id="c6-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span>検査例外の定義を1行で言うと？</span></summary>
+    <div class="qa"><p><strong>Exception の子孫で、かつ RuntimeException の子孫でないもの。</strong>Error 系と RuntimeException 系はすべて非検査です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>try { }</code> だけを書くとどうなる？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>catch か finally が最低1つ必要です。ただし try-with-resources なら try 単体で成立します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span><code>catch (Exception e)</code> の後に <code>catch (IOException e)</code> を書くと？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>親が先に全部捕まえるため、下の catch が到達不能になります。子 → 親の順が正解です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span><code>catch (IOException | FileNotFoundException e)</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>FileNotFoundException は IOException の子なので、multi-catch に親子関係のある例外は並べられません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span>multi-catch の変数 <code>e</code> に再代入できる？</span></summary>
+    <div class="qa"><p><strong>できない。</strong>暗黙的に final です。単一の catch なら再代入できます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>try { return val; } finally { val = 100; }</code> の戻り値は？</span></summary>
+    <div class="qa"><p><strong>return した時点の値。</strong>return で値が退避されるため、finally での書き換えは戻り値に影響しません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span>try で例外を投げ、finally に <code>return 2;</code> があると？</span></summary>
+    <div class="qa"><p><strong>例外は握りつぶされ、2 が返る。</strong>finally の return は tryの return も例外も上書きします。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span>finally が実行されないケースは？</span></summary>
+    <div class="qa"><p><strong>System.exit() が呼ばれたときだけ。</strong>JVM ごと終了するためです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span>try-with-resources で、close と catch はどちらが先？</span></summary>
+    <div class="qa"><p><strong>close が先。</strong>try → close → catch → finally の順です。リソースの後始末が終わってから例外処理に入ります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span><code>try (A a = new A(); B b = new B())</code> で閉じられる順は？</span></summary>
+    <div class="qa"><p><strong>b → a の逆順。</strong>後に宣言したものから閉じます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span>親が <code>throws IOException</code>。子で <code>throws Exception</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>検査例外は広げられません。逆に <code>throws FileNotFoundException</code> や throws なしは OK。非検査例外は自由に追加できます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span>カスタム例外を非検査にしたいときの継承元は？</span></summary>
+    <div class="qa"><p><strong>RuntimeException。</strong>Exception を継承すると検査例外になります。あわせて、コンストラクタは継承されないので自分で定義する必要があります。</p></div></details>
+  <details class="q"><summary><span class="qn">Q+1</span><span><code>try (Res r = new Res())</code> の括弧の中は何をしている？</span></summary>
+    <div class="qa"><p><strong>ただの変数宣言。</strong><code>Res r = new Res();</code> と同じで、コンストラクタが動いてリソースを<strong>開き</strong>ます。<code>close()</code> はここには書かれておらず、ブロックを抜けるときにコンパイラが生成した呼び出しが走ります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q+2</span><span><code>AutoCloseable</code> の中身は？</span></summary>
+    <div class="qa"><p><strong><code>void close() throws Exception;</code> の抽象メソッド1つだけ。</strong><code>java.io.Closeable</code> はそのサブインタフェースで、例外を <code>IOException</code> に狭めています（オーバーライドで検査例外を狭めるのは可）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q+3</span><span><code>close()</code> メソッドを持っているのに <code>try(...)</code> に書けないのはなぜ？</span></summary>
+    <div class="qa"><p><strong><code>implements AutoCloseable</code> が無いから。</strong>コンパイラはメソッド名ではなく<strong>型</strong>で判断します（<code>Res cannot be converted to AutoCloseable</code>）。逆に <code>implements</code> だけ書いて <code>close()</code> を実装しないと、抽象メソッド未実装のエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q+4</span><span><code>close()</code> は具体的に何をする？</span></summary>
+    <div class="qa"><p><strong>自分で書く。決まった処理は無い。</strong>典型は「コンストラクタで開いたものを閉じる」。GC が回収するのは Java のメモリだけで、<strong>OS 側のファイルハンドルや DB 接続は対象外</strong>なので、明示的に返す必要があります。</p></div></details>
+</section>

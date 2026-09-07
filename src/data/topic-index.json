@@ -1,0 +1,151 @@
+[
+  {
+    "group": "起動と環境",
+    "terms": [
+      "main",
+      "コマンドライン引数",
+      "javac",
+      "バイトコード",
+      "JVM",
+      "クラスパス",
+      "パッケージ",
+      "import",
+      "static import",
+      "アクセス修飾子",
+      "protected",
+      "トップレベル"
+    ]
+  },
+  {
+    "group": "型と変換",
+    "terms": [
+      "基本データ型",
+      "リテラル",
+      "型変換",
+      "キャスト",
+      "拡大変換",
+      "縮小変換",
+      "var",
+      "オートボクシング",
+      "アンボクシング",
+      "Integer",
+      "既定値",
+      "スコープ"
+    ]
+  },
+  {
+    "group": "文字列",
+    "terms": [
+      "String",
+      "StringBuilder",
+      "テキストブロック",
+      "不変",
+      "equals",
+      "文字列連結",
+      "substring",
+      "charAt"
+    ]
+  },
+  {
+    "group": "配列とリスト",
+    "terms": [
+      "配列",
+      "2次元配列",
+      "ジャグ配列",
+      "length",
+      "ArrayList",
+      "拡張for",
+      "null"
+    ]
+  },
+  {
+    "group": "演算子と制御",
+    "terms": [
+      "優先順位",
+      "インクリメント",
+      "複合代入",
+      "短絡評価",
+      "三項演算子",
+      "switch 式",
+      "yield",
+      "ラベル",
+      "break",
+      "continue",
+      "無限ループ",
+      "do-while",
+      "ビット演算"
+    ]
+  },
+  {
+    "group": "クラス",
+    "terms": [
+      "コンストラクタ",
+      "デフォルトコンストラクタ",
+      "this",
+      "this()",
+      "オーバーロード",
+      "可変長引数",
+      "値渡し",
+      "参照",
+      "static",
+      "初期化ブロック",
+      "初期化の順序",
+      "ガベージコレクション"
+    ]
+  },
+  {
+    "group": "SE 17 新機能",
+    "terms": [
+      "record",
+      "標準コンストラクタ",
+      "正規コンストラクタ",
+      "コンパクトコンストラクタ",
+      "コンポーネント",
+      "instanceof",
+      "パターン変数",
+      "アクセサ"
+    ]
+  },
+  {
+    "group": "継承とインタフェース",
+    "terms": [
+      "継承",
+      "extends",
+      "implements",
+      "super",
+      "オーバーライド",
+      "隠蔽",
+      "ポリモーフィズム",
+      "ダウンキャスト",
+      "抽象クラス",
+      "abstract",
+      "final",
+      "インタフェース",
+      "default",
+      "sealed",
+      "permits",
+      "non-sealed"
+    ]
+  },
+  {
+    "group": "例外処理",
+    "terms": [
+      "例外",
+      "検査例外",
+      "非検査例外",
+      "Error",
+      "try-with-resources",
+      "multi-catch",
+      "finally",
+      "return",
+      "throw",
+      "throws",
+      "catch の順序",
+      "オーバーライド",
+      "NullPointerException",
+      "ArrayIndexOutOfBoundsException",
+      "ClassCastException",
+      "NumberFormatException"
+    ]
+  }
+]

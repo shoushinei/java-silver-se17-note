@@ -1,0 +1,19 @@
+name: build
+
+# docs/index.html は src/ から生成したもの。
+# ビルドし忘れたまま push されると公開ページだけ古くなるので、CI で突き合わせる。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: docs/index.html が src/ と一致するか確認
+        run: node build.mjs --check

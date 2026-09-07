@@ -1,0 +1,34 @@
+<section id="c6-s07">
+  <div class="sh"><span class="num">07</span><h2>throw と throws</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th><code>throw</code></th><th><code>throws</code></th></tr></thead>
+    <tbody>
+      <tr><td>書く場所</td><td>メソッドの<strong>中</strong></td><td>メソッドの<strong>宣言部</strong></td></tr>
+      <tr><td>意味</td><td>例外を実際に投げる</td><td>投げる可能性があると宣言</td></tr>
+      <tr><td>対象</td><td>インスタンス1つ</td><td>クラス名。カンマで複数可</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>両方を使った形<span class="tag">OK</span></div><pre><code>void m() throws IOException, SQLException {   // 宣言
+    throw new IOException();                  // 実行
+}</code></pre></div>
+
+  <h3>throw に渡せるもの</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>Throwable でないものは投げられない<span class="tag">NG</span></div><pre><code>throw new String("x");   // コンパイルエラー</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>throw null はコンパイルが通る<span class="tag">実行時</span></div><pre><code>throw null;   // コンパイルは通り、実行時に NullPointerException</code></pre></div>
+
+  <h3>呼び出す側の義務</h3>
+  <p>検査例外を <code>throws</code> しているメソッドを呼ぶ側は、<strong>catch するか、自分も throws する</strong>必要があります。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>何もせずに呼ぶ<span class="tag">NG</span></div><pre><code>void caller() {
+    m();   // コンパイルエラー: IOException が未処理
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>自分も throws すれば通る<span class="tag">OK</span></div><pre><code>void caller() throws IOException, SQLException {
+    m();
+}</code></pre></div>
+
+  <div class="point"><p><code>main</code> メソッドも例外ではありません。<span class="mk">public static void main(String[] args) throws Exception は合法</span>です。「main に throws は書けない」という選択肢は誤りです。</p></div>
+</section>

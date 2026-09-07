@@ -1,0 +1,36 @@
+<section id="c4-s02">
+  <div class="sh"><span class="num">02</span><h2>フィールドとライフサイクル</h2></div>
+
+  <h3>ローカル変数との決定的な違い</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>フィールド</th><th>ローカル変数</th></tr></thead>
+    <tbody>
+      <tr><td>初期化</td><td><strong>既定値が入る</strong>（省略可）</td><td><strong>必須</strong>。使う前に代入がないとエラー</td></tr>
+      <tr><td>置き場所</td><td>ヒープ（実体の中）</td><td>スタック（メソッドの中）</td></tr>
+      <tr><td>寿命</td><td>実体が生きている間</td><td>メソッドを抜けるまで</td></tr>
+      <tr><td>アクセス修飾子</td><td>付けられる</td><td><strong>付けられない</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>この差が出題される<span class="tag">NG</span></div><pre><code>class T {
+    int f;                            // OK。既定値 0 が入る
+    void m() {
+        int local;
+        System.out.println(f);        // OK → 0
+        System.out.println(local);    // コンパイルエラー
+                                      // variable local might not have been initialized
+    }
+}</code></pre></div>
+
+  <div class="point link"><p>既定値は第2章の表と同じです。数値は <code>0</code>、<code>boolean</code> は <code>false</code>、<code>char</code> は <code>'\u0000'</code>、<span class="mk">参照型は null</span>。フィールドが参照型なら、初期化しないまま使うと <code>NullPointerException</code> になります。</p></div>
+
+  <h3>オブジェクトのライフサイクル</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>参照が切れたら回収対象<span class="tag">図</span></div><pre><code>Car c = new Car("A");     // ① 生成。c が実体を指す
+c = new Car("B");         // ② 最初の実体を指す矢印が消えた
+                          //    → どこからも参照されない → GC の対象
+c = null;                 // ③ 2つ目も参照が切れる</code></pre></div>
+
+  <div class="point trap"><p>ガベージコレクションについて問われるのは<span class="mk">「いつ回収対象になるか」であって「いつ回収されるか」ではありません</span>。<br>どこからも参照されなくなった時点で<strong>対象</strong>になりますが、実際に回収されるタイミングは JVM 任せで<strong>保証されません</strong>。<code>System.gc()</code> も「お願い」であって強制ではなく、<code>finalize()</code> は非推奨です。</p></div>
+</section>

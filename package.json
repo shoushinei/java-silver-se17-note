@@ -1,0 +1,14 @@
+{
+  "name": "java-silver-se17-note",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Java Silver SE 17 (1Z0-825) 統合ノート",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node build.mjs --check",
+    "serve": "node build.mjs && node --run serve:only",
+    "serve:only": "python -m http.server 8080 --directory docs"
+  },
+  "engines": { "node": ">=18" }
+}

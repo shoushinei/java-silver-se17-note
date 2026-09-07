@@ -1,0 +1,177 @@
+<section id="c1-s03">
+  <div class="sh"><span class="num">03</span><h2>コンパイルと実行</h2></div>
+
+  <h3>まず Java が動く仕組み</h3>
+
+  <p>コマンドの規則は丸暗記できますが、<strong>仕組みを知っていると導けます</strong>。ここを押さえると、この節の問題はほぼ落とさなくなります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ソースから実行までの3段階<span class="tag">図</span></div><pre><code>Main.java          人間が書くソースコード（ただのテキスト）
+    │
+    │  javac        コンパイル
+    ↓
+Main.class         バイトコード（JVM 用の中間コード。機種に依存しない）
+    │
+    │  java         JVM を起動して読み込み、解釈しながら実行
+    ↓
+実行</code></pre></div>
+
+  <p>C 言語のコンパイラは、CPU が直接理解できる機械語を吐きます。だから Windows 用にコンパイルした実行ファイルは Mac では動きません。Java はここで<strong>一段はさみます</strong>。<code>javac</code> が作るのは機械語ではなく、<strong>JVM という仮想的なコンピュータ向けの命令</strong>＝バイトコードです。</p>
+
+  <div class="point"><p>バイトコードは<span class="mk">どの機種でも同じ内容</span>です。機種ごとの違いは JVM 側が吸収します。Windows には Windows 用の JVM、Mac には Mac 用の JVM があり、同じ <code>.class</code> をそれぞれが自分の CPU 向けに動かす。これが「一度書けばどこでも動く」（Write Once, Run Anywhere）の実体です。<br><code>java</code> コマンドの正体は<strong>この JVM を起動するプログラム</strong>です。</p></div>
+
+  <h3>なぜ javac はファイル名、java はクラス名なのか</h3>
+
+  <p>2つのコマンドは<strong>見ている世界が違います</strong>。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>扱う対象</th><th>渡すもの</th></tr></thead>
+    <tbody>
+      <tr><td><code>javac</code></td><td><strong>ファイル</strong>を読んでファイルを書く</td><td>ファイル名（<code>.java</code> 付き）</td></tr>
+      <tr><td><code>java</code></td><td><strong>クラス</strong>をクラスパスから探す</td><td>クラス名（拡張子なし）</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><code>javac</code> はファイルを変換する道具なので、当然ファイル名が要ります。<br>一方 <code>java</code> は「この名前の<strong>クラス</strong>を持ってきて動かせ」と JVM に頼むコマンドです。JVM にとって世界はファイルではなく<strong>クラス名の空間</strong>でできていて、<code>Main</code> という名前を受け取ってからクラスパス上を探しにいきます。</p>
+
+  <div class="point trap"><p>だから <code>java Main.class</code> は失敗します。JVM はこれをファイル名だと思わず、<span class="mk">「Main パッケージの class というクラス」</span>と解釈するからです。ドットはパッケージの区切りにしか見えません。<br>実際のエラーは <code>ClassNotFoundException: Main.class</code>。<code>.class</code> ファイルが目の前にあっても失敗します。</p></div>
+
+  <p>同じ理由で、パッケージに属するクラスは <code>java com.example.Main</code> とドット区切りで渡します。これは「ディレクトリのパス」ではなく<strong>クラスの完全な名前</strong>です。<code>java com/example/Main</code> が誤りなのもここから導けます。</p>
+
+  <h3>2つのコマンド</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コマンド</th><th>渡すもの</th><th>すること</th></tr></thead>
+    <tbody>
+      <tr><td><code>javac</code></td><td><strong>ファイル名</strong>（拡張子 .java あり）</td><td>ソースを .class に変換する</td></tr>
+      <tr><td><code>java</code></td><td><strong>クラス名</strong>（拡張子なし）</td><td>.class を読み込んで main を起動する</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本の2ステップ<span class="tag">最重要</span></div><pre><code>javac Main.java        // Main.class が生成される
+java Main              // 実行。.class や .java は付けない</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ありがちな誤り<span class="tag">NG</span></div><pre><code>javac Main             // 失敗。javac にはファイル名（.java 付き）が必要
+java Main.class        // 失敗。クラス名として "Main.class" を探しにいく
+java Main.java         // ← これは失敗しない（次項を参照）</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">javac にはファイル名、java にはクラス名</span>。<code>java Main.class</code> は「Main パッケージの class クラス」を探しにいって失敗します。この選択肢は頻出です。</p></div>
+
+  <h3>java コマンドの2つのモード</h3>
+
+  <p><code>java</code> は<strong>1つのコマンドに2つの動作が入っています</strong>。判定は単純で、<span class="mk">渡された引数が <code>.java</code> で終わっているかどうか</span>、それだけです。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>渡したもの</th><th>モード</th><th>読むファイル</th><th><code>.class</code> は必要？</th></tr></thead>
+    <tbody>
+      <tr><td><code>java Main</code><br><span style="font-size:12px">拡張子なし</span></td><td>クラス実行モード</td><td><strong>Main.class</strong><br><span style="font-size:12px">クラスパスから探す</span></td><td><strong>必要</strong></td></tr>
+      <tr><td><code>java Main.java</code><br><span style="font-size:12px">.java で終わる</span></td><td>ソース実行モード<br><span style="font-size:12px">SE 11 以降</span></td><td><strong>Main.java</strong><br><span style="font-size:12px">その場で読む</span></td><td><strong>不要</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>したがって、ソースファイルしか無い状態から出力に到達する道は<strong>2本</strong>あります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>どちらでもゴールに着く<span class="tag">最重要</span></div><pre><code>// 経路①  .class を作ってから実行する
+javac Main.java        // Main.class が生成される
+java Main              // その .class を読んで実行
+
+// 経路②  ソースから直接実行する
+java Main.java         // .class は作られない
+java Main.java red     // 引数も渡せる</code></pre></div>
+
+  <h3>ソース実行モードの中身</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>コンパイルは省略されていない<span class="tag">図</span></div><pre><code>経路①  Main.java ──javac──→ Main.class ──java──→ JVM が実行
+                              （ディスクに保存）
+
+経路②  Main.java ──────────→ バイトコード ──→ JVM が実行
+                            （メモリ上。保存しない）</code></pre></div>
+
+  <div class="point trap"><p>よくある誤解は「ソース実行モードはコンパイルを飛ばしている」というものです。正しくは<span class="mk">コンパイル結果を保存していないだけ</span>。<br>Java は<strong>必ずバイトコードを経由します</strong>。経路②でもバイトコードは作られていて、ファイルに書かずそのまま JVM に渡しているだけです。「作る必要がない」のは<strong>クラス</strong>ではなく <code>.class</code> <strong>ファイル</strong>です。</p></div>
+
+  <h3>2つのモードが別物である証拠</h3>
+
+  <p><code>.class</code> と <code>.java</code> の中身をわざとズラすと、読んでいるファイルの違いがはっきり見えます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じディレクトリで出力が食い違う<span class="tag">要注意</span></div><pre><code>// VERSION 1 の状態でコンパイル
+javac Main.java
+
+// その後ソースだけを VERSION 2 に書き換える（再コンパイルはしない）
+
+$ ls
+Main.class  Main.java
+
+$ java Main             → VERSION 1     // .class を読んでいる
+$ java Main.java        → VERSION 2     // .java を読んでいる</code></pre></div>
+
+  <p>同じコマンド、同じディレクトリなのに結果が違う。見ているファイルが別だからです。<strong>ソース実行モードは <code>.class</code> の存在を完全に無視します</strong>。</p>
+
+  <h3>どちらを使うか</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>経路</th><th>向いている場面</th><th>特徴</th></tr></thead>
+    <tbody>
+      <tr><td><code>java Main.java</code></td><td>1ファイルの試し書き、動作確認</td><td>毎回コンパイルが走るので起動が遅い。成果物が残らない</td></tr>
+      <tr><td><code>javac</code> → <code>java</code></td><td>複数ファイル、繰り返し実行、配布</td><td><code>.class</code> が残るので2回目以降が速い</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point new"><p>ソース実行モードには制約があります。<span class="mk">1ファイルで完結するプログラム限定</span>（そのファイル内に複数クラスを書くのは可）で、複数ファイルに分かれていると使えません。<br>また <strong>SE 11 で導入された機能</strong>なので SE 8 以前では動きません。「<code>java Main.java</code> はエラーになる」と書かれた古い教材があるのはそのためで、<strong>SE 17 の試験では動くのが正解</strong>です。</p></div>
+
+  <h3>よく問われるオプション</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>オプション</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><code>javac -d bin Main.java</code></td><td>.class の出力先を指定。パッケージ構造のディレクトリも自動で作られる</td></tr>
+      <tr><td><code>java -cp bin Main</code></td><td>クラスを探す場所を指定。<code>-classpath</code> と同じ</td></tr>
+      <tr><td><code>javac A.java B.java</code></td><td>複数ファイルを同時にコンパイル</td></tr>
+      <tr><td><code>javac *.java</code></td><td>カレントの全ソースをコンパイル</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>問題文の読み分け ── 同じ選択肢が正解にも誤りにもなる</h3>
+
+  <p>この節でいちばん落とし穴になるのが、<strong>同じコマンドが問題によって正解にも不正解にもなる</strong>ことです。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ソースしか無い状態で java を叩く<span class="tag">実行時</span></div><pre><code>$ ls
+Sample.java                      // .class はまだ存在しない
+
+$ java Sample
+Error: Could not find or load main class Sample
+Caused by: java.lang.ClassNotFoundException: Sample</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>「クラスを実行するコマンドは？」</th><th>「このプログラムを実行し<br>◯◯と表示したい」</th></tr></thead>
+    <tbody>
+      <tr><td>ソースコードの提示</td><td>なし</td><td><strong>あり</strong></td></tr>
+      <tr><td>問われているもの</td><td>コマンド単体の妥当性</td><td><strong>出力までの手順</strong></td></tr>
+      <tr><td>前提</td><td><code>.class</code> は既にある</td><td><code>.java</code> しか無い</td></tr>
+      <tr><td><code>java Sample</code></td><td>○ 正しい</td><td><strong>× コンパイルがまだ</strong></td></tr>
+      <tr><td><code>javac Sample.java</code><br><code>java Sample</code></td><td>—</td><td>○</td></tr>
+      <tr><td><code>java Sample.java</code></td><td>○</td><td>○</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>判断の分かれ目は<span class="mk">問題文にソースコードが載っているか</span>です。<br>載っていなければ、コマンドの文法が正しいかを聞いている。<strong>載っていて「実行して〜と表示したい」とあれば、ソースから出力に至る手順</strong>を聞いています。後者では、コンパイル工程を含む形か <code>java Sample.java</code> でなければ正解になりません。<br>選択肢だけを見て機械的に判断すると、ここで確実に引っかかります。</p></div>
+
+  <h3>紛らわしいコマンド</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コマンド</th><th>正体</th></tr></thead>
+    <tbody>
+      <tr><td><code>javac</code></td><td>コンパイラ。<code>.java</code> → <code>.class</code></td></tr>
+      <tr><td><code>java</code></td><td>JVM を起動して実行する</td></tr>
+      <tr><td><code>javap</code></td><td><strong>逆アセンブラ</strong>。クラスの構造を表示するだけで<strong>実行しない</strong></td></tr>
+      <tr><td><code>jmod</code></td><td>モジュールファイルを作るツール</td></tr>
+      <tr><td><code>jshell</code></td><td>対話実行環境（SE 9 以降）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>javap は実行ではない<span class="tag">要注意</span></div><pre><code>$ javap Sample
+Compiled from "Sample.java"
+public class Sample {
+  public Sample();
+  public static void main(java.lang.String[]);
+}
+// メソッドの一覧が出るだけ。"sample" は表示されない</code></pre></div>
+</section>

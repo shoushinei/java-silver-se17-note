@@ -1,0 +1,22 @@
+<section id="c5-s01">
+  <div class="sh"><span class="num">01</span><h2>継承の基本</h2></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>extends は1つだけ<span class="tag">基本</span></div><pre><code>class Animal { }
+class Dog extends Animal { }          // OK
+class Cat extends Animal, Dog { }     // コンパイルエラー。クラスの多重継承は不可</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>規則</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>クラスの継承</td><td><strong>単一継承のみ</strong>。<code>extends</code> は1つ</td></tr>
+      <tr><td>インタフェースの実装</td><td><strong>複数可</strong>。<code>implements A, B, C</code></td></tr>
+      <tr><td>インタフェース同士の継承</td><td><strong>複数可</strong>。<code>interface C extends A, B</code></td></tr>
+      <tr><td>暗黙の親</td><td>何も書かなければ <code>java.lang.Object</code> を継承</td></tr>
+      <tr><td>継承されないもの</td><td><strong>コンストラクタ</strong>、<code>private</code> メンバ</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>クラスの多重継承が禁止されているのは<span class="mk">同じ名前のフィールドやメソッドを2つ受け継ぐと、どちらか決められない</span>からです（菱形継承問題）。<br>インタフェースが複数実装できるのは、元々<strong>実装を持たなかった</strong>ためです。<code>default</code> メソッドで実装が入った SE 8 以降は、衝突したら<strong>書き手に解決させる</strong>方式にして回避しています（節10）。</p></div>
+
+  <div class="point link"><p>継承しても<span class="mk">使えるとは限りません</span>。第1章 節07の到達範囲がそのまま効き、別パッケージのサブクラスからは修飾子なしのメンバが見えません。<strong>存在すること</strong>と<strong>名前で呼べること</strong>は別レイヤーです。</p></div>
+</section>

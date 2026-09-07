@@ -1,0 +1,75 @@
+<section id="c2-s12">
+  <div class="sh"><span class="num">12</span><h2>null との付き合い方</h2></div>
+
+  <p>この章の問題で最も多く問われるのが null です。判定基準は<strong>1行</strong>で足ります。</p>
+
+  <div class="point"><p><span class="mk">null に「ドット」を付けたら NullPointerException。付けなければ安全。</span></p></div>
+
+  <h3>安全な操作</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ドットがない<span class="tag">OK</span></div><pre><code>String s = null;
+
+s = null;                    // 代入
+s == null;                   // 比較 → true
+System.out.println(s);       // "null" と表示される
+System.out.println("a" + s); // "anull"
+String.valueOf(s);           // "null" ← static メソッド
+"abc".equals(s);             // false  ← 呼ぶ側が null でない
+Arrays.toString(null);       // "null" ← static メソッド</code></pre></div>
+
+  <h3>例外になる操作</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>ドットがある<span class="tag">実行時</span></div><pre><code>String s = null;
+s.length();          // ① メソッド呼び出し
+s.equals("abc");     // ①
+
+int[] a = null;
+a.length;            // ② フィールドアクセス（配列の length を含む）
+a[0];                // ③ 添字アクセス
+
+Integer i = null;
+int j = i;           // ④ アンボクシング ← ドットは無いが裏で intValue() が呼ばれる</code></pre></div>
+
+  <div class="point trap"><p>④だけがドットのない例外です。<span class="mk">ラッパー型から基本データ型への代入</span>だけは要注意。第3節のボクシングの話とつながります。</p></div>
+
+  <h3>「配列そのもの」と「配列の中身」を区別する</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length が動くかどうかで見分ける<span class="tag">最重要</span></div><pre><code>String[] a = new String[3];    // 配列はある。中身が null
+a.length;          // 3        ← OK
+a[0];              // null     ← OK
+a[0].length();     // NullPointerException
+
+String[] b = null;             // 配列そのものがない
+b.length;          // NullPointerException
+b[0];              // NullPointerException</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>どこが null か</th><th><code>.length</code></th><th><code>[0]</code></th><th><code>[0].xxx()</code></th></tr></thead>
+    <tbody>
+      <tr><td>配列そのもの</td><td><strong>例外</strong></td><td><strong>例外</strong></td><td>例外</td></tr>
+      <tr><td>配列の中身</td><td>OK</td><td>OK（null が返る）</td><td><strong>例外</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>拡張for文での挙動</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>取り出すだけなら止まらない<span class="tag">要注意</span></div><pre><code>String[] arr = {"A", null, "C", "D"};
+
+for (String s : arr) System.out.print(s);          // "AnullCD"
+for (String s : arr) System.out.print(s.length()); // 2周目で例外（1文字目は出力済み）</code></pre></div>
+
+  <p>拡張for文の走査そのものは null があっても止まりません。<span class="mk">取り出した後にドットを付けたときだけ</span>落ちます。</p>
+
+  <h3>コレクションでの null</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ArrayList には null を入れられる<span class="tag">OK</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;();
+list.add(null);           // OK
+list.size();              // 1  ← null も1個として数えられる
+list.get(0);              // null
+list.contains(null);      // true
+list.get(0).length();     // NullPointerException
+
+List.of("a", null);       // NullPointerException ← 生成時点で落ちる</code></pre></div>
+
+  <div class="point link"><p>第6章の判定基準がそのまま使えます。<span class="mk pink">null は「呼ばれたとき」だけ例外になる</span>ので、選択肢を読むときは「ドットがあるか」だけを探してください。</p></div>
+</section>

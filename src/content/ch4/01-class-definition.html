@@ -1,0 +1,36 @@
+<section id="c4-s01">
+  <div class="sh"><span class="num">01</span><h2>クラスの定義とインスタンス化</h2></div>
+
+  <p>クラスは<strong>設計図</strong>、インスタンスは<strong>それを元に作られた実体</strong>です。設計図をいくら書いてもメモリは使われず、<code>new</code> した瞬間に実体ができます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラスに書けるもの<span class="tag">基本</span></div><pre><code>class Car {
+    String name;                      // フィールド（インスタンス変数）
+    static int total;                 // static変数（クラス変数）
+
+    Car(String name) { this.name = name; }   // コンストラクタ
+
+    void run() { }                    // インスタンスメソッド
+    static void info() { }            // staticメソッド
+
+    { }                               // インスタンス初期化ブロック
+    static { }                        // static初期化ブロック
+}</code></pre></div>
+
+  <h3>new が行う3つのこと</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>1行で3段階<span class="tag">図</span></div><pre><code>Car c = new Car("A");
+
+  ①  new Car(...)     ヒープ上に実体を作り、フィールドを既定値で埋める
+  ②  Car("A")         コンストラクタが走り、初期化される
+  ③  c =              できた実体への「参照」を変数 c に入れる
+
+     c ──────→ [ name="A" ]        c は実体そのものではなく、実体を指す矢印</code></pre></div>
+
+  <div class="point"><p>変数が持っているのは<span class="mk">実体ではなく参照（矢印）</span>です。第2章の配列と同じ構造で、代入は矢印のコピーになります。<code>==</code> が「同じ実体か」を、<code>equals</code> が「中身が同じか」を判定するのもこのためです。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>参照のコピー<span class="tag">要注意</span></div><pre><code>Car a = new Car("A");
+Car b = a;                    // 矢印をコピー。実体は1つのまま
+b.name = "B";
+System.out.println(a.name);   // B ← a から見ても変わっている
+System.out.println(a == b);   // true（同じ実体）</code></pre></div>
+</section>

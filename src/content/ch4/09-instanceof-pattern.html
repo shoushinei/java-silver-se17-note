@@ -1,0 +1,111 @@
+<section id="c4-s09">
+  <div class="sh"><span class="num">09</span><h2>instanceof のパターンマッチング</h2></div>
+
+  <div class="point new"><p>SE 16 で正式化された機能で、<span class="mk">SE 17 試験の新規範囲</span>です。11 の教材には載っていません。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>従来の書き方との比較<span class="tag">基本</span></div><pre><code>// 従来 ── 判定してから自分でキャスト
+if (o instanceof String) {
+    String s = (String) o;
+    System.out.println(s.length());
+}
+
+// SE 16以降 ── 判定と同時に変数へ束縛される
+if (o instanceof String s) {
+    System.out.println(s.length());     // キャスト不要
+}</code></pre></div>
+
+  <p><code>s</code> を<strong>パターン変数</strong>と呼びます。<code>instanceof</code> が <code>true</code> のときだけ値が入り、自動的にキャスト済みの状態で使えます。</p>
+
+  <h3>実際に何が起きているか</h3>
+
+  <p>「<code>instanceof</code> が型変換してくれる」という理解は<strong>半分だけ正しい</strong>です。正確には3つのことを同時に行っています。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>従来の3行を1行に畳んだだけ<span class="tag">最重要</span></div><pre><code>// 従来
+if (a instanceof B) {      // ① 判定する
+    B b = (B) a;           // ② キャストする ③ 新しい変数に入れる
+    b.only();
+}
+
+// パターンマッチング
+if (a instanceof B b) {    // ①②③ を一度に
+    b.only();
+}</code></pre></div>
+
+  <div class="point trap"><p>ここで作られているのは<span class="mk">新しい変数</span>です。<strong>元の変数 <code>a</code> は書き換わりません</strong>。<br>キャスト <code>(B) a</code> は「<code>a</code> の値を <code>B</code> として見た結果」を式の値として返すだけで、<code>a</code> 自身の宣言型にも指し先にも影響しません。<code>a</code> はそのまま <code>A</code> 型として残ります。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>a と b は共存し、同じ実体を指す<span class="tag">頻出</span></div><pre><code>A a = new B();
+
+if (a instanceof B b) {
+    System.out.println(a == b);   // true ← オブジェクトは1つ
+
+    a.test();      // ○ A にあるメソッド。実装は B のものが動く（多態）
+    b.test();      // ○ 同じ結果
+
+    a.only();      // ✗ error: cannot find symbol ── A に only() は無い
+    b.only();      // ○ B 固有のメソッドはこちらから
+}</code></pre></div>
+
+  <div class="point"><p>オブジェクトは1つのまま、<span class="mk">それを見るための窓口が2つになった</span>状態です。<br>「どのメソッドを<strong>書けるか</strong>」は変数の宣言型で決まり、「どの実装が<strong>動くか</strong>」はオブジェクトの実際の型で決まります。<code>a</code> の宣言型は <code>A</code> のままなので <code>only()</code> は書けませんが、<code>test()</code> は書けて、動くのは <code>B</code> の実装です。<br><strong>パターン変数の存在意義は、サブクラス固有のメンバを呼べる窓口を用意すること</strong>にあります。</p></div>
+
+  <h3>参照型のキャストは値を変えない</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>種類</th><th>何が起きるか</th></tr></thead>
+    <tbody>
+      <tr><td><strong>基本データ型</strong> <code>(int) 3.9</code></td><td>値そのものが変わる（3.9 → 3）</td></tr>
+      <tr><td><strong>参照型</strong> <code>(B) a</code></td><td>値は変わらない。<strong>コンパイラへの型の申告</strong>が変わるだけ</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>第2章のキャストとは意味が違います。参照型のキャストはオブジェクトを作り変えません。「このオブジェクトを <code>B</code> として扱わせてくれ」という宣言にすぎず、実行時に本当に <code>B</code> でなければ <span class="mk">ClassCastException</span> になります。</p></div>
+
+  <div class="point"><p>この構文が導入された理由も、ここから分かります。従来の書き方には<strong>判定した型とキャストする型を書き間違えられる</strong>穴がありました。<br><code>if (a instanceof B) { C c = (C) a; }</code> はコンパイルが通り、実行時に落ちます。パターンマッチングは判定と変数宣言を1つの構文に閉じ込めることで、この食い違いを構造的に起こせなくしました。<code>if</code> を抜けると変数が消えるのも、<span class="mk">判定が保証している範囲の外では意味を持たない</span>からです。</p></div>
+
+  <h3>パターン変数のスコープ</h3>
+
+  <p>ここが唯一ややこしく、そのぶん出題されます。スコープは<strong>「その変数が確実に代入されている範囲」</strong>です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>&amp;&amp; では使える<span class="tag">OK</span></div><pre><code>if (o instanceof String s && s.length() > 3) { }
+// && の右側は「左が true のとき」しか評価されない → s は確実に存在する</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>|| では使えない<span class="tag">NG</span></div><pre><code>if (o instanceof String s || s.isEmpty()) { }
+// コンパイルエラー: cannot find symbol
+// || の右側は「左が false のとき」に評価される → s は存在しない</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>else 側で使う ── 黒本の定番<span class="tag">最頻出</span></div><pre><code>A[] array = { new A(), new B(), new A(), new B() };
+
+for (A a : array) {
+    if (a instanceof B b) {
+        a.test();
+    } else {
+        b.test();          // コンパイルエラー
+    }                      // error: cannot find symbol / symbol: variable b
+}</code></pre></div>
+
+  <div class="point trap"><p><code>else</code> に来たということは <span class="mk">instanceof が false だった</span>ということです。<code>b</code> に入れる値が無かったので、変数そのものが作られていません。<br>選択肢には <code>ABAB</code> <code>BBBB</code> <code>AAAA</code> <code>ABBA</code> と出力パターンが並びますが、<strong>その手前でコンパイルが通りません</strong>。配列の中身を追う必要すらありません。</p></div>
+
+  <div class="point"><p>パターンマッチングが出てきたら、<strong>出力を追う前にスコープを確認する</strong>のが速いです。<br>① パターン変数はどこで宣言されたか<br>② 使っている場所は「判定成功が確定した範囲」か<br>③ 範囲外ならそこで終わり<br>なお <code>else</code> だから使えない、と覚えると<span class="mk">否定形で逆になったときに落とします</span>。<code>!</code> を付ければ成功が確定する世界が <code>else</code> 側に移り、そちらで使えるようになります。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>if を抜けると消える<span class="tag">NG</span></div><pre><code>if (o instanceof String s) { }
+System.out.println(s);      // コンパイルエラー: cannot find symbol</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>否定すると else 側で使える<span class="tag">要注意</span></div><pre><code>if (!(o instanceof String s)) {
+    System.out.println("String ではない");   // ここでは s は使えない
+} else {
+    System.out.println(s.toUpperCase());     // ここでは使える
+}</code></pre></div>
+
+  <div class="point"><p>丸暗記ではなく<span class="mk">「その位置に来たとき、判定は成功していたか」</span>で判断してください。成功が確定している場所でだけ使えます。<code>&amp;&amp;</code> の右、<code>if</code> の中、否定した場合の <code>else</code> の中 ── いずれも「true だった」ことが確定している場所です。</p></div>
+
+  <h3>その他の規則</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>null は常に false<span class="tag">要注意</span></div><pre><code>Object n = null;
+System.out.println(n instanceof String);      // false（例外にはならない）
+if (n instanceof String s) { }                // 中に入らない</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>無関係な型はコンパイルエラー<span class="tag">NG</span></div><pre><code>String s = "x";
+System.out.println(s instanceof Integer);
+// エラー: incompatible types: String cannot be converted to Integer</code></pre></div>
+
+  <p>継承関係がまったく無い型どうしの <code>instanceof</code> は、<strong>実行するまでもなく false と分かる</strong>のでコンパイルエラーになります。<code>Object</code> 型の変数なら何とでも比較できます。</p>
+</section>

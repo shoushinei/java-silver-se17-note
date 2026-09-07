@@ -1,0 +1,43 @@
+<section id="c6-s01">
+  <div class="sh"><span class="num">01</span><h2>クラス階層と3つの分類</h2></div>
+
+  <p>すべての判断はこの階層から派生します。まずこの形を覚えてください。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラス階層<span class="tag">図</span></div><pre><code>Throwable
+├── Error                        ← 非検査。捕まえない
+└── Exception                    ← 捕捉の対象
+    ├── RuntimeException         ← 非検査
+    │   ├── NullPointerException
+    │   ├── ArithmeticException
+    │   └── ...
+    └── IOException など          ← 検査例外
+        └── FileNotFoundException</code></pre></div>
+
+  <p>検査例外かどうかの判定は、次の1行がすべてです。</p>
+  <p><span class="mk">Exception の子孫で、かつ RuntimeException の子孫でないものが「検査例外」。</span>それ以外（Error 系と RuntimeException 系）はすべて「非検査例外」です。</p>
+
+  <h3>3分類の違い</h3>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>検査例外</th><th>非検査例外</th><th>エラー</th></tr></thead>
+    <tbody>
+      <tr><td>代表例</td><td><code>IOException</code><br><code>SQLException</code></td><td><code>NullPointerException</code><br><code>ArithmeticException</code></td><td><code>OutOfMemoryError</code><br><code>StackOverflowError</code></td></tr>
+      <tr><td>原因</td><td>外部要因（ファイル・通信）</td><td>プログラムのバグ</td><td>JVM の異常</td></tr>
+      <tr><td>処理の義務</td><td><strong>必須</strong></td><td>任意</td><td>事実上なし</td></tr>
+      <tr><td>書かないと</td><td><strong>コンパイルエラー</strong></td><td>コンパイルは通る</td><td>通る</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>3分類の実質的な違いは <span class="mk pink">「処理を書かないとコンパイルエラーになるか」だけ</span>です。この一点を軸に選択肢を切っていけば、分類問題はほぼ落としません。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>検査例外を投げるのに宣言がない<span class="tag">NG</span></div><pre><code>void m() {
+    throw new IOException();   // コンパイルエラー
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>throws で宣言すれば通る<span class="tag">OK</span></div><pre><code>void m() throws IOException {
+    throw new IOException();
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>非検査例外は何も要らない<span class="tag">OK</span></div><pre><code>void m() {
+    throw new RuntimeException();   // 宣言も catch も不要
+}</code></pre></div>
+</section>

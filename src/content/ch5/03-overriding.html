@@ -1,0 +1,99 @@
+<section id="c5-s03">
+  <div class="sh"><span class="num">03</span><h2>メソッドのオーバーライド</h2></div>
+
+  <p>成立条件は<strong>シグネチャ（名前＋引数リスト）が完全一致</strong>すること。そのうえで4つの制約があります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>規則</th><th>方向</th></tr></thead>
+    <tbody>
+      <tr><td>戻り値の型</td><td>同じ、または<strong>サブ型</strong>（共変戻り値）</td><td>狭めるのは可</td></tr>
+      <tr><td>アクセス修飾子</td><td><strong>狭められない</strong></td><td>広げるのは可</td></tr>
+      <tr><td>検査例外</td><td><strong>増やせない・広げられない</strong></td><td>狭める・減らすのは可</td></tr>
+      <tr><td>非検査例外</td><td><strong>自由</strong></td><td>制限なし</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>すべて実機で確認<span class="tag">最重要</span></div><pre><code>class A { Object m(){ return null; } }
+class B extends A { String m(){ return null; } }        // OK（共変戻り値）
+
+class A { String m(){ return null; } }
+class B extends A { Object m(){ return null; } }        // NG。広げるのは不可
+
+class A { protected void m(){} }
+class B extends A { public void m(){} }                 // OK（広げる）
+
+class A { public void m(){} }
+class B extends A { protected void m(){} }              // NG（狭める）
+
+class A { void m(){} }
+class B extends A { void m() throws IOException {} }    // NG（検査例外を追加）
+
+class A { void m() throws IOException {} }
+class B extends A { void m() throws FileNotFoundException {} }   // OK（狭める）
+
+class A { void m(){} }
+class B extends A { void m() throws RuntimeException {} }        // OK（非検査）</code></pre></div>
+
+  <div class="point"><p>覚え方は<span class="mk">「呼ぶ側が困らないように」</span>です。<code>A</code> 型の変数で呼んでいる人にとって、<br>・戻り値が <code>String</code>（サブ型）に<strong>狭まる</strong>のは困らない ── <code>Object</code> として受け取れる<br>・アクセスが<strong>広がる</strong>のは困らない ── 見えていたものが見え続ける<br>・検査例外が<strong>減る</strong>のは困らない ── catch していた分が減るだけ<br>逆向きはすべて呼び出し側を壊すので禁止されます。</p></div>
+
+  <h3>オーバーライドできないもの</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>3つの禁止<span class="tag">NG</span></div><pre><code>class A { final void m(){} }
+class B extends A { void m(){} }        // error: cannot override（final メソッド）
+
+class A { static void m(){} }
+class B extends A { void m(){} }        // error（static を非static で）
+
+class A { void m(){} }
+class B extends A { static void m(){} } // error（非static を static で）</code></pre></div>
+
+  <div class="point trap"><p><code>static</code> と非 <code>static</code> は<span class="mk">相互に入れ替えられません</span>。static メソッド同士なら書けますが、それはオーバーライドではなく<strong>隠蔽（hiding）</strong>です（節05）。<br><code>private</code> メソッドはそもそも子から見えないので、同名で書いても<strong>まったく別のメソッド</strong>になります。</p></div>
+
+  <div class="point"><p><code>@Override</code> はアノテーションであり必須ではありませんが、<span class="mk">付けておくと綴り間違いをコンパイラが検出</span>してくれます。付けたのにオーバーライドになっていなければ <code>method does not override or implement a method from a supertype</code>。</p></div>
+
+  <h3>戻り値型は「同じ」ではなく「同じかサブ型」</h3>
+
+  <p>ここを「同じでなければいけない」と覚えると、選択肢を1つ間違えます。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>親 → 子</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>String</code> → <code>String</code></td><td>○</td><td>同じ</td></tr>
+      <tr><td><code>Object</code> → <code>String</code></td><td><strong>○</strong></td><td><strong>サブ型に狭めている（共変戻り値）</strong></td></tr>
+      <tr><td><code>String</code> → <code>Object</code></td><td>×</td><td>広げている</td></tr>
+      <tr><td><code>void</code> → <code>String</code></td><td>×</td><td><strong>継承関係がまったく無い</strong></td></tr>
+      <tr><td><code>int</code> → <code>long</code></td><td>×</td><td>基本データ型に共変は効かない</td></tr>
+      <tr><td><code>long</code> → <code>int</code></td><td>×</td><td>同上</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>選択肢の<span class="mk">「戻り値型は同じでなければいけない」は誤り</span>です。サブ型に狭めるのは許されます。<br>共変が効くのは<strong>参照型だけ</strong>。<code>int</code> と <code>long</code> は継承関係ではなく変換の関係なので、共変になりません。</p></div>
+
+  <div class="point link"><p>第4章 節10の <code>record</code> の問題（<code>default void value()</code> と アクセサ <code>String value()</code> の衝突）は、<span class="mk">「違ううえに、サブ型ですらなかった」</span>ケースです。<br><code>Object → String</code> なら通り、<code>void → String</code> は通らない。この一段があるので「同じでなければならない」という覚え方では説明できません。</p></div>
+
+  <h3>4つの条件の非対称</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>規則</th></tr></thead>
+    <tbody>
+      <tr><td><strong>引数リスト</strong></td><td><strong>完全一致</strong>（型・数・順番）── ここだけ緩められない</td></tr>
+      <tr><td>戻り値型</td><td>同じ、またはサブ型</td></tr>
+      <tr><td>アクセス修飾子</td><td>狭められない（広げるのは可）</td></tr>
+      <tr><td>検査例外</td><td>増やせない・広げられない（減らすのは可）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><span class="mk">引数だけが「完全一致」で、残り3つは片方向に緩められます</span>。この非対称そのものを問う選択肢問題が出ます。<br>引数が1つでも違えばオーバーライドではなく<strong>オーバーロード</strong>になる（節04）ので、そこだけは厳密でなければならない、という理屈です。</p></div>
+
+  <h3>誤りの選択肢としてよく出るもの</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>選択肢</th><th>判定</th></tr></thead>
+    <tbody>
+      <tr><td>戻り値型は同じでなければいけない</td><td><strong>×</strong> サブ型可</td></tr>
+      <tr><td>抽象メソッドはオーバーライドできない</td><td><strong>×</strong> むしろ<strong>されるために存在する</strong></td></tr>
+      <tr><td>オーバーロードされたメソッドはオーバーライドできない</td><td><strong>×</strong> それぞれ独立に上書きできる</td></tr>
+      <tr><td>引数リストは型・数・順番すべてが同じ</td><td><strong>○ 正しい</strong></td></tr>
+    </tbody>
+  </table></div>
+</section>

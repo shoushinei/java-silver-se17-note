@@ -1,0 +1,25 @@
+<section id="c6-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>試験前日に、この13項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c6-barfill"></i></div>
+  <div class="barlab" id="c6-barlab">0 / 13</div>
+
+  <ul class="ck" id="c6-cklist">
+    <li data-i="0"><span class="box">✓</span><span class="cktx">検査例外の定義 ── Exception の子孫かつ RuntimeException の子孫でない</span></li>
+    <li data-i="1"><span class="box">✓</span><span class="cktx">try 単体は不可。catch か finally が必要（try-with-resources は例外）</span></li>
+    <li data-i="2"><span class="box">✓</span><span class="cktx">catch はサブクラスが先、スーパークラスが後</span></li>
+    <li data-i="3"><span class="box">✓</span><span class="cktx">multi-catch に継承関係のある例外は並べられない</span></li>
+    <li data-i="4"><span class="box">✓</span><span class="cktx">multi-catch の変数は暗黙的に final</span></li>
+    <li data-i="5"><span class="box">✓</span><span class="cktx">return の値は finally より前に確定して退避される</span></li>
+    <li data-i="6"><span class="box">✓</span><span class="cktx">finally の return は try の return も例外も上書きする</span></li>
+    <li data-i="7"><span class="box">✓</span><span class="cktx">finally が実行されないのは System.exit のときだけ</span></li>
+    <li data-i="8"><span class="box">✓</span><span class="cktx">try-with-resources の close は catch より先、宣言と逆順</span></li>
+    <li data-i="9"><span class="box">✓</span><span class="cktx">オーバーライドで検査例外は広げられない。非検査は自由</span></li>
+      <li><span class="box">✓</span><span class="cktx">try(...) に書けるのは AutoCloseable を実装した型だけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">括弧の中は変数宣言。close() の呼び出しはコンパイラが生成する</span></li>
+    <li><span class="box">✓</span><span class="cktx">Java 9 の try(r) 形式は final か実質 final でなければ不可</span></li>
+</ul>
+  <button class="reset" id="c6-ckreset" type="button">チェックをすべて外す</button>
+
+</section>

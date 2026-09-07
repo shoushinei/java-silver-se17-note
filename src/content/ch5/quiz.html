@@ -1,0 +1,91 @@
+<section id="c5-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>答えを声に出してから開いてください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span><code>P p = new C();</code> のとき <code>p.x</code>（フィールド）と <code>p.m()</code>（メソッド）はどちらの実装？</span></summary>
+    <div class="qa"><p><strong>フィールドは P、メソッドは C。</strong>インスタンスメソッドだけが実行時に実体を見て決まり（動的束縛）、フィールドと static メソッドはコンパイル時に宣言型で決まります（静的束縛）。この章の核心です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>((P)c).x</code> の結果が <code>c.x</code> と違うのはなぜ？</span></summary>
+    <div class="qa"><p><strong>キャストで宣言型が変わったから。</strong>実体は同じですが、フィールドは宣言型で解決されます。親子の同名フィールドは<strong>両方とも実体の中に存在</strong>し、上書きされているわけではありません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span>親に <code>A(int x)</code> だけがあるとき、子の <code>B(){}</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>暗黙の <code>super()</code> が呼べません。エラーは<strong>子クラス側</strong>に出ます。<code>super(0)</code> と明示するか、親に <code>A(){}</code> を足します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span>コンストラクタの実行順序は？</span></summary>
+    <div class="qa"><p><strong>最上位の親までさかのぼってから下りてくる。</strong>各階層で「初期化ブロック → コンストラクタ本体」の順です。親が完成していなければ子を組み立てられないため。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span>オーバーライドで戻り値型・アクセス・検査例外はどう変えられる？</span></summary>
+    <div class="qa"><p><strong>戻り値はサブ型に狭める可、アクセスは広げる可、検査例外は狭める・減らすのが可。</strong>逆はすべて不可。「呼ぶ側が困らない方向にだけ変えられる」と覚えます。非検査例外は自由。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5b</span><span>「オーバーライドの戻り値型は同じでなければいけない」は正しい？</span></summary>
+    <div class="qa"><p><strong>誤り。同じ<strong>またはサブ型</strong>。</strong><code>Object</code> → <code>String</code> は可（共変戻り値）。ただし共変が効くのは<strong>参照型だけ</strong>で、<code>int</code> → <code>long</code> は不可。<code>void</code> → <code>String</code> は継承関係が無いので不可です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5c</span><span>「抽象メソッドはオーバーライドできない」「オーバーロードされたメソッドはオーバーライドできない」は？</span></summary>
+    <div class="qa"><p><strong>どちらも誤り。</strong>抽象メソッドは<strong>オーバーライドされるために存在します</strong>。オーバーロードされたメソッドも、それぞれ独立に上書きできます。4条件のうち<strong>完全一致が要求されるのは引数リストだけ</strong>で、残り3つは片方向に緩められます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>static</code> メソッドはオーバーライドできる？</span></summary>
+    <div class="qa"><p><strong>できない。</strong>static 同士なら書けますが、それは<strong>隠蔽（hiding）</strong>で、宣言型で解決されます。static と非 static を入れ替えるとコンパイルエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span>オーバーライドのつもりで引数の型を間違えるとどうなる？</span></summary>
+    <div class="qa"><p><strong>静かにオーバーロードになる。</strong>コンパイルは通り、親のメソッドが呼ばれ続けます。<code>@Override</code> を付けていればここで止まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span>継承関係のある型へのダウンキャストが失敗するのはいつ？</span></summary>
+    <div class="qa"><p><strong>実行時（ClassCastException）。</strong>コンパイルは通ります。継承関係が<strong>まったく無い</strong>型どうしのキャストはコンパイルエラーになるので、区別してください。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span><code>P p = new C();</code> で <code>C</code> 固有のメソッドを呼ぶには？</span></summary>
+    <div class="qa"><p><strong><code>((C)p).only()</code> とキャストする</strong>か、<code>if (p instanceof C c)</code> でパターン変数を使います。「書ける範囲は宣言型、動く実装は実体型」。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span>abstract メソッドを1つも持たない abstract クラスは？</span></summary>
+    <div class="qa"><p><strong>合法。</strong>「インスタンス化させたくない」という意図だけで付けられます。逆に、abstract メソッドを持つクラスは abstract でなければなりません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10b</span><span><code>AbstractSample s = new ConcreteSample();</code> は合法？</span></summary>
+    <div class="qa"><p><strong>合法。</strong>禁止されているのは <code>new 抽象クラス名()</code> と直接書くことだけで、<strong>型として使うのは自由</strong>です。むしろ型として使うためにある構文。親の具象メソッドから抽象メソッドを呼べば、子の実装が動きます（テンプレートメソッド）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span>abstract クラスはコンストラクタを持てる？ main は書ける？</span></summary>
+    <div class="qa"><p><strong>どちらも可。</strong>コンストラクタは子の <code>super()</code> から呼ばれます。<code>main</code> は static なのでインスタンス不要で、<code>java クラス名</code> で起動できます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span><code>final int[] arr = {1,2};</code> のとき <code>arr[0] = 100;</code> は？</span></summary>
+    <div class="qa"><p><strong>OK。</strong><code>final</code> が固定するのは<strong>矢印であって指す先の中身ではありません</strong>。<code>arr = new int[]{3};</code> だけがエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13</span><span>インタフェースのフィールドとメソッドに暗黙に付く修飾子は？</span></summary>
+    <div class="qa"><p><strong>フィールドは <code>public static final</code>、メソッドは <code>public abstract</code>。</strong>フィールドは定数なので再代入不可。実装側は <code>public</code> を書かないと「アクセスを狭めた」ことになりエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13b</span><span>インタフェースのメソッドに本体を書けるのはどんなとき？</span></summary>
+    <div class="qa"><p><strong><code>default</code> / <code>static</code> / <code>private</code> のいずれかが付いているときだけ。</strong>修飾子なし（＝暗黙に <code>public abstract</code>）に本体を書くと <code>interface abstract methods cannot have body</code>。<code>public</code> や <code>abstract</code> を明示しても同じです。<strong>付いていれば本体が必要、付いていなければ禁止</strong>という対称関係。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13c</span><span>インタフェースのメソッドに <code>protected</code> や <code>final</code> は付けられる？</span></summary>
+    <div class="qa"><p><strong>どちらも不可。</strong><code>protected</code> はインタフェースが「誰でも使える約束事」なので中間段階が成立しません。<code>final</code> はオーバーライド禁止の意味で、オーバーライドされるためにあるインタフェースと矛盾します。<code>public</code> と <code>abstract</code> は冗長ですが書けます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13d</span><span><code>private void a();</code> と <code>private default void c(){ }</code> は？</span></summary>
+    <div class="qa"><p><strong>どちらもエラー。</strong>前者は <code>missing method body</code> ── 本体を省くと暗黙に abstract になり「実装クラスに書かせる」意味になるが、private では相手に見えないので矛盾。後者は <code>illegal combination of modifiers</code> ── 継承させたいのに見せない、で矛盾。<strong><code>private void b(){ }</code> だけが正解</strong>です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13e</span><span><code>new インタフェース名()</code> は？</span></summary>
+    <div class="qa"><p><strong>不可。<code>is abstract; cannot be instantiated</code>。</strong>抽象クラスとまったく同じエラーです。型として使うのは自由。<code>new I(){ ... }</code> は匿名クラスで別物（SE 17 の範囲外）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q14</span><span>インタフェースの <code>static</code> メソッドは実装クラスに継承される？</span></summary>
+    <div class="qa"><p><strong>されない。</strong><code>I.s()</code> はエラーで、<code>G.s()</code> とインタフェース名で呼びます。<code>default</code> は継承されるので、この非対称が出題されます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15</span><span>2つのインタフェースが同名の default を持ち、両方を実装すると？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー（types A and B are incompatible）。</strong>解決はオーバーライドして <code>A.super.m()</code> と名指しすること。Java は曖昧さを書き手に解決させます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15b</span><span>クラスの中で <code>super.m()</code> と書くと、インタフェースの default は呼べる？</span></summary>
+    <div class="qa"><p><strong>呼べない。</strong><code>super</code> は<strong>スーパークラスだけ</strong>を見ます。<code>extends</code> を書いていなければスーパークラスは <code>Object</code> なので <code>cannot find symbol</code>。default を呼ぶには <code>I.super.m()</code> と名指しします。<br>ただし<strong>親クラスがその default を継承していれば</strong> <code>super.m()</code> で届きます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15c</span><span><code>interface B extends A</code>、<code>class C implements B</code> のとき、C から <code>A.super.m()</code> は？</span></summary>
+    <div class="qa"><p><strong>不可（<code>not an enclosing class: A</code>）。</strong>名指しできるのは<strong>直接の親だけ</strong>です。<code>C</code> の直接の親は <code>B</code> なので <code>B.super.m()</code> なら通ります。<strong>implements の右に書かれている名前かどうか</strong>で判定します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q16</span><span>クラスの具象メソッドと default が競合したら？</span></summary>
+    <div class="qa"><p><strong>クラスが勝つ。エラーにはならない。</strong>「クラスは実装、インタフェースは規約」という優先順位です。record のアクセサが default に勝つのも同じ規則。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q17</span><span><code>default String toString()</code> をインタフェースに書ける？</span></summary>
+    <div class="qa"><p><strong>書けない。</strong><code>Object</code> のメソッドは「クラスが勝つ」規則により default が絶対に使われないので、書くこと自体が禁止されています。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18</span><span><code>sealed</code> インタフェースを実装するクラスに必要なものは？</span></summary>
+    <div class="qa"><p><strong><code>final</code> / <code>sealed</code> / <code>non-sealed</code> のいずれかを必ず書く。</strong>書き忘れると <code>sealed, non-sealed or final modifiers expected</code>。<code>record</code> は暗黙に final なので不要です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q19</span><span><code>permits</code> は省略できる？ 相手はどこにあってもよい？</span></summary>
+    <div class="qa"><p><strong>同一ファイル内なら省略可。相手は同じパッケージ（モジュール使用時は同じモジュール）に限る。</strong>封をする以上、コンパイラが全実装を一望できる必要があるためです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q20</span><span><code>sealed</code> と <code>switch</code> のパターンマッチングは SE 17 の出題範囲？</span></summary>
+    <div class="qa"><p><strong>switch のパターンマッチングは範囲外</strong>（SE 17 ではプレビュー機能）。問われるのは <code>sealed</code> の<strong>構文規則</strong> ── permits の範囲、実装側の3択、場所の制約です。</p></div></details>
+</section>

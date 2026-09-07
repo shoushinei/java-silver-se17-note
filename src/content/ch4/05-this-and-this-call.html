@@ -1,0 +1,38 @@
+<section id="c4-s05">
+  <div class="sh"><span class="num">05</span><h2>this と this()</h2></div>
+
+  <h3>this ── 自分自身への参照</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同名の変数を区別する<span class="tag">頻出</span></div><pre><code>class Car {
+    String name;
+    Car(String name) {
+        name = name;            // 何も起きない。引数に引数を代入しているだけ
+        this.name = name;       // 正しい。左がフィールド、右が引数
+    }
+}</code></pre></div>
+
+  <div class="point"><p>ローカル変数（引数を含む）とフィールドが同名のとき、<span class="mk">近い方＝ローカル変数が優先されます</span>（シャドーイング）。フィールドを指したいときは <code>this.</code> が必須です。<br><code>name = name;</code> はコンパイルエラーにならず、<strong>フィールドは既定値のまま</strong>になります。出力を問う問題で <code>null</code> や <code>0</code> が正解になるパターン。</p></div>
+
+  <h3>this() ── 別のコンストラクタを呼ぶ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化処理をまとめる<span class="tag">OK</span></div><pre><code>class Car {
+    String name;
+    int year;
+    Car() { this("無名", 2020); }        // 別のコンストラクタへ委譲
+    Car(String name, int year) {
+        this.name = name;
+        this.year = year;
+    }
+}</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>3つの制約<span class="tag">NG</span></div><pre><code>Car() {
+    System.out.println("x");
+    this("A", 2020);          // エラー: call to this must be first statement
+}
+
+Car(int y) { this(y); }       // エラー: 自分自身は呼べない（再帰的呼び出し）
+
+void m() { this(); }          // エラー: コンストラクタ以外からは呼べない</code></pre></div>
+
+  <div class="point trap"><p><code>this()</code> は<span class="mk">コンストラクタの最初の1文</span>でなければなりません。第5章で扱う <code>super()</code> も同じ制約なので、<strong><code>this()</code> と <code>super()</code> は同時に書けません</strong>（どちらも先頭を要求するため）。</p></div>
+</section>

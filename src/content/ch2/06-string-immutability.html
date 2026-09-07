@@ -1,0 +1,39 @@
+<section id="c2-s06">
+  <div class="sh"><span class="num">06</span><h2>String の不変性</h2></div>
+
+  <p><code>String</code> は<strong>不変（immutable）</strong>です。一度作られた文字列の中身は変わりません。「変更」に見える操作は、すべて<strong>新しいインスタンスを返している</strong>だけです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>元の文字列は変わらない<span class="tag">最重要</span></div><pre><code>String s = "Hello";
+s.concat(" World");
+s.toUpperCase();
+s.replace("H", "J");
+System.out.println(s);   // Hello ← 何も変わっていない</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値を受け取れば変わる<span class="tag">OK</span></div><pre><code>String s = "Hello";
+s = s.concat(" World");
+System.out.println(s);   // Hello World</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">メソッドを呼んだだけで代入していないコードが頻出します。</span>「変数が書き換わったはず」と思って選択肢を選ぶと落ちます。<strong>戻り値を受け取っているかを必ず目で確認</strong>してください。</p></div>
+
+  <h3>== と equals()</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>リテラルは共有される<span class="tag">最重要</span></div><pre><code>String a = "Hello";
+String b = "Hello";
+System.out.println(a == b);        // true  ← 定数プールで同一インスタンス
+
+String c = new String("Hello");
+System.out.println(a == c);        // false ← new は必ず新規インスタンス
+System.out.println(a.equals(c));   // true  ← 中身は同じ</code></pre></div>
+
+  <p>文字列リテラルは<strong>定数プール</strong>に格納され、同じ内容なら同じインスタンスが使い回されます。<code>new</code> を書くと、必ず別のインスタンスが作られます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>連結が定数式かどうかで変わる<span class="tag">要注意</span></div><pre><code>String a = "Hello";
+System.out.println(a == "Hel" + "lo");   // true  ← コンパイル時に確定
+
+String h = "Hel";
+System.out.println(a == h + "lo");       // false ← 実行時に生成される
+
+final String f = "Hel";
+System.out.println(a == f + "lo");       // true  ← final なら定数式</code></pre></div>
+
+  <div class="point link"><p>ここでも <code>final</code> の1語で結果が反転します。<span class="mk pink">コンパイル時に値が確定するか</span>という同じ判定基準が、型変換・String 比較・第6章の multi-catch すべてに共通して効いています。</p></div>
+</section>

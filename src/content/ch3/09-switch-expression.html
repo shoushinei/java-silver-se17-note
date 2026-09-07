@@ -1,0 +1,119 @@
+<section id="c3-s09">
+  <div class="sh"><span class="num">09</span><h2>switch 式</h2></div>
+
+  <div class="point new"><p>Java 14 で正式導入された構文で、<strong>SE 11 Silver には存在しませんでした</strong>。11 の教材では一切カバーされていないので、この節が第3章で最も重要です。</p></div>
+
+  <h3>アロー構文 ── フォールスルーしない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>break が不要になる<span class="tag">形</span></div><pre><code>switch (x) {
+    case 1 -&gt; System.out.println("A");
+    case 2 -&gt; System.out.println("B");
+    default -&gt; System.out.println("D");
+}
+// x が 2 なら "B" だけ。下へ流れない</code></pre></div>
+
+  <p><span class="mk">アロー構文では break を書きません。書くとコンパイルエラーになります。</span>一致した1つだけが実行されます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複数のラベルをまとめられる<span class="tag">OK</span></div><pre><code>switch (x) {
+    case 1, 2, 3 -&gt; System.out.println("小");
+    case 4, 5    -&gt; System.out.println("大");
+    default      -&gt; System.out.println("その他");
+}</code></pre></div>
+
+  <h3>値を返す ── ここが「式」たるゆえん</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>代入できる<span class="tag">最重要</span></div><pre><code>String result = switch (x) {
+    case 1, 2 -&gt; "小";
+    case 3    -&gt; "中";
+    default   -&gt; "大";
+};                              // ← セミコロンが必要！</code></pre></div>
+
+  <div class="point trap"><p>switch <strong>式</strong>は値を作る「式」なので、<span class="mk">閉じ波括弧の後にセミコロンが必要</span>です。switch <strong>文</strong>には要りません。選択肢でここを削られると見落とします。</p></div>
+
+  <h3>yield ── ブロックから値を返す</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複数行書くときは { } と yield<span class="tag">最重要</span></div><pre><code>int result = switch (x) {
+    case 1 -&gt; 10;                 // 1行なら式をそのまま書く
+    case 2 -&gt; {
+        System.out.println("処理");
+        yield 20;                 // ← ブロックからは yield で返す
+    }
+    default -&gt; 0;
+};</code></pre></div>
+
+  <p><code>yield</code> は<strong>予約語ではなく文脈依存キーワード</strong>なので、変数名にも使えます（<code>var</code> と同じ扱い）。「予約語だから識別子に使えない」という選択肢は誤りです。</p>
+
+  <div class="point"><p><span class="mk">yield は switch 式だけを抜け、return はメソッドごと抜けます。</span>役割が違うので流用できず、専用のキーワードが用意されました。</p>
+<div class="code" data-v="ok" style="margin-top:12px"><div class="cap"><span class="dot ok"></span>yield の後もメソッドは続く<span class="tag">要注意</span></div><pre><code>int m(int x) {
+    int r = switch (x) {
+        case 1 -&gt; { yield 10; }    // switch 式を抜けて r に 10 が入る
+        default -&gt; 0;
+    };
+    System.out.println("続き");     // ← 実行される
+    return r;
+}</code></pre></div></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>return は使えない<span class="tag">NG</span></div><pre><code>int result = switch (x) {
+    case 1 -&gt; { return 10; }      // コンパイルエラー
+    default -&gt; 0;
+};</code></pre></div>
+
+  <h3>各 case が取れる3つの形</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>式・ブロック・例外<span class="tag">OK</span></div><pre><code>int result = switch (x) {
+    case 1 -&gt; 10;                            // ① 式だけ → そのまま値になる
+    case 2 -&gt; { yield 20; }                  // ② ブロック → yield で返す
+    case 3 -&gt; throw new RuntimeException();  // ③ 例外 → 値を返さなくてよい
+    default -&gt; 0;
+};</code></pre></div>
+
+  <h3>網羅性 ── すべての場合をカバーする必要がある</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>default がないとエラー<span class="tag">最重要</span></div><pre><code>int x = 5;
+String s = switch (x) {
+    case 1 -&gt; "A";
+    case 2 -&gt; "B";
+};                    // コンパイルエラー: すべての値をカバーしていない</code></pre></div>
+
+  <p><span class="mk">値を返す switch 式は、あらゆる入力に対して値を返せなければいけません。</span>int や String では現実的に全部を列挙できないので、<strong>default が必須</strong>になります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>enum を全部書けば default 不要<span class="tag">要注意</span></div><pre><code>enum Color { RED, GREEN, BLUE }
+
+String s = switch (color) {
+    case RED   -&gt; "赤";
+    case GREEN -&gt; "緑";
+    case BLUE  -&gt; "青";
+};                    // OK。全定数を網羅しているので default は省略できる</code></pre></div>
+
+  <div class="point"><p>ただし<strong>値を返さない</strong>switch 式（文として使う場合）は、網羅性を要求されません。<span class="mk">「値を返すかどうか」が default 必須かを分けます。</span></p></div>
+
+  <h3>コロン構文とアロー構文は混在できない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>どちらかに統一する<span class="tag">NG</span></div><pre><code>switch (x) {
+    case 1 -&gt; System.out.println("A");
+    case 2: System.out.println("B"); break;   // コンパイルエラー: 混在は不可
+}</code></pre></div>
+
+  <p>従来のコロン構文でも <code>yield</code> を使って値を返せます（この形も出題されます）。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>コロン構文 + yield<span class="tag">OK</span></div><pre><code>int result = switch (x) {
+    case 1: yield 10;
+    case 2: yield 20;
+    default: yield 0;
+};</code></pre></div>
+
+  <h3>まとめ表</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>switch 文（コロン）</th><th>switch 式（アロー）</th></tr></thead>
+    <tbody>
+      <tr><td>フォールスルー</td><td><strong>する</strong></td><td><strong>しない</strong></td></tr>
+      <tr><td>break</td><td>必要</td><td><strong>書けない</strong></td></tr>
+      <tr><td>値を返す</td><td>不可</td><td>可能</td></tr>
+      <tr><td>複数ラベル</td><td><code>case 1: case 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
+      <tr><td>ブロックから値を返す</td><td>—</td><td><code>yield</code></td></tr>
+      <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
+      <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
+    </tbody>
+  </table></div>
+</section>

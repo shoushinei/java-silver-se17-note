@@ -1,0 +1,36 @@
+<section id="c4-s03">
+  <div class="sh"><span class="num">03</span><h2>メソッドと引数の渡し方</h2></div>
+
+  <p>Java の引数の渡し方は<strong>値渡しだけ</strong>です。参照型でも例外はありません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本データ型 ── 呼び出し元は変わらない<span class="tag">OK</span></div><pre><code>static void change(int x) { x = 100; }
+
+int a = 1;
+change(a);
+System.out.println(a);       // 1（変わらない）</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>参照型 ── 中身は変わるが、差し替えは効かない<span class="tag">最重要</span></div><pre><code>static void modify(int[] arr) { arr[0] = 100; }     // 中身を書き換え
+static void replace(int[] arr) { arr = new int[]{9}; }  // 矢印を差し替え
+
+int[] x = {1, 2};
+modify(x);
+System.out.println(x[0]);    // 100 ← 変わる
+
+int[] y = {1, 2};
+replace(y);
+System.out.println(y[0]);    // 1 ← 変わらない</code></pre></div>
+
+  <div class="point"><p>渡されるのは<span class="mk">矢印のコピー</span>です。コピーした矢印でも<strong>指す先は同じ</strong>なので、中身の書き換えは呼び出し元に伝わります。<br>一方、メソッド内で <code>arr = ...</code> と代入するのは<strong>コピーした矢印の向きを変えているだけ</strong>で、元の矢印には何の影響もありません。この対比が必ず出ます。</p></div>
+
+  <h3>可変長引数</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実体は配列<span class="tag">要注意</span></div><pre><code>static void m(String... s) { System.out.println(s.length); }
+
+m();                 // 0（null ではなく長さ0の配列）
+m("a", "b");         // 2
+m(new String[]{"a"});// 1（配列をそのまま渡せる）</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2つの制約<span class="tag">NG</span></div><pre><code>void m(String... s, int x) { }      // エラー: 可変長引数は最後だけ
+void m(int... a, String... b) { }   // エラー: 2つは書けない
+void m(int x, String... s) { }      // OK</code></pre></div>
+</section>

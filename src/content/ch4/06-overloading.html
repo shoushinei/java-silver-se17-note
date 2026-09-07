@@ -1,0 +1,45 @@
+<section id="c4-s06">
+  <div class="sh"><span class="num">06</span><h2>メソッドのオーバーロード</h2></div>
+
+  <p>同じ名前で複数のメソッドを定義することです。成立条件は<strong>引数リストが違うこと</strong>、それだけです。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>違うもの</th><th>オーバーロードになるか</th></tr></thead>
+    <tbody>
+      <tr><td>引数の<strong>型</strong></td><td>○</td></tr>
+      <tr><td>引数の<strong>数</strong></td><td>○</td></tr>
+      <tr><td>引数の<strong>順序</strong>（型が違う場合）</td><td>○</td></tr>
+      <tr><td>戻り値の型だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td>引数名だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td>アクセス修飾子だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値型は区別に使われない<span class="tag">頻出</span></div><pre><code>void m(int x) { }
+int  m(int x) { return 0; }
+// エラー: method m(int) is already defined in class</code></pre></div>
+
+  <h3>どれが呼ばれるか ── 優先順位</h3>
+
+  <p>候補が複数あるとき、コンパイラは<strong>この順で</strong>探します。上で見つかればそこで確定します。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>順位</th><th>方法</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>完全一致</td><td><code>m(5)</code> → <code>m(int)</code></td></tr>
+      <tr><td>2</td><td><strong>拡大変換</strong></td><td><code>m(5)</code> → <code>m(long)</code></td></tr>
+      <tr><td>3</td><td><strong>ボクシング</strong></td><td><code>m(5)</code> → <code>m(Integer)</code></td></tr>
+      <tr><td>4</td><td><strong>可変長引数</strong></td><td><code>m(5)</code> → <code>m(int...)</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実際に確かめた結果<span class="tag">最重要</span></div><pre><code>static void n(long x)    { System.out.println("long"); }
+static void n(Integer x) { System.out.println("Integer"); }
+n(5);                    // long ← 拡大変換がボクシングより優先
+
+static void k(Integer x) { System.out.println("Integer"); }
+static void k(int... x)  { System.out.println("varargs"); }
+k(5);                    // Integer ← ボクシングが可変長より優先</code></pre></div>
+
+  <div class="point"><p>覚え方は<span class="mk">「面倒な処理ほど後回し」</span>です。拡大変換は数値を広げるだけ、ボクシングはオブジェクトを作る、可変長引数は配列を作る。<strong>コンパイラは手間の少ない方から試します</strong>。<br>第2章の「拡大変換とボクシングは組み合わせられない」もここに繋がります。<code>m(Long)</code> しかないところに <code>int</code> を渡すと、<strong>拡大してからボクシングはできない</strong>のでエラーになります。</p></div>
+</section>

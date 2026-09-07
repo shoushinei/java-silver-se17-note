@@ -1,0 +1,19 @@
+:root{
+  --sumi:#1A1C23;
+  --sumi-2:#3D414F;
+  --sumi-3:#6E7382;
+  --washi:#FCFBF8;
+  --washi-2:#F3F1EA;
+  --rule:#E2DED2;
+  --marker:#FFE873;
+  --marker-2:#FFD5E6;
+  --ok:#0F7B5A;
+  --ok-bg:#EAF6F1;
+  --err:#C4304A;
+  --err-bg:#FCEDEF;
+  --run:#A96A00;
+  --run-bg:#FCF3E3;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Shippori Mincho B1",serif;
+  --body:"Noto Sans JP",system-ui,sans-serif;
+}

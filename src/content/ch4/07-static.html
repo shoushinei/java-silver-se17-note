@@ -1,0 +1,47 @@
+<section id="c4-s07">
+  <div class="sh"><span class="num">07</span><h2>static 変数と static メソッド</h2></div>
+
+  <p><code>static</code> が付いたものは<strong>クラスに1つ</strong>、付かないものは<strong>インスタンスごとに1つ</strong>です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>共有されるかどうか<span class="tag">基本</span></div><pre><code>class Counter {
+    static int shared;      // クラスに1つ
+    int each;               // インスタンスごとに1つ
+}
+
+Counter a = new Counter();
+Counter b = new Counter();
+a.shared = 10;  a.each = 1;
+b.shared++;     b.each = 2;
+
+System.out.println(a.shared);   // 11 ← b の変更が a にも見える
+System.out.println(a.each);     // 1  ← 独立している</code></pre></div>
+
+  <h3>アクセスの向きは一方通行</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>どこから</th><th>static メンバへ</th><th>インスタンスメンバへ</th></tr></thead>
+    <tbody>
+      <tr><td>インスタンスメソッド</td><td>○</td><td>○</td></tr>
+      <tr><td><strong>static メソッド</strong></td><td>○</td><td><strong>×</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>static からインスタンスは見えない<span class="tag">最頻出</span></div><pre><code>class St {
+    int f = 1;
+    static void m() {
+        System.out.println(f);       // コンパイルエラー
+        // non-static variable f cannot be referenced from a static context
+        System.out.println(this);    // エラー: static に this は存在しない
+    }
+}</code></pre></div>
+
+  <div class="point"><p>理由は<span class="mk">static メソッドはインスタンスが1つも無くても呼べる</span>からです。呼ばれた時点で「どの実体の <code>f</code> か」が決まらないので、参照しようがありません。<br>逆向き（インスタンスメソッドから static）は、クラスが読み込まれている以上 static は必ず存在するので、問題なく使えます。<br><code>main</code> が <code>static</code> であるがゆえに、そこからインスタンス変数を直接触れないのも同じ理由です。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>インスタンス経由でも static は同じ実体<span class="tag">要注意</span></div><pre><code>Counter a = null;
+System.out.println(a.shared);    // NullPointerException にならない！
+
+// static メンバは参照ではなくクラスで解決されるため、
+// a.shared は Counter.shared に読み替えられる</code></pre></div>
+
+  <div class="point trap"><p><code>null</code> の変数から static メンバを呼んでも<span class="mk">例外になりません</span>。コンパイル時に <code>クラス名.メンバ</code> へ読み替えられるからです。<br>「<code>null.静的メソッド()</code> は NPE になる」という選択肢は誤りです。</p></div>
+</section>

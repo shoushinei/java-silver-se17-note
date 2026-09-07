@@ -1,0 +1,33 @@
+<section id="c3-s06">
+  <div class="sh"><span class="num">06</span><h2>三項演算子</h2></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>int max = (a &gt; b) ? a : b;
+
+// 条件 ? 真のときの値 : 偽のときの値</code></pre></div>
+
+  <p>条件部分は<strong>必ず boolean</strong> でなければいけません。そして<span class="mk">選ばれなかった側は評価されません</span>（短絡評価と同じ）。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>選ばれない側は実行されない<span class="tag">要注意</span></div><pre><code>int i = 0, j = 0;
+int r = true ? i++ : j++;
+System.out.println(i + " " + j);   // 1 0 ← j++ は実行されない</code></pre></div>
+
+  <h3>結果の型は数値昇格される</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>両辺の型が揃えられる<span class="tag">最重要</span></div><pre><code>System.out.println(true ? 1 : 2.0);      // 1.0 ← int と double なので double に昇格
+System.out.println(true ? 'a' : 98);     // a   ← 定数が char の範囲内なら char
+System.out.println(true ? 1 : 'a');      // 1</code></pre></div>
+
+  <div class="point trap"><p><code>true ? 1 : 2.0</code> が <strong>1 ではなく 1.0</strong> になるのが引っかけです。<span class="mk">実際に選ばれなかった側の型も、結果の型に影響します。</span></p></div>
+
+  <h3>ネストは右から結合する</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>右結合<span class="tag">要注意</span></div><pre><code>String s = a ? "A" : b ? "B" : "C";
+
+// 実際はこう解釈される
+String s = a ? "A" : (b ? "B" : "C");</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>文は書けない<span class="tag">NG</span></div><pre><code>int x = (a &gt; b) ? System.out.println("A") : 0;   // エラー: void は値ではない
+(a &gt; b) ? doSomething() : doOther();              // エラー: 式文として不正</code></pre></div>
+
+  <p>三項演算子は<strong>値を作るための「式」</strong>です。<span class="mk">結果を代入するか、値として使わなければいけません。</span></p>
+</section>

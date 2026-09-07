@@ -1,0 +1,208 @@
+<section id="c5-s10">
+  <div class="sh"><span class="num">10</span><h2>default / static / private メソッド</h2></div>
+
+  <p>インタフェースが実装を持てるようになった経緯を知ると、規則が導けます。</p>
+
+  <div class="point"><p>Java 8 でラムダ式が入ったとき、<code>List</code> や <code>Collection</code> に <code>forEach</code> を追加したくなりました。しかし従来のインタフェースにメソッドを足すと<span class="mk">世界中の実装クラスが一斉にコンパイルエラー</span>になります。<br>そこで「実装を持ったメソッド」を許し、既存クラスを壊さずに機能追加できるようにした。<code>default</code> の本質は<strong>後方互換のための仕組み</strong>です。</p></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th><code>default</code></th><th><code>static</code></th><th><code>private</code></th></tr></thead>
+    <tbody>
+      <tr><td>実装クラスに継承される</td><td><strong>○</strong></td><td><strong>×</strong></td><td>×</td></tr>
+      <tr><td>呼び方</td><td>インスタンス経由</td><td><strong>インタフェース名</strong>経由</td><td>内部からのみ</td></tr>
+      <tr><td>オーバーライド</td><td>○</td><td>×</td><td>×</td></tr>
+      <tr><td>導入</td><td>SE 8</td><td>SE 8</td><td>SE 9</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>static は実装クラスに継承されない<span class="tag">頻出</span></div><pre><code>interface G { static void s(){} default void d(){} }
+class I implements G { }
+
+new I().d();      // OK
+I.s();            // error: cannot find symbol
+G.s();            // OK。インタフェース名で呼ぶ</code></pre></div>
+
+  <h3>default が衝突したら</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ名前の default を2つ実装<span class="tag">最頻出</span></div><pre><code>interface A { default void m(){ System.out.println("A"); } }
+interface B { default void m(){ System.out.println("B"); } }
+class C implements A, B { }
+// error: types A and B are incompatible</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>解決はオーバーライド＋名指し<span class="tag">OK</span></div><pre><code>class C implements A, B {
+    public void m(){
+        A.super.m();       // インタフェース名.super.メソッド()
+        B.super.m();
+    }
+}</code></pre></div>
+
+  <div class="point"><p>Java は多重継承の曖昧さを<span class="mk">コンパイラに解決させず、書き手に選ばせます</span>。<code>A.super.m()</code> という構文は、この場面でしか使いません。</p></div>
+
+  <h3>クラスが常に勝つ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>エラーにはならない<span class="tag">要注意</span></div><pre><code>class Par { public void m(){ System.out.println("クラスが勝つ"); } }
+interface In { default void m(){ System.out.println("インタフェース"); } }
+class Sub extends Par implements In { }
+
+new Sub().m();      // クラスが勝つ</code></pre></div>
+
+  <div class="point trap"><p>クラスの具象メソッドと <code>default</code> が競合した場合、<span class="mk">クラス側が無条件で優先</span>されます。「クラスは実装、インタフェースは規約」という優先順位です。<br>第4章 節10の <code>record</code> のアクセサが default に勝つのも、この規則です。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>Object のメソッドは default にできない<span class="tag">NG</span></div><pre><code>interface I { default String toString(){ return "x"; } }
+// error: default method toString in interface I overrides a member of java.lang.Object</code></pre></div>
+
+  <p><code>toString</code> / <code>equals</code> / <code>hashCode</code> はすべてのクラスが <code>Object</code> から継承しており、「クラスが勝つ」規則により<strong>その default が絶対に使われない</strong>ため、書くこと自体が禁止されています。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>default に付けられない修飾子</th><th>エラー</th></tr></thead>
+    <tbody>
+      <tr><td><code>final</code></td><td><code>modifier final not allowed here</code></td></tr>
+      <tr><td><code>static</code> / <code>abstract</code> / <code>private</code></td><td><code>illegal combination of modifiers</code></td></tr>
+      <tr><td><code>protected</code> / <code>synchronized</code></td><td>不可</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><code>private</code> メソッド（SE 9以降）は、<span class="mk">複数の default メソッドで共通処理をくくり出す</span>ために追加されました。<code>private static</code> も書けます。外部からは一切見えません。</p></div>
+
+
+  <h3>メソッドに本体を書けるかは、修飾子で決まる</h3>
+
+  <p>インタフェースのメソッドは<strong>4種類しかありません</strong>。修飾子を見れば、本体が要るか要らないかが一意に決まります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>本体</th><th>正体</th></tr></thead>
+    <tbody>
+      <tr><td><code>void m();</code></td><td><strong>禁止</strong></td><td>暗黙に <code>public abstract</code></td></tr>
+      <tr><td><code>default void m(){ }</code></td><td><strong>必要</strong></td><td>実装クラスに継承される</td></tr>
+      <tr><td><code>static void m(){ }</code></td><td><strong>必要</strong></td><td>インタフェース名で呼ぶ</td></tr>
+      <tr><td><code>private void m(){ }</code></td><td><strong>必要</strong></td><td>内部専用（SE 9+）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>修飾子なしに本体を書くと<span class="tag">最頻出</span></div><pre><code>public interface S { void m(){ } }
+// error: interface abstract methods cannot have body
+
+public interface S { public void m(){ } }      // 同じエラー
+public interface S { abstract void m(){ } }    // 同じエラー</code></pre></div>
+
+  <div class="point"><p>エラーメッセージが答えを言っています。<span class="mk">修飾子なし＝ abstract メソッド</span>なので本体を持てません。<code>public</code> を明示しても <code>abstract</code> は消えないので同じです。<br><code>default</code> は<strong>本体を書く許可証</strong>だと考えてください。SE 8 で導入したとき「本体を書いたら自動的にデフォルト実装になる」仕様にすると<strong>意図せず実装を提供してしまう</strong>危険があったため、明示的な宣言を要求する形にしました。</p></div>
+
+  <h3>冗長な修飾子はエラーにならない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>4通りとも同じ意味<span class="tag">要注意</span></div><pre><code>void m();                     // 標準的な書き方
+public void m();              // public は冗長
+abstract void m();            // abstract も冗長
+public abstract void m();     // 両方冗長</code></pre></div>
+
+  <p>暗黙に付くものを明示しただけなので、すべて正しい書き方です。<strong>選択肢に4つ並んでいて全部正解</strong>というパターンがあり得ます。</p>
+
+  <h3>修飾子の可否 ── 一覧</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>修飾子</th><th>付けられるか</th><th>本体</th></tr></thead>
+    <tbody>
+      <tr><td>なし</td><td>○</td><td>禁止</td></tr>
+      <tr><td><code>public</code></td><td>○（冗長）</td><td>禁止</td></tr>
+      <tr><td><code>abstract</code></td><td>○（冗長）</td><td>禁止</td></tr>
+      <tr><td><code>default</code></td><td>○</td><td>必要</td></tr>
+      <tr><td><code>static</code></td><td>○</td><td>必要</td></tr>
+      <tr><td><code>private</code></td><td>○</td><td>必要</td></tr>
+      <tr><td><code>protected</code></td><td><strong>×</strong></td><td><code>modifier protected not allowed here</code></td></tr>
+      <tr><td><code>final</code></td><td><strong>×</strong></td><td><code>modifier final not allowed here</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><code>protected</code> が使えないのは、インタフェースが「<span class="mk">誰でも使える約束事</span>」だからです。<code>public</code> か（内部専用の）<code>private</code> の2択しかなく、「サブクラスまで」という中間段階が成立しません。<br><code>final</code> が使えないのは、インタフェースのメソッドが<strong>オーバーライドされるためにある</strong>からです。<code>default</code> に付けようとしても同じ理由で弾かれます。</p></div>
+
+  <h3>組み合わせの可否</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>組み合わせ</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>private static void m(){ }</code></td><td><strong>○</strong></td><td>矛盾しない。static メソッドの共通処理に使う</td></tr>
+      <tr><td><code>public default void m(){ }</code></td><td>○</td><td><code>public</code> は冗長</td></tr>
+      <tr><td><code>public static void m(){ }</code></td><td>○</td><td>同上</td></tr>
+      <tr><td><code>default static void m(){ }</code></td><td><strong>×</strong></td><td><code>illegal combination</code> 所属先が違う</td></tr>
+      <tr><td><code>private default void m(){ }</code></td><td><strong>×</strong></td><td>継承させたいのに見せない、で矛盾</td></tr>
+      <tr><td><code>final default void m(){ }</code></td><td><strong>×</strong></td><td><code>final</code> 自体が不可</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>private メソッドの2つの罠</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>本体を省略できない<span class="tag">頻出</span></div><pre><code>public interface S { private void a(); }
+// error: missing method body, or declare abstract</code></pre></div>
+
+  <div class="point trap"><p>本体を省略すると<span class="mk">暗黙に abstract が付く</span>＝「実装クラスに書かせる」という意味になります。しかし <code>private</code> は実装クラスからも見えない。<strong>書いてほしい相手が、そのメソッドの存在を知らない</strong>という矛盾です。<br><code>private abstract</code> も禁止なので、<strong>本体を書く以外に道がありません</strong>。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>default と併用できない<span class="tag">頻出</span></div><pre><code>public interface S { private default void c(){ } }
+// error: illegal combination of modifiers: private and default</code></pre></div>
+
+  <h3>private の用途 ── ただし文法上は独立</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>default の共通処理をくくり出す<span class="tag">OK</span></div><pre><code>interface S {
+    private void log(String s){ System.out.println("[log] " + s); }   // 共通処理
+    default void d1(){ log("d1"); }
+    default void d2(){ log("d2"); }
+}
+// [log] d1
+// [log] d2</code></pre></div>
+
+  <div class="point"><p>SE 9 で追加された目的は、<code>default</code> が増えたときの<span class="mk">重複を1か所にまとめる</span>ことです。しかも内部の都合なので実装クラスには見せたくない。この2つの要求から生まれました。<br>ただし<strong>文法上は <code>default</code> の存在に依存しません</strong>。<code>default</code> が1つも無くても、呼び出し元が無くてもコンパイルは通ります。<span class="mk">用途としてはセット、文法としては独立</span>と分けて覚えてください。</p></div>
+
+  <div class="point trap"><p>「誰からも呼ばれないメソッドは意味がないのでは」と感じても、<strong>コンパイラは文法しか見ません</strong>。未使用の変数やメソッドはエラーになりません。<br>問題文が「<span class="mk">記述してコンパイルできるコードを選べ</span>」なら文法だけ、「実行結果を選べ」なら挙動、と<strong>何が問われているかを先に読む</strong>のがこの試験では一貫して効きます。</p></div>
+
+  <h3>super. と インタフェース名.super. の使い分け</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>見に行く先</th></tr></thead>
+    <tbody>
+      <tr><td><code>super.m()</code></td><td><strong>スーパークラス</strong>のみ。インタフェースは一切見ない</td></tr>
+      <tr><td><code>I.super.m()</code></td><td><strong>直接</strong>実装／継承したインタフェースの default メソッド</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>素の super はインタフェースを見ない<span class="tag">最頻出</span></div><pre><code>interface A { default void sample(){ System.out.println("Hello"); } }
+interface B extends A { }
+
+class C implements B {
+    public void sample(){
+        super.sample();          // error: cannot find symbol
+    }
+}
+// C は extends を書いていない → スーパークラスは Object
+// Object に sample() は無い</code></pre></div>
+
+  <div class="point"><p>クラスの親は1つしかないので <code>super</code> だけで一意に決まります。インタフェースは<span class="mk">複数実装できるので、どれのことか名指しが必要</span>。だから前に名前が付きます。<br>覚え方は、<strong><code>super.</code> は縦のライン（継承）を1段上る、<code>名前.super.</code> は横のライン（インタフェース）から名指しで取ってくる</strong>。</p></div>
+
+  <h3>名指しできるのは「直接の親」だけ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>間接的な祖先は指せない<span class="tag">最頻出</span></div><pre><code>interface A { default void sample(){ System.out.println("Hello"); } }
+interface B extends A { }
+class C implements B {
+    public void sample(){
+        A.super.sample();        // error: not an enclosing class: A
+        B.super.sample();        // OK ── B は A から sample() を継承している
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p><code>C implements B</code> なので、<code>C</code> から見た直接の親は <code>B</code> だけ。<code>A</code> は <code>B</code> の親であって <code>C</code> の直接の親ではありません。<br>判定は簡単で、<span class="mk">implements（インタフェース内なら extends）の右に書かれている名前かどうか</span>を見ます。<code>A.super</code> と <code>B.super</code> の1文字違いで正誤が変わります。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>インタフェースの中でも使える<span class="tag">OK</span></div><pre><code>interface A { default void m(){ System.out.println("A の default"); } }
+interface B extends A {
+    default void m(){ A.super.m(); System.out.println("B の default"); }
+}
+// 出力: A の default / B の default
+
+// ただし素の super.m() はインタフェース内でも不可（スーパークラスが存在しない）</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親クラス経由なら super. で届く<span class="tag">要注意</span></div><pre><code>interface I { default void m(){ System.out.println("I の default"); } }
+class Base implements I { }              // m() を継承しているだけ
+class Sub extends Base {
+    void call(){ super.m(); }            // OK → I の default
+}</code></pre></div>
+
+  <div class="point"><p><code>super.</code> は「インタフェースを見に行かない」のではなく、<span class="mk">スーパークラスだけを見て、そこで見つかればよい</span>という動き方です。<code>Base</code> は <code>I</code> から <code>m()</code> を継承しているので、<code>Base</code> のメソッドとして存在します。<strong>間にクラスが1枚挟まっていれば届きます</strong>。</p></div>
+
+  <div class="point"><p>判定手順。<code>super.m()</code> を見たら ──<br>① <span class="mk">extends を書いているか</span>。書いていなければスーパークラスは <code>Object</code><br>② その親クラスが <code>m()</code> を持っているか（自分で定義／継承のどちらでも可）</p></div>
+</section>

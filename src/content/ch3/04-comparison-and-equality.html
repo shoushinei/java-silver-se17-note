@@ -1,0 +1,45 @@
+<section id="c3-s04">
+  <div class="sh"><span class="num">04</span><h2>比較演算子と等価性</h2></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>boolean に大小比較は使えない<span class="tag">NG</span></div><pre><code>boolean a = true, b = false;
+a &gt; b;         // コンパイルエラー
+a == b;        // OK ← 等価比較だけは可能</code></pre></div>
+
+  <h3>== は「参照」、equals は「中身」</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本データ型と参照型で意味が変わる<span class="tag">最重要</span></div><pre><code>int a = 5, b = 5;
+a == b;                              // true  ← 値そのものを比較
+
+String s = "abc";
+String t = new String("abc");
+s == t;                              // false ← 参照を比較
+s.equals(t);                         // true
+
+Integer x = 127, y = 127;
+Integer p = 128, q = 128;
+x == y;                              // true  ← キャッシュ範囲
+p == q;                              // false</code></pre></div>
+
+  <div class="point link"><p>第2章の内容がそのまま出ます。<span class="mk pink">Integer は -128〜127 だけキャッシュされる</span>、<span class="mk pink">文字列リテラルは定数プールで共有される</span>の2点を思い出してください。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>片方が基本データ型ならアンボクシングされる<span class="tag">要注意</span></div><pre><code>Integer p = 128;
+int q = 128;
+System.out.println(p == q);    // true ← p がアンボクシングされ値比較になる
+
+Integer a = 128, b = 128;
+System.out.println(a == b);          // false ← 両方参照型
+System.out.println(a.equals(b));     // true</code></pre></div>
+
+  <h3>instanceof</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>null は常に false<span class="tag">要注意</span></div><pre><code>String s = null;
+System.out.println(s instanceof String);   // false ← 例外にはならない
+
+Object o = "abc";
+System.out.println(o instanceof String);   // true</code></pre></div>
+
+  <div class="point new"><p>SE 17 では <code>instanceof</code> の<strong>パターンマッチング</strong>が追加されています。詳しくは第4章で扱いますが、形だけ覚えておいてください。</p>
+<div class="code" data-v="ok" style="margin-top:12px"><div class="cap"><span class="dot ok"></span>キャストが不要になる<span class="tag">SE17</span></div><pre><code>if (o instanceof String s) {      // 判定と同時に s に代入される
+    System.out.println(s.length());
+}</code></pre></div></div>
+</section>

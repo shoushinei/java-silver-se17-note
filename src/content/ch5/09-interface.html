@@ -1,0 +1,67 @@
+<section id="c5-s09">
+  <div class="sh"><span class="num">09</span><h2>インタフェース</h2></div>
+
+  <p>省略された修飾子を補って読むのが、この節のすべてです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>暗黙に付くもの<span class="tag">最重要</span></div><pre><code>interface I {
+    int X = 1;                    // 実際は public static final int X = 1;
+    void m();                     // 実際は public abstract void m();
+    default void d(){ }           // 実際は public default void d(){ }
+    static void s(){ }            // 実際は public static void s(){ }
+    private void h(){ }           // SE 9以降。private はそのまま
+}</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>メンバ</th><th>暗黙に付く修飾子</th></tr></thead>
+    <tbody>
+      <tr><td>フィールド</td><td><code>public static final</code>（定数。再代入不可）</td></tr>
+      <tr><td>メソッド（本体なし）</td><td><code>public abstract</code></td></tr>
+      <tr><td><code>default</code> / <code>static</code> メソッド</td><td><code>public</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>実装側で public を書き忘れる<span class="tag">最頻出</span></div><pre><code>interface I { void m(); }          // 暗黙に public
+
+class C implements I {
+    void m(){ }                     // 修飾子なし → public より狭い
+}
+// error: m() in C cannot implement m() in I
+//        attempting to assign weaker access privileges; was public</code></pre></div>
+
+  <div class="point trap"><p>インタフェースのメソッドは<span class="mk">暗黙に public</span>なので、実装側も必ず <code>public</code> を書きます。節03の「アクセスを狭められない」がここに効いています。<br>これは非常によく出る引っかけです。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>定数への再代入<span class="tag">NG</span></div><pre><code>interface I { int X = 1; }
+I.X = 2;      // error: cannot assign a value to static final variable X</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>できること</th><th>できないこと</th></tr></thead>
+    <tbody>
+      <tr><td>複数のインタフェースを実装</td><td>コンストラクタを持つ</td></tr>
+      <tr><td>インタフェース同士の多重継承</td><td>インスタンスフィールドを持つ</td></tr>
+      <tr><td><code>extends</code> と <code>implements</code> の併用</td><td>インスタンス化する</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>順序は extends が先<span class="tag">要注意</span></div><pre><code>class C extends P implements A, B { }     // OK
+class C implements A, B extends P { }     // コンパイルエラー</code></pre></div>
+
+  <h3>インタフェースもインスタンス化できない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>抽象クラスと同じエラー<span class="tag">頻出</span></div><pre><code>interface I { void m(); }
+
+new I();                    // error: I is abstract; cannot be instantiated
+I i = new Impl();           // OK。型として使うのは自由</code></pre></div>
+
+  <div class="point"><p>エラーメッセージは抽象クラスのときと<span class="mk">一字一句同じ</span>です。インタフェースのメソッドは暗黙に <code>abstract</code> なので、本体を持たないものが含まれている ── 実体を作っても実行するコードが無いからです。<br><code>new</code> できない2つ（抽象クラス・インタフェース）は、どちらも<strong>「未完成のメソッドを含んでいるから」</strong>という同じ理由です。</p></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th><code>new</code> できるか</th><th>型として使えるか</th></tr></thead>
+    <tbody>
+      <tr><td>普通のクラス</td><td>○</td><td>○</td></tr>
+      <tr><td><strong>抽象クラス</strong></td><td><strong>×</strong></td><td>○</td></tr>
+      <tr><td><strong>インタフェース</strong></td><td><strong>×</strong></td><td>○</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><code>new I(){ ... }</code> のように後ろに <code>{ }</code> が続く形（匿名クラス）は通りますが、これは<strong>インタフェースを実装した名前の無いクラスをその場で定義している</strong>だけで、インタフェースのインスタンス化ではありません。<span class="mk">匿名クラスは SE 17 の出題範囲外</span>です。</p></div>
+</section>

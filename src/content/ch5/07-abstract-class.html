@@ -1,0 +1,61 @@
+<section id="c5-s07">
+  <div class="sh"><span class="num">07</span><h2>抽象クラス</h2></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実装を持てる「未完成のクラス」<span class="tag">基本</span></div><pre><code>abstract class Animal {
+    String name;                          // フィールドを持てる
+    Animal(String n){ this.name = n; }    // コンストラクタを持てる
+    void breathe(){ }                     // 実装のあるメソッドも書ける
+    abstract void cry();                  // 本体が無い。子に実装を強制する
+}</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>規則</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>インスタンス化</td><td><strong>不可</strong>（<code>A is abstract; cannot be instantiated</code>）</td></tr>
+      <tr><td>コンストラクタ</td><td><strong>持てる</strong>。子の <code>super()</code> から呼ばれる</td></tr>
+      <tr><td>abstract メソッド</td><td><strong>0個でもよい</strong></td></tr>
+      <tr><td>abstract メソッドに本体</td><td>不可（<code>abstract methods cannot have a body</code>）</td></tr>
+      <tr><td><code>abstract</code> + <code>final</code></td><td>不可（<code>illegal combination of modifiers</code>）</td></tr>
+      <tr><td><code>abstract</code> + <code>private</code></td><td>不可（子から実装できないため）</td></tr>
+      <tr><td><code>abstract</code> + <code>static</code></td><td>不可</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p><span class="mk">abstract メソッドを1つも持たない abstract クラス</span>は合法です。「インスタンス化させたくない」という意図だけで付けられます。<br>逆に、<strong>abstract メソッドを持つクラスは abstract でなければなりません</strong>。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>継承する側の義務<span class="tag">頻出</span></div><pre><code>abstract class A { abstract void m(); }
+
+class B extends A { }            // error: B is not abstract and does not
+                                 //        override abstract method m() in A
+
+abstract class C extends A { }   // OK。abstract なら実装を先送りできる</code></pre></div>
+
+  <div class="point link"><p>第4章 節01の「main は static なのでインスタンス不要」と組み合わせると、<span class="mk">abstract クラスでも main を書いて java コマンドで起動できます</span>。「abstract だから実行できない」は誤りです。</p></div>
+
+  <h3>「インスタンス化できない」の正確な意味</h3>
+
+  <p>禁止されているのは <strong><code>new 抽象クラス名()</code> と直接書くこと</strong>だけです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>型として使うのは自由<span class="tag">最頻出</span></div><pre><code>new AbstractSample();                       // error: is abstract; cannot be instantiated
+new ConcreteSample();                       // OK ── 子は完成品
+AbstractSample s = new ConcreteSample();    // OK ── 変数の型にするのは自由</code></pre></div>
+
+  <div class="point"><p><code>abstract</code> メソッドは本体を持たないので、実体を作っても<span class="mk">実行すべきコードが存在しません</span>。だから「未完成のものは実体化させない」。<br>子クラスが本体を書けば完成品になるので <code>new</code> できます。<br><code>abstract</code> が禁じているのは<strong>実体を作ること</strong>であって<strong>型として使うこと</strong>ではありません。むしろ<span class="mk">型として使うためにある</span>構文です。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>親の中から呼んだ抽象メソッドが子に飛ぶ<span class="tag">頻出</span></div><pre><code>abstract class AbstractSample {
+    public void sample(){
+        System.out.println("A");
+        test();                          // 実装は子にある
+        System.out.println("C");
+    }
+    protected abstract void test();
+}
+class ConcreteSample extends AbstractSample {
+    protected void test(){ System.out.println("B"); }
+}
+
+AbstractSample s = new ConcreteSample();
+s.sample();          // A B C</code></pre></div>
+
+  <div class="point"><p><code>AbstractSample</code> を書いた時点では <code>test()</code> の中身は決まっていません。決めるのは子クラス。<br>これは<span class="mk">テンプレートメソッド</span>と呼ばれる設計で、<strong>処理の骨組みを親が決め、具体的な一部だけを子に埋めさせる</strong>形です。<code>abstract</code> メソッドの本来の用途がこれです。<br>「<code>test()</code> は呼ばれない」と考えて <code>A C</code> を選ばせる選択肢が出ます。</p></div>
+</section>

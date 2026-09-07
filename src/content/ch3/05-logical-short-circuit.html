@@ -1,0 +1,49 @@
+<section id="c3-s05">
+  <div class="sh"><span class="num">05</span><h2>論理演算子と短絡評価</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>演算子</th><th>意味</th><th>右辺の評価</th></tr></thead>
+    <tbody>
+      <tr><td><code>&amp;&amp;</code></td><td>かつ</td><td><strong>左が false なら評価しない</strong></td></tr>
+      <tr><td><code>||</code></td><td>または</td><td><strong>左が true なら評価しない</strong></td></tr>
+      <tr><td><code>&amp;</code></td><td>かつ</td><td><strong>必ず評価する</strong></td></tr>
+      <tr><td><code>|</code></td><td>または</td><td><strong>必ず評価する</strong></td></tr>
+      <tr><td><code>^</code></td><td>排他的論理和（片方だけ true なら true）</td><td>必ず評価する</td></tr>
+      <tr><td><code>!</code></td><td>否定</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><span class="mk">記号が2つなら短絡、1つなら必ず両辺を評価。</span>これが判定の起点です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>&amp;&amp; と &amp; で結果が変わる<span class="tag">最重要</span></div><pre><code>int i = 0;
+
+if (false &amp;&amp; i++ &gt; 0) { }
+System.out.println(i);     // 0 ← i++ が実行されていない
+
+int j = 0;
+if (false &amp; j++ &gt; 0) { }
+System.out.println(j);     // 1 ← 右辺も評価された</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>|| も同じ構造<span class="tag">要注意</span></div><pre><code>int i = 0;
+if (true || i++ &gt; 0) { }
+System.out.println(i);     // 0
+
+int j = 0;
+if (true | j++ &gt; 0) { }
+System.out.println(j);     // 1</code></pre></div>
+
+  <div class="point trap"><p>短絡評価は<strong>副作用があるコードと組み合わされて</strong>出題されます。<code>i++</code>、メソッド呼び出し、代入などが右辺にあるとき、<span class="mk">それが実行されたかどうか</span>が答えを分けます。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>短絡評価は null チェックにも使われる<span class="tag">実行時</span></div><pre><code>String s = null;
+
+if (s != null &amp;&amp; s.length() &gt; 0) { }   // OK。左が false なので右辺は評価されない
+if (s != null &amp;  s.length() &gt; 0) { }   // NullPointerException！</code></pre></div>
+
+  <div class="point link"><p>第2章の「null にドットを付けたら例外」がここで効きます。<span class="mk pink"><code>&amp;</code> を使うと右辺が必ず評価されるので落ちる</span>、という形で出題されます。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>整数には &amp;&amp; を使えない<span class="tag">NG</span></div><pre><code>int a = 1, b = 2;
+a &amp;&amp; b;        // コンパイルエラー: boolean でないとダメ
+a &amp; b;         // OK ← ビット演算として動く（結果は 0）</code></pre></div>
+
+  <p><code>&amp;</code> <code>|</code> <code>^</code> は boolean にも整数にも使えます。<span class="mk"><code>&amp;&amp;</code> <code>||</code> は boolean 専用</span>です。</p>
+</section>

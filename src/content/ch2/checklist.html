@@ -1,0 +1,31 @@
+<section id="c2-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>試験前日に、この12項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c2-barfill"></i></div>
+  <div class="barlab" id="c2-barlab">0 / 19</div>
+
+  <ul class="ck" id="c2-cklist">
+    <li><span class="box">✓</span><span class="cktx">既定の型は int と double。外すには接尾辞 L / f が必要</span></li>
+    <li><span class="box">✓</span><span class="cktx">先頭が 0 の整数リテラルは8進数。アンダースコアは数字と数字の間だけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">byte・short・char の演算は int に昇格。ただし複合代入は暗黙キャスト</span></li>
+    <li><span class="box">✓</span><span class="cktx">final なら縮小変換が通る。拡大変換とボクシングは同時に使えない</span></li>
+    <li><span class="box">✓</span><span class="cktx">Integer の == は -128〜127 だけ true。null のアンボクシングは NPE</span></li>
+    <li><span class="box">✓</span><span class="cktx">ローカル変数は初期化必須。フィールドには既定値がある</span></li>
+    <li><span class="box">✓</span><span class="cktx">var はローカル変数専用。ただし予約語ではないので変数名に使える</span></li>
+    <li><span class="box">✓</span><span class="cktx">String は不変。メソッドの戻り値を代入しないと変わらない</span></li>
+    <li><span class="box">✓</span><span class="cktx">arr.length / s.length() / list.size() の3種類を混同しない</span></li>
+    <li><span class="box">✓</span><span class="cktx">StringBuilder の equals はオーバーライドされていない</span></li>
+    <li><span class="box">✓</span><span class="cktx">テキストブロックのインデントは終了 """ の位置も基準に含む</span></li>
+    <li><span class="box">✓</span><span class="cktx">remove(int) はインデックス、remove(Object) は値</span></li>
+    <li><span class="box">✓</span><span class="cktx">null に「ドット」を付けたときだけ例外。ただしアンボクシングは例外</span></li>
+    <li><span class="box">✓</span><span class="cktx">参照型の配列は2段階。new Item[3] だけでは中身は null</span></li>
+    <li><span class="box">✓</span><span class="cktx">println(配列) はハッシュ形式。中身は Arrays.toString。char[] だけ例外</span></li>
+    <li><span class="box">✓</span><span class="cktx">配列の代入は参照のコピー。clone は浅いコピー</span></li>
+    <li><span class="box">✓</span><span class="cktx">add は 0〜size、set は 0〜size-1。add は割り込み、set は上書き</span></li>
+    <li><span class="box">✓</span><span class="cktx">拡張for文で remove すると例外か取りこぼし。最後から2番目だけ静かに終わる</span></li>
+    <li><span class="box">✓</span><span class="cktx">List.of は不変、Arrays.asList は set のみ可、ArrayList(3) の 3 は容量</span></li>
+  </ul>
+  <button class="reset" id="c2-ckreset" type="button">チェックをすべて外す</button>
+
+</section>

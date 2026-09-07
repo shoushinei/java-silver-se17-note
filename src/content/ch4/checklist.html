@@ -1,0 +1,38 @@
+<section id="c4-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>この章は配点が最も大きい範囲です。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c4-barfill"></i></div>
+  <div class="barlab" id="c4-barlab">0 / 27</div>
+
+  <ul class="ck" id="c4-cklist">
+    <li><span class="box">✓</span><span class="cktx">変数が持つのは実体ではなく参照。代入は矢印のコピー</span></li>
+    <li><span class="box">✓</span><span class="cktx">フィールドには既定値が入る。ローカル変数は初期化必須</span></li>
+    <li><span class="box">✓</span><span class="cktx">引数は常に値渡し。中身の書き換えは伝わるが、差し替えは伝わらない</span></li>
+    <li><span class="box">✓</span><span class="cktx">可変長引数は最後に1つだけ。実体は配列で、引数なしなら長さ0</span></li>
+    <li><span class="box">✓</span><span class="cktx">コンストラクタに戻り値型を書くとメソッドになる。コンパイルは通る</span></li>
+    <li><span class="box">✓</span><span class="cktx">コンストラクタを1つでも定義するとデフォルトは生成されない</span></li>
+    <li><span class="box">✓</span><span class="cktx">name = name; はフィールドを変えない。this. が必要</span></li>
+    <li><span class="box">✓</span><span class="cktx">this() は最初の1文だけ。super() と同時には書けない</span></li>
+    <li><span class="box">✓</span><span class="cktx">オーバーロードの区別は引数リストのみ。戻り値型は無関係</span></li>
+    <li><span class="box">✓</span><span class="cktx">解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数</span></li>
+    <li><span class="box">✓</span><span class="cktx">static からインスタンスメンバと this は参照できない。逆は可</span></li>
+    <li><span class="box">✓</span><span class="cktx">null 参照からの static 呼び出しは NPE にならない</span></li>
+    <li><span class="box">✓</span><span class="cktx">初期化は static（1回・書いた順）→ インスタンス（毎回・書いた順）→ コンストラクタ</span></li>
+    <li><span class="box">✓</span><span class="cktx">初期化ブロックはコンストラクタより下に書いても先に動く。本体は常に最後</span></li>
+    <li><span class="box">✓</span><span class="cktx">new が無ければインスタンス初期化ブロックは走らない。static 参照だけでは動かない</span></li>
+    <li><span class="box">✓</span><span class="cktx">パターン変数は「判定成功が確定した範囲」だけ。&amp;&amp; は可、|| は不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">パターン変数は新しい変数。元の変数は宣言型も指し先も変わらない</span></li>
+    <li><span class="box">✓</span><span class="cktx">参照型のキャストは値を変えない。型の申告が変わるだけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">javap で見ると final class extends java.lang.Record。上下とも継承不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">record のアクセサは x()。getX() でも p.x でもない</span></li>
+    <li><span class="box">✓</span><span class="cktx">標準・正規・コンパクトの3種類。括弧の有無で正規かコンパクトか決まる</span></li>
+    <li><span class="box">✓</span><span class="cktx">3種類の外側（オーバーロード）は先頭で this(...) 必須。直接代入は不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">this.フィールド と this(...) は別物。「最初に」の制約は括弧の方だけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">コンパクト形式では this.value を読むことすらできない。return も不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">アクセサと同名の default メソッドは戻り値型が合わないとエラー</span></li>
+    <li><span class="box">✓</span><span class="cktx">禁止はインスタンスフィールドの追加と継承だけ。メソッドと実装は自由</span></li>
+    <li><span class="box">✓</span><span class="cktx">コンポーネントが配列だと equals は参照比較になる</span></li>
+  </ul>
+  <button class="reset" id="c4-ckreset" type="button">チェックをすべて外す</button>
+</section>

@@ -1,0 +1,26 @@
+<section id="c2-s02">
+  <div class="sh"><span class="num">02</span><h2>リテラルの書き方</h2></div>
+
+  <h3>基数の表記</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>4種類の書き方<span class="tag">形</span></div><pre><code>int a = 10;        // 10進数
+int b = 0b1010;    // 2進数（0b または 0B）→ 10
+int c = 012;       // 8進数（先頭の 0）→ 10
+int d = 0xA;       // 16進数（0x または 0X）→ 10</code></pre></div>
+
+  <div class="point trap"><p><code>012</code> は12ではなく <strong>10</strong> です。<span class="mk">先頭に 0 が付いた整数リテラルは8進数</span>として解釈されます。桁揃えのつもりで <code>int a = 007;</code> と書くと値が変わる、という引っかけがあります。</p></div>
+
+  <h3>アンダースコアの位置</h3>
+  <p>桁区切りに <code>_</code> が使えますが、位置に厳しい制約があります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>数字と数字の間だけ<span class="tag">OK</span></div><pre><code>int    a = 1_000_000;
+long   b = 1_234_567_890L;
+double c = 3.141_592;</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>先頭・末尾・記号の隣は不可<span class="tag">NG</span></div><pre><code>int    a = _1000;      // エラー: 先頭
+int    b = 1000_;      // エラー: 末尾
+double c = 1_.5;       // エラー: 小数点の隣
+double d = 1._5;       // エラー: 小数点の隣
+long   e = 100_L;      // エラー: 接尾辞の隣</code></pre></div>
+
+  <p><span class="mk">数字と数字の間に挟まれているときだけ有効。</span>これ以外は全部コンパイルエラーです。</p>
+</section>

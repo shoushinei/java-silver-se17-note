@@ -1,0 +1,36 @@
+<section id="c4-s04">
+  <div class="sh"><span class="num">04</span><h2>コンストラクタ</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>規則</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>名前</td><td><strong>クラス名と完全一致</strong>（大文字小文字も）</td></tr>
+      <tr><td>戻り値型</td><td><strong>書かない</strong>。<code>void</code> も書けない</td></tr>
+      <tr><td>呼び出し</td><td><code>new</code> のときだけ。自分で呼べない</td></tr>
+      <tr><td>アクセス修飾子</td><td>4種類すべて可。<code>private</code> にすると外部から <code>new</code> できない</td></tr>
+      <tr><td>継承</td><td><strong>されない</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値型を書いた瞬間にメソッドになる<span class="tag">最頻出</span></div><pre><code>class B {
+    void B() { System.out.println("これはメソッド"); }    // コンストラクタではない
+}
+
+new B();          // 引数なしコンストラクタが呼ばれる（デフォルト）
+new B().B();      // メソッドとして呼べてしまう</code></pre></div>
+
+  <div class="point trap"><p><code>void B()</code> は<span class="mk">コンストラクタではなく、たまたまクラス名と同じ名前のメソッド</span>です。コンパイルは通ります。<br>この場合クラスには明示的なコンストラクタが1つも無いので<strong>デフォルトコンストラクタが自動生成され</strong>、<code>new B()</code> は成功します。「コンパイルエラー」を選ばせる引っかけです。</p></div>
+
+  <h3>デフォルトコンストラクタ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>1つでも定義すると自動生成されない<span class="tag">最頻出</span></div><pre><code>class A {
+    A(int x) { }          // 引数ありを1つ定義した
+}
+
+new A(5);                 // OK
+new A();                  // コンパイルエラー
+                          // constructor A in class A cannot be applied to given types;
+                          //   required: int</code></pre></div>
+
+  <div class="point"><p>デフォルトコンストラクタ（引数なし・中身空）は、<span class="mk">コンストラクタを1つも書かなかったときだけ</span>コンパイラが用意します。1つでも自分で書けば、自動生成は行われません。<br>引数なしでも使いたければ、<code>A() { }</code> を<strong>自分で書き足す</strong>必要があります。</p></div>
+</section>

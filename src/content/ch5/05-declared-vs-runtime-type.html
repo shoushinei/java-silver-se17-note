@@ -1,0 +1,48 @@
+<section id="c5-s05">
+  <div class="sh"><span class="num">05</span><h2>宣言型か実体型か ── 章の核心</h2></div>
+
+  <p>この章でもっとも出題され、もっとも間違えるのがここです。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>対象</th><th>何で決まるか</th><th>用語</th></tr></thead>
+    <tbody>
+      <tr><td><strong>インスタンスメソッド</strong></td><td><strong>実体型</strong>（実行時）</td><td>オーバーライド</td></tr>
+      <tr><td><strong>フィールド</strong></td><td><strong>宣言型</strong>（コンパイル時）</td><td>隠蔽（hiding）</td></tr>
+      <tr><td><strong>static メソッド</strong></td><td><strong>宣言型</strong>（コンパイル時）</td><td>隠蔽（hiding）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>実行して確認した結果<span class="tag">最重要</span></div><pre><code>class P {
+    int x = 1;
+    String m(){ return "P.m"; }
+    static String s(){ return "P.s"; }
+}
+class C extends P {
+    int x = 2;
+    String m(){ return "C.m"; }
+    static String s(){ return "C.s"; }
+}
+
+P p = new C();
+System.out.println(p.x);      // 1    ← 宣言型 P で解決
+System.out.println(p.m());    // C.m  ← 実体型 C で解決
+System.out.println(p.s());    // P.s  ← 宣言型 P で解決
+
+C c = new C();
+System.out.println(c.x);          // 2
+System.out.println(((P)c).x);     // 1  ← キャストで宣言型が変わる</code></pre></div>
+
+  <div class="point"><p>理由は<strong>解決のタイミング</strong>です。<br>インスタンスメソッドだけが<span class="mk">実行時に実体を見て決める（動的束縛）</span>仕組みを持ちます。フィールドと static メソッドは<strong>コンパイル時に変数の型だけを見て決めてしまう（静的束縛）</strong>。<br><code>((P)c).x</code> が 1 になるのは、キャストで<strong>宣言型が変わった</strong>からです。実体は同じ <code>C</code> のままですが、フィールドは宣言型で解決されるので結果が変わります。</p></div>
+
+  <div class="point trap"><p>フィールドは<span class="mk">親子の同名フィールドが両方とも実体の中に存在します</span>。上書きされるのではなく、2つ並んで存在し、宣言型でどちらを見るかが決まる。<br><code>super.x</code> で親側を、<code>this.x</code> で自分側を明示できます。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>super で親側を指す<span class="tag">OK</span></div><pre><code>class Sub extends Sup {
+    int v = 20;                            // 親の v = 10 とは別に存在
+    void m(){ System.out.println("Sub.m"); }
+    void show(){
+        System.out.println(v + " / " + super.v);   // 20 / 10
+        m();                                        // Sub.m
+        super.m();                                  // Sup.m
+    }
+}</code></pre></div>
+</section>

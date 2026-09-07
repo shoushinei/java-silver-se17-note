@@ -1,0 +1,79 @@
+<section id="c1-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>答えを声に出してから開いてください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span><code>static public void main(String[] args)</code> は実行できる？</span></summary>
+    <div class="qa"><p><strong>できる。</strong>修飾子の順序に決まりはありません。<code>public static</code> でも <code>static public</code> でも同じです。<code>final</code> を足しても動きます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>public static void main(String... args)</code> は？</span></summary>
+    <div class="qa"><p><strong>実行できる。</strong>可変長引数の実体は配列なので、シグネチャは <code>String[]</code> と同一になります。<code>String args[]</code> も同様に可。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span><code>main</code> に <code>static</code> を付け忘れた。いつエラーになる？</span></summary>
+    <div class="qa"><p><strong>実行時。</strong>メソッドとしては文法上正しいのでコンパイルは通ります。<code>java</code> コマンドで起動しようとした瞬間に <code>Main method not found</code> になります。選択肢に「コンパイルエラー」があっても選ばないこと。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span><code>java Main red green</code> のとき <code>args[0]</code> は？</span></summary>
+    <div class="qa"><p><strong>"red"。</strong>クラス名は含まれません。<code>args.length</code> は 2 です。C 言語と違う点。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span>引数なしで実行したとき <code>args</code> は null？</span></summary>
+    <div class="qa"><p><strong>null ではなく長さ 0 の配列。</strong><code>args.length</code> は 0 で安全に呼べますが、<code>args[0]</code> は <code>ArrayIndexOutOfBoundsException</code> です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>java Main.class</code> は動く？</span></summary>
+    <div class="qa"><p><strong>動かない。</strong><code>java</code> に渡すのはクラス名です。<code>Main.class</code> は「Main パッケージの class クラス」と解釈されて失敗します。<code>java Main</code> が正しい形。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span><code>java Main.java</code> は？</span></summary>
+    <div class="qa"><p><strong>動く（SE 11 以降）。</strong>シングルファイルソース起動といい、メモリ上でコンパイルして実行します。<code>.class</code> は生成されません。SE 17 の範囲なので「エラーになる」は誤り。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span>1つの .java ファイルに public クラスは何個書ける？</span></summary>
+    <div class="qa"><p><strong>1個まで。しかもファイル名と一致が必須。</strong>public を付けないクラスは何個でも同居できます。<code>.class</code> ファイルはクラスの数だけ生成されます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span><code>package</code> と <code>import</code> の順序は？</span></summary>
+    <div class="qa"><p><strong>package → import → 型宣言。</strong>package は1ファイルに最大1つで、コメント以外の何よりも前。逆順はコンパイルエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span><code>import java.util.*;</code> で <code>java.util.concurrent.TimeUnit</code> は使える？</span></summary>
+    <div class="qa"><p><strong>使えない。</strong>ワイルドカードは<strong>そのパッケージ直下</strong>のクラスだけを指し、サブパッケージには及びません。<code>java.util.concurrent</code> は別パッケージです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span><code>java.util.*</code> と <code>java.sql.*</code> を両方インポートして <code>Date</code> を使うと？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー（ambiguous）。</strong>解決策は、片方を単一型インポートする（ワイルドカードより優先される）か、完全修飾名で書くか。ただし <code>import java.util.Date;</code> と <code>import java.sql.Date;</code> の併記も不可です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span><code>static import java.lang.Math.max;</code> は正しい？</span></summary>
+    <div class="qa"><p><strong>誤り。正しくは <code>import static</code>。</strong>語順が逆だとコンパイルエラーです。この1点だけを問う問題が出ます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13</span><span><code>package com.example;</code> の Main を実行するコマンドは？</span></summary>
+    <div class="qa"><p><strong><code>java com.example.Main</code>。</strong>完全修飾名をドット区切りで渡します。<code>java Main</code> でも <code>java com/example/Main</code> でもありません。クラスパスの起点は <code>-cp</code> で指定します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span><code>java</code> はどうやって2つのモードを切り替えている？</span></summary>
+    <div class="qa"><p><strong>引数が <code>.java</code> で終わっているかどうかだけ。</strong>終わっていればソース実行モードでその <code>.java</code> を読み、そうでなければクラス名として <code>.class</code> をクラスパスから探します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q24</span><span>ソース実行モードはバイトコードを経由しない？</span></summary>
+    <div class="qa"><p><strong>経由する。</strong>コンパイルは必ず行われ、バイトコードは作られています。違いは<strong>それをファイルに保存しないこと</strong>だけ。「コンパイルを飛ばしている」は誤解です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q25</span><span>古い <code>.class</code> と書き換えた <code>.java</code> が同居しているとき、<code>java Main.java</code> はどちらを実行する？</span></summary>
+    <div class="qa"><p><strong>.java の方。</strong>ソース実行モードは <code>.class</code> の存在を完全に無視します。<code>java Main</code> なら古い <code>.class</code> が実行されるので、同じディレクトリで出力が食い違います。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18</span><span><code>javac</code> が作る <code>.class</code> の中身は機械語？</span></summary>
+    <div class="qa"><p><strong>機械語ではなくバイトコード。</strong>JVM という仮想的なコンピュータ向けの命令です。機種に依存しないので、同じ <code>.class</code> を各 OS の JVM がそれぞれ動かせます。これが Write Once, Run Anywhere の実体。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q19</span><span><code>.class</code> が目の前にあるのに <code>java Main.class</code> が失敗するのはなぜ？</span></summary>
+    <div class="qa"><p><strong>JVM がファイル名ではなくクラス名として解釈するから。</strong>ドットはパッケージの区切りにしか見えないので、「Main パッケージの class クラス」を探しにいって <code>ClassNotFoundException</code> になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q20</span><span>ソースコードが提示され「実行して sample と表示したい」とある。<code>java Sample</code> は正解？</span></summary>
+    <div class="qa"><p><strong>不正解。</strong>まだコンパイルしていないので <code>.class</code> が存在せず、<code>Could not find or load main class</code> になります。正解は <code>javac Sample.java</code> → <code>java Sample</code> の2行か、<code>java Sample.java</code> の1行。<strong>問題文にソースが載っているかどうか</strong>で読み分けます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span><code>javap Sample</code> を実行すると何が起きる？</span></summary>
+    <div class="qa"><p><strong>クラスの構造が表示されるだけで、プログラムは実行されない。</strong><code>javap</code> は逆アセンブラです。<code>jmod</code> はモジュール作成ツールで、これも実行はしません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span><code>java Sample "a "b</code> の <code>args.length</code> は？</span></summary>
+    <div class="qa"><p><strong>1。</strong>引用符は引数の区切りではなく<strong>空白を無効化するスイッチ</strong>です。閉じた直後の <code>b</code> は空白を挟んでいないので同じ引数の続きになり、<code>args[0]</code> は <code>a b</code>。<code>"a " b</code> なら2個です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q14</span><span>修飾子を何も書かないとどこまで見える？</span></summary>
+    <div class="qa"><p><strong>同じパッケージまで。</strong>パッケージプライベートと呼びます。<code>default</code> というアクセス修飾子は<strong>存在しません</strong>。書くのは「何も書かない」ことです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15</span><span>別パッケージのサブクラスは protected メンバに必ずアクセスできる？</span></summary>
+    <div class="qa"><p><strong>できない場合がある。</strong>アクセスできるのは <code>this</code> か、<strong>自分と同じ型の参照</strong>を通したときだけ。スーパークラス型の参照経由（<code>Base x</code> の <code>x.prot</code>）はコンパイルエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q16</span><span>トップレベルのクラスに private は付けられる？</span></summary>
+    <div class="qa"><p><strong>付けられない。</strong><code>public</code> か修飾子なしの2択です。<code>protected</code> も不可。ネストしたクラスなら4種類すべて使えます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q17</span><span>ローカル変数に private は付けられる？</span></summary>
+    <div class="qa"><p><strong>付けられない。</strong>スコープはブロックで決まるので、アクセス修飾子に意味がありません。ただし <code>final</code> は付けられます（アクセス修飾子ではないため）。</p></div></details>
+</section>

@@ -1,0 +1,19 @@
+.search{position:relative;margin-bottom:14px}
+.search input{width:100%;font-family:var(--body);font-size:13px;padding:8px 26px 8px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--washi);color:var(--sumi);outline:none;box-sizing:border-box}
+.search input:focus{border-color:var(--sumi-3)}
+.search .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--sumi-3);font-size:16px;line-height:1;display:none;padding:2px 4px}
+.shits{font-size:11px;color:var(--sumi-3);margin:7px 0 0;padding-left:2px;display:none;line-height:1.5}
+.toc a .cnt{margin-left:auto;font-size:11px;color:var(--sumi-3);flex:none}
+.toc a.on .cnt{color:var(--marker)}
+.qhide{display:none!important}
+mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
+.chip{display:inline-block;font-family:var(--body);font-size:12.5px;padding:5px 11px;border:1px solid var(--rule);border-radius:999px;margin:0 6px 7px 0;cursor:pointer;background:var(--washi);color:var(--sumi-2);transition:background .15s,color .15s}
+.chip:hover{background:var(--sumi);color:var(--washi);border-color:var(--sumi)}
+.chip b{font-weight:400;opacity:.45;margin-left:5px;font-size:11px}
+.idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
+.idx-h:first-child{margin-top:0}
+@media (max-width:860px){
+  .search{flex:none;min-width:200px;margin-bottom:0;order:-1}
+  .shits{display:none!important}
+  .toc a .cnt{margin-left:6px}
+}

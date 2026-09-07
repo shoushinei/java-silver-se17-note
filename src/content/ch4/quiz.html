@@ -1,0 +1,100 @@
+<section id="c4-quiz">
+  <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
+  <p>答えを声に出してから開いてください。</p>
+
+  <details class="q"><summary><span class="qn">Q1</span><span>クラスに <code>A(int x)</code> だけを定義した。<code>new A()</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>デフォルトコンストラクタが自動生成されるのは、コンストラクタを<strong>1つも書かなかったとき</strong>だけです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q2</span><span><code>class B { void B(){} }</code> はコンパイルできる？</span></summary>
+    <div class="qa"><p><strong>できる。</strong>戻り値型が付いているのでコンストラクタではなく<strong>ただのメソッド</strong>です。コンストラクタは1つも無いのでデフォルトが生成され、<code>new B()</code> も成功します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q3</span><span>コンストラクタで <code>name = name;</code> と書くとどうなる？</span></summary>
+    <div class="qa"><p><strong>エラーにはならず、フィールドは既定値のまま。</strong>引数に引数を代入しているだけです。フィールドを指すには <code>this.name = name;</code> が必要。出力を問う問題で <code>null</code> や <code>0</code> が正解になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q4</span><span><code>this()</code> はどこに書ける？</span></summary>
+    <div class="qa"><p><strong>コンストラクタの最初の1文だけ。</strong>自分自身は呼べず、メソッドからも呼べません。<code>super()</code> も先頭を要求するので、両方を同時に書くことはできません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q5</span><span>戻り値の型だけが違うメソッドはオーバーロードになる？</span></summary>
+    <div class="qa"><p><strong>ならない。コンパイルエラー。</strong>区別に使われるのは<strong>引数リストだけ</strong>です。引数名だけ、アクセス修飾子だけの違いも同様にエラー。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q6</span><span><code>n(long)</code> と <code>n(Integer)</code> があるとき <code>n(5)</code> はどちらを呼ぶ？</span></summary>
+    <div class="qa"><p><strong><code>n(long)</code>。</strong>優先順位は<strong>完全一致 → 拡大変換 → ボクシング → 可変長引数</strong>。手間の少ない方から試されます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q7</span><span><code>k(Integer)</code> と <code>k(int...)</code> があるとき <code>k(5)</code> は？</span></summary>
+    <div class="qa"><p><strong><code>k(Integer)</code>。</strong>ボクシングは可変長引数より優先されます。可変長引数は<strong>常に最後の手段</strong>です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q8</span><span>static メソッドからインスタンス変数を参照できる？</span></summary>
+    <div class="qa"><p><strong>できない。</strong>インスタンスが1つも無くても呼べるので、「どの実体の変数か」が決まりません。<code>this</code> も使えません。逆向き（インスタンス→static）は可能です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q9</span><span><code>null</code> の変数から static メソッドを呼ぶとどうなる？</span></summary>
+    <div class="qa"><p><strong>正常に動く。NPE にならない。</strong>static メンバはコンパイル時に <code>クラス名.メンバ</code> へ読み替えられ、参照を使わないためです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10</span><span>static ブロックとインスタンス初期化ブロック、どちらが先？</span></summary>
+    <div class="qa"><p><strong>static が先。しかもクラスにつき1回だけ。</strong>順序は「static変数・staticブロック（書いた順）」→ main → new のたびに「インスタンス変数・初期化ブロック（書いた順）」→ コンストラクタ本体。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10b</span><span>初期化ブロックがコンストラクタより<strong>下</strong>に書かれていたら、どちらが先に動く？</span></summary>
+    <div class="qa"><p><strong>初期化ブロックが先。</strong>コンストラクタ本体は常に最後です。ソース上の並び順が効くのは初期化子どうしの間だけ。ブロックの中身が各コンストラクタの先頭にコピーされる、と考えると位置が無関係な理由が分かります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q10c</span><span><code>static int num;</code> と <code>{ num = 10; }</code> を持つクラスで、<code>new</code> せずに <code>Sample.num</code> を表示すると？</span></summary>
+    <div class="qa"><p><strong>0。</strong>static フィールドへの参照はクラスの初期化しか起こしません。インスタンスが作られないので、インスタンス初期化ブロックもコンストラクタも実行されず、既定値のままです。<code>new Sample();</code> を挟めば 100 になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q11</span><span>メソッドに配列を渡し、中で <code>arr[0]=100</code> とした。呼び出し元は変わる？</span></summary>
+    <div class="qa"><p><strong>変わる。</strong>渡されるのは矢印のコピーですが、指す先は同じ実体だからです。ただし <code>arr = new int[]{...}</code> と<strong>差し替えた</strong>場合は呼び出し元に影響しません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span><code>if (o instanceof String s || s.isEmpty())</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong><code>||</code> の右側は「左が false のとき」に評価されるので、<code>s</code> が存在しません。<code>&amp;&amp;</code> なら使えます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12b</span><span><code>if (a instanceof B b)</code> の中で <code>a</code> はまだ使える？</span></summary>
+    <div class="qa"><p><strong>使える。</strong>パターンマッチングは <code>a</code> を変換するのではなく、<strong>新しい変数 <code>b</code> を作る</strong>だけです。<code>a == b</code> は <code>true</code>（同じ実体）。<code>a</code> の宣言型は <code>A</code> のままなので <code>B</code> 固有のメソッドは <code>b</code> から呼びます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12c</span><span><code>if (a instanceof B b) { a.test(); } else { b.test(); }</code> の結果は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong><code>else</code> は <code>instanceof</code> が false だった側なので <code>b</code> は存在しません。出力パターンの選択肢に惑わされず、<strong>先にスコープを確認</strong>します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q13</span><span><code>if (!(o instanceof String s)) { A } else { B }</code>。<code>s</code> が使えるのは？</span></summary>
+    <div class="qa"><p><strong>B（else 側）だけ。</strong>「その位置に来たとき判定は成功していたか」で決まります。否定した場合、成功が確定しているのは else 側です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q14</span><span><code>null instanceof String</code> の結果は？</span></summary>
+    <div class="qa"><p><strong>false。</strong>例外にはなりません。パターン変数を使う形でも、中に入らないだけです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q15</span><span><code>record Point(int x, int y)</code> の値の取り出し方は？</span></summary>
+    <div class="qa"><p><strong><code>p.x()</code>。</strong><code>getX()</code> ではありません。<code>p.x</code>（括弧なし）もフィールドが private なのでエラーです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q16</span><span>コンパクトコンストラクタで <code>this.x = x;</code> と書くと？</span></summary>
+    <div class="qa"><p><strong><code>cannot assign a value to final variable x</code>。</strong>コンパクト形式で触れる <code>x</code> は引数変数です。加工したいときは <code>x = x * 10;</code> と引数の方に代入します。代入はコンパイラが最後に自動追加。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q17</span><span>正規コンストラクタを自分で書き、片方のフィールドへの代入を忘れると？</span></summary>
+    <div class="qa"><p><strong><code>variable y might not have been initialized</code>。</strong>正規形式（引数リストがコンポーネントと一致）を書いた場合は、<strong>全フィールドを自分で代入</strong>する必要があります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18</span><span>コンポーネントと引数が違うコンストラクタを追加できる？</span></summary>
+    <div class="qa"><p><strong>できるが、最初の1文で <code>this(...)</code> を呼ぶ必要がある。</strong>直接 <code>this.x = ...</code> と代入すると <code>constructor is not canonical, so its first statement must invoke another constructor</code> になります。初期化の経路を1本に絞る仕組みです。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18b</span><span><code>record Data(String value)</code> に <code>public Data() { }</code> を足した。修正方法は？</span></summary>
+    <div class="qa"><p>2通り。<strong>①正規にする</strong>＝<code>Data(String value)</code> と引数を取り、<strong>かつ</strong> <code>this.value = value;</code> で初期化する（<strong>両方セットで必要</strong>。引数だけ直すと <code>variable value might not have been initialized</code> に変わるだけ）。<strong>②委譲する</strong>＝<code>this("sample");</code> を第1文に置く。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18c</span><span>record のオーバーロードされたコンストラクタで <code>super();</code> は使える？</span></summary>
+    <div class="qa"><p><strong>使えない。</strong>record は暗黙に <code>java.lang.Record</code> を継承していますが、<code>super()</code> を明示的に呼ぶことはできません。「スーパークラスのコンストラクタを呼ぶ」という選択肢は<strong>常に誤り</strong>です。<code>this();</code> も自分自身を呼ぶので <code>recursive constructor invocation</code> になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18d</span><span>コンパクトコンストラクタの中で <code>this.value</code> を<strong>読む</strong>のは？</span></summary>
+    <div class="qa"><p><strong>不可。<code>variable value might not have been initialized</code>。</strong>代入はブロックの<strong>最後</strong>に自動追加されるので、ブロック内ではフィールドは未代入です。書くことも読むこともできません。<code>this.</code> を外して引数変数 <code>value</code> を見れば通ります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q18e</span><span><code>interface Test { default void value(){} }</code> を <code>record Data(String value)</code> が実装すると？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>自動生成されるアクセサは <code>String value()</code>、インタフェースは <code>void value()</code>。名前と引数が同じで戻り値型だけ違うのでオーバーライドが成立しません。戻り値型を揃えれば通り、<strong>アクセサが default に勝ちます</strong>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q19</span><span>record にメソッドは書ける？</span></summary>
+    <div class="qa"><p><strong>書ける。</strong>インスタンスメソッド・static メソッド・static フィールドは自由です。アクセサや <code>toString</code> の上書きも可。禁止は<strong>インスタンスフィールドの追加</strong>だけ（<code>field declaration must be static</code>）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q20</span><span>record はインタフェースを実装できる？ 継承は？</span></summary>
+    <div class="qa"><p><strong>実装は可、継承は不可。</strong>暗黙に <code>final</code> なので継承されず（<code>cannot inherit from final</code>）、暗黙に <code>java.lang.Record</code> を継承済みなので <code>extends</code> も書けません。<strong>上下とも塞がっている</strong>と覚えます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span><code>public record R(int x)</code> の標準／正規コンストラクタを <code>private</code> にできる？</span></summary>
+    <div class="qa"><p><strong>できない。</strong><code>attempting to assign stronger access privileges; was public</code>。record 本体より狭くはできません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span><code>record A(int[] arr)</code> で、中身が同じ2つを <code>equals</code> で比べると？</span></summary>
+    <div class="qa"><p><strong>false。</strong>自動生成の <code>equals</code> は参照型のコンポーネントをその型の <code>equals</code> で比べます。配列の <code>equals</code> は参照比較なので一致しません。「record は常に中身で比較」は<strong>配列のときだけ成り立ちません</strong>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q24</span><span><code>javap</code> で record を見ると、クラス宣言はどう表示される？</span></summary>
+    <div class="qa"><p><strong><code>public final class Point extends java.lang.Record</code>。</strong>ソースに書いていない <code>final</code> が付いており、親も既に埋まっています。継承も被継承も不可な理由がこの1行に出ています。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
+    <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
+</section>

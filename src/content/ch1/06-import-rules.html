@@ -1,0 +1,60 @@
+<section id="c1-s06">
+  <div class="sh"><span class="num">06</span><h2>import の規則</h2></div>
+
+  <p><code>import</code> は「このクラス名を短く書かせてほしい」という宣言です。<strong>コードを読み込むわけでも、性能に影響するわけでもありません</strong>。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2つの書き方<span class="tag">OK</span></div><pre><code>import java.util.List;      // 単一型インポート
+import java.util.*;         // オンデマンドインポート（そのパッケージの全クラス）</code></pre></div>
+
+  <h3>import が要らない2つのケース</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>ケース</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>java.lang</code> のクラス</td><td>自動でインポートされる。<code>String</code> <code>System</code> <code>Integer</code> <code>Math</code> <code>Object</code> <code>Exception</code> など</td></tr>
+      <tr><td>同じパッケージのクラス</td><td>姓が同じなので名前だけで届く</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><code>System.out.println</code> がいきなり書けるのは、<code>java.lang</code> が自動インポートされているからです。逆に <code>java.util.List</code> や <code>java.time.LocalDate</code> は明示しないと使えません。<br><span class="mk">import java.lang.String; と書いてもエラーにはなりません</span>。冗長なだけです。</p></div>
+
+  <h3>ワイルドカードはサブパッケージを含まない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>階層は降りてくれない<span class="tag">NG</span></div><pre><code>import java.util.*;
+
+TimeUnit t;      // コンパイルエラー: cannot find symbol
+                 // TimeUnit は java.util.concurrent にあり、java.util には無い</code></pre></div>
+
+  <p><code>java.util.*</code> が指すのは <strong><code>java.util</code> 直下のクラスだけ</strong>です。<code>java.util.concurrent</code> は名前が似ているだけの別パッケージで、使うには <code>import java.util.concurrent.*;</code> が別途必要になります。パッケージは<span class="mk">入れ子の階層ではなく、ドットを含んだ1つの名前</span>だと考えるのが正確です。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>クラスの内側は指せない<span class="tag">NG</span></div><pre><code>import java.util.List.*;      // メソッドはインポートできない（static import を除く）
+import java.util;             // パッケージ自体はインポートできない</code></pre></div>
+
+  <h3>名前が衝突した場合</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>曖昧さはコンパイルエラー<span class="tag">NG</span></div><pre><code>import java.util.*;
+import java.sql.*;
+
+Date d;      // コンパイルエラー: reference to Date is ambiguous
+             // both class java.sql.Date and class java.util.Date match</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>解決策は2つ<span class="tag">OK</span></div><pre><code>// ① 片方だけ単一型インポートする ── ワイルドカードより優先される
+import java.util.*;
+import java.sql.*;
+import java.util.Date;              // これで Date は java.util.Date に確定
+
+// ② 完全修飾名で書く ── import 自体が不要
+java.util.Date d1 = new java.util.Date();
+java.sql.Date  d2 = new java.sql.Date(0L);</code></pre></div>
+
+  <div class="point"><p>優先順位は<span class="mk">単一型インポート ＞ オンデマンドインポート</span>。ただし<strong>単一型インポート同士で同じクラス名が衝突するとエラー</strong>です（<code>import java.util.Date;</code> と <code>import java.sql.Date;</code> の併記は不可）。その場合は完全修飾名しか手がありません。</p></div>
+
+  <h3>static インポート</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラス名を省略して static メンバを使う<span class="tag">OK</span></div><pre><code>import static java.lang.Math.max;      // メソッド1つ
+import static java.lang.Math.*;        // Math の static メンバ全部
+
+System.out.println(max(3, 7));         // Math. を書かずに呼べる → 7</code></pre></div>
+
+  <div class="point trap"><p>語順は <code>import static</code> です。<span class="mk">static import と書くとコンパイルエラー</span>。この1点だけを問う問題が出ます。<br>また、<code>import static</code> が指すのは<strong>クラスの static メンバ</strong>であって、パッケージやクラス自体ではありません。</p></div>
+</section>

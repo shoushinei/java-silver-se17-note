@@ -1,0 +1,42 @@
+<section id="c1-s05">
+  <div class="sh"><span class="num">05</span><h2>パッケージ宣言</h2></div>
+
+  <p>パッケージは<strong>クラスの姓</strong>にあたるものです。同じ名前のクラスが世界中にあっても、姓が違えば区別できます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>書ける順序は1通りしかない<span class="tag">最重要</span></div><pre><code>package com.example.app;       // ① package は必ず先頭（コメント以外の何よりも前）
+
+import java.util.List;         // ② import は package の後、型宣言の前
+import java.util.ArrayList;
+
+public class Main { }          // ③ 型宣言</code></pre></div>
+
+  <div class="point trap"><p>この順序が逆でも、重複しても<span class="mk">コンパイルエラー</span>です。<code>package</code> は<strong>1ファイルに最大1つ</strong>、しかも先頭。<code>import</code> の後ろに <code>package</code> を書いた選択肢は必ず誤りです。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>順序違反<span class="tag">NG</span></div><pre><code>import java.util.List;
+package foo;                   // コンパイルエラー
+                               // class, interface, enum, or record expected
+public class Main { }</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>package の前に書いてよいもの<span class="tag">OK</span></div><pre><code>// コメントはいくつ書いてもよい
+/* ブロックコメントも可 */
+package com.example;           // OK
+
+public class Main { }</code></pre></div>
+
+  <h3>ディレクトリ構造との対応</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>パッケージ名 = ディレクトリ階層<span class="tag">図</span></div><pre><code>package com.example.app;   の Main クラスは
+
+bin/
+└── com/
+    └── example/
+        └── app/
+            └── Main.class
+
+javac -d bin Main.java     // このディレクトリを自動で作ってくれる
+java -cp bin com.example.app.Main   // 実行時は完全修飾名で指定する</code></pre></div>
+
+  <div class="point trap"><p>パッケージに属するクラスを実行するとき、<span class="mk">java コマンドには完全修飾名を渡します</span>。<code>java Main</code> でも <code>java com/example/app/Main</code> でもなく、<strong>ドット区切りの <code>com.example.app.Main</code></strong>。ここも定番です。</p></div>
+
+  <p>パッケージ名がすべて小文字なのは慣習で、文法上の制約ではありません。ただし <code>java</code> で始まるパッケージ名は使用が禁止されています。</p>
+</section>

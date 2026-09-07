@@ -1,0 +1,107 @@
+<section id="c3-s11">
+  <div class="sh"><span class="num">11</span><h2>break と continue</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>動作</th><th>使える場所</th></tr></thead>
+    <tbody>
+      <tr><td><code>break</code></td><td>ループや switch を<strong>抜ける</strong></td><td>ループ / switch</td></tr>
+      <tr><td><code>continue</code></td><td>その周を飛ばして<strong>次の周へ</strong></td><td><strong>ループのみ</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>continue は switch では使えない<span class="tag">NG</span></div><pre><code>switch (x) {
+    case 1: continue;      // コンパイルエラー（ループの中にあれば別）
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>for の中の switch なら continue も使える<span class="tag">OK</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {
+    switch (i) {
+        case 1: continue;      // OK。for の次の周へ
+    }
+    System.out.println(i);
+}
+// 出力: 0 2</code></pre></div>
+
+  <h3>continue と for の更新部</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>更新部は実行される<span class="tag">要注意</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {
+    if (i == 1) continue;      // i++ は実行される
+    System.out.println(i);
+}
+// 出力: 0 2
+
+int i = 0;
+while (i &lt; 3) {
+    if (i == 1) continue;      // 無限ループ！ i++ に到達しない
+    System.out.println(i);
+    i++;
+}</code></pre></div>
+
+  <div class="point trap"><p><code>for</code> では更新部が必ず実行されますが、<span class="mk">while で continue すると更新処理を飛ばして無限ループになる</span>ことがあります。この対比が出題されます。</p></div>
+
+  <h3>ラベル付き break / continue</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>多重ループを一気に抜ける<span class="tag">最重要</span></div><pre><code>outer:                                   // ← ラベルはループの直前に置く
+for (int i = 0; i &lt; 3; i++) {
+    for (int j = 0; j &lt; 3; j++) {
+        if (j == 1) break outer;         // 外側のループごと抜ける
+        System.out.println(i + "-" + j);
+    }
+}
+// 出力: 0-0 だけ</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>continue にもラベルを付けられる<span class="tag">OK</span></div><pre><code>outer:
+for (int i = 0; i &lt; 3; i++) {
+    for (int j = 0; j &lt; 3; j++) {
+        if (j == 1) continue outer;      // 外側の次の周へ
+        System.out.println(i + "-" + j);
+    }
+}
+// 出力: 0-0 1-0 2-0</code></pre></div>
+
+  <div class="point"><p><code>break outer</code> は<strong>ループごと抜ける</strong>、<code>continue outer</code> は<strong>外側の次の周へ進む</strong>。この違いで出力が大きく変わるので、選択肢を読むときは<span class="mk">break か continue かを最初に確認</span>してください。</p></div>
+
+
+  <h3>ラベルとは何か</h3>
+
+  <p>ラベルは<strong>文に付ける名札</strong>で、構文は <code>識別子 : 文</code> だけです。用途は <code>break</code> と <code>continue</code> の行き先を指定すること、その一つしかありません。</p>
+
+  <div class="point"><p>Java には <code>goto</code> が<span class="mk">予約語として存在するのに使えません</span>。無制限なジャンプは制御フローを壊すという合意がある一方、多重ループを一気に抜けたいという需要は残る。そこで「ジャンプ先はループの入口か出口だけ」という<strong>制限付きの goto</strong> として用意されたのがラベル付き break / continue です。<code>goto</code> が予約語のままなのは、うっかり変数名に使わせないためです。</p></div>
+
+  <h3>ラベルを付けられる対象</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ループ以外にも付けられる<span class="tag">要注意</span></div><pre><code>OUT: {                            // ブロックにラベルを付けられる
+    System.out.println("A");
+    break OUT;                    // ブロックから抜ける
+}
+System.out.println("B");
+// 出力: A B
+
+L: if (true) { break L; }         // if にも付けられる</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>continue はループにしか使えない<span class="tag">NG</span></div><pre><code>B: { System.out.println(1); continue B; }
+// コンパイルエラー: not a loop label: B</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>変数宣言には付けられない<span class="tag">NG</span></div><pre><code>L: int i = 5;
+// コンパイルエラー: variable declaration not allowed here</code></pre></div>
+
+  <div class="point trap"><p><code>break</code> は<strong>任意の文</strong>（ブロックや if を含む）から抜けられますが、<code>continue</code> は<span class="mk">ループに付いたラベルにしか使えません</span>。この非対称が出題されます。<br>また、ローカル変数の宣言文だけは例外的にラベルを付けられません。</p></div>
+
+  <h3>ラベルの有効範囲と名前空間</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ラベルの外からは飛べない<span class="tag">NG</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {
+    outer: System.out.println(i);
+    break outer;                  // コンパイルエラー: undefined label: outer
+}</code></pre></div>
+
+  <p><code>break ラベル</code> が使えるのは、<strong>そのラベルが付いた文の内側</strong>だけです。上の例では <code>outer:</code> が付いているのは <code>println</code> の1文だけで、<code>break outer;</code> はその外側にあるため、ラベルが見つかりません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変数と同名でも衝突しない<span class="tag">OK</span></div><pre><code>int foo = 10;
+foo: for (int i = 0; i &lt; 2; i++) {
+    System.out.println(foo + i);
+    continue foo;
+}
+// 出力: 10 11</code></pre></div>
+
+  <div class="point"><p>ラベルと変数は<span class="mk">別の名前空間</span>にあるので、同名でも問題ありません。「同じ名前だからコンパイルエラー」という選択肢は誤りです。<br>慣習として <code>OUT</code> や <code>LOOP</code> のように大文字で書きますが、これは規約であって文法上はただの識別子です。<code>outer</code> という決まった名前があるわけでもありません。</p></div>
+
+</section>

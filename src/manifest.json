@@ -1,0 +1,506 @@
+{
+  "title": "全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート",
+  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・62論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
+  "brand": "Java Silver<br>SE 17 統合ノート",
+  "brandSub": "1Z0-825 / 全6章 完成版",
+  "chapters": [
+    {
+      "id": "ch1",
+      "key": "c1",
+      "num": "CHAPTER 1",
+      "title": "Java の概要と簡単な Java プログラムの作成",
+      "tocHeading": "第1章　概要とプログラム作成",
+      "sections": [
+        {
+          "id": "c1-s01",
+          "tn": "01",
+          "label": "mainのシグネチャ",
+          "file": "01-main-signature.html"
+        },
+        {
+          "id": "c1-s02",
+          "tn": "02",
+          "label": "コマンドライン引数",
+          "file": "02-command-line-args.html"
+        },
+        {
+          "id": "c1-s03",
+          "tn": "03",
+          "label": "コンパイルと実行",
+          "file": "03-compile-and-run.html"
+        },
+        {
+          "id": "c1-s04",
+          "tn": "04",
+          "label": "ファイル名とクラス",
+          "file": "04-filename-and-class.html"
+        },
+        {
+          "id": "c1-s05",
+          "tn": "05",
+          "label": "パッケージ宣言",
+          "file": "05-package-declaration.html"
+        },
+        {
+          "id": "c1-s06",
+          "tn": "06",
+          "label": "importの規則",
+          "file": "06-import-rules.html"
+        },
+        {
+          "id": "c1-s07",
+          "tn": "07",
+          "label": "アクセス修飾子",
+          "file": "07-access-modifiers.html"
+        },
+        {
+          "id": "c1-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c1-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "key": "c2",
+      "num": "CHAPTER 2",
+      "title": "Java の基本データ型と文字列の操作",
+      "tocHeading": "第2章　基本データ型と文字列",
+      "sections": [
+        {
+          "id": "c2-s01",
+          "tn": "01",
+          "label": "8つの基本データ型",
+          "file": "01-primitive-types.html"
+        },
+        {
+          "id": "c2-s02",
+          "tn": "02",
+          "label": "リテラルの書き方",
+          "file": "02-literals.html"
+        },
+        {
+          "id": "c2-s03",
+          "tn": "03",
+          "label": "型変換",
+          "file": "03-type-conversion.html"
+        },
+        {
+          "id": "c2-s04",
+          "tn": "04",
+          "label": "宣言・初期化・スコープ",
+          "file": "04-declaration-and-scope.html"
+        },
+        {
+          "id": "c2-s05",
+          "tn": "05",
+          "label": "var（型推論）",
+          "file": "05-var-type-inference.html"
+        },
+        {
+          "id": "c2-s06",
+          "tn": "06",
+          "label": "Stringの不変性",
+          "file": "06-string-immutability.html"
+        },
+        {
+          "id": "c2-s07",
+          "tn": "07",
+          "label": "Stringのメソッド",
+          "file": "07-string-methods.html"
+        },
+        {
+          "id": "c2-s08",
+          "tn": "08",
+          "label": "StringBuilder",
+          "file": "08-stringbuilder.html"
+        },
+        {
+          "id": "c2-s09",
+          "tn": "09",
+          "label": "テキストブロック",
+          "file": "09-text-blocks.html"
+        },
+        {
+          "id": "c2-s10",
+          "tn": "10",
+          "label": "配列",
+          "file": "10-arrays.html"
+        },
+        {
+          "id": "c2-s11",
+          "tn": "11",
+          "label": "ArrayList",
+          "file": "11-arraylist.html"
+        },
+        {
+          "id": "c2-s12",
+          "tn": "12",
+          "label": "nullとの付き合い方",
+          "file": "12-null-handling.html"
+        },
+        {
+          "id": "c2-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c2-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    },
+    {
+      "id": "ch3",
+      "key": "c3",
+      "num": "CHAPTER 3",
+      "title": "演算子と制御構造",
+      "tocHeading": "第3章　演算子と制御構造",
+      "sections": [
+        {
+          "id": "c3-s01",
+          "tn": "01",
+          "label": "優先順位",
+          "file": "01-operator-precedence.html"
+        },
+        {
+          "id": "c3-s02",
+          "tn": "02",
+          "label": "算術と++／--",
+          "file": "02-arithmetic-and-increment.html"
+        },
+        {
+          "id": "c3-s03",
+          "tn": "03",
+          "label": "代入と複合代入",
+          "file": "03-assignment-compound.html"
+        },
+        {
+          "id": "c3-s04",
+          "tn": "04",
+          "label": "比較と等価性",
+          "file": "04-comparison-and-equality.html"
+        },
+        {
+          "id": "c3-s05",
+          "tn": "05",
+          "label": "論理演算子と短絡",
+          "file": "05-logical-short-circuit.html"
+        },
+        {
+          "id": "c3-s06",
+          "tn": "06",
+          "label": "三項演算子",
+          "file": "06-ternary.html"
+        },
+        {
+          "id": "c3-s07",
+          "tn": "07",
+          "label": "if文",
+          "file": "07-if-statement.html"
+        },
+        {
+          "id": "c3-s08",
+          "tn": "08",
+          "label": "switch文",
+          "file": "08-switch-statement.html"
+        },
+        {
+          "id": "c3-s09",
+          "tn": "09",
+          "label": "switch式 ★新",
+          "file": "09-switch-expression.html"
+        },
+        {
+          "id": "c3-s10",
+          "tn": "10",
+          "label": "繰り返しと2次元配列",
+          "file": "10-loops-and-2d-arrays.html"
+        },
+        {
+          "id": "c3-s11",
+          "tn": "11",
+          "label": "break / continue / ラベル",
+          "file": "11-break-continue-label.html"
+        },
+        {
+          "id": "c3-s12",
+          "tn": "12",
+          "label": "進数とビット演算",
+          "file": "12-radix-and-bitwise.html"
+        },
+        {
+          "id": "c3-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c3-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    },
+    {
+      "id": "ch4",
+      "key": "c4",
+      "num": "CHAPTER 4",
+      "title": "クラスの定義とインスタンスの使用",
+      "tocHeading": "第4章　クラスとインスタンス",
+      "sections": [
+        {
+          "id": "c4-s01",
+          "tn": "01",
+          "label": "定義とインスタンス化",
+          "file": "01-class-definition.html"
+        },
+        {
+          "id": "c4-s02",
+          "tn": "02",
+          "label": "フィールドとライフサイクル",
+          "file": "02-fields-and-lifecycle.html"
+        },
+        {
+          "id": "c4-s03",
+          "tn": "03",
+          "label": "メソッドと引数",
+          "file": "03-methods-and-parameters.html"
+        },
+        {
+          "id": "c4-s04",
+          "tn": "04",
+          "label": "コンストラクタ",
+          "file": "04-constructors.html"
+        },
+        {
+          "id": "c4-s05",
+          "tn": "05",
+          "label": "this と this()",
+          "file": "05-this-and-this-call.html"
+        },
+        {
+          "id": "c4-s06",
+          "tn": "06",
+          "label": "オーバーロード",
+          "file": "06-overloading.html"
+        },
+        {
+          "id": "c4-s07",
+          "tn": "07",
+          "label": "static",
+          "file": "07-static.html"
+        },
+        {
+          "id": "c4-s08",
+          "tn": "08",
+          "label": "初期化の順序",
+          "file": "08-initialization-order.html"
+        },
+        {
+          "id": "c4-s09",
+          "tn": "09",
+          "label": "instanceof ★新",
+          "file": "09-instanceof-pattern.html"
+        },
+        {
+          "id": "c4-s10",
+          "tn": "10",
+          "label": "record ★新",
+          "file": "10-record.html"
+        },
+        {
+          "id": "c4-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c4-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    },
+    {
+      "id": "ch5",
+      "key": "c5",
+      "num": "CHAPTER 5",
+      "title": "継承とインタフェースの使用",
+      "tocHeading": "第5章　継承とインタフェース",
+      "sections": [
+        {
+          "id": "c5-s01",
+          "tn": "01",
+          "label": "継承の基本",
+          "file": "01-inheritance-basics.html"
+        },
+        {
+          "id": "c5-s02",
+          "tn": "02",
+          "label": "コンストラクタと super()",
+          "file": "02-super-constructor.html"
+        },
+        {
+          "id": "c5-s03",
+          "tn": "03",
+          "label": "オーバーライド",
+          "file": "03-overriding.html"
+        },
+        {
+          "id": "c5-s04",
+          "tn": "04",
+          "label": "オーバーロードとの区別",
+          "file": "04-overload-vs-override.html"
+        },
+        {
+          "id": "c5-s05",
+          "tn": "05",
+          "label": "宣言型か実体型か ★核心",
+          "file": "05-declared-vs-runtime-type.html"
+        },
+        {
+          "id": "c5-s06",
+          "tn": "06",
+          "label": "多態とキャスト",
+          "file": "06-polymorphism-and-cast.html"
+        },
+        {
+          "id": "c5-s07",
+          "tn": "07",
+          "label": "抽象クラス",
+          "file": "07-abstract-class.html"
+        },
+        {
+          "id": "c5-s08",
+          "tn": "08",
+          "label": "final",
+          "file": "08-final.html"
+        },
+        {
+          "id": "c5-s09",
+          "tn": "09",
+          "label": "インタフェース",
+          "file": "09-interface.html"
+        },
+        {
+          "id": "c5-s10",
+          "tn": "10",
+          "label": "default / static / private",
+          "file": "10-interface-methods.html"
+        },
+        {
+          "id": "c5-s11",
+          "tn": "11",
+          "label": "sealed ★新",
+          "file": "11-sealed.html"
+        },
+        {
+          "id": "c5-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c5-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    },
+    {
+      "id": "ch6",
+      "key": "c6",
+      "num": "CHAPTER 6",
+      "title": "例外処理",
+      "tocHeading": "第6章　例外処理",
+      "sections": [
+        {
+          "id": "c6-s01",
+          "tn": "01",
+          "label": "階層と3分類",
+          "file": "01-exception-hierarchy.html"
+        },
+        {
+          "id": "c6-s02",
+          "tn": "02",
+          "label": "覚える例外名",
+          "file": "02-common-exceptions.html"
+        },
+        {
+          "id": "c6-s03",
+          "tn": "03",
+          "label": "try-catch-finally",
+          "file": "03-try-catch-finally.html"
+        },
+        {
+          "id": "c6-s04",
+          "tn": "04",
+          "label": "catchの順序",
+          "file": "04-catch-order.html"
+        },
+        {
+          "id": "c6-s05",
+          "tn": "05",
+          "label": "multi-catch",
+          "file": "05-multi-catch.html"
+        },
+        {
+          "id": "c6-s06",
+          "tn": "06",
+          "label": "finallyとreturn",
+          "file": "06-finally-and-return.html"
+        },
+        {
+          "id": "c6-s07",
+          "tn": "07",
+          "label": "throw / throws",
+          "file": "07-throw-and-throws.html"
+        },
+        {
+          "id": "c6-s08",
+          "tn": "08",
+          "label": "カスタム例外",
+          "file": "08-custom-exception.html"
+        },
+        {
+          "id": "c6-s09",
+          "tn": "09",
+          "label": "try-with-resources",
+          "file": "09-try-with-resources.html"
+        },
+        {
+          "id": "c6-s10",
+          "tn": "10",
+          "label": "オーバーライド",
+          "file": "10-override-and-exceptions.html"
+        },
+        {
+          "id": "c6-quiz",
+          "tn": "▸",
+          "label": "一問一答",
+          "file": "quiz.html"
+        },
+        {
+          "id": "c6-check",
+          "tn": "▸",
+          "label": "直前チェック",
+          "file": "checklist.html"
+        }
+      ]
+    }
+  ]
+}

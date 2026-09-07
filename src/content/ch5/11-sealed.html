@@ -1,0 +1,58 @@
+<section id="c5-s11">
+  <div class="sh"><span class="num">11</span><h2>シールクラス（sealed）</h2></div>
+
+  <div class="point new"><p>SE 17 で正式化。<span class="mk">この試験の新規範囲</span>で、11 の教材には載っていません。</p></div>
+
+  <p><code>sealed</code> は<strong>継承・実装できる型を名指しで限定する</strong>修飾子です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>permits で相手を列挙する<span class="tag">最重要</span></div><pre><code>sealed interface Shape permits Circle, Square, Tri { }
+
+record Circle(double r) implements Shape { }     // record は暗黙に final
+final class Square implements Shape { }          // 打ち止め
+non-sealed class Tri implements Shape { }        // 封を解く
+
+class MyTri extends Tri { }                      // non-sealed なので継承できる</code></pre></div>
+
+  <div class="point"><p><code>final</code> が<strong>全面禁止</strong>、修飾子なしが<strong>全面開放</strong>だとすると、<code>sealed</code> はその<span class="mk">中間を埋めるもの</span>です。<br>従来は「この型の実装は3種類だけ」という設計意図をコメントでしか表現できず、誰かが4つ目を作れてしまいました。<code>sealed</code> はその意図を<strong>コンパイラに強制させます</strong>。</p></div>
+
+  <h3>実装側は3択を必ず宣言する</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>修飾子</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><code>final</code></td><td>ここで完全に打ち止め</td></tr>
+      <tr><td><code>sealed</code></td><td>さらに <code>permits</code> で限定して継承を許す</td></tr>
+      <tr><td><code>non-sealed</code></td><td>封を解く。誰でも継承できる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>書き忘れるとエラー<span class="tag">最頻出</span></div><pre><code>sealed interface S permits A { }
+class A implements S { }
+// error: sealed, non-sealed or final modifiers expected</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>permits に無い型は実装できない<span class="tag">頻出</span></div><pre><code>sealed interface S permits A { }
+final class A implements S { }
+final class B implements S { }
+// error: class is not allowed to extend sealed class: S
+//        (as it is not listed in its 'permits' clause)</code></pre></div>
+
+  <div class="point"><p><code>record</code> は暗黙に <code>final</code> なので、<span class="mk">3択の宣言が不要</span>です。<code>sealed</code> と <code>record</code> が組で出てくるのはこのためです。<br><code>non-sealed</code> は Java で<strong>唯一ハイフンを含むキーワード</strong>です。</p></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>規則</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>付けられる先</td><td>クラス・抽象クラス・インタフェース</td></tr>
+      <tr><td><code>permits</code> の相手の場所</td><td><strong>同じパッケージ</strong>（モジュール使用時は同じモジュール）</td></tr>
+      <tr><td><code>permits</code> の省略</td><td><strong>同一ファイル内なら可</strong>。コンパイラが推論する</td></tr>
+      <tr><td><code>sealed</code> + <code>final</code></td><td>不可（意味が矛盾）</td></tr>
+      <tr><td><code>record</code> に <code>sealed</code></td><td>不可（既に final）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージは permits できない<span class="tag">NG</span></div><pre><code>package p1;
+public sealed interface X permits p2.Y { }
+// error: class X in unnamed module cannot extend a sealed class
+//        in a different package</code></pre></div>
+
+  <div class="point trap"><p><code>sealed</code> の本来の狙いは <code>switch</code> のパターンマッチングで<strong>網羅性を検査させる</strong>ことですが、<span class="mk">switch のパターンマッチングは SE 17 ではプレビュー機能</span>なので出題範囲外です。<br>SE 17 で問われるのは<strong>構文規則の方</strong> ── <code>permits</code> の範囲、実装側の3択、場所の制約です。</p></div>
+</section>

@@ -1,0 +1,22 @@
+<section id="c3-s03">
+  <div class="sh"><span class="num">03</span><h2>代入演算子と複合代入</h2></div>
+
+  <p>複合代入演算子（<code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code> <code>%=</code>）には、<strong>暗黙のキャストが組み込まれています</strong>。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>意味は同じでも結果が違う<span class="tag">最重要</span></div><pre><code>byte a = 1;
+a += 2;        // OK。(byte)(a + 2) と同じ扱い
+a++;           // OK。同じ理由
+a = a + 2;     // コンパイルエラー: a + 2 は int</code></pre></div>
+
+  <div class="point link"><p>第2章の数値昇格とセットで問われます。<span class="mk pink">byte・short・char の演算結果は int</span> なので、そのままでは代入できません。複合代入だけが例外的に通ります。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>右辺全体が先に評価される<span class="tag">要注意</span></div><pre><code>int a = 2;
+a *= 3 + 4;    // a = a * (3 + 4) = 14 ← a*3+4 = 10 ではない</code></pre></div>
+
+  <p><code>a op= b</code> は <code>a = a op (b)</code> と展開されます。<span class="mk">右辺全体が括弧で囲まれる</span>と覚えてください。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>文字列にも使える<span class="tag">OK</span></div><pre><code>String s = "a";
+s += 1;        // "a1"
+s += 'b';      // "a1b"
+s += null;     // "a1bnull"</code></pre></div>
+</section>

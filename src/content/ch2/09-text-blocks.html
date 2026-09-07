@@ -1,0 +1,65 @@
+<section id="c2-s09">
+  <div class="sh"><span class="num">09</span><h2>テキストブロック</h2></div>
+
+  <div class="point new"><p>SE 11 Silver には存在しなかった項目です。11 の教材では一切カバーされていないので、ここは新規に固める必要があります。</p></div>
+
+  <p><code>"""</code> で囲んで、複数行の文字列をそのまま書ける構文です（Java 15〜）。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>String s = """
+    Hello
+    World""";
+// "Hello\nWorld"</code></pre></div>
+
+  <h3>ルール1 ── 開始の """ の後は改行が必須</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ行に文字を書けない<span class="tag">NG</span></div><pre><code>String s = """Hello
+    World""";        // コンパイルエラー</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>改行してから書く<span class="tag">OK</span></div><pre><code>String s = """
+    Hello
+    World""";</code></pre></div>
+
+  <p>終了の <code>"""</code> は同じ行に置けます。<span class="mk">改行が必須なのは開始側だけ。</span></p>
+
+  <h3>ルール2 ── インデントは「最も浅い行」を基準に除去される</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>付随的な空白の除去<span class="tag">最重要</span></div><pre><code>String s = """
+        Hello
+      World
+        """;
+// 最も浅いのは終了の """ の位置（6文字）
+// → 各行から6文字ぶんのインデントが取り除かれる
+// "  Hello\nWorld\n"</code></pre></div>
+
+  <p><strong>終了の <code>"""</code> の位置も判定に含まれます。</strong>これが最も左にあれば、その位置が基準になります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>終了位置を変えると結果が変わる<span class="tag">要注意</span></div><pre><code>String a = """
+    Hello
+    """;          // 終了が4文字目 → "Hello\n"
+
+String b = """
+    Hello
+""";              // 終了が0文字目 → "    Hello\n"</code></pre></div>
+
+  <h3>ルール3 ── 末尾の改行</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>終了 """ の位置で改行の有無が決まる<span class="tag">要注意</span></div><pre><code>String a = """
+    Hello""";     // "Hello"     ← 末尾に改行なし
+
+String b = """
+    Hello
+    """;          // "Hello\n"   ← 末尾に改行あり</code></pre></div>
+
+  <h3>ルール4 ── 2つのエスケープ</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>行末の \ と \s<span class="tag">要注意</span></div><pre><code>String a = """
+    Hello \
+    World""";
+// "Hello World" ← 行末の \ で改行を打ち消す（連結される）
+
+String b = """
+    Hello   \s
+    World""";
+// \s は空白1文字として扱われ、その手前の空白も保持される</code></pre></div>
+
+  <p>通常のエスケープ（<code>\n</code> <code>\t</code> <code>\"</code>）も使えます。ただし<span class="mk">ダブルクォート1個は、そのまま書いてもエスケープ不要</span>です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クォートの扱い<span class="tag">OK</span></div><pre><code>String s = """
+    彼は "Hello" と言った""";     // OK。エスケープ不要</code></pre></div>
+</section>

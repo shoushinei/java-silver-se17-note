@@ -1,0 +1,37 @@
+<section id="c5-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>第4章と並ぶ最大の範囲です。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c5-barfill"></i></div>
+  <div class="barlab" id="c5-barlab">0 / 26</div>
+
+  <ul class="ck" id="c5-cklist">
+    <li><span class="box">✓</span><span class="cktx">クラスは単一継承。インタフェースは複数実装・多重継承ともに可</span></li>
+    <li><span class="box">✓</span><span class="cktx">コンストラクタと private メンバは継承されない</span></li>
+    <li><span class="box">✓</span><span class="cktx">super() は自動挿入される。親に引数なしが無ければ子側でエラー</span></li>
+    <li><span class="box">✓</span><span class="cktx">実行順序は親が先。各階層で初期化ブロック→コンストラクタ本体</span></li>
+    <li><span class="box">✓</span><span class="cktx">オーバーライドは「呼ぶ側が困らない方向」にだけ変えられる</span></li>
+    <li><span class="box">✓</span><span class="cktx">戻り値型は同じかサブ型。共変が効くのは参照型だけ</span></li>
+    <li><span class="box">✓</span><span class="cktx">完全一致が要るのは引数リストだけ。残り3つは片方向に緩められる</span></li>
+    <li><span class="box">✓</span><span class="cktx">super. はスーパークラスのみ。default は I.super.m() で直接の親を名指し</span></li>
+    <li><span class="box">✓</span><span class="cktx">abstract が禁じるのは new だけ。型として使うのは自由</span></li>
+    <li><span class="box">✓</span><span class="cktx">検査例外は増やせない。非検査例外は自由</span></li>
+    <li><span class="box">✓</span><span class="cktx">final・static・private メソッドはオーバーライドできない</span></li>
+    <li><span class="box">✓</span><span class="cktx">引数を1文字変えるとオーバーロードになる。@Override が防ぐ</span></li>
+    <li><span class="box">✓</span><span class="cktx">メソッドは実体型、フィールドと static は宣言型で解決される</span></li>
+    <li><span class="box">✓</span><span class="cktx">親子の同名フィールドは両方存在する。super.x で親側を指す</span></li>
+    <li><span class="box">✓</span><span class="cktx">ダウンキャストの失敗は実行時。無関係な型はコンパイルエラー</span></li>
+    <li><span class="box">✓</span><span class="cktx">書ける範囲は宣言型、動く実装は実体型</span></li>
+    <li><span class="box">✓</span><span class="cktx">abstract はインスタンス化不可だがコンストラクタと main は持てる</span></li>
+    <li><span class="box">✓</span><span class="cktx">final 変数が固定するのは参照。中身は変えられる</span></li>
+    <li><span class="box">✓</span><span class="cktx">インタフェースのフィールドは public static final、メソッドは public abstract</span></li>
+    <li><span class="box">✓</span><span class="cktx">default は継承される。static は継承されずインタフェース名で呼ぶ</span></li>
+    <li><span class="box">✓</span><span class="cktx">本体を書けるのは default / static / private のみ。付いていなければ禁止</span></li>
+    <li><span class="box">✓</span><span class="cktx">protected と final は付けられない。public と abstract は冗長だが可</span></li>
+    <li><span class="box">✓</span><span class="cktx">private は本体必須。default との併用は不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">インタフェースも new できない。抽象クラスと同じエラー</span></li>
+    <li><span class="box">✓</span><span class="cktx">default の衝突は A.super.m() で解決。クラスは常に default に勝つ</span></li>
+    <li><span class="box">✓</span><span class="cktx">sealed の実装側は final / sealed / non-sealed の3択が必須</span></li>
+  </ul>
+  <button class="reset" id="c5-ckreset" type="button">チェックをすべて外す</button>
+</section>

@@ -1,10 +1,16 @@
+<!doctype html>
+<html lang="ja">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート</title>
+<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・62論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ---- styles/01-tokens.css ---- */
 :root{
   --sumi:#1A1C23;
   --sumi-2:#3D414F;
@@ -24,11 +30,14 @@
   --disp:"Shippori Mincho B1",serif;
   --body:"Noto Sans JP",system-ui,sans-serif;
 }
+
+/* ---- styles/02-base.css ---- */
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
 body{margin:0;background:var(--washi);color:var(--sumi);font-family:var(--body);font-size:16px;line-height:1.9;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 
+/* ---- styles/03-layout.css ---- */
 .shell{display:grid;grid-template-columns:236px minmax(0,1fr);gap:0;max-width:1180px;margin:0 auto}
 .toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:34px 20px 40px;border-right:1px solid var(--rule)}
 .toc-brand{font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:.04em;line-height:1.5;margin-bottom:4px}
@@ -41,6 +50,7 @@ body{margin:0;background:var(--washi);color:var(--sumi);font-family:var(--body);
 .toc-gap{height:14px}
 main{min-width:0;padding:0 44px 120px}
 
+/* ---- styles/04-hero.css ---- */
 .hero{padding:76px 0 44px;border-bottom:3px solid var(--sumi)}
 .eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--sumi-3);margin-bottom:20px}
 .hero h1{font-family:var(--disp);font-weight:800;font-size:clamp(34px,6.4vw,56px);line-height:1.2;letter-spacing:.01em;margin:0 0 6px}
@@ -52,6 +62,7 @@ main{min-width:0;padding:0 44px 120px}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
 .dot.ok{background:var(--ok)}.dot.err{background:var(--err)}.dot.run{background:var(--run)}
 
+/* ---- styles/05-typography.css ---- */
 section{padding-top:60px}
 .sh{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:26px}
 .sh .num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--err);letter-spacing:.06em;flex:none;padding-top:4px}
@@ -61,10 +72,12 @@ h3::before{content:"";display:inline-block;width:4px;height:15px;background:var(
 p{margin:0 0 15px}
 code:not(pre code){font-family:var(--mono);font-size:.86em;background:var(--washi-2);border:1px solid var(--rule);border-radius:4px;padding:1.5px 5px;white-space:nowrap}
 
+/* ---- styles/06-marker.css ---- */
 .mk{position:relative;font-weight:700;display:inline;background-image:linear-gradient(var(--marker),var(--marker));background-repeat:no-repeat;background-position:0 88%;background-size:0 42%;transition:background-size .55s cubic-bezier(.22,.9,.3,1) .1s}
 .mk.lit{background-size:100% 42%}
 .mk.pink{background-image:linear-gradient(var(--marker-2),var(--marker-2))}
 
+/* ---- styles/07-code.css ---- */
 .code{border:1px solid var(--rule);border-left:4px solid var(--sumi-3);border-radius:7px;background:#fff;margin:0 0 16px;overflow:hidden}
 .code[data-v=ok]{border-left-color:var(--ok)}
 .code[data-v=err]{border-left-color:var(--err)}
@@ -81,6 +94,7 @@ pre code{font-family:inherit}
 .c{color:var(--sumi-3);font-style:italic}
 .n{color:#1D5FA8}
 
+/* ---- styles/08-callout.css ---- */
 .point{border:1px solid var(--rule);border-radius:8px;background:#fff;padding:16px 18px;margin:22px 0;position:relative}
 .point::before{content:"試験ポイント";position:absolute;top:-9px;left:14px;background:var(--sumi);color:var(--washi);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:2px 9px;border-radius:3px}
 .point p:last-child{margin-bottom:0}
@@ -88,6 +102,7 @@ pre code{font-family:inherit}
 .point.link::before{content:"他の章とつながる";background:var(--ok)}
 .point.new::before{content:"SE 17 で新登場";background:#1D5FA8}
 
+/* ---- styles/09-table.css ---- */
 .tw{overflow-x:auto;margin:0 0 20px;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;min-width:420px;font-size:14px;background:#fff}
 th,td{border:1px solid var(--rule);padding:9px 12px;text-align:left;vertical-align:top;line-height:1.65}
@@ -95,10 +110,12 @@ th{background:var(--sumi);color:var(--washi);font-weight:700;font-size:13px;lett
 tbody tr:nth-child(even){background:var(--washi)}
 td code{white-space:nowrap}
 
+/* ---- styles/10-list.css ---- */
 ul,ol{margin:0 0 15px;padding-left:1.35em}
 li{margin-bottom:7px}
 .tight li{margin-bottom:3px}
 
+/* ---- styles/11-quiz.css ---- */
 .q{border:1px solid var(--rule);border-radius:8px;background:#fff;margin-bottom:11px;overflow:hidden}
 .q>summary{cursor:pointer;padding:14px 16px;font-weight:500;font-size:15px;list-style:none;display:flex;gap:11px;align-items:flex-start}
 .q>summary::-webkit-details-marker{display:none}
@@ -110,6 +127,7 @@ li{margin-bottom:7px}
 .qa p:last-child{margin-bottom:0}
 .qa strong{background:linear-gradient(var(--marker),var(--marker));background-repeat:no-repeat;background-position:0 88%;background-size:100% 40%;padding:0 2px}
 
+/* ---- styles/12-checklist.css ---- */
 .ck{list-style:none;padding:0;margin:0 0 18px}
 .ck li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--rule);border-radius:7px;background:#fff;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:background .15s,border-color .15s}
 .ck li:hover{border-color:var(--sumi-3)}
@@ -124,10 +142,12 @@ li{margin-bottom:7px}
 .reset{font:inherit;font-size:12px;color:var(--sumi-3);background:none;border:1px solid var(--rule);border-radius:5px;padding:5px 11px;cursor:pointer}
 .reset:hover{border-color:var(--sumi-3);color:var(--sumi)}
 
+/* ---- styles/13-footer.css ---- */
 footer{margin-top:70px;padding-top:22px;border-top:3px solid var(--sumi);font-size:12.5px;color:var(--sumi-3)}
 a{color:var(--sumi)}
 :focus-visible{outline:2.5px solid var(--err);outline-offset:2px;border-radius:3px}
 
+/* ---- styles/14-responsive.css ---- */
 @media (max-width:860px){
   .shell{display:block}
   .toc{position:sticky;top:0;height:auto;border-right:none;border-bottom:1px solid var(--rule);padding:11px 14px;background:rgba(252,251,248,.96);backdrop-filter:blur(8px);z-index:20;display:flex;gap:7px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
@@ -139,6 +159,7 @@ a{color:var(--sumi)}
   .qa{padding-left:16px}
 }
 
+/* ---- styles/15-chapter.css ---- */
 .toc-h{font-family:var(--disp);font-weight:800;font-size:12px;letter-spacing:.06em;color:var(--sumi);margin:20px 0 7px;padding-left:8px;border-left:3px solid var(--err)}
 .chap{margin-top:86px;padding:30px 0 4px;border-top:3px solid var(--sumi)}
 .chap-num{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--err);margin-bottom:10px}
@@ -150,6 +171,7 @@ a{color:var(--sumi)}
 }
 hr.sep{border:none;border-top:1px solid var(--rule);margin:34px 0}
 
+/* ---- styles/16-search.css ---- */
 .search{position:relative;margin-bottom:14px}
 .search input{width:100%;font-family:var(--body);font-size:13px;padding:8px 26px 8px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--washi);color:var(--sumi);outline:none;box-sizing:border-box}
 .search input:focus{border-color:var(--sumi-3)}
@@ -170,14 +192,16 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
   .toc a .cnt{margin-left:6px}
 }
 </style>
+</head>
+<body>
 <div class="shell">
 <nav class="toc" aria-label="目次">
   <div class="toc-brand">Java Silver<br>SE 17 統合ノート</div>
   <div class="toc-sub">1Z0-825 / 全6章 完成版</div>
   <div class="search">
     <input id="q" type="search" placeholder="論点を検索（/ で移動）" autocomplete="off" aria-label="ノート内を検索">
-    <span class="x" id="qx" role="button" aria-label="検索を解除">×</span>
-    <p class="shits" id="qhits"></p>
+    <span class="x" id="qx" role="button" tabindex="0" aria-label="検索を解除">×</span>
+    <p class="shits" id="qhits" aria-live="polite"></p>
   </div>
   <a href="#idx"><span class="tn">◎</span>論点インデックス</a>
   <div class="toc-h">第1章　概要とプログラム作成</div>
@@ -281,13 +305,14 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
   <div id="idxbody"></div>
 </section>
 
+<!-- ==================== CHAPTER 1 ==================== -->
 <div class="chap" id="ch1">
   <div class="chap-num">CHAPTER 1</div>
   <h2 class="chap-title">Java の概要と簡単な Java プログラムの作成</h2>
   <p class="chap-lead">配点は小さいのに、落とすと痛い章です。問われるのは知識ではなく<strong>形</strong>。<code>main</code> のシグネチャ、<code>package</code> と <code>import</code> の順序、<code>java</code> コマンドに何を渡すか。すべて「1文字違うと動かない」種類の規則で、覚えれば確実に取れます。</p>
 </div>
 
-<!-- ================= 01 ================= -->
+<!-- ch1/01-main-signature.html · mainのシグネチャ -->
 <section id="c1-s01">
   <div class="sh"><span class="num">01</span><h2>main メソッドのシグネチャ</h2></div>
 
@@ -348,7 +373,7 @@ public static final void main(String[] args) { }   // final を付けてもよ�
   <p><code>main(int)</code> は<strong>ただのメソッド</strong>です。JVM が起点として選ぶのは常に <code>String[]</code> を取る方だけ。オーバーロードされた <code>main</code> は、自分で呼ばない限り実行されません。</p>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ch1/02-command-line-args.html · コマンドライン引数 -->
 <section id="c1-s02">
   <div class="sh"><span class="num">02</span><h2>コマンドライン引数</h2></div>
 
@@ -425,7 +450,7 @@ Integer.parseInt(args[0]);                // NumberFormatException</code></pre><
 
 </section>
 
-<!-- ================= 03 ================= -->
+<!-- ch1/03-compile-and-run.html · コンパイルと実行 -->
 <section id="c1-s03">
   <div class="sh"><span class="num">03</span><h2>コンパイルと実行</h2></div>
 
@@ -604,7 +629,7 @@ public class Sample {
 // メソッドの一覧が出るだけ。"sample" は表示されない</code></pre></div>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ch1/04-filename-and-class.html · ファイル名とクラス -->
 <section id="c1-s04">
   <div class="sh"><span class="num">04</span><h2>ファイル名とクラス宣言の規則</h2></div>
 
@@ -640,7 +665,7 @@ class Main {
   <p>public がなければファイル名は自由です。実行時に指定するのは<strong>クラス名</strong>なので、ファイル名が何であっても <code>java Main</code> で起動します。</p>
 </section>
 
-<!-- ================= 05 ================= -->
+<!-- ch1/05-package-declaration.html · パッケージ宣言 -->
 <section id="c1-s05">
   <div class="sh"><span class="num">05</span><h2>パッケージ宣言</h2></div>
 
@@ -684,7 +709,7 @@ java -cp bin com.example.app.Main   // 実行時は完全修飾名で指定す�
   <p>パッケージ名がすべて小文字なのは慣習で、文法上の制約ではありません。ただし <code>java</code> で始まるパッケージ名は使用が禁止されています。</p>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ch1/06-import-rules.html · importの規則 -->
 <section id="c1-s06">
   <div class="sh"><span class="num">06</span><h2>import の規則</h2></div>
 
@@ -746,7 +771,7 @@ System.out.println(max(3, 7));         // Math. を書かずに呼べる → 7</
   <div class="point trap"><p>語順は <code>import static</code> です。<span class="mk">static import と書くとコンパイルエラー</span>。この1点だけを問う問題が出ます。<br>また、<code>import static</code> が指すのは<strong>クラスの static メンバ</strong>であって、パッケージやクラス自体ではありません。</p></div>
 </section>
 
-<!-- ================= 07 ================= -->
+<!-- ch1/07-access-modifiers.html · アクセス修飾子 -->
 <section id="c1-s07">
   <div class="sh"><span class="num">07</span><h2>アクセス修飾子の到達範囲</h2></div>
 
@@ -845,7 +870,7 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
   <div class="point link"><p>第5章とつながります。オーバーライドでは<span class="mk">アクセス範囲を狭められません</span>。<code>protected</code> のメソッドを修飾子なしでオーバーライドすると <code>attempting to assign weaker access privileges; was protected</code> になります。広げる（<code>protected</code> → <code>public</code>）のは自由です。</p></div>
 </section>
 
-<!-- ================= QUIZ ================= -->
+<!-- ch1/quiz.html · 一問一答 -->
 <section id="c1-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>答えを声に出してから開いてください。</p>
@@ -926,7 +951,7 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
     <div class="qa"><p><strong>付けられない。</strong>スコープはブロックで決まるので、アクセス修飾子に意味がありません。ただし <code>final</code> は付けられます（アクセス修飾子ではないため）。</p></div></details>
 </section>
 
-<!-- ================= CHECKLIST ================= -->
+<!-- ch1/checklist.html · 直前チェック -->
 <section id="c1-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>この章は暗記で確実に取れます。タップで消し込めます。</p>
@@ -958,16 +983,14 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
   <button class="reset" id="c1-ckreset" type="button">チェックをすべて外す</button>
 </section>
 
+<!-- ==================== CHAPTER 2 ==================== -->
 <div class="chap" id="ch2">
   <div class="chap-num">CHAPTER 2</div>
   <h2 class="chap-title">Java の基本データ型と文字列の操作</h2>
   <p class="chap-lead">この章の失点は、知識不足ではなく「1文字の見落とし」で起きます。接尾辞の L、括弧の有無、final の1語。ArrayList とテキストブロックは 11 の教材に載っていない新規範囲です。</p>
 </div>
 
-
-
-
-<!-- ================= 01 ================= -->
+<!-- ch2/01-primitive-types.html · 8つの基本データ型 -->
 <section id="c2-s01">
   <div class="sh"><span class="num">01</span><h2>8つの基本データ型</h2></div>
 
@@ -1014,7 +1037,7 @@ System.out.println(Double.NaN == Double.NaN);   // false
   <div class="point link"><p>第6章とつながります。<span class="mk pink">整数の 0 除算だけが ArithmeticException</span>。小数の 0 除算は例外を投げません。「実行時に例外がスローされる」という選択肢を選ばせる引っかけに使われます。</p></div>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ch2/02-literals.html · リテラルの書き方 -->
 <section id="c2-s02">
   <div class="sh"><span class="num">02</span><h2>リテラルの書き方</h2></div>
 
@@ -1042,7 +1065,7 @@ long   e = 100_L;      // エラー: 接尾辞の隣</code></pre></div>
   <p><span class="mk">数字と数字の間に挟まれているときだけ有効。</span>これ以外は全部コンパイルエラーです。</p>
 </section>
 
-<!-- ================= 03 ================= -->
+<!-- ch2/03-type-conversion.html · 型変換 -->
 <section id="c2-s03">
   <div class="sh"><span class="num">03</span><h2>型変換</h2></div>
 
@@ -1104,7 +1127,7 @@ System.out.println(c == d);   // false</code></pre></div>
 int j = i;      // コンパイルは通り、実行時に NullPointerException</code></pre></div>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ch2/04-declaration-and-scope.html · 宣言・初期化・スコープ -->
 <section id="c2-s04">
   <div class="sh"><span class="num">04</span><h2>宣言・初期化・スコープ</h2></div>
 
@@ -1163,7 +1186,7 @@ catch (Exception e) { System.out.println(y); }   // コンパイルエラー</co
 }</code></pre></div>
 </section>
 
-<!-- ================= 05 ================= -->
+<!-- ch2/05-var-type-inference.html · var（型推論） -->
 <section id="c2-s05">
   <div class="sh"><span class="num">05</span><h2>var（ローカル変数型推論）</h2></div>
 
@@ -1203,7 +1226,7 @@ var var = 10;            // OK。これも通る</code></pre></div>
   <div class="point trap"><p><span class="mk">「var は予約語なので識別子に使えない」という選択肢は誤り</span>です。互換性のため予約語にはされておらず、変数名・メソッド名・パッケージ名に使えます（クラス名とインタフェース名には使えません）。これは狙われます。</p></div>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ch2/06-string-immutability.html · Stringの不変性 -->
 <section id="c2-s06">
   <div class="sh"><span class="num">06</span><h2>String の不変性</h2></div>
 
@@ -1244,7 +1267,7 @@ System.out.println(a == f + "lo");       // true  ← final なら定数式</cod
   <div class="point link"><p>ここでも <code>final</code> の1語で結果が反転します。<span class="mk pink">コンパイル時に値が確定するか</span>という同じ判定基準が、型変換・String 比較・第6章の multi-catch すべてに共通して効いています。</p></div>
 </section>
 
-<!-- ================= 07 ================= -->
+<!-- ch2/07-string-methods.html · Stringのメソッド -->
 <section id="c2-s07">
   <div class="sh"><span class="num">07</span><h2>String の主要メソッド</h2></div>
 
@@ -1471,7 +1494,7 @@ System.out.println(s);   // "  Hello World  " ← 元は変わらない</code></
   <p>チェーンできるのは、各メソッドが<strong>新しい String を返している</strong>からです。1つずつ結果を書き出せば必ず解けます。</p>
 </section>
 
-<!-- ================= 08 ================= -->
+<!-- ch2/08-stringbuilder.html · StringBuilder -->
 <section id="c2-s08">
   <div class="sh"><span class="num">08</span><h2>StringBuilder</h2></div>
 
@@ -1671,7 +1694,8 @@ String d = a + "x";           // OK ← String との連結なら toString() が
 
   <div class="point link"><p><code>StringBuffer</code> という同じ API のクラスもあります。違いは<span class="mk pink">スレッドセーフかどうか</span>だけで、メソッドは同一です。選択肢に混ざっても、動作は StringBuilder と同じと考えて構いません。</p></div>
 </section>
-<!-- ================= 09 ================= -->
+
+<!-- ch2/09-text-blocks.html · テキストブロック -->
 <section id="c2-s09">
   <div class="sh"><span class="num">09</span><h2>テキストブロック</h2></div>
 
@@ -1738,7 +1762,7 @@ String b = """
     彼は "Hello" と言った""";     // OK。エスケープ不要</code></pre></div>
 </section>
 
-<!-- ================= 10 ================= -->
+<!-- ch2/10-arrays.html · 配列 -->
 <section id="c2-s10">
   <div class="sh"><span class="num">10</span><h2>配列</h2></div>
 
@@ -1921,7 +1945,7 @@ System.out.println(a[0][0]);   // "X" のまま</code></pre></div></div>
   <div class="point link"><p>第4章とつながります。<span class="mk pink">配列は参照型</span>なので、メソッドに渡すと参照がコピーされます。<code>arr[0] = 99</code> は呼び出し元に伝わりますが、<code>arr = new int[]{...}</code> は伝わりません。</p></div>
 </section>
 
-<!-- ================= 11 ================= -->
+<!-- ch2/11-arraylist.html · ArrayList -->
 <section id="c2-s11">
   <div class="sh"><span class="num">11</span><h2>ArrayList</h2></div>
 
@@ -2117,7 +2141,7 @@ System.out.println(arr[0]);   // 9 ← 元の配列も変わる</code></pre></di
 a.add(4);      // OK</code></pre></div>
 </section>
 
-<!-- ================= 12 ================= -->
+<!-- ch2/12-null-handling.html · nullとの付き合い方 -->
 <section id="c2-s12">
   <div class="sh"><span class="num">12</span><h2>null との付き合い方</h2></div>
 
@@ -2194,7 +2218,7 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
   <div class="point link"><p>第6章の判定基準がそのまま使えます。<span class="mk pink">null は「呼ばれたとき」だけ例外になる</span>ので、選択肢を読むときは「ドットがあるか」だけを探してください。</p></div>
 </section>
 
-<!-- ================= QUIZ ================= -->
+<!-- ch2/quiz.html · 一問一答 -->
 <section id="c2-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
@@ -2266,7 +2290,7 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
     <div class="qa"><p><strong>List.of は set も不可（不変）、Arrays.asList は set だけ可（固定長）。</strong>asList は元の配列を包んでいるだけなので、set すると<strong>元の配列も変わります</strong>。どちらも add / remove は UnsupportedOperationException。</p></div></details>
 </section>
 
-<!-- ================= CHECKLIST ================= -->
+<!-- ch2/checklist.html · 直前チェック -->
 <section id="c2-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>試験前日に、この12項目を声に出して言えるか確認してください。タップで消し込めます。</p>
@@ -2298,14 +2322,15 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
   <button class="reset" id="c2-ckreset" type="button">チェックをすべて外す</button>
 
 </section>
+
+<!-- ==================== CHAPTER 3 ==================== -->
 <div class="chap" id="ch3">
   <div class="chap-num">CHAPTER 3</div>
   <h2 class="chap-title">演算子と制御構造</h2>
   <p class="chap-lead">この章の失点は「知らなかった」ではなく「読み違えた」で起きます。<code>i++</code> と <code>++i</code> の1文字、<code>&amp;</code> と <code>&amp;&amp;</code> の1文字、<code>:</code> と <code>-&gt;</code> の違い。そして <code>switch</code> 式は SE 17 で完全に新規の範囲です。</p>
 </div>
 
-
-<!-- ============ 01 ============ -->
+<!-- ch3/01-operator-precedence.html · 優先順位 -->
 <section id="c3-s01">
   <div class="sh"><span class="num">01</span><h2>演算子の優先順位</h2></div>
 
@@ -2335,7 +2360,7 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
 a = b = c = 5;      // c=5 → b=5 → a=5 の順。全部 5 になる</code></pre></div>
 </section>
 
-<!-- ============ 02 ============ -->
+<!-- ch3/02-arithmetic-and-increment.html · 算術と++／-- -->
 <section id="c3-s02">
   <div class="sh"><span class="num">02</span><h2>算術演算子とインクリメント</h2></div>
 
@@ -2389,7 +2414,7 @@ final int x = 1;
 x++;                          // コンパイルエラー: final は変更不可</code></pre></div>
 </section>
 
-<!-- ============ 03 ============ -->
+<!-- ch3/03-assignment-compound.html · 代入と複合代入 -->
 <section id="c3-s03">
   <div class="sh"><span class="num">03</span><h2>代入演算子と複合代入</h2></div>
 
@@ -2413,7 +2438,7 @@ s += 'b';      // "a1b"
 s += null;     // "a1bnull"</code></pre></div>
 </section>
 
-<!-- ============ 04 ============ -->
+<!-- ch3/04-comparison-and-equality.html · 比較と等価性 -->
 <section id="c3-s04">
   <div class="sh"><span class="num">04</span><h2>比較演算子と等価性</h2></div>
 
@@ -2460,7 +2485,7 @@ System.out.println(o instanceof String);   // true</code></pre></div>
 }</code></pre></div></div>
 </section>
 
-<!-- ============ 05 ============ -->
+<!-- ch3/05-logical-short-circuit.html · 論理演算子と短絡 -->
 <section id="c3-s05">
   <div class="sh"><span class="num">05</span><h2>論理演算子と短絡評価</h2></div>
 
@@ -2511,7 +2536,7 @@ a &amp; b;         // OK ← ビット演算として動く（結果は 0）</co
   <p><code>&amp;</code> <code>|</code> <code>^</code> は boolean にも整数にも使えます。<span class="mk"><code>&amp;&amp;</code> <code>||</code> は boolean 専用</span>です。</p>
 </section>
 
-<!-- ============ 06 ============ -->
+<!-- ch3/06-ternary.html · 三項演算子 -->
 <section id="c3-s06">
   <div class="sh"><span class="num">06</span><h2>三項演算子</h2></div>
 
@@ -2546,7 +2571,7 @@ String s = a ? "A" : (b ? "B" : "C");</code></pre></div>
   <p>三項演算子は<strong>値を作るための「式」</strong>です。<span class="mk">結果を代入するか、値として使わなければいけません。</span></p>
 </section>
 
-<!-- ============ 07 ============ -->
+<!-- ch3/07-if-statement.html · if文 -->
 <section id="c3-s07">
   <div class="sh"><span class="num">07</span><h2>if 文</h2></div>
 
@@ -2586,7 +2611,7 @@ while (i &lt; 3);                    // 無限ループ！本体が空文
     int x = 10;      // コンパイルエラー: 宣言は文ではあるが、ここには置けない</code></pre></div>
 </section>
 
-<!-- ============ 08 ============ -->
+<!-- ch3/08-switch-statement.html · switch文 -->
 <section id="c3-s08">
   <div class="sh"><span class="num">08</span><h2>switch 文（従来の形）</h2></div>
 
@@ -2658,7 +2683,7 @@ switch (s) {                 // NullPointerException
   <p>SE 17 の switch 文では <code>case null</code> は書けません。null が来ると実行時に落ちます。</p>
 </section>
 
-<!-- ============ 09 ============ -->
+<!-- ch3/09-switch-expression.html · switch式 ★新 -->
 <section id="c3-s09">
   <div class="sh"><span class="num">09</span><h2>switch 式</h2></div>
 
@@ -2779,7 +2804,7 @@ String s = switch (color) {
   </table></div>
 </section>
 
-<!-- ============ 10 ============ -->
+<!-- ch3/10-loops-and-2d-arrays.html · 繰り返しと2次元配列 -->
 <section id="c3-s10">
   <div class="sh"><span class="num">10</span><h2>繰り返し文</h2></div>
 
@@ -2905,7 +2930,7 @@ System.out.println(total);
 
 </section>
 
-<!-- ============ 11 ============ -->
+<!-- ch3/11-break-continue-label.html · break / continue / ラベル -->
 <section id="c3-s11">
   <div class="sh"><span class="num">11</span><h2>break と continue</h2></div>
 
@@ -3014,7 +3039,7 @@ foo: for (int i = 0; i &lt; 2; i++) {
 
 </section>
 
-<!-- ============ 12 ============ -->
+<!-- ch3/12-radix-and-bitwise.html · 進数とビット演算 -->
 <section id="c3-s12">
   <div class="sh"><span class="num">12</span><h2>進数リテラルとビット演算</h2></div>
 
@@ -3118,7 +3143,7 @@ status &amp; FLAG_B          // 2    → B は立っている
   <div class="point trap"><p>この形の問題は<span class="mk">オペランドが int なので <code>&amp;&amp;</code> <code>||</code> が即座に消える</span>ところから解きます。残った <code>&amp;</code> と <code>|</code> を縦書きで計算すれば確定します。</p></div>
 </section>
 
-<!-- ============ QUIZ ============ -->
+<!-- ch3/quiz.html · 一問一答 -->
 <section id="c3-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
@@ -3187,7 +3212,7 @@ status &amp; FLAG_B          // 2    → B は立っている
     <div class="qa"><p><strong>yield は switch 式だけを抜け、return はメソッドごと抜ける。</strong>だから switch 式の中で return は書けません。yield は予約語ではないので変数名にも使えます。</p></div></details>
 </section>
 
-<!-- ============ CHECKLIST ============ -->
+<!-- ch3/checklist.html · 直前チェック -->
 <section id="c3-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>試験前日に、この14項目を声に出して言えるか確認してください。タップで消し込めます。</p>
@@ -3216,13 +3241,15 @@ status &amp; FLAG_B          // 2    → B は立っている
   <button class="reset" id="c3-ckreset" type="button">チェックをすべて外す</button>
 
 </section>
+
+<!-- ==================== CHAPTER 4 ==================== -->
 <div class="chap" id="ch4">
   <div class="chap-num">CHAPTER 4</div>
   <h2 class="chap-title">クラスの定義とインスタンスの使用</h2>
   <p class="chap-lead">出題数がもっとも多い章です。前半（クラス・コンストラクタ・オーバーロード・static）は Bronze と重なりますが、問われる精度が上がります。後半の <code>instanceof</code> パターンマッチングと <code>record</code> は SE 17 で新規に追加された範囲で、確実に出ます。</p>
 </div>
 
-<!-- ================= 01 ================= -->
+<!-- ch4/01-class-definition.html · 定義とインスタンス化 -->
 <section id="c4-s01">
   <div class="sh"><span class="num">01</span><h2>クラスの定義とインスタンス化</h2></div>
 
@@ -3260,7 +3287,7 @@ System.out.println(a.name);   // B ← a から見ても変わっている
 System.out.println(a == b);   // true（同じ実体）</code></pre></div>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ch4/02-fields-and-lifecycle.html · フィールドとライフサイクル -->
 <section id="c4-s02">
   <div class="sh"><span class="num">02</span><h2>フィールドとライフサイクル</h2></div>
 
@@ -3298,7 +3325,7 @@ c = null;                 // ③ 2つ目も参照が切れる</code></pre></div>
   <div class="point trap"><p>ガベージコレクションについて問われるのは<span class="mk">「いつ回収対象になるか」であって「いつ回収されるか」ではありません</span>。<br>どこからも参照されなくなった時点で<strong>対象</strong>になりますが、実際に回収されるタイミングは JVM 任せで<strong>保証されません</strong>。<code>System.gc()</code> も「お願い」であって強制ではなく、<code>finalize()</code> は非推奨です。</p></div>
 </section>
 
-<!-- ================= 03 ================= -->
+<!-- ch4/03-methods-and-parameters.html · メソッドと引数 -->
 <section id="c4-s03">
   <div class="sh"><span class="num">03</span><h2>メソッドと引数の渡し方</h2></div>
 
@@ -3336,7 +3363,7 @@ void m(int... a, String... b) { }   // エラー: 2つは書けない
 void m(int x, String... s) { }      // OK</code></pre></div>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ch4/04-constructors.html · コンストラクタ -->
 <section id="c4-s04">
   <div class="sh"><span class="num">04</span><h2>コンストラクタ</h2></div>
 
@@ -3374,7 +3401,7 @@ new A();                  // コンパイルエラー
   <div class="point"><p>デフォルトコンストラクタ（引数なし・中身空）は、<span class="mk">コンストラクタを1つも書かなかったときだけ</span>コンパイラが用意します。1つでも自分で書けば、自動生成は行われません。<br>引数なしでも使いたければ、<code>A() { }</code> を<strong>自分で書き足す</strong>必要があります。</p></div>
 </section>
 
-<!-- ================= 05 ================= -->
+<!-- ch4/05-this-and-this-call.html · this と this() -->
 <section id="c4-s05">
   <div class="sh"><span class="num">05</span><h2>this と this()</h2></div>
 
@@ -3414,7 +3441,7 @@ void m() { this(); }          // エラー: コンストラクタ以外からは
   <div class="point trap"><p><code>this()</code> は<span class="mk">コンストラクタの最初の1文</span>でなければなりません。第5章で扱う <code>super()</code> も同じ制約なので、<strong><code>this()</code> と <code>super()</code> は同時に書けません</strong>（どちらも先頭を要求するため）。</p></div>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ch4/06-overloading.html · オーバーロード -->
 <section id="c4-s06">
   <div class="sh"><span class="num">06</span><h2>メソッドのオーバーロード</h2></div>
 
@@ -3461,7 +3488,7 @@ k(5);                    // Integer ← ボクシングが可変長より優先<
   <div class="point"><p>覚え方は<span class="mk">「面倒な処理ほど後回し」</span>です。拡大変換は数値を広げるだけ、ボクシングはオブジェクトを作る、可変長引数は配列を作る。<strong>コンパイラは手間の少ない方から試します</strong>。<br>第2章の「拡大変換とボクシングは組み合わせられない」もここに繋がります。<code>m(Long)</code> しかないところに <code>int</code> を渡すと、<strong>拡大してからボクシングはできない</strong>のでエラーになります。</p></div>
 </section>
 
-<!-- ================= 07 ================= -->
+<!-- ch4/07-static.html · static -->
 <section id="c4-s07">
   <div class="sh"><span class="num">07</span><h2>static 変数と static メソッド</h2></div>
 
@@ -3510,7 +3537,7 @@ System.out.println(a.shared);    // NullPointerException にならない！
   <div class="point trap"><p><code>null</code> の変数から static メンバを呼んでも<span class="mk">例外になりません</span>。コンパイル時に <code>クラス名.メンバ</code> へ読み替えられるからです。<br>「<code>null.静的メソッド()</code> は NPE になる」という選択肢は誤りです。</p></div>
 </section>
 
-<!-- ================= 08 ================= -->
+<!-- ch4/08-initialization-order.html · 初期化の順序 -->
 <section id="c4-s08">
   <div class="sh"><span class="num">08</span><h2>初期化の順序</h2></div>
 
@@ -3580,7 +3607,7 @@ System.out.println(Sample.num);       // 100</code></pre></div>
   <div class="point trap"><p>この2問は組で出ます。判定手順は次の2段階です。<br>① <span class="mk">new があるか</span> ── 無ければインスタンス側は一切動かない<br>② <span class="mk">初期化ブロック → コンストラクタ本体</span> ── 位置に関係なくこの順<br>選択肢に「コンパイルエラー」が並びますが、どちらも文法上は正しいコードです。</p></div>
 </section>
 
-<!-- ================= 09 ================= -->
+<!-- ch4/09-instanceof-pattern.html · instanceof ★新 -->
 <section id="c4-s09">
   <div class="sh"><span class="num">09</span><h2>instanceof のパターンマッチング</h2></div>
 
@@ -3693,7 +3720,7 @@ System.out.println(s instanceof Integer);
   <p>継承関係がまったく無い型どうしの <code>instanceof</code> は、<strong>実行するまでもなく false と分かる</strong>のでコンパイルエラーになります。<code>Object</code> 型の変数なら何とでも比較できます。</p>
 </section>
 
-<!-- ================= 10 ================= -->
+<!-- ch4/10-record.html · record ★新 -->
 <section id="c4-s10">
   <div class="sh"><span class="num">10</span><h2>レコードクラス</h2></div>
 
@@ -4103,7 +4130,7 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
   <div class="point link"><p>第5章とつながります。<code>record</code> は暗黙に <code>final</code> なので <code>sealed</code> インタフェースの実装先としてそのまま使えます（<code>final</code> / <code>sealed</code> / <code>non-sealed</code> の宣言が不要）。</p></div>
 </section>
 
-<!-- ================= QUIZ ================= -->
+<!-- ch4/quiz.html · 一問一答 -->
 <section id="c4-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>答えを声に出してから開いてください。</p>
@@ -4205,7 +4232,7 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
     <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
 </section>
 
-<!-- ================= CHECKLIST ================= -->
+<!-- ch4/checklist.html · 直前チェック -->
 <section id="c4-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>この章は配点が最も大きい範囲です。タップで消し込めます。</p>
@@ -4245,13 +4272,14 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
   <button class="reset" id="c4-ckreset" type="button">チェックをすべて外す</button>
 </section>
 
+<!-- ==================== CHAPTER 5 ==================== -->
 <div class="chap" id="ch5">
   <div class="chap-num">CHAPTER 5</div>
   <h2 class="chap-title">継承とインタフェースの使用</h2>
   <p class="chap-lead">第4章と並ぶ最大の出題範囲です。中心にあるのは<strong>「宣言型で決まるものと、実体型で決まるもの」</strong>の一点。メソッドは実体型、フィールドと static は宣言型 ── この非対称を掴めば大半が解けます。<code>sealed</code> は SE 17 の新規範囲です。</p>
 </div>
 
-<!-- ================= 01 ================= -->
+<!-- ch5/01-inheritance-basics.html · 継承の基本 -->
 <section id="c5-s01">
   <div class="sh"><span class="num">01</span><h2>継承の基本</h2></div>
 
@@ -4275,7 +4303,7 @@ class Cat extends Animal, Dog { }     // コンパイルエラー。クラスの
   <div class="point link"><p>継承しても<span class="mk">使えるとは限りません</span>。第1章 節07の到達範囲がそのまま効き、別パッケージのサブクラスからは修飾子なしのメンバが見えません。<strong>存在すること</strong>と<strong>名前で呼べること</strong>は別レイヤーです。</p></div>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ch5/02-super-constructor.html · コンストラクタと super() -->
 <section id="c5-s02">
   <div class="sh"><span class="num">02</span><h2>コンストラクタと super()</h2></div>
 
@@ -4317,7 +4345,7 @@ class B extends A { B(){} }         // 暗黙の super() が呼べない
   </table></div>
 </section>
 
-<!-- ================= 03 ================= -->
+<!-- ch5/03-overriding.html · オーバーライド -->
 <section id="c5-s03">
   <div class="sh"><span class="num">03</span><h2>メソッドのオーバーライド</h2></div>
 
@@ -4418,7 +4446,7 @@ class B extends A { static void m(){} } // error（非static を static で）</
   </table></div>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ch5/04-overload-vs-override.html · オーバーロードとの区別 -->
 <section id="c5-s04">
   <div class="sh"><span class="num">04</span><h2>オーバーライドとオーバーロードの区別</h2></div>
 
@@ -4443,7 +4471,7 @@ a.m(5);        // A ← オーバーライドされていないので親のも�
   <div class="point trap"><p>オーバーライドのつもりで<span class="mk">引数の型を書き間違える</span>と、静かにオーバーロードになります。コンパイルは通り、出力だけが変わる。<br><code>@Override</code> を付けていればここで止まります。黒本はこの引っかけを多用します。</p></div>
 </section>
 
-<!-- ================= 05 ================= -->
+<!-- ch5/05-declared-vs-runtime-type.html · 宣言型か実体型か ★核心 -->
 <section id="c5-s05">
   <div class="sh"><span class="num">05</span><h2>宣言型か実体型か ── 章の核心</h2></div>
 
@@ -4493,7 +4521,7 @@ System.out.println(((P)c).x);     // 1  ← キャストで宣言型が変わる
 }</code></pre></div>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ch5/06-polymorphism-and-cast.html · 多態とキャスト -->
 <section id="c5-s06">
   <div class="sh"><span class="num">06</span><h2>ポリモーフィズムと参照型のキャスト</h2></div>
 
@@ -4527,7 +4555,7 @@ p.only();       // error: cannot find symbol ── P に only() は無い
   <div class="point"><p><span class="mk">「どのメソッドを書けるか」は宣言型、「どの実装が動くか」は実体型</span>。この2軸の分離がポリモーフィズムの本体です。<br>コンパイラは実行時に何が入るかを知らないので、変数の型に書かれているものしか許可できません。</p></div>
 </section>
 
-<!-- ================= 07 ================= -->
+<!-- ch5/07-abstract-class.html · 抽象クラス -->
 <section id="c5-s07">
   <div class="sh"><span class="num">07</span><h2>抽象クラス</h2></div>
 
@@ -4590,7 +4618,7 @@ s.sample();          // A B C</code></pre></div>
   <div class="point"><p><code>AbstractSample</code> を書いた時点では <code>test()</code> の中身は決まっていません。決めるのは子クラス。<br>これは<span class="mk">テンプレートメソッド</span>と呼ばれる設計で、<strong>処理の骨組みを親が決め、具体的な一部だけを子に埋めさせる</strong>形です。<code>abstract</code> メソッドの本来の用途がこれです。<br>「<code>test()</code> は呼ばれない」と考えて <code>A C</code> を選ばせる選択肢が出ます。</p></div>
 </section>
 
-<!-- ================= 08 ================= -->
+<!-- ch5/08-final.html · final -->
 <section id="c5-s08">
   <div class="sh"><span class="num">08</span><h2>final</h2></div>
 
@@ -4616,7 +4644,7 @@ sb = new StringBuilder();  // error</code></pre></div>
   <div class="point"><p><code>final</code> クラスの例は <code>String</code>、<code>Integer</code> などのラッパークラス、そして <code>record</code>（暗黙）。<br><code>abstract</code> とは<strong>正反対の意味</strong>なので同時には付けられません。「継承を強制する」と「継承を禁止する」は両立しません。</p></div>
 </section>
 
-<!-- ================= 09 ================= -->
+<!-- ch5/09-interface.html · インタフェース -->
 <section id="c5-s09">
   <div class="sh"><span class="num">09</span><h2>インタフェース</h2></div>
 
@@ -4685,7 +4713,7 @@ I i = new Impl();           // OK。型として使うのは自由</code></pre><
   <div class="point"><p><code>new I(){ ... }</code> のように後ろに <code>{ }</code> が続く形（匿名クラス）は通りますが、これは<strong>インタフェースを実装した名前の無いクラスをその場で定義している</strong>だけで、インタフェースのインスタンス化ではありません。<span class="mk">匿名クラスは SE 17 の出題範囲外</span>です。</p></div>
 </section>
 
-<!-- ================= 10 ================= -->
+<!-- ch5/10-interface-methods.html · default / static / private -->
 <section id="c5-s10">
   <div class="sh"><span class="num">10</span><h2>default / static / private メソッド</h2></div>
 
@@ -4895,7 +4923,7 @@ class Sub extends Base {
   <div class="point"><p>判定手順。<code>super.m()</code> を見たら ──<br>① <span class="mk">extends を書いているか</span>。書いていなければスーパークラスは <code>Object</code><br>② その親クラスが <code>m()</code> を持っているか（自分で定義／継承のどちらでも可）</p></div>
 </section>
 
-<!-- ================= 11 ================= -->
+<!-- ch5/11-sealed.html · sealed ★新 -->
 <section id="c5-s11">
   <div class="sh"><span class="num">11</span><h2>シールクラス（sealed）</h2></div>
 
@@ -4955,7 +4983,7 @@ public sealed interface X permits p2.Y { }
   <div class="point trap"><p><code>sealed</code> の本来の狙いは <code>switch</code> のパターンマッチングで<strong>網羅性を検査させる</strong>ことですが、<span class="mk">switch のパターンマッチングは SE 17 ではプレビュー機能</span>なので出題範囲外です。<br>SE 17 で問われるのは<strong>構文規則の方</strong> ── <code>permits</code> の範囲、実装側の3択、場所の制約です。</p></div>
 </section>
 
-<!-- ================= QUIZ ================= -->
+<!-- ch5/quiz.html · 一問一答 -->
 <section id="c5-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>答えを声に出してから開いてください。</p>
@@ -5048,7 +5076,7 @@ public sealed interface X permits p2.Y { }
     <div class="qa"><p><strong>switch のパターンマッチングは範囲外</strong>（SE 17 ではプレビュー機能）。問われるのは <code>sealed</code> の<strong>構文規則</strong> ── permits の範囲、実装側の3択、場所の制約です。</p></div></details>
 </section>
 
-<!-- ================= CHECKLIST ================= -->
+<!-- ch5/checklist.html · 直前チェック -->
 <section id="c5-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>第4章と並ぶ最大の範囲です。タップで消し込めます。</p>
@@ -5087,16 +5115,14 @@ public sealed interface X permits p2.Y { }
   <button class="reset" id="c5-ckreset" type="button">チェックをすべて外す</button>
 </section>
 
+<!-- ==================== CHAPTER 6 ==================== -->
 <div class="chap" id="ch6">
   <div class="chap-num">CHAPTER 6</div>
   <h2 class="chap-title">例外処理</h2>
   <p class="chap-lead">この章が問うているのは「エラー処理の書き方」ではなく、コンパイラと JVM がいつ何を判定するかです。try-with-resources・multi-catch・カスタム例外は SE 11 Silver の範囲外だった新規項目です。</p>
 </div>
 
-
-
-
-<!-- ================= 01 ================= -->
+<!-- ch6/01-exception-hierarchy.html · 階層と3分類 -->
 <section id="c6-s01">
   <div class="sh"><span class="num">01</span><h2>クラス階層と3つの分類</h2></div>
 
@@ -5141,7 +5167,7 @@ public sealed interface X permits p2.Y { }
 }</code></pre></div>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ch6/02-common-exceptions.html · 覚える例外名 -->
 <section id="c6-s02">
   <div class="sh"><span class="num">02</span><h2>名前を覚えるべき例外</h2></div>
   <p>出題される例外は限られています。名前と「どんな場面で出るか」をセットで。</p>
@@ -5170,7 +5196,7 @@ public sealed interface X permits p2.Y { }
   <div class="point trap"><p>親子関係そのものが問われます。とくに <span class="mk">FileNotFoundException は IOException の子</span>、<span class="mk">NumberFormatException は IllegalArgumentException の子</span>、<span class="mk">ArrayIndexOutOfBoundsException は IndexOutOfBoundsException の子</span>。catch の順序問題と multi-catch 問題は、この関係を知らないと解けません。</p></div>
 </section>
 
-<!-- ================= 03 ================= -->
+<!-- ch6/03-try-catch-finally.html · try-catch-finally -->
 <section id="c6-s03">
   <div class="sh"><span class="num">03</span><h2>try-catch-finally の構文</h2></div>
 
@@ -5210,7 +5236,7 @@ try { } finally { } catch (Exception e) { }   // エラー: 順序が逆</code><
   <p><code>try</code> のブロック内で宣言した変数は、そのブロックを出た時点で消えます。catch や finally でも使いたいなら、try の<strong>外</strong>で宣言してください。</p>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ch6/04-catch-order.html · catchの順序 -->
 <section id="c6-s04">
   <div class="sh"><span class="num">04</span><h2>catch の順序</h2></div>
 
@@ -5239,7 +5265,7 @@ try { } finally { } catch (Exception e) { }   // エラー: 順序が逆</code><
   <p>ただし <code>Exception</code> と <code>RuntimeException</code>（およびその子孫）は<strong>常に catch してよい</strong>という例外扱いです。非検査例外はどこでも発生し得るためです。</p>
 </section>
 
-<!-- ================= 05 ================= -->
+<!-- ch6/05-multi-catch.html · multi-catch -->
 <section id="c6-s05">
   <div class="sh"><span class="num">05</span><h2>multi-catch 句</h2></div>
 
@@ -5267,7 +5293,7 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
   <div class="point trap"><p>選択肢では <span class="mk">親子関係があるかどうか</span>が焦点になります。<code>IOException | FileNotFoundException</code> を見て「別の名前だから OK」と判断すると落ちます。02 の親子関係表がここで効きます。</p></div>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ch6/06-finally-and-return.html · finallyとreturn -->
 <section id="c6-s06">
   <div class="sh"><span class="num">06</span><h2>finally と return ── この章の山場</h2></div>
 
@@ -5328,7 +5354,7 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
   <div class="point link"><p>第4章（値渡し）とつながります。<code>return val</code> で「値がコピーされる」のは、メソッド呼び出しで引数がコピーされるのと同じ仕組みです。<span class="mk pink">Java は基本データ型を必ずコピーで扱う</span>、という一貫した性質の別の現れ方だと考えると覚えやすくなります。</p></div>
 </section>
 
-<!-- ================= 07 ================= -->
+<!-- ch6/07-throw-and-throws.html · throw / throws -->
 <section id="c6-s07">
   <div class="sh"><span class="num">07</span><h2>throw と throws</h2></div>
 
@@ -5364,7 +5390,7 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
   <div class="point"><p><code>main</code> メソッドも例外ではありません。<span class="mk">public static void main(String[] args) throws Exception は合法</span>です。「main に throws は書けない」という選択肢は誤りです。</p></div>
 </section>
 
-<!-- ================= 08 ================= -->
+<!-- ch6/08-custom-exception.html · カスタム例外 -->
 <section id="c6-s08">
   <div class="sh"><span class="num">08</span><h2>カスタム例外の作成</h2></div>
 
@@ -5389,7 +5415,7 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
   <p><code>super(message)</code> を呼んでおくと、<code>getMessage()</code> でその文字列を取り出せます。</p>
 </section>
 
-<!-- ================= 09 ================= -->
+<!-- ch6/09-try-with-resources.html · try-with-resources -->
 <section id="c6-s09">
   <div class="sh"><span class="num">09</span><h2>try-with-resources</h2></div>
 
@@ -5523,7 +5549,7 @@ try (r) { }
   <p>閉じる対象が途中ですり替わると、どれを閉じるべきか決まりません。そのため <code>final</code> または<strong>実質 final</strong>（一度も再代入していない）である必要があります。</p>
 </section>
 
-<!-- ================= 10 ================= -->
+<!-- ch6/10-override-and-exceptions.html · オーバーライド -->
 <section id="c6-s10">
   <div class="sh"><span class="num">10</span><h2>オーバーライドと例外の制約</h2></div>
 
@@ -5557,7 +5583,7 @@ try (r) { }
   </table></div></div>
 </section>
 
-<!-- ================= QUIZ ================= -->
+<!-- ch6/quiz.html · 一問一答 -->
 <section id="c6-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
   <p>問題を解く前の自己確認用です。答えを開く前に、頭の中で言い切れるか試してください。</p>
@@ -5610,7 +5636,7 @@ try (r) { }
     <div class="qa"><p><strong>自分で書く。決まった処理は無い。</strong>典型は「コンストラクタで開いたものを閉じる」。GC が回収するのは Java のメモリだけで、<strong>OS 側のファイルハンドルや DB 接続は対象外</strong>なので、明示的に返す必要があります。</p></div></details>
 </section>
 
-<!-- ================= CHECKLIST ================= -->
+<!-- ch6/checklist.html · 直前チェック -->
 <section id="c6-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
   <p>試験前日に、この13項目を声に出して言えるか確認してください。タップで消し込めます。</p>
@@ -5637,6 +5663,7 @@ try (r) { }
 
 </section>
 
+
 <footer>
   出典は Oracle 公式の試験内容チェックリスト（1Z0-825-JPN）に準拠。第1章から第6章までの全範囲を扱っています。<br>
   全6章そろいました。あとは模擬問題①②を90分タイマーで。<br>
@@ -5644,9 +5671,23 @@ try (r) { }
 </footer>
 </main>
 </div>
-
 <script>
-(function(){
+/* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
+window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException"]}] };
+
+/* ---- scripts/00-app.js ---- */
+/* 全モジュール共通の名前空間。
+   ビルド時に build.mjs が NoteApp.chapters（章IDの配列）を差し込むので、
+   章を増やしても JavaScript 側を書き換える必要はない。 */
+var NoteApp = window.NoteApp || (window.NoteApp = {});
+NoteApp.chapters = NoteApp.chapters || [];
+
+/* ---- scripts/01-highlight.js ---- */
+/* コードブロックの簡易シンタックスハイライト。
+   pre code の textContent を読み、キーワード／文字列／行コメント／数値だけを
+   span で包む。外部ライブラリを持ち込まないための最小実装。*/
+(function () {
   var KW = "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while|var|record|sealed|permits|yield|true|false|null";
   var RE = new RegExp("(\\/\\/[^\\n]*)|(\"(?:[^\"\\\\]|\\\\.)*\")|\\b(" + KW + ")\\b|\\b(\\d+)\\b","g");
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
@@ -5664,7 +5705,12 @@ try (r) { }
     out += esc(src.slice(last));
     el.innerHTML = out;
   });
+})();
 
+/* ---- scripts/02-marker.js ---- */
+/* .mk（マーカー線）を、画面に入った瞬間に引く演出。
+   IntersectionObserver 非対応環境では最初から引いた状態にする。*/
+(function () {
   var marks = document.querySelectorAll(".mk");
   if("IntersectionObserver" in window){
     var io = new IntersectionObserver(function(es){
@@ -5672,7 +5718,11 @@ try (r) { }
     },{rootMargin:"0px 0px -12% 0px"});
     marks.forEach(function(m){ io.observe(m); });
   } else { marks.forEach(function(m){ m.classList.add("lit"); }); }
+})();
 
+/* ---- scripts/03-scrollspy.js ---- */
+/* スクロール位置に追従して、目次の現在地に .on を付ける。*/
+(function () {
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
   var secs = links.map(function(a){ return document.querySelector(a.getAttribute("href")); });
   function spy(){
@@ -5685,218 +5735,304 @@ try (r) { }
     if(!tick){ tick = true; requestAnimationFrame(function(){ spy(); tick = false; }); }
   }, {passive:true});
   spy();
+})();
 
-  ["c1","c2","c3","c4","c5","c6"].forEach(function(pre){
+/* ---- scripts/04-checklist.js ---- */
+/* 章末「直前チェック」の開閉と進捗バー。チェック状態はブラウザに保存する。
+
+   保存先は localStorage。元のノートは Artifact ランタイム専用の
+   window.storage しか見ていなかったため、GitHub Pages や file:// で開くと
+   進捗が一切保存されなかった。localStorage を第一の保存先にし、
+   window.storage は使える環境でのみ併用する。 */
+(function () {
+  var PREFIX = "java-silver-note:";
+
+  function readLocal(key) {
+    try {
+      return window.localStorage.getItem(PREFIX + key);
+    } catch (e) {
+      return null; // プライベートウィンドウなど、参照自体が例外になる環境がある
+    }
+  }
+
+  function writeLocal(key, value) {
+    try {
+      window.localStorage.setItem(PREFIX + key, value);
+    } catch (e) {
+      /* 保存できなくても閲覧は続けられるので握りつぶす */
+    }
+  }
+
+  (NoteApp.chapters || []).forEach(function (pre) {
     var list = document.getElementById(pre + "-cklist");
-    if(!list) return;
-    var KEY = "java-silver-final-" + pre;
+    if (!list) return;
+
     var items = Array.prototype.slice.call(list.querySelectorAll("li"));
     var fill = document.getElementById(pre + "-barfill");
-    var lab  = document.getElementById(pre + "-barlab");
-    var btn  = document.getElementById(pre + "-ckreset");
-    var state = items.map(function(){ return false; });
-    function paint(){
-      items.forEach(function(li,i){ li.classList.toggle("done", state[i]); });
+    var lab = document.getElementById(pre + "-barlab");
+    var btn = document.getElementById(pre + "-ckreset");
+    var state = items.map(function () { return false; });
+
+    function paint() {
+      items.forEach(function (li, i) { li.classList.toggle("done", state[i]); });
       var n = state.filter(Boolean).length;
-      fill.style.width = (n / state.length * 100) + "%";
-      lab.textContent = n + " / " + state.length;
+      if (fill) fill.style.width = (n / state.length * 100) + "%";
+      if (lab) lab.textContent = n + " / " + state.length;
     }
-    function save(){ try{ if(window.storage && window.storage.set){ window.storage.set(KEY, JSON.stringify(state)); } }catch(e){} }
-    function load(){
-      try{
-        if(window.storage && window.storage.get){
-          window.storage.get(KEY).then(function(r){
-            if(r && r.value){
-              var v = JSON.parse(r.value);
-              if(Array.isArray(v) && v.length === state.length){ state = v; paint(); }
-            }
-          }).catch(function(){});
+
+    function save() {
+      var json = JSON.stringify(state);
+      writeLocal(pre, json);
+      try {
+        if (window.storage && window.storage.set) window.storage.set(PREFIX + pre, json);
+      } catch (e) { /* ランタイム側の保存は任意 */ }
+    }
+
+    function adopt(json) {
+      if (!json) return false;
+      try {
+        var v = JSON.parse(json);
+        if (Array.isArray(v) && v.length === state.length) {
+          state = v;
+          paint();
+          return true;
         }
-      }catch(e){}
+      } catch (e) { /* 壊れた値は無視して初期状態のまま */ }
+      return false;
     }
-    items.forEach(function(li,i){
-      li.setAttribute("role","button");
-      li.setAttribute("tabindex","0");
-      function toggle(){ state[i] = !state[i]; paint(); save(); }
+
+    function load() {
+      if (adopt(readLocal(pre))) return;
+      try {
+        if (window.storage && window.storage.get) {
+          window.storage.get(PREFIX + pre).then(function (r) {
+            if (r && r.value) adopt(r.value);
+          }).catch(function () {});
+        }
+      } catch (e) { /* 同上 */ }
+    }
+
+    items.forEach(function (li, i) {
+      li.setAttribute("role", "button");
+      li.setAttribute("tabindex", "0");
+      li.setAttribute("aria-pressed", "false");
+      function toggle() {
+        state[i] = !state[i];
+        li.setAttribute("aria-pressed", String(state[i]));
+        paint();
+        save();
+      }
       li.addEventListener("click", toggle);
-      li.addEventListener("keydown", function(e){
-        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+      li.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
       });
     });
-    if(btn) btn.addEventListener("click", function(){
-      state = state.map(function(){ return false; }); paint(); save();
+
+    if (btn) btn.addEventListener("click", function () {
+      state = state.map(function () { return false; });
+      items.forEach(function (li) { li.setAttribute("aria-pressed", "false"); });
+      paint();
+      save();
     });
-    paint(); load();
+
+    paint();
+    load();
   });
 })();
-</script>
 
-<script>
-(function(){
+/* ---- scripts/05-search.js ---- */
+/* ノート全文の絞り込み検索。
+
+   1. 各 section の textContent を一度だけ取り出してキャッシュし、
+   2. 語を含む節だけ目次に残して件数バッジを出し、
+   3. 本文の該当文字列を <mark class="hit"> で囲む。
+
+   論点インデックス（06-topic-index.js）からも呼ぶので、
+   apply / jump / cache を NoteApp.search として公開する。 */
+NoteApp.search = (function () {
   var main = document.querySelector("main");
-  if(!main) return;
+  if (!main) return null;
+
   var idxSec = document.getElementById("idx");
   var secs = Array.prototype.slice.call(main.querySelectorAll("section[id]"))
-              .filter(function(s){ return s.id !== "idx"; });
-  var cache = secs.map(function(s){ return { el:s, id:s.id, txt:s.textContent.toLowerCase() }; });
+    .filter(function (s) { return s.id !== "idx"; });
+  var cache = secs.map(function (s) {
+    return { el: s, id: s.id, txt: s.textContent.toLowerCase() };
+  });
 
   var linkOf = {};
-  Array.prototype.slice.call(document.querySelectorAll(".toc a")).forEach(function(a){
+  Array.prototype.slice.call(document.querySelectorAll(".toc a")).forEach(function (a) {
     linkOf[a.getAttribute("href").slice(1)] = a;
   });
   var heads = Array.prototype.slice.call(document.querySelectorAll(".toc-h"));
 
   var input = document.getElementById("q");
-  var clr   = document.getElementById("qx");
-  var hits  = document.getElementById("qhits");
+  var clr = document.getElementById("qx");
+  var hits = document.getElementById("qhits");
 
-  function count(t, q){ var n=0, i=0; while((i = t.indexOf(q, i)) >= 0){ n++; i += q.length; } return n; }
+  function count(t, q) {
+    var n = 0, i = 0;
+    while ((i = t.indexOf(q, i)) >= 0) { n++; i += q.length; }
+    return n;
+  }
 
-  function unmark(){
-    Array.prototype.slice.call(main.querySelectorAll("mark.hit")).forEach(function(m){
-      var p = m.parentNode; if(!p) return;
+  function unmark() {
+    Array.prototype.slice.call(main.querySelectorAll("mark.hit")).forEach(function (m) {
+      var p = m.parentNode;
+      if (!p) return;
       p.replaceChild(document.createTextNode(m.textContent), m);
       p.normalize();
     });
   }
 
-  function markAll(q){
+  function markAll(q) {
     var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
-      acceptNode: function(n){
+      acceptNode: function (n) {
         var v = n.nodeValue;
-        if(!v || !v.trim()) return NodeFilter.FILTER_REJECT;
+        if (!v || !v.trim()) return NodeFilter.FILTER_REJECT;
         var p = n.parentNode;
-        if(!p) return NodeFilter.FILTER_REJECT;
+        if (!p) return NodeFilter.FILTER_REJECT;
         var tag = p.nodeName;
-        if(tag === "SCRIPT" || tag === "STYLE" || tag === "MARK") return NodeFilter.FILTER_REJECT;
-        if(idxSec && idxSec.contains(n)) return NodeFilter.FILTER_REJECT;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "MARK") return NodeFilter.FILTER_REJECT;
+        if (idxSec && idxSec.contains(n)) return NodeFilter.FILTER_REJECT;
         return v.toLowerCase().indexOf(q) >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });
     var nodes = [], n;
-    while((n = walker.nextNode())) nodes.push(n);
-    if(nodes.length > 1200) nodes = nodes.slice(0, 1200);
-    nodes.forEach(function(node){
+    while ((n = walker.nextNode())) nodes.push(n);
+    if (nodes.length > 1200) nodes = nodes.slice(0, 1200); // 1文字検索でも固まらないように
+    nodes.forEach(function (node) {
       var s = node.nodeValue, low = s.toLowerCase();
       var frag = document.createDocumentFragment(), last = 0, i;
-      while((i = low.indexOf(q, last)) >= 0){
-        if(i > last) frag.appendChild(document.createTextNode(s.slice(last, i)));
+      while ((i = low.indexOf(q, last)) >= 0) {
+        if (i > last) frag.appendChild(document.createTextNode(s.slice(last, i)));
         var m = document.createElement("mark");
         m.className = "hit";
         m.textContent = s.slice(i, i + q.length);
         frag.appendChild(m);
         last = i + q.length;
       }
-      if(last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
-      if(node.parentNode) node.parentNode.replaceChild(frag, node);
+      if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+      if (node.parentNode) node.parentNode.replaceChild(frag, node);
     });
   }
 
-  function apply(raw){
+  function apply(raw) {
     var q = (raw || "").trim().toLowerCase();
     unmark();
-    if(!q){
-      cache.forEach(function(c){
-        var a = linkOf[c.id]; if(!a) return;
+    if (!q) {
+      cache.forEach(function (c) {
+        var a = linkOf[c.id];
+        if (!a) return;
         a.classList.remove("qhide");
-        var b = a.querySelector(".cnt"); if(b) b.remove();
+        var b = a.querySelector(".cnt");
+        if (b) b.remove();
       });
-      heads.forEach(function(h){ h.classList.remove("qhide"); });
+      heads.forEach(function (h) { h.classList.remove("qhide"); });
       hits.style.display = "none";
-      clr.style.display  = "none";
+      clr.style.display = "none";
       return;
     }
     clr.style.display = "block";
     var nsec = 0, nhit = 0;
-    cache.forEach(function(c){
+    cache.forEach(function (c) {
       var n = count(c.txt, q);
-      var a = linkOf[c.id]; if(!a) return;
+      var a = linkOf[c.id];
+      if (!a) return;
       var b = a.querySelector(".cnt");
-      if(n > 0){
-        nsec++; nhit += n;
+      if (n > 0) {
+        nsec++;
+        nhit += n;
         a.classList.remove("qhide");
-        if(!b){ b = document.createElement("span"); b.className = "cnt"; a.appendChild(b); }
+        if (!b) { b = document.createElement("span"); b.className = "cnt"; a.appendChild(b); }
         b.textContent = n;
       } else {
         a.classList.add("qhide");
-        if(b) b.remove();
+        if (b) b.remove();
       }
     });
-    heads.forEach(function(h){
+    heads.forEach(function (h) {
       var el = h.nextElementSibling, any = false;
-      while(el && !el.classList.contains("toc-h")){
-        if(el.tagName === "A" && !el.classList.contains("qhide")){ any = true; break; }
+      while (el && !el.classList.contains("toc-h")) {
+        if (el.tagName === "A" && !el.classList.contains("qhide")) { any = true; break; }
         el = el.nextElementSibling;
       }
       h.classList.toggle("qhide", !any);
     });
     hits.style.display = "block";
-    hits.textContent = nsec === 0
-      ? "該当なし"
-      : nsec + " 節 / " + nhit + " 箇所";
+    hits.textContent = nsec === 0 ? "該当なし" : nsec + " 節 / " + nhit + " 箇所";
     markAll(q);
   }
 
-  function jump(){
+  function jump() {
     var m = main.querySelector("mark.hit");
-    if(m) m.scrollIntoView({behavior:"smooth", block:"center"});
+    if (m) m.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   var t;
-  input.addEventListener("input", function(){
+  input.addEventListener("input", function () {
     clearTimeout(t);
-    t = setTimeout(function(){ apply(input.value); }, 160);
+    t = setTimeout(function () { apply(input.value); }, 160);
   });
-  input.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){ e.preventDefault(); apply(input.value); jump(); }
-    if(e.key === "Escape"){ input.value = ""; apply(""); input.blur(); }
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); apply(input.value); jump(); }
+    if (e.key === "Escape") { input.value = ""; apply(""); input.blur(); }
   });
-  clr.addEventListener("click", function(){ input.value = ""; apply(""); input.focus(); });
-  document.addEventListener("keydown", function(e){
-    if(e.key === "/" && document.activeElement !== input){ e.preventDefault(); input.focus(); }
-    if(e.key === "Escape" && input.value){ input.value = ""; apply(""); }
+  clr.addEventListener("click", function () { input.value = ""; apply(""); input.focus(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && document.activeElement !== input) { e.preventDefault(); input.focus(); }
+    if (e.key === "Escape" && input.value) { input.value = ""; apply(""); }
   });
 
-  // ---- 論点インデックス ----
-  var GROUPS = [
-    ["起動と環境", ["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]],
-    ["型と変換",   ["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ"]],
-    ["文字列",     ["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt"]],
-    ["配列とリスト",["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null"]],
-    ["演算子と制御",["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]],
-    ["クラス",     ["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]],
-    ["SE 17 新機能",["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]],
-    ["継承とインタフェース",["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed"]],
-    ["例外処理",   ["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException"]]
-  ];
+  return { apply: apply, jump: jump, count: count, cache: cache, input: input };
+})();
+
+/* ---- scripts/06-topic-index.js ---- */
+/* 論点インデックス。語ごとにノート全体の出現回数を数えてチップを並べ、
+   クリックで検索を実行する。語の一覧は src/data/topic-index.json 側にあり、
+   ビルド時に NoteApp.topicIndex として差し込まれる。 */
+(function () {
+  var search = NoteApp.search;
   var body = document.getElementById("idxbody");
-  if(body){
-    GROUPS.forEach(function(g){
-      var terms = g[1].map(function(w){
-        var n = 0; cache.forEach(function(c){ n += count(c.txt, w.toLowerCase()); });
-        return [w, n];
-      }).filter(function(p){ return p[1] > 0; });
-      if(!terms.length) return;
-      var h = document.createElement("div");
-      h.className = "idx-h"; h.textContent = g[0];
-      body.appendChild(h);
-      var wrap = document.createElement("div");
-      terms.forEach(function(p){
-        var c = document.createElement("span");
-        c.className = "chip";
-        c.textContent = p[0];
-        var b = document.createElement("b"); b.textContent = p[1];
-        c.appendChild(b);
-        c.addEventListener("click", function(){
-          input.value = p[0];
-          apply(p[0]);
-          jump();
-        });
-        wrap.appendChild(c);
+  if (!search || !body) return;
+
+  (NoteApp.topicIndex || []).forEach(function (g) {
+    var terms = g.terms.map(function (w) {
+      var n = 0;
+      search.cache.forEach(function (c) { n += search.count(c.txt, w.toLowerCase()); });
+      return [w, n];
+    }).filter(function (p) { return p[1] > 0; }); // 本文に無い語は出さない
+    if (!terms.length) return;
+
+    var h = document.createElement("div");
+    h.className = "idx-h";
+    h.textContent = g.group;
+    body.appendChild(h);
+
+    var wrap = document.createElement("div");
+    terms.forEach(function (p) {
+      var c = document.createElement("span");
+      c.className = "chip";
+      c.setAttribute("role", "button");
+      c.setAttribute("tabindex", "0");
+      c.textContent = p[0];
+      var b = document.createElement("b");
+      b.textContent = p[1];
+      c.appendChild(b);
+      function run() {
+        search.input.value = p[0];
+        search.apply(p[0]);
+        search.jump();
+      }
+      c.addEventListener("click", run);
+      c.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); run(); }
       });
-      body.appendChild(wrap);
+      wrap.appendChild(c);
     });
-  }
+    body.appendChild(wrap);
+  });
 })();
 </script>
-
+</body>
+</html>

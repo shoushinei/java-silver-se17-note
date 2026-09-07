@@ -1,0 +1,40 @@
+<section id="c5-s02">
+  <div class="sh"><span class="num">02</span><h2>コンストラクタと super()</h2></div>
+
+  <p>コンストラクタは継承されません。そのかわり、<strong>子のコンストラクタは必ず親のコンストラクタを呼びます</strong>。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>書かなければ super() が自動挿入される<span class="tag">最重要</span></div><pre><code>class Sub extends Sup {
+    Sub() {
+        // super();  ← 書かなくてもコンパイラがここに入れる
+        System.out.println("Sub()");
+    }
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実行順序は「親が先」<span class="tag">頻出</span></div><pre><code>class Base { Base(){ System.out.println("① Base()"); } }
+class Mid extends Base {
+    { System.out.println("② Mid 初期化ブロック"); }
+    Mid(){ System.out.println("③ Mid()"); }
+}
+class Sub extends Mid { Sub(){ System.out.println("④ Sub()"); } }
+
+new Sub();     // ① ② ③ ④</code></pre></div>
+
+  <div class="point"><p>順序は<span class="mk">最上位の親までさかのぼってから、下りてくる</span>形になります。各階層で「初期化ブロック → コンストラクタ本体」の順（第4章 節08）。<br>子は親の状態を土台にするので、<strong>親が完成していなければ子を組み立てられない</strong>という理屈です。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親に引数なしコンストラクタが無い<span class="tag">最頻出</span></div><pre><code>class A { A(int x){} }              // 引数ありを定義 → デフォルトは生成されない
+class B extends A { B(){} }         // 暗黙の super() が呼べない
+
+// error: constructor A in class A cannot be applied to given types;
+//   required: int</code></pre></div>
+
+  <div class="point trap"><p>エラーは<strong>子クラスの側</strong>に出ます。親のコードは何も間違っていません。<br>解決は <code>B(){ super(0); }</code> と<span class="mk">明示的に引数を渡す</span>か、親に <code>A(){}</code> を足すか。第4章 節04の「1つでも定義するとデフォルトは生成されない」がここに波及します。</p></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>規則</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td><code>super()</code> の位置</td><td><strong>第1文のみ</strong></td></tr>
+      <tr><td><code>this()</code> との併用</td><td><strong>不可</strong>。どちらも第1文を要求する</td></tr>
+      <tr><td><code>this()</code> を書いた場合</td><td><code>super()</code> は挿入されない（合流先が呼ぶ）</td></tr>
+    </tbody>
+  </table></div>
+</section>

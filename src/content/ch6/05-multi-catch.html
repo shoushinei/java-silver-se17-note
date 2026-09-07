@@ -1,0 +1,26 @@
+<section id="c6-s05">
+  <div class="sh"><span class="num">05</span><h2>multi-catch 句</h2></div>
+
+  <p>同じ処理を複数の例外に対して書きたいとき、<code>|</code> で並べられます（Java 7〜）。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">OK</span></div><pre><code>try {
+} catch (IOException | SQLException e) {
+    e.printStackTrace();
+}</code></pre></div>
+
+  <h3>ルール1 ── 継承関係にある例外は並べられない</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親子を並べた<span class="tag">NG</span></div><pre><code>catch (IOException | Exception e) { }                // エラー
+catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></div>
+  <p>親のほうで捕まえられるものを並べるのは冗長なので、文法として禁止されています。</p>
+
+  <h3>ルール2 ── 変数は暗黙的に final</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>multi-catch の変数に再代入<span class="tag">NG</span></div><pre><code>catch (IOException | SQLException e) {
+    e = new IOException();   // エラー: 実質的に final
+}</code></pre></div>
+  <p>単一の catch なら再代入できますが、multi-catch では禁止です。</p>
+
+  <h3>ルール3 ── 変数名は最後に1つだけ</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>変数名が2つ<span class="tag">NG</span></div><pre><code>catch (IOException e | SQLException e2) { }   // エラー</code></pre></div>
+
+  <div class="point trap"><p>選択肢では <span class="mk">親子関係があるかどうか</span>が焦点になります。<code>IOException | FileNotFoundException</code> を見て「別の名前だから OK」と判断すると落ちます。02 の親子関係表がここで効きます。</p></div>
+</section>

@@ -1,0 +1,28 @@
+<section id="c3-check">
+  <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
+  <p>試験前日に、この14項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+
+  <div class="bar"><i id="c3-barfill"></i></div>
+  <div class="barlab" id="c3-barlab">0 / 16</div>
+
+  <ul class="ck" id="c3-cklist">
+    <li><span class="box">✓</span><span class="cktx">後置は「返してから増やす」。<code>i = i++</code> は増えない</span></li>
+    <li><span class="box">✓</span><span class="cktx">複合した式は左から1つずつ紙に書き出す</span></li>
+    <li><span class="box">✓</span><span class="cktx">整数除算はゼロ方向に切り捨て。剰余の符号は左に従う</span></li>
+    <li><span class="box">✓</span><span class="cktx">複合代入は暗黙キャスト付き。右辺全体が括弧で囲まれる</span></li>
+    <li><span class="box">✓</span><span class="cktx">記号2つ（&amp;&amp; ||）は短絡、1つ（&amp; |）は必ず両辺を評価</span></li>
+    <li><span class="box">✓</span><span class="cktx">三項演算子は右結合。結果の型は両辺で昇格する</span></li>
+    <li><span class="box">✓</span><span class="cktx">if の条件は boolean のみ。<code>b = true</code> は通ってしまう</span></li>
+    <li><span class="box">✓</span><span class="cktx">if / while の直後のセミコロン1個で意味が変わる</span></li>
+    <li><span class="box">✓</span><span class="cktx">switch に long・float・double・boolean は使えない</span></li>
+    <li><span class="box">✓</span><span class="cktx">case ラベルは定数のみ。default はどこでもよくフォールスルーする</span></li>
+    <li><span class="box">✓</span><span class="cktx">アロー構文はフォールスルーしない。break は書けない</span></li>
+    <li><span class="box">✓</span><span class="cktx">switch 式はブロックから yield で返す。末尾にセミコロンが必要</span></li>
+    <li><span class="box">✓</span><span class="cktx">値を返す switch 式は default 必須（enum 全網羅時を除く）</span></li>
+    <li><span class="box">✓</span><span class="cktx">while の continue は無限ループの原因。ラベルで多重ループを抜ける</span></li>
+    <li><span class="box">✓</span><span class="cktx">0b=2進数、0x=16進数、先頭の0だけ=8進数。012 は 10</span></li>
+    <li><span class="box">✓</span><span class="cktx">&& と || は boolean 専用。& | ^ は整数にも使える</span></li>
+  </ul>
+  <button class="reset" id="c3-ckreset" type="button">チェックをすべて外す</button>
+
+</section>

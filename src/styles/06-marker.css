@@ -1,0 +1,3 @@
+.mk{position:relative;font-weight:700;display:inline;background-image:linear-gradient(var(--marker),var(--marker));background-repeat:no-repeat;background-position:0 88%;background-size:0 42%;transition:background-size .55s cubic-bezier(.22,.9,.3,1) .1s}
+.mk.lit{background-size:100% 42%}
+.mk.pink{background-image:linear-gradient(var(--marker-2),var(--marker-2))}

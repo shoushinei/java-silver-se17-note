@@ -1,0 +1,408 @@
+<section id="c4-s10">
+  <div class="sh"><span class="num">10</span><h2>レコードクラス</h2></div>
+
+  <div class="point new"><p>SE 16 で正式化。<span class="mk">SE 17 試験の新規範囲</span>で、毎回出ると考えてください。11 の教材には載っていません。</p></div>
+
+  <h3>何のための構文か</h3>
+
+  <p>「値を運ぶだけのクラス」を書くと、フィールド・コンストラクタ・ゲッター・<code>equals</code>・<code>hashCode</code>・<code>toString</code> で毎回50行ほどになります。<code>record</code> はそれを<strong>1行に畳む</strong>ための構文です。</p>
+
+  <h3>コンパイル結果を覗く ── ここに全部書いてある</h3>
+
+  <p>規則を暗記する必要はありません。<code>javap</code> でコンパイル結果を見れば、<strong>試験に出る事実がそのまま並んでいます</strong>。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>javap -p Point の出力<span class="tag">最重要</span></div><pre><code>public record Point(int x, int y) { }
+
+// ↓ javac した後、javap -p Point で見えるもの
+
+public final class Point extends java.lang.Record {
+  private final int x;
+  private final int y;
+  public Point(int, int);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public int x();
+  public int y();
+}</code></pre></div>
+
+  <p>この9行から、record の論点がほぼ全部導けます。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>出力の行</th><th>そこから分かること</th></tr></thead>
+    <tbody>
+      <tr><td><code>public <strong>final</strong> class</code></td><td>暗黙に final。<strong>継承できない</strong>（<code>cannot inherit from final</code>）</td></tr>
+      <tr><td><code>extends java.lang.Record</code></td><td>親が既に埋まっている。単一継承なので <strong><code>extends</code> を書けない</strong></td></tr>
+      <tr><td><code><strong>private final</strong> int x;</code></td><td><code>p.x</code> は不可。再代入も不可（setter が作れない）</td></tr>
+      <tr><td><code>public Point(int, int)</code></td><td>標準コンストラクタ。record 本体と同じ <code>public</code>。<strong>狭められない</strong></td></tr>
+      <tr><td><code>public int <strong>x()</strong>;</code></td><td>アクセサは <strong><code>getX()</code> ではない</strong>。フィールドと同名で、括弧の有無だけが違う</td></tr>
+      <tr><td><code>equals</code> / <code>hashCode</code> / <code>toString</code></td><td>3つとも自動生成。コンポーネントの一覧だけから作られる</td></tr>
+      <tr><td>インスタンスフィールドが x, y だけ</td><td>追加できない。<strong>状態はコンポーネントがすべて</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>手書きに直すと</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じ意味のクラスを自分で書いた場合<span class="tag">図</span></div><pre><code>public final class Point extends java.lang.Record {
+
+    private final int x;                       // ① private かつ final
+    private final int y;
+
+    public Point(int x, int y) {               // ② 標準コンストラクタ
+        this.x = x;
+        this.y = y;
+    }
+
+    public int x() { return this.x; }          // ③ アクセサ（同名・括弧あり）
+    public int y() { return this.y; }
+
+    public final boolean equals(Object o) {    // ④ コンポーネントを1つずつ比較
+        if (this == o) return true;
+        if (!(o instanceof Point p)) return false;
+        return this.x == p.x &amp;&amp; this.y == p.y;
+    }
+
+    public final int hashCode() {              // ⑤ コンポーネントから計算
+        return Integer.hashCode(x) * 31 + Integer.hashCode(y);
+    }
+
+    public final String toString() {           // ⑥ クラス名[名前=値, ...]
+        return "Point[x=" + x + ", y=" + y + "]";
+    }
+}</code></pre></div>
+
+  <div class="point"><p>実際のバイトコードでは、<code>equals</code> / <code>hashCode</code> / <code>toString</code> は <code>invokedynamic</code> で <code>java.lang.runtime.ObjectMethods</code> を呼び、実行時に生成されます。<br>ただし<span class="mk">意味は上の手書き版と同じ</span>なので、試験対策としてはこの形で理解して構いません。この仕組みのおかげで「コンポーネントの一覧」が唯一の情報源になり、3つのメソッドの整合性が構造的に保証されています。</p></div>
+
+  <div class="point trap"><p><code>javap</code> の出力で <code>final</code> が付いているのは <code>toString</code> / <code>hashCode</code> / <code>equals</code> の3つだけで、<span class="mk">アクセサ x() には付いていません</span>。<br>ただしこの <code>final</code> は「サブクラスからのオーバーライド禁止」を意味するもので、<strong>record 自身の定義で上書きすることは4つとも可能</strong>です。自分で書けば、その分は生成されません。</p></div>
+
+  <h3>5点セットとしての整理</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>この1行が展開される<span class="tag">まとめ</span></div><pre><code>record Point(int x, int y) { }
+
+// ↓ コンパイラが自動生成するもの（5点セット）
+//
+//   private final int x;
+//   private final int y;                    ① フィールド（すべて final）
+//   Point(int x, int y) { ... }             ② 標準コンストラクタ
+//   public int x()   public int y()         ③ アクセサ（getX ではない）
+//   public boolean equals(Object o)         ④ 中身で比較
+//   public int hashCode()                   ⑤ 中身から計算
+//   public String toString()                   Point[x=1, y=2] 形式</code></pre></div>
+
+  <p>括弧の中の <code>int x, int y</code> を<strong>コンポーネント</strong>と呼びます。この名前がそのままフィールド名・コンストラクタ引数名・アクセサ名になります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実行結果<span class="tag">OK</span></div><pre><code>Point p = new Point(1, 2);
+
+System.out.println(p);                        // Point[x=1, y=2]
+System.out.println(p.x());                    // 1
+System.out.println(p.equals(new Point(1,2))); // true ← 中身が同じなら等しい</code></pre></div>
+
+  <div class="point trap"><p>アクセサ名は <code>getX()</code> ではなく<span class="mk">コンポーネント名と同じ x()</span>です。JavaBeans の慣習に従っていません。<br>また <code>p.x</code>（括弧なし）はフィールドが <code>private</code> なのでエラー。<strong>この2つが最頻出の引っかけ</strong>です。</p></div>
+
+  <h3>コンストラクタは3種類</h3>
+
+  <p>黒本の record 問題は<strong>ほぼ全部コンストラクタ</strong>です。名前と役割を正確に区別してください。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>名前</th><th>書き方</th><th>フィールドへの代入</th></tr></thead>
+    <tbody>
+      <tr><td><strong>標準</strong>コンストラクタ</td><td>何も書かない（自動生成）</td><td>自動</td></tr>
+      <tr><td><strong>正規</strong>コンストラクタ</td><td>引数リストを<strong>書く</strong></td><td><strong>全フィールド自分で</strong></td></tr>
+      <tr><td><strong>コンパクト</strong>コンストラクタ</td><td>引数リストを<strong>書かない</strong></td><td>自動（最後に追加）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>3つに共通するのは<span class="mk">引数リストがコンポーネントと一致している</span>ことです。コンパクト形式は括弧を省略しているだけで、実際の引数は他の2つと同じ。<br>だから<strong>3つは同時に存在できません</strong>。1つの入口を3通りの方法で埋めているだけです。<code>javap</code> で見ると、どれも <code>public Data(java.lang.String);</code> という同一のものが生成されています。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>正規とコンパクトを両方書くと重複<span class="tag">NG</span></div><pre><code>public record D(String v) {
+    public D { }
+    public D(String v) { this.v = v; }
+}
+// error: constructor D(String) is already defined in record D</code></pre></div>
+
+  <h3>① 標準コンストラクタ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>何も書かない<span class="tag">基本</span></div><pre><code>record S1(String v, int n) { }
+
+new S1("  abc  ", 5);      // S1[v=  abc  , n=5]  加工なし。渡した値がそのまま</code></pre></div>
+
+  <p>全コンポーネントを受け取り、全フィールドに代入するだけのものが自動生成されます。アクセス修飾子は<strong>record 本体と同じ</strong>。加工も検証もしません。</p>
+
+  <h3>② 正規コンストラクタ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>引数リストを書き、全フィールドに代入する<span class="tag">要注意</span></div><pre><code>record S2(String v, int n) {
+    S2(String v, int n) {          // 引数リストがコンポーネントと完全一致 ← 目印
+        if (v == null) throw new IllegalArgumentException();
+        v = v.trim();
+        System.out.println("検証してから…");
+        this.v = v;                // ← this. を書く。位置は自由（最後でもよい）
+        this.n = n * 10;
+    }
+}
+new S2("  abc  ", 5);      // S2[v=abc, n=50]</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>1つでも代入を忘れると止まる<span class="tag">NG</span></div><pre><code>S2(String v, int n) { this.v = v; }
+// error: variable n might not have been initialized</code></pre></div>
+
+  <div class="point trap"><p>要件は「<span class="mk">全フィールドに漏れなく代入すること</span>」だけで、<strong>書く位置は自由</strong>です。「最初に書かなければならない」という制約はありません。</p></div>
+
+  <h3>③ コンパクトコンストラクタ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>括弧が無い形<span class="tag">最頻出</span></div><pre><code>record S3(String v, int n) {
+    S3 {                                   // 引数リストが無い ← 目印
+        if (n &lt; 0) throw new IllegalArgumentException("負の数");
+        if (v == null) v = "(未設定)";      // 引数を差し替える
+        v = v.trim();                       // 加工する
+    }
+}
+new S3("  abc  ", 5);      // S3[v=abc, n=5]
+new S3(null, 5);           // S3[v=(未設定), n=5]</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>実行の流れ<span class="tag">図</span></div><pre><code>new Data("x")
+    ↓
+① 引数 value に "x" が入る          ← フィールドはまだ空
+    ↓
+② コンパクトコンストラクタの本体が動く
+      ここで value を検証・加工できる
+    ↓
+③ this.value = value;  が自動追加される
+    ↓
+④ 完成</code></pre></div>
+
+  <div class="point trap"><p>②の時点で<span class="mk">フィールドはまだ未代入</span>です。<code>final</code> フィールドは「確実に代入済み」と判定できるまで参照できないので、<strong>書くことも読むこともできません</strong>。</p></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th></tr></thead>
+    <tbody>
+      <tr><td><code>value</code>（引数変数）</td><td>○ 読める・書ける</td></tr>
+      <tr><td><code>this.value = x;</code></td><td>✗ <code>cannot assign a value to final variable value</code></td></tr>
+      <tr><td><code>if (this.value == null)</code></td><td>✗ <code>variable value might not have been initialized</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>加工した<strong>引数の値がそのままフィールドに入ります</strong>。③の自動代入が最後に走るためです。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>return は書けない／修飾子は狭められない<span class="tag">NG</span></div><pre><code>public record H(int x) { public H { if (x &gt; 0) return; } }
+// error: invalid compact constructor in record
+//        （途中で抜けると自動代入が走らないため）
+
+public record I(int x) { private I { } }
+// error: invalid canonical constructor in record I
+//        （record 本体より狭くできない）</code></pre></div>
+
+  <div class="point"><p>用途は<span class="mk">検証と正規化</span>の2つだけです。record は不変オブジェクトなので、<strong>生成の瞬間が値を検査できる唯一のタイミング</strong>。ここを通さずにインスタンスを作る経路が無いよう設計されています。<br>実務では②でできることは③でもできるうえ、③のほうが短く代入漏れの心配もありません。<strong>コンパクト形式が第一選択</strong>です。</p></div>
+
+  <h3>3種類の外側 ── オーバーロードされたコンストラクタ</h3>
+
+  <p>引数リストが<strong>コンポーネントと一致しない</strong>ものは、上の3種類のどれでもありません。普通のクラスと同じ<span class="mk">コンストラクタのオーバーロード</span>です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>this(...) で3種類のどれかへ合流する<span class="tag">最頻出</span></div><pre><code>public record Data(String value) {
+    public Data() {                 // 引数0個 ← コンポーネント(1個)と不一致
+        this("sample");             // 第1文で標準コンストラクタを呼ぶ
+    }
+}
+new Data();        // Data[value=sample]</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2つの禁止事項<span class="tag">NG</span></div><pre><code>public Data() { this.value = "sample"; }
+// error: constructor is not canonical, so its first statement
+//        must invoke another constructor of class Data
+//        （フィールドへの直接代入は不可）
+
+public Data() { System.out.println("x"); this("a"); }
+// 同じエラー（this(...) は「第1文」でなければならない）</code></pre></div>
+
+  <div class="point link"><p>普通のクラスなら、それぞれのコンストラクタが独立してフィールドに代入できます（節05の <code>this()</code> 参照）。record はそれを禁じ、<span class="mk">初期化の出口を1つに絞って</span>います。<br>どんな引数で作られても必ず標準／正規／コンパクトのどれかを通るので、そこに書いた検証をすり抜ける経路が存在しません。</p></div>
+
+  <h3>2種類の this を混同しない</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>意味</th><th>制約</th></tr></thead>
+    <tbody>
+      <tr><td><code>this.value</code>（ドット）</td><td><strong>フィールド</strong>を指す</td><td>正規では書く。コンパクトと外側では禁止</td></tr>
+      <tr><td><code>this(...)</code>（括弧）</td><td><strong>別のコンストラクタを呼ぶ</strong></td><td>外側で<strong>第1文に必須</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>「最初に <code>this</code>」という制約があるのは<span class="mk">括弧の方だけ</span>です。ドットの方（正規コンストラクタの代入）に位置の制約はありません。<br><strong>ドットか括弧か</strong>で見分けてください。ここを混ぜると、空欄補充問題（<code>this("sample")</code> を選ぶ）とエラー判定問題（<code>this.value</code> で落ちる）の区別がつかなくなります。</p></div>
+
+  <h3>判定フロー</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>括弧の有無を最初に見る<span class="tag">最重要</span></div><pre><code>コンストラクタが書かれているか？
+  いいえ ─→ 標準コンストラクタ
+  はい  ─→ 引数リストの括弧はあるか？
+             ない ─→ コンパクト（代入は自動。this. は禁止）
+             ある ─→ コンポーネントと一致するか？
+                       一致  ─→ 正規（全フィールドに this. で代入）
+                       不一致 ─→ オーバーロード（第1文で this(...) 必須）</code></pre></div>
+
+  <h3>出題パターン① 引数なしコンストラクタを足した</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>これ単体ではコンパイルエラー<span class="tag">頻出</span></div><pre><code>public record Data(String value) {
+    public Data() {
+    }
+}
+// error: constructor is not canonical, so its first statement
+//        must invoke another constructor of class Data</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>修正の方針</th><th>書き方</th></tr></thead>
+    <tbody>
+      <tr><td><strong>正規にする</strong></td><td><code>public Data(String value) { this.value = value; }</code><br><span style="font-size:12px">引数を1つ受け取る＋フィールドを初期化。<strong>両方</strong>必要</span></td></tr>
+      <tr><td><strong>合流させる</strong></td><td><code>public Data() { this("sample"); }</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>引数だけ直しても足りない<span class="tag">要注意</span></div><pre><code>public Data(String value) {          // 正規になったが本体が空
+}
+// error: variable value might not have been initialized</code></pre></div>
+
+  <div class="point trap"><p>「String 引数を1つ受け取るようにする」と「フィールド value を初期化する」は<span class="mk">セットで初めて正解</span>です。片方だけでは別のエラーに移るだけ。2つ選択の問題では、この2つが答えになります。</p></div>
+
+  <h3>出題パターン② 空欄に入るコードを選ぶ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>選択肢の判定<span class="tag">頻出</span></div><pre><code>public record Data(String value) {
+    public Data() {
+        // insert code here
+    }
+}</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>選択肢</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>this("sample");</code></td><td><strong>○ 正解</strong></td><td>引数1個の標準コンストラクタへ合流</td></tr>
+      <tr><td><code>this();</code></td><td>×</td><td><code>recursive constructor invocation</code> 自分自身を呼んでいる</td></tr>
+      <tr><td><code>super();</code></td><td>×</td><td>record に <code>super()</code> は書けない</td></tr>
+      <tr><td><code>super("sample");</code></td><td>×</td><td>同上</td></tr>
+      <tr><td><code>this.value = value;</code></td><td>×</td><td>直接代入は禁止。そもそも <code>value</code> が存在しない</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>正誤の分かれ目は<span class="mk">this に引数を渡しているか</span>だけです。<code>"sample"</code> という文字列自体に意味はなく、<strong>合流先が要求する String を埋める</strong>ための値。<code>""</code> でも <code>null</code> でも動きます。<br><code>super</code> 系は<strong>常に誤り</strong>。record は暗黙に <code>java.lang.Record</code> を継承していますが、書き手が <code>super()</code> を触る余地はありません。</p></div>
+
+  <h3>出題パターン③ コンパクト形式で this.value を読む</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>this. が1つ付いているだけ<span class="tag">最頻出</span></div><pre><code>public record Data(String value) {
+    public Data {
+        if (this.value == null) {                    // ← this. を付けた
+            System.out.println("value is null");
+        }
+    }
+}
+// error: variable value might not have been initialized</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>this. を外せば通る<span class="tag">OK</span></div><pre><code>public Data {
+    if (value == null) { System.out.println("value is null"); }
+}
+
+new Data(null);                     // value is null
+new Data(null).value();             // null（自動代入で null が入る）</code></pre></div>
+
+  <h3>出題パターン④ アクセサとインタフェースの衝突</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値型が食い違う<span class="tag">頻出</span></div><pre><code>public interface Test {
+    default void value() { System.out.println("A"); }   // 戻り値 void
+}
+
+public record Data(String value) implements Test { }
+// error: value() in Data cannot implement value() in Test
+//   return type String is not compatible with void</code></pre></div>
+
+  <p>record は <code>public String value()</code> というアクセサを自動生成します。インタフェースは <code>void value()</code> を要求している。<strong>名前と引数が同じで戻り値型だけが違う</strong>ので、オーバーライドとして成立しません（節06の「戻り値型だけ違うのは区別されない」と同じ根拠）。</p>
+
+  <div class="point trap"><p>エラーが出るのは <code>data.value()</code> を呼んでいる行<strong>ではなく</strong>、<span class="mk">record の宣言行</span>です。クラス定義そのものが成立していないので、<code>main</code> を読む手前で終わります。<br>戻り値型を <code>String</code> に揃えれば通り、そのときは <code>B</code> が出力されます。<strong>アクセサが default メソッドに勝つ</strong>ためです（第5章「クラスの具象メソッドは default に勝つ」）。</p></div>
+
+  <div class="point"><p>判定手順は2段階です。<br>① インタフェースのメソッド名が<span class="mk">コンポーネント名と同じか</span><br>② 同じなら、<span class="mk">戻り値型がコンポーネントの型と一致するか</span><br>不一致ならコンパイルエラー、一致するならアクセサが勝って default は使われません。<code>default void</code> の <code>void</code> が最重要の1語になります。</p></div>
+
+  <h3>エラーメッセージ逆引き</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>メッセージ</th><th>原因</th></tr></thead>
+    <tbody>
+      <tr><td><code>constructor is not canonical, so its first statement must invoke another constructor</code></td><td>オーバーロード側で <code>this(...)</code> を第1文に書いていない／直接代入した</td></tr>
+      <tr><td><code>variable value might not have been initialized</code></td><td>正規の本体が空／コンパクト形式で <code>this.value</code> を読んだ</td></tr>
+      <tr><td><code>cannot assign a value to final variable value</code></td><td>コンパクト形式で <code>this.value = ...</code> と書いた</td></tr>
+      <tr><td><code>recursive constructor invocation</code></td><td><code>this()</code> で自分自身を呼んだ</td></tr>
+      <tr><td><code>constructor D(String) is already defined</code></td><td>正規とコンパクトを両方書いた</td></tr>
+      <tr><td><code>invalid compact constructor in record</code></td><td>コンパクト形式で <code>return</code> を書いた</td></tr>
+      <tr><td><code>invalid canonical constructor in record</code></td><td>アクセス修飾子を record 本体より狭くした</td></tr>
+      <tr><td><code>return type X is not compatible with Y</code></td><td>アクセサとインタフェースのメソッドが衝突</td></tr>
+      <tr><td><code>field declaration must be static</code></td><td>インスタンスフィールドを追加した</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>自動生成を上書きできる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>アクセサも toString も差し替え可能<span class="tag">要注意</span></div><pre><code>record R5(int x) {
+    public int x() { return x * 1000; }        // アクセサを上書き
+    public String toString() { return "カスタム"; }
+}
+new R5(3).x();        // 3000</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>アクセサの形は変えられない<span class="tag">NG</span></div><pre><code>record E2(int x) {
+    void x() { }                               // 戻り値型が違う
+}
+// error: invalid accessor method in record E2</code></pre></div>
+
+  <p>自分で書けば自動生成は行われません。ただし<strong>アクセサは「引数なし・コンポーネントと同じ型を返す public メソッド」</strong>という形を守る必要があります。<code>equals</code> や <code>hashCode</code> も同様に上書きできます。</p>
+
+  <h3>できること・できないこと</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>可否</th><th>エラーメッセージ</th></tr></thead>
+    <tbody>
+      <tr><td>static フィールド・メソッド</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>インスタンスメソッド</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>インタフェースの実装</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>ネスト・ローカル・ジェネリック</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>コンポーネントの可変長引数</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>インスタンスフィールドの追加</td><td>×</td><td><code>field declaration must be static</code></td></tr>
+      <tr><td>他クラスの継承（<code>extends</code>）</td><td>×</td><td>暗黙に <code>Record</code> を継承済み</td></tr>
+      <tr><td>record を継承する</td><td>×</td><td><code>cannot inherit from final</code></td></tr>
+      <tr><td><code>abstract</code> にする</td><td>×</td><td><code>modifier abstract not allowed here</code></td></tr>
+      <tr><td>フィールドの再代入（setter）</td><td>×</td><td>すべて <code>final</code></td></tr>
+      <tr><td>標準／正規コンストラクタを狭める</td><td>×</td><td><code>attempting to assign stronger access privileges</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>禁止はインスタンスフィールドの追加だけ<span class="tag">頻出</span></div><pre><code>record W(int x) {
+    static final int MAX = 100;                // static は OK
+    static W of(int v) { return new W(v); }    // static メソッドも OK
+    int doubled() { return x * 2; }            // インスタンスメソッドも OK
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>インタフェースは実装できる<span class="tag">OK</span></div><pre><code>interface Named { String label(); }
+
+record Person(String name) implements Named {
+    public String label() { return "名前:" + name; }
+}
+Named n = new Person("A");     // 多態も普通に使える</code></pre></div>
+
+  <div class="point"><p>禁止されているのは<span class="mk">インスタンスフィールドの追加</span>と<span class="mk">継承</span>だけです。「record にはメソッドを書けない」「record はインタフェースを実装できない」はどちらも誤りで、選択肢に出ます。<br>暗黙に <code>final</code> かつ暗黙に <code>java.lang.Record</code> のサブクラスなので、<strong>継承の口が上下とも塞がっている</strong>と覚えると整理できます。</p></div>
+
+  <h3>細かいが出る論点</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>コンポーネントゼロも可変長も書ける<span class="tag">要注意</span></div><pre><code>record Empty() { }                 // Empty[]
+record V(int... nums) { }          // 可変長引数もコンポーネントにできる
+record Box&lt;T&gt;(T value) { }         // ジェネリックも可</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ネストとローカル<span class="tag">要注意</span></div><pre><code>public class G {
+    record Nest(int a) { }                     // ネストした record は暗黙に static
+    public static void main(String[] x) {
+        record Local(String s) { }             // メソッド内にも定義できる
+        System.out.println(new Local("ok"));   // Local[s=ok]
+    }
+}</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>配列コンポーネントの equals<span class="tag">最重要</span></div><pre><code>record A(int[] arr) { }
+
+new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
+
+// 自動生成される equals は各コンポーネントを
+//   基本データ型 → ==
+//   参照型       → その型の equals
+// で比較する。配列の equals は「同じ実体か」なので false になる</code></pre></div>
+
+  <div class="point trap"><p>「record は中身で比較する」は<span class="mk">コンポーネントが配列のときだけ成り立ちません</span>。配列の <code>equals</code> は <code>Object</code> のもの（参照比較）だからです。<br><code>toString</code> も <code>A[arr=[I@44a664f2]</code> のようになります。第2章の「配列に equals は効かない」がそのまま持ち込まれる形です。</p></div>
+
+  <div class="point link"><p>第5章とつながります。<code>record</code> は暗黙に <code>final</code> なので <code>sealed</code> インタフェースの実装先としてそのまま使えます（<code>final</code> / <code>sealed</code> / <code>non-sealed</code> の宣言が不要）。</p></div>
+</section>

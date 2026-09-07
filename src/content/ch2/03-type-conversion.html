@@ -1,0 +1,60 @@
+<section id="c2-s03">
+  <div class="sh"><span class="num">03</span><h2>型変換</h2></div>
+
+  <h3>拡大変換（自動）と縮小変換（キャスト必須）</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変換の方向<span class="tag">図</span></div><pre><code>byte → short → int → long → float → double     ← この向きは自動
+char ─────────↗
+
+double → float → long → int → short → byte     ← この向きはキャスト必須
+int → char</code></pre></div>
+
+  <p><code>long → float</code> が拡大変換なのは直感に反しますが、float のほうが表現範囲が広いためです。<strong>精度は失われます</strong>が、コンパイルは通ります。</p>
+
+  <h3>罠1 ── byte・short・char の演算は int に昇格する</h3>
+  <p>この章で<strong>最頻出</strong>です。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>byte + byte は int<span class="tag">NG</span></div><pre><code>byte a = 1, b = 2;
+byte c = a + b;      // コンパイルエラー: a + b の結果は int</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>キャストすれば通る<span class="tag">OK</span></div><pre><code>byte c = (byte)(a + b);</code></pre></div>
+
+  <h3>罠2 ── 複合代入演算子は暗黙のキャストを含む</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>意味は同じでも結果が違う<span class="tag">要注意</span></div><pre><code>byte a = 1;
+a += 2;       // OK。+= に暗黙の縮小キャストが組み込まれている
+a++;          // OK。同じ理由
+a = a + 2;    // コンパイルエラー</code></pre></div>
+
+  <div class="point trap"><p><span class="mk"><code>a += 2</code> は通るが <code>a = a + 2</code> はエラー。</span>この非対称が選択肢に並びます。意味は同じなのに結果が違う、という点だけ覚えてください。</p></div>
+
+  <h3>罠3 ── コンパイル時定数なら縮小変換が通る</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>final の有無で結果が変わる<span class="tag">要注意</span></div><pre><code>byte a = 10;            // OK。10 は範囲内の定数
+byte b = 200;           // コンパイルエラー: 範囲外
+
+final int x = 10;
+byte c = x;             // OK。final なのでコンパイル時に確定
+
+int y = 10;
+byte d = y;             // コンパイルエラー: final でない</code></pre></div>
+
+  <div class="point link"><p><code>final</code> という1語の有無だけで合否が変わります。第4章の「実質的に final」や第6章の multi-catch の変数と同じ考え方で、<span class="mk pink">コンパイラが値を確定できるかどうか</span>が判定基準です。</p></div>
+
+  <h3>ボクシングと拡大変換は組み合わせられない</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2段階の変換は不可<span class="tag">NG</span></div><pre><code>Long a = 5;      // コンパイルエラー
+// int → long（拡大変換）→ Long（ボクシング）の2段階は許されない</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>1段階なら通る<span class="tag">OK</span></div><pre><code>Long a = 5L;              // long → Long のボクシングだけ
+Integer b = 5;            // int → Integer のボクシングだけ
+long c = Integer.valueOf(5);   // アンボクシング → 拡大変換</code></pre></div>
+
+  <h3>Integer キャッシュ</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>127 と 128 で結果が変わる<span class="tag">最重要</span></div><pre><code>Integer a = 127, b = 127;
+System.out.println(a == b);   // true
+
+Integer c = 128, d = 128;
+System.out.println(c == d);   // false</code></pre></div>
+
+  <p>オートボクシングは内部で <code>Integer.valueOf()</code> を呼びますが、<span class="mk">-128 〜 127 の範囲はキャッシュされた同一インスタンスが返る</span>ためです。値の比較には必ず <code>equals()</code> を使います。</p>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>null のアンボクシング<span class="tag">実行時</span></div><pre><code>Integer i = null;
+int j = i;      // コンパイルは通り、実行時に NullPointerException</code></pre></div>
+</section>

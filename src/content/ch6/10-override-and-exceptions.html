@@ -1,0 +1,32 @@
+<section id="c6-s10">
+  <div class="sh"><span class="num">10</span><h2>オーバーライドと例外の制約</h2></div>
+
+  <p>第5章（継承とインタフェース）とまたがる論点で、必ず出ます。</p>
+
+  <p><span class="mk">オーバーライドするメソッドは、検査例外を増やせない・広げられない。</span></p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親のメソッド<span class="tag">前提</span></div><pre><code>class Parent {
+    void m() throws IOException { }
+}</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>子クラスでの宣言</th><th>判定</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>void m() throws FileNotFoundException</code></td><td style="color:var(--ok);font-weight:700">OK</td><td>IOException の子なので、より狭い</td></tr>
+      <tr><td><code>void m()</code></td><td style="color:var(--ok);font-weight:700">OK</td><td>減らすのは自由</td></tr>
+      <tr><td><code>void m() throws RuntimeException</code></td><td style="color:var(--ok);font-weight:700">OK</td><td>非検査例外は制約の対象外</td></tr>
+      <tr><td><code>void m() throws Exception</code></td><td style="color:var(--err);font-weight:700">NG</td><td>親より広い</td></tr>
+      <tr><td><code>void m() throws SQLException</code></td><td style="color:var(--err);font-weight:700">NG</td><td>無関係な検査例外の追加</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>オーバーライドの3制約をまとめて確認しておいてください。<span class="mk">向きが項目ごとに逆</span>なのが引っかけの温床です。</p>
+  <div class="tw" style="margin-top:12px"><table>
+    <thead><tr><th>項目</th><th>変更できる方向</th></tr></thead>
+    <tbody>
+      <tr><td>アクセス修飾子</td><td>同じか、より<strong>広く</strong></td></tr>
+      <tr><td>戻り値の型</td><td>同じか、その<strong>サブクラス</strong>（共変戻り値）</td></tr>
+      <tr><td>検査例外</td><td>同じか、より<strong>狭く</strong></td></tr>
+    </tbody>
+  </table></div></div>
+</section>

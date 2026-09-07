@@ -1,0 +1,38 @@
+<section id="c3-s07">
+  <div class="sh"><span class="num">07</span><h2>if 文</h2></div>
+
+  <h3>条件は boolean のみ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>整数は条件にできない<span class="tag">NG</span></div><pre><code>int i = 1;
+if (i) { }          // コンパイルエラー（C言語と違う）
+if (i = 1) { }      // コンパイルエラー: 代入の結果は int
+if (i == 1) { }     // OK</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>boolean の代入は通ってしまう<span class="tag">最重要</span></div><pre><code>boolean b = false;
+if (b = true) {            // 代入の結果は boolean → 条件として成立
+    System.out.println("実行される");
+}
+System.out.println(b);     // true ← b が書き換わっている</code></pre></div>
+
+  <div class="point trap"><p><code>==</code> と <code>=</code> の書き間違いは、<span class="mk">boolean 変数のときだけコンパイルが通ってしまいます</span>。しかも常に true 側が実行され、変数も書き換わる。選択肢を読むときは<strong>イコールの数を数えて</strong>ください。</p></div>
+
+  <h3>波括弧を省略すると次の1文だけ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>インデントに騙されない<span class="tag">要注意</span></div><pre><code>if (false)
+    System.out.println("A");
+    System.out.println("B");   // ← if とは無関係。必ず実行される
+
+// 出力: B</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>セミコロンだけの空文<span class="tag">要注意</span></div><pre><code>if (true);                        // ← ここで if は終わっている
+    System.out.println("A");      // 常に実行される
+
+int i = 0;
+while (i &lt; 3);                    // 無限ループ！本体が空文
+    i++;</code></pre></div>
+
+  <div class="point trap"><p><code>if (...)</code> や <code>while (...)</code> の直後の<span class="mk">セミコロン1個</span>が、コード全体の意味を変えます。<strong>行末のセミコロンを目で確認する</strong>癖をつけてください。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>波括弧なしで宣言はできない<span class="tag">NG</span></div><pre><code>if (true)
+    int x = 10;      // コンパイルエラー: 宣言は文ではあるが、ここには置けない</code></pre></div>
+</section>
