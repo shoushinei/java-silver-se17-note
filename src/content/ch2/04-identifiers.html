@@ -1,0 +1,66 @@
+<section id="c2-s04">
+  <div class="sh"><span class="num">04</span><h2>識別子の規則</h2></div>
+
+  <p>識別子とは、変数・メソッド・クラス・インタフェース・パッケージ・ラベルなど、<strong>自分で付ける名前</strong>のことです。規則は1組しかなく、どの種類の名前にも同じものが当てはまります。</p>
+
+  <h3>使える文字</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>位置</th><th>使える文字</th></tr></thead>
+    <tbody>
+      <tr><td>1文字目</td><td>Unicode の<strong>文字</strong>（英字・日本語など）、<code>_</code>、<code>$</code></td></tr>
+      <tr><td>2文字目以降</td><td>1文字目に使えるもの ＋ <strong>数字</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>すべて通る名前<span class="tag">最重要</span></div><pre><code>int _name  = 1;   // _ で始めてよい
+int $price = 2;   // $ で始めてよい
+int a_b$c9 = 3;   // 途中は数字も混ぜられる
+int 変数    = 4;   // 日本語も Unicode の「文字」なので通る
+int INT    = 5;   // 大文字小文字は区別される。予約語の int とは別物
+int Class  = 6;   // class ではないので通る
+int String = 7;   // String はクラス名であって予約語ではない</code></pre></div>
+
+  <div class="point"><p>長さに制限はありません。<code>$</code> も規則上は使えますが、<span class="mk">コンパイラが自動生成する名前に使う文字</span>なので、慣習として避けます。「<code>$</code> は使えない」という選択肢は<strong>誤り</strong>です。</p></div>
+
+  <h3>使えないもの</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>すべてコンパイルエラー<span class="tag">NG</span></div><pre><code>int 1a      = 1;   // 数字では始められない
+int a-b     = 1;   // ハイフンは識別子の文字ではない
+int my name = 1;   // 空白は入れられない
+int goto    = 1;   // goto は予約語
+int const   = 1;   // const も予約語
+int true    = 1;   // 予約語ではないが、リテラルなので使えない
+int null    = 1;   // 同上
+int _       = 1;   // _ 単独は Java 9 以降キーワード扱い</code></pre></div>
+
+  <div class="point trap"><p><code>true</code> <code>false</code> <code>null</code> は<span class="mk">予約語の一覧には載っていません</span>。これらは<strong>リテラル</strong>で、文法上そちらの側から識別子として除外されています。「予約語は50語」と数えるとき、この3つは<strong>含まれません</strong>。</p></div>
+
+  <div class="point trap"><p><code>goto</code> と <code>const</code> は<span class="mk">Java に機能がないのに予約語です</span>。他言語から来た人がうっかり名前に使わないよう、押さえてあります。「使われていないから識別子に使える」という選択肢は誤りです。</p></div>
+
+  <h3>予約語ではないので、名前に使えるもの</h3>
+
+  <p><code>var</code> <code>yield</code> <code>record</code> <code>sealed</code> <code>permits</code> は<strong>文脈依存キーワード</strong>です。決まった位置に書いたときだけキーワードとして働き、それ以外では普通の識別子として扱われます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変数名に使える<span class="tag">頻出</span></div><pre><code>int var     = 1;   // OK
+int yield   = 2;   // OK
+int record  = 3;   // OK
+int sealed  = 4;   // OK
+int permits = 5;   // OK</code></pre></div>
+
+  <div class="point link"><p>これらを「新しい予約語だから識別子に使えない」とする選択肢は誤りです。互換性を壊さないために、あえて予約語にしていません。<br>ただし <code>var</code> だけは<strong>クラス名とインタフェース名には使えません</strong>。詳しくは次の <code>05</code>・<code>06</code>、第3章 <code>09</code>、第4章 <code>10</code>、第5章 <code>11</code> で扱います。</p></div>
+
+  <h3>命名規約は文法ではない</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>対象</th><th>慣習</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td>クラス・インタフェース</td><td>先頭大文字のキャメルケース</td><td><code>StringBuilder</code></td></tr>
+      <tr><td>メソッド・変数</td><td>先頭小文字のキャメルケース</td><td><code>toUpperCase</code></td></tr>
+      <tr><td>定数</td><td>すべて大文字＋アンダースコア</td><td><code>MAX_VALUE</code></td></tr>
+      <tr><td>パッケージ</td><td>すべて小文字</td><td><code>java.util</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>これらは<strong>規約であって文法ではありません</strong>。守らなくても<span class="mk">コンパイルエラーにはなりません</span>。「クラス名が小文字だからエラー」「定数が小文字だからエラー」という選択肢は誤りです。</p></div>
+</section>

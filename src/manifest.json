@@ -1,6 +1,6 @@
 {
   "title": "全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート",
-  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・62論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
+  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・63論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
   "brand": "Java Silver<br>SE 17 統合ノート",
   "brandSub": "1Z0-825 / 全6章 完成版",
   "chapters": [
@@ -95,56 +95,62 @@
         {
           "id": "c2-s04",
           "tn": "04",
-          "label": "宣言・初期化・スコープ",
-          "file": "04-declaration-and-scope.html"
+          "label": "識別子の規則",
+          "file": "04-identifiers.html"
         },
         {
           "id": "c2-s05",
           "tn": "05",
-          "label": "var（型推論）",
-          "file": "05-var-type-inference.html"
+          "label": "宣言・初期化・スコープ",
+          "file": "05-declaration-and-scope.html"
         },
         {
           "id": "c2-s06",
           "tn": "06",
-          "label": "Stringの不変性",
-          "file": "06-string-immutability.html"
+          "label": "var（型推論）",
+          "file": "06-var-type-inference.html"
         },
         {
           "id": "c2-s07",
           "tn": "07",
-          "label": "Stringのメソッド",
-          "file": "07-string-methods.html"
+          "label": "Stringの不変性",
+          "file": "07-string-immutability.html"
         },
         {
           "id": "c2-s08",
           "tn": "08",
-          "label": "StringBuilder",
-          "file": "08-stringbuilder.html"
+          "label": "Stringのメソッド",
+          "file": "08-string-methods.html"
         },
         {
           "id": "c2-s09",
           "tn": "09",
-          "label": "テキストブロック",
-          "file": "09-text-blocks.html"
+          "label": "StringBuilder",
+          "file": "09-stringbuilder.html"
         },
         {
           "id": "c2-s10",
           "tn": "10",
-          "label": "配列",
-          "file": "10-arrays.html"
+          "label": "テキストブロック",
+          "file": "10-text-blocks.html"
         },
         {
           "id": "c2-s11",
           "tn": "11",
-          "label": "ArrayList",
-          "file": "11-arraylist.html"
+          "label": "配列",
+          "file": "11-arrays.html"
         },
         {
           "id": "c2-s12",
           "tn": "12",
+          "label": "ArrayList",
+          "file": "12-arraylist.html"
+        },
+        {
+          "id": "c2-s13",
+          "tn": "13",
           "label": "nullとの付き合い方",
-          "file": "12-null-handling.html"
+          "file": "13-null-handling.html"
         },
         {
           "id": "c2-quiz",
