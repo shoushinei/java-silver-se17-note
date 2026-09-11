@@ -129,6 +129,8 @@ System.out.println(new int[0]);     // [I@... ← 要素数0でも同じ形式</
 
   <p>配列は <code>toString()</code> を<strong>オーバーライドしていない</strong>ので、<code>Object</code> の既定実装（クラス名＋@＋ハッシュコード）がそのまま使われます。<span class="mk">println は中身を見に行きません。</span></p>
 
+  <div class="point link"><p>なぜ「クラス名@ハッシュ値」になるのか、自作クラスではどうなるのか、null を println するとどうなるのかは<a href="#c5-s13">第5章 13「Object から受け継ぐ toString / equals / hashCode」</a>にまとめています。</p></div>
+
   <div class="tw"><table>
     <thead><tr><th>記号</th><th>意味</th></tr></thead>
     <tbody>
@@ -143,7 +145,7 @@ System.out.println(new int[0]);     // [I@... ← 要素数0でも同じ形式</
 
 Arrays.toString(new int[]{1,2,3});        // "[1, 2, 3]"
 Arrays.toString(new String[2]);           // "[null, null]"
-Arrays.toString(null);                    // "null"  ← 例外にならない
+Arrays.toString((int[]) null);            // "null"  ← 例外にならない（null を直接書くと曖昧でコンパイルエラー）
 Arrays.deepToString(new int[][]{{1,2}});  // "[[1, 2]]" ← 2次元用</code></pre></div>
 
   <div class="point trap"><p><code>char[]</code> だけは<span class="mk">println に専用のオーバーロードがあるので中身が出ます</span>。ただし連結すると toString() に戻ります。</p>

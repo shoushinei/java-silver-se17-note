@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート</title>
-<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・64論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
+<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・65論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -463,6 +463,15 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
   .mt td:first-child { width: 44%; }   /* 名前が単語の途中で折れない程度の幅を確保する */
   .mt td:first-child code { white-space: normal; overflow-wrap: anywhere; font-size: 11px; }
 
+  /* 本文中のインラインコードは折り返さない指定になっている（05-typography.css）。
+     コンパイラのメッセージや一問一答の問題文のような長いものが画面幅を超え、
+     ページ全体が横にずれていた。スマホでは表の外に限って折り返しを許す。
+     表は .tw の中で横スクロールできるので、列が潰れないよう従来どおりにしておく。 */
+  /* 元の指定 code:not(pre code) は詳細度が (0,0,3) あるので、同じ :not を付けて上回らせる */
+  p code:not(pre code),
+  li code:not(pre code),
+  summary code:not(pre code) { white-space: normal; overflow-wrap: anywhere; }
+
   .qa { padding-left: 16px; }
   .q > summary { padding: 13px 14px; }
   .point { padding: 15px 14px; }
@@ -578,6 +587,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <a href="#c5-s10"><span class="tn">10</span>default / static / private</a>
     <a href="#c5-s11"><span class="tn">11</span>sealed ★新</a>
     <a href="#c5-s12"><span class="tn">12</span>アクセス修飾子と継承</a>
+    <a href="#c5-s13"><span class="tn">13</span>toString / equals / hashCode</a>
     <a href="#c5-quiz"><span class="tn">▸</span>一問一答</a>
     <a href="#c5-check"><span class="tn">▸</span>直前チェック</a>
   </div>
@@ -2339,6 +2349,8 @@ System.out.println(new int[0]);     // [I@... ← 要素数0でも同じ形式</
 
   <p>配列は <code>toString()</code> を<strong>オーバーライドしていない</strong>ので、<code>Object</code> の既定実装（クラス名＋@＋ハッシュコード）がそのまま使われます。<span class="mk">println は中身を見に行きません。</span></p>
 
+  <div class="point link"><p>なぜ「クラス名@ハッシュ値」になるのか、自作クラスではどうなるのか、null を println するとどうなるのかは<a href="#c5-s13">第5章 13「Object から受け継ぐ toString / equals / hashCode」</a>にまとめています。</p></div>
+
   <div class="tw"><table>
     <thead><tr><th>記号</th><th>意味</th></tr></thead>
     <tbody>
@@ -2353,7 +2365,7 @@ System.out.println(new int[0]);     // [I@... ← 要素数0でも同じ形式</
 
 Arrays.toString(new int[]{1,2,3});        // "[1, 2, 3]"
 Arrays.toString(new String[2]);           // "[null, null]"
-Arrays.toString(null);                    // "null"  ← 例外にならない
+Arrays.toString((int[]) null);            // "null"  ← 例外にならない（null を直接書くと曖昧でコンパイルエラー）
 Arrays.deepToString(new int[][]{{1,2}});  // "[[1, 2]]" ← 2次元用</code></pre></div>
 
   <div class="point trap"><p><code>char[]</code> だけは<span class="mk">println に専用のオーバーロードがあるので中身が出ます</span>。ただし連結すると toString() に戻ります。</p>
@@ -5628,6 +5640,160 @@ public class Sub extends lib.Base {
   <div class="point link"><p>狭めてはいけない理由は第5章 03 のとおりです。親の型で扱ったときに呼べるはずのメソッドが、子の実体では呼べなくなってしまいます。</p></div>
 </section>
 
+<!-- ch5/13-object-methods.html · toString / equals / hashCode -->
+<section id="c5-s13">
+  <div class="sh"><span class="num">13</span><h2>Object から受け継ぐ toString / equals / hashCode</h2></div>
+
+  <p><code>extends</code> を書かないクラスは、暗黙に <code>java.lang.Object</code> を継承しています。つまり<strong>すべてのクラスが、Object のメソッドを最初から持っています</strong>。その中で試験に出るのが次の3つです。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>メソッド</th><th>Object の既定の動作</th><th>オーバーライドする目的</th></tr></thead>
+    <tbody>
+      <tr><td><code>toString()</code></td><td><strong>クラス名@16進のハッシュ値</strong></td><td>中身を読める文字列にする</td></tr>
+      <tr><td><code>equals(Object)</code></td><td><strong>参照の比較</strong>（<code>==</code> と同じ）</td><td>中身で等しいかを判定する</td></tr>
+      <tr><td><code>hashCode()</code></td><td>オブジェクトごとの値</td><td><code>equals</code> と矛盾しない値にする</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><span class="mk">3つとも「オーバーライドされる前提」で用意された仮の実装です。</span>Object は、あなたのクラスの「中身」が何なのかを知りません。だから文字列にするときは型の名前と識別用の番号しか出せず、比べるときは「同じインスタンスかどうか」しか判定できません。</p></div>
+
+  <h3>println はオブジェクトを受け取ると toString() を呼ぶ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>println(Object) がしていること<span class="tag">最重要</span></div><pre><code>// System.out.println(x) は、おおむね次のように動く
+String s = (x == null) ? "null" : x.toString();   // String.valueOf(x) と同じ
+// → s を出力する</code></pre></div>
+
+  <p>ポイントは2つです。<strong>null のときは toString() を呼ばずに "null" と表示する</strong>ので、例外になりません。null でなければ、そのオブジェクトの <code>toString()</code> が呼ばれます。<strong>オーバーライドしていれば自分の実装、していなければ Object の既定の実装</strong>です。文字列連結の <code>"値: " + x</code> も同じ仕組みで <code>toString()</code> を呼び、null なら <code>"値: null"</code> になります。</p>
+
+  <h3>自作クラスで確かめる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toString() をオーバーライドしたクラスの配列<span class="tag">最頻出</span></div><pre><code>class Box {
+    public String label;
+    public Box(String label) { this.label = label; }
+    public String toString() { return label; }       // オーバーライド
+}
+
+Box[] boxes = { new Box("X"), new Box("Y"), new Box("Z"), null };
+
+System.out.println(boxes[1]);         // Y     ← Box の toString() が呼ばれる
+System.out.println(boxes[2].label);   // Z     ← フィールドを直接出力
+System.out.println(boxes[3]);         // null  ← null なので toString() は呼ばれない</code></pre></div>
+
+  <div class="point trap"><p>ハッシュ値が出るのは <strong>toString() をオーバーライドしていないとき</strong>だけです。この例では <code>Box</code> がオーバーライドしているので、<code>boxes[1]</code> は <code>Box@7344699f</code> のような形にはなりません。<br>また、<code>boxes[3]</code> は null ですが、<span class="mk">println に渡しただけなら例外にならず "null" と出ます</span>。「null なので実行時に例外」を選ばせる引っかけに注意してください。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>null に「ドット」を付けた瞬間に例外<span class="tag">対比</span></div><pre><code>System.out.println(boxes[3].label);        // NullPointerException
+System.out.println(boxes[3].toString());   // NullPointerException</code></pre></div>
+
+  <p>println 自身は null を確かめてから <code>toString()</code> を呼びます。しかし <code>boxes[3].label</code> や <code>boxes[3].toString()</code> は、<strong>println に渡す前に自分で null をたどってしまう</strong>ので例外になります。<a href="#c2-s13">第2章 13「null との付き合い方」</a>と同じ判定です。</p>
+
+  <h3>なぜハッシュ値になるのか</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>Object の toString() の正体<span class="tag">OK</span></div><pre><code>class Plain { }                  // toString() をオーバーライドしていない
+
+Plain p = new Plain();
+System.out.println(p);           // Plain@18b4aac2
+
+// Object の toString() は、次の文字列を作っているだけ
+p.getClass().getName() + "@" + Integer.toHexString(p.hashCode());   // Plain@18b4aac2</code></pre></div>
+
+  <p><code>@</code> の後ろは <code>hashCode()</code> の値を16進数で書いたものです。<strong>実行するたびに変わる</strong>ので、選択肢に出てくる <code>@7344699f</code> のような数字そのものに意味はありません。「この形になるかどうか」だけを判定してください。</p>
+
+  <p>配列も同じです。配列は <code>toString()</code> をオーバーライドしていないので、<code>int[]</code> なら <code>[I@...</code>、<code>String[]</code> なら <code>[Ljava.lang.String;@...</code> になります。記号の読み方は<a href="#c2-s11">第2章 11「配列」</a>にあります。</p>
+
+  <h3>ハッシュ値にしない方法</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>対象</th><th>中身を表示する方法</th></tr></thead>
+    <tbody>
+      <tr><td>自作クラス</td><td><code>public String toString()</code> をオーバーライドする</td></tr>
+      <tr><td>配列</td><td><code>Arrays.toString(配列)</code>。2次元なら <code>Arrays.deepToString</code></td></tr>
+      <tr><td><code>ArrayList</code> などのコレクション</td><td>そのままで <code>[a, b]</code> と出る（オーバーライド済み）</td></tr>
+      <tr><td><code>String</code> / <code>StringBuilder</code> / ラッパークラス</td><td>そのままで中身が出る（オーバーライド済み）</td></tr>
+      <tr><td><code>record</code></td><td>そのままで <code>Point[x=1, y=2]</code> と出る（自動生成。<a href="#c4-s10">第4章 10</a>）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>入れ物と中身は別々に判定する<span class="tag">要注意</span></div><pre><code>System.out.println(List.of(new Box("X"), new Box("Y")));   // [X, Y]
+System.out.println(List.of(new Plain()));                  // [Plain@...]
+System.out.println(Arrays.toString(boxes));                // [X, Y, Z, null]</code></pre></div>
+
+  <p>リストや <code>Arrays.toString</code> は、<strong>各要素の <code>toString()</code> を呼んで</strong> <code>[ ]</code> でつないでいるだけです。要素のクラスがオーバーライドしていなければ、中身はハッシュ形式のままです。</p>
+
+  <h3>toString() のオーバーライドでよくある誤り</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>3つともコンパイルエラー<span class="tag">頻出</span></div><pre><code>class A { String toString() { return "a"; } }
+// error: attempting to assign weaker access privileges; was public
+
+class B { public void toString() { } }
+// error: return type void is not compatible with String
+
+class C { @Override public String tostring() { return "c"; } }
+// error: method does not override or implement a method from a supertype</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">public を付け忘れると、アクセスを狭めたことになってコンパイルエラー</span>です。Object の <code>toString()</code> が public なので、オーバーライドする側も public 以外は書けません（<a href="#c5-s12">第5章 12</a> の「狭めるのは不可」）。<br><code>C</code> のように綴りを間違えた場合、<code>@Override</code> が無ければ<strong>コンパイルは通ります</strong>。ただしそれは新しい別メソッドなので、println するとハッシュ値が出ます。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>null を直接渡すと、どのオーバーロードか決まらない<span class="tag">要注意</span></div><pre><code>System.out.println(null);            // コンパイルエラー
+// error: reference to println is ambiguous
+//   println(char[]) と println(String) の両方が当てはまる
+
+System.out.println((Object) null);   // OK。"null" と出る</code></pre></div>
+
+  <p><code>String</code> 型や <code>Object</code> 型の変数に入った null なら "null" と出ます。<code>null</code> と直接書いたときだけ、どのオーバーロードを呼ぶか決められずにエラーになります。<br>ただし <code>char[] c = null;</code> を <code>println(c)</code> すると、<code>char[]</code> 専用のオーバーロードが中身を読みに行くので <strong>NullPointerException</strong> です。</p>
+
+  <h3>equals() ── オーバーライドとオーバーロードの取り違え</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型が Object でなければオーバーライドではない<span class="tag">最頻出</span></div><pre><code>class P {
+    int x;
+    P(int x) { this.x = x; }
+    public boolean equals(P o) { return x == o.x; }   // 引数が P ＝ オーバーロード
+}
+
+P a = new P(1), b = new P(1);
+Object o = b;
+
+a.equals(b);              // true  ← equals(P) が選ばれる
+a.equals(o);              // false ← equals(Object) ＝ Object の参照比較が選ばれる
+List.of(a).contains(b);   // false ← コレクションは equals(Object) を呼ぶ</code></pre></div>
+
+  <div class="point trap"><p>Object の <code>equals</code> は<strong>引数が Object 型</strong>です。<code>equals(P o)</code> と書くと引数リストが違うので<span class="mk">オーバーライドではなくオーバーロード</span>になり、Object の <code>equals(Object)</code> は残ったままです。どちらが呼ばれるかは<strong>引数の宣言型</strong>で決まるので、<code>Object o</code> を渡すと参照比較になります。<code>@Override</code> を付ければ、コンパイルエラーで気付けます。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>正しいオーバーライドの形<span class="tag">OK</span></div><pre><code>@Override
+public boolean equals(Object o) {                   // 引数は Object
+    return o instanceof P p &amp;&amp; x == p.x;            // 型を確かめてから比べる
+}</code></pre></div>
+
+  <h3>hashCode() ── equals を変えたら一緒に変える</h3>
+
+  <p>決まりは1つだけです。<strong><code>equals</code> で等しいと判定される2つのオブジェクトは、<code>hashCode()</code> も同じ値を返さなければなりません</strong>。<code>HashSet</code> や <code>HashMap</code> は、まず <code>hashCode()</code> で候補を絞ってから <code>equals</code> で比べるためです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>equals だけ変えると、HashSet が重複を見抜けない<span class="tag">要注意</span></div><pre><code>class Q {        // equals(Object) だけオーバーライド
+    ...
+}
+Set&lt;Q&gt; qs = new HashSet&lt;&gt;();
+qs.add(new Q(1));
+qs.add(new Q(1));
+qs.size();       // 2 ← 既定の hashCode はインスタンスごとに違うので、
+                 //     equals で比べる段階まで進まない
+
+class R {        // equals(Object) と hashCode() の両方をオーバーライド
+    ...
+    @Override public int hashCode() { return Integer.hashCode(x); }
+}
+// 同じように2回 add すると size() は 1</code></pre></div>
+
+  <div class="point"><p>逆向きは成り立たなくて構いません。<span class="mk">hashCode が同じでも equals が false</span> ということはあり得ます（別の中身が、たまたま同じ値になる）。「hashCode が等しいなら equals も true」という選択肢は誤りです。</p></div>
+
+  <h3>まとめ</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>Object が全クラスに与える3つ<span class="tag">暗記</span></div><pre><code>toString()   既定は「クラス名@16進ハッシュ値」
+equals()     既定は参照比較（==）
+hashCode()   既定はオブジェクトごとの値
+
+→ どれもオーバーライドされる前提で用意されている
+→ println はオブジェクトを受け取ると toString() を呼ぶ
+→ null のときは toString() を呼ばず "null" と表示する</code></pre></div>
+</section>
+
 <!-- ch5/quiz.html · 一問一答 -->
 <section id="c5-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
@@ -5728,6 +5894,15 @@ public class Sub extends lib.Base {
 
   <details class="q"><summary><span class="qn">Q23</span><span>親の private メソッドと同じ名前のメソッドを子に書き、親の public メソッドの中から呼ぶと、どちらが動く？</span></summary>
     <div class="qa"><p><strong>親のもの。</strong>private は継承されないので、子のメソッドはオーバーライドではなく別物の新メソッドです。多態は起きず、子に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q24</span><span>toString() をオーバーライドしたクラスの配列で、要素が null のところを <code>println(arr[i])</code> すると？</span></summary>
+    <div class="qa"><p><strong>"null" と表示される。</strong>println は null を確かめてから toString() を呼ぶので例外になりません。<code>arr[i].toString()</code> や <code>arr[i].フィールド</code> と書いたときだけ NullPointerException です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q25</span><span><code>String toString() { return "a"; }</code>（public なし）は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>Object の toString() は public なので、public 以外で書くとアクセスを狭めたことになります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q26</span><span><code>public boolean equals(P o)</code> はオーバーライド？</span></summary>
+    <div class="qa"><p><strong>違う。オーバーロード。</strong>Object の equals は引数が Object 型です。引数が P だと別メソッドになり、<code>Object</code> 型の引数を渡すと Object の参照比較が呼ばれます。</p></div></details>
 </section>
 
 <!-- ch5/checklist.html · 直前チェック -->
@@ -6329,7 +6504,7 @@ try (r) { }
 <script>
 /* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
 window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
-  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
 
 /* ---- scripts/00-app.js ---- */
 /* 全モジュール共通の名前空間。

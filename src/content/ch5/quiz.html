@@ -97,4 +97,13 @@
 
   <details class="q"><summary><span class="qn">Q23</span><span>親の private メソッドと同じ名前のメソッドを子に書き、親の public メソッドの中から呼ぶと、どちらが動く？</span></summary>
     <div class="qa"><p><strong>親のもの。</strong>private は継承されないので、子のメソッドはオーバーライドではなく別物の新メソッドです。多態は起きず、子に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q24</span><span>toString() をオーバーライドしたクラスの配列で、要素が null のところを <code>println(arr[i])</code> すると？</span></summary>
+    <div class="qa"><p><strong>"null" と表示される。</strong>println は null を確かめてから toString() を呼ぶので例外になりません。<code>arr[i].toString()</code> や <code>arr[i].フィールド</code> と書いたときだけ NullPointerException です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q25</span><span><code>String toString() { return "a"; }</code>（public なし）は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>Object の toString() は public なので、public 以外で書くとアクセスを狭めたことになります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q26</span><span><code>public boolean equals(P o)</code> はオーバーライド？</span></summary>
+    <div class="qa"><p><strong>違う。オーバーロード。</strong>Object の equals は引数が Object 型です。引数が P だと別メソッドになり、<code>Object</code> 型の引数を渡すと Object の参照比較が呼ばれます。</p></div></details>
 </section>

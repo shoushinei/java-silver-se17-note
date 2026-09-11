@@ -254,6 +254,15 @@
   .mt td:first-child { width: 44%; }   /* 名前が単語の途中で折れない程度の幅を確保する */
   .mt td:first-child code { white-space: normal; overflow-wrap: anywhere; font-size: 11px; }
 
+  /* 本文中のインラインコードは折り返さない指定になっている（05-typography.css）。
+     コンパイラのメッセージや一問一答の問題文のような長いものが画面幅を超え、
+     ページ全体が横にずれていた。スマホでは表の外に限って折り返しを許す。
+     表は .tw の中で横スクロールできるので、列が潰れないよう従来どおりにしておく。 */
+  /* 元の指定 code:not(pre code) は詳細度が (0,0,3) あるので、同じ :not を付けて上回らせる */
+  p code:not(pre code),
+  li code:not(pre code),
+  summary code:not(pre code) { white-space: normal; overflow-wrap: anywhere; }
+
   .qa { padding-left: 16px; }
   .q > summary { padding: 13px 14px; }
   .point { padding: 15px 14px; }

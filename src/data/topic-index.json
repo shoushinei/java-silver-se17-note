@@ -131,7 +131,9 @@
       "sealed",
       "permits",
       "non-sealed",
-      "private static"
+      "private static",
+      "toString",
+      "hashCode"
     ]
   },
   {
