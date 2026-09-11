@@ -92,9 +92,9 @@
   <details class="q"><summary><span class="qn">Q22</span><span><code>record A(int[] arr)</code> で、中身が同じ2つを <code>equals</code> で比べると？</span></summary>
     <div class="qa"><p><strong>false。</strong>自動生成の <code>equals</code> は参照型のコンポーネントをその型の <code>equals</code> で比べます。配列の <code>equals</code> は参照比較なので一致しません。「record は常に中身で比較」は<strong>配列のときだけ成り立ちません</strong>。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q24</span><span><code>javap</code> で record を見ると、クラス宣言はどう表示される？</span></summary>
+  <details class="q"><summary><span class="qn">Q23</span><span><code>javap</code> で record を見ると、クラス宣言はどう表示される？</span></summary>
     <div class="qa"><p><strong><code>public final class Point extends java.lang.Record</code>。</strong>ソースに書いていない <code>final</code> が付いており、親も既に埋まっています。継承も被継承も不可な理由がこの1行に出ています。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q23</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
+  <details class="q"><summary><span class="qn">Q24</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
     <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
 </section>

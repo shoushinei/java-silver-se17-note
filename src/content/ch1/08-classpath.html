@@ -1,0 +1,112 @@
+<section id="c1-s08">
+  <div class="sh"><span class="num">08</span><h2>パッケージ付きのコンパイルと実行 ── -d と -cp</h2></div>
+
+  <p>1ファイルだけなら <code>javac Main.java</code> と <code>java Main</code> で済みます。パッケージに属するクラスが複数になると、<strong>「.class をどこに書き出すか」</strong>と<strong>「JVM にどこを探させるか」</strong>を指定する必要が出てきます。前者を決めるのが <code>javac -d</code>、後者を決めるのが <code>java -cp</code> です。</p>
+
+  <p>この節の例は、次のファイル構成で、<strong>app ディレクトリの1つ上</strong>でコマンドを打つ前提です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>この節で使うファイル構成<span class="tag">前提</span></div><pre><code>作業ディレクトリ（ここでコマンドを打つ）
+└── app/
+    ├── Item.java     // package app;  public class Item { ... }
+    └── Main.java     // package app;  public class Main { main の中で Item を使う }</code></pre></div>
+
+  <h3>大前提 ── JVM はクラスをどう探すか</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>探すファイルの決まり方<span class="tag">最重要</span></div><pre><code>探すファイル ＝ クラスパス / パッケージ名の . を / にしたもの / クラス名.class
+
+java -cp build app.Main    →  build/app/Main.class を探す
+java app.Main              →  ./app/Main.class を探す（-cp が無ければカレントディレクトリ）</code></pre></div>
+
+  <p><code>java</code> に渡すのは<strong>ファイルのパスではなく、クラスの完全修飾名</strong>（<code>app.Main</code>）です。JVM はこれを <code>app/Main.class</code> というパスに読み替え、<strong>クラスパスに書かれた場所を起点にして</strong>そのファイルを探します。<strong>クラスパス</strong>とは「クラスを探し始める場所」の一覧のことで、<code>-cp</code> で指定します。</p>
+
+  <div class="point"><p><span class="mk">パッケージ名とディレクトリの階層は一致していなければなりません</span>（第1章 05）。だから <code>-cp</code> に書くのは<strong>パッケージの一番上のディレクトリ（app）が入っている場所</strong>で、パッケージのディレクトリそのもの（<code>build/app</code>）ではありません。</p></div>
+
+  <h3>javac -d ── .class の書き出し先</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>-d を付けない場合<span class="tag">図</span></div><pre><code>$ javac app/Item.java app/Main.java
+
+app/
+├── Item.java
+├── Item.class      ← .java と同じ場所にできる
+├── Main.java
+└── Main.class</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>-d build を付けた場合<span class="tag">図</span></div><pre><code>$ javac -d build app/Item.java app/Main.java
+
+app/
+├── Item.java
+└── Main.java
+build/              ← 無ければ作られる
+└── app/            ← パッケージ名のディレクトリも自動で作られる
+    ├── Item.class
+    └── Main.class</code></pre></div>
+
+  <p><code>-d</code> の後ろは<strong>書き出し先の一番上のディレクトリ</strong>です。その下にパッケージの階層（<code>app/</code>）を javac が自動で作り、<code>.class</code> を置きます。<code>-d</code> を付けなければ、<code>.class</code> は元の <code>.java</code> と同じディレクトリにできます。<code>-d</code> の d は directory（出力先ディレクトリ）です。</p>
+
+  <h3>java -cp ── クラスを探す場所</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><code>java -cp build app.Main</code></td><td>build を起点に探す</td></tr>
+      <tr><td><code>-classpath build</code> / <code>--class-path build</code></td><td><code>-cp</code> と同じ。長い書き方</td></tr>
+      <tr><td>指定しない</td><td><strong>カレントディレクトリ（.）だけ</strong>を探す（環境変数 CLASSPATH が無い場合）</td></tr>
+      <tr><td><code>-cp build:lib</code>（Windows は <code>build;lib</code>）</td><td>複数の場所を前から順に探す</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><code>-cp</code> の cp は class path です。javac にも同じ <code>-cp</code> があり、こちらは<strong>コンパイル時に参照する、コンパイル済みの .class の場所</strong>を指定します。</p>
+
+  <h3>組み合わせを判定する</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コンパイル</th><th>実行</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build app.Main</code></td><td><strong>○</strong></td><td><code>build/app/Main.class</code> が見つかる</td></tr>
+      <tr><td class="wrap"><code>javac app/Item.java app/Main.java</code></td><td class="wrap"><code>java app.Main</code></td><td><strong>○</strong></td><td><code>-d</code> なしなので <code>./app/Main.class</code> にあり、<code>-cp</code> なしのカレントから見つかる</td></tr>
+      <tr><td class="wrap"><code>javac app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build app.Main</code></td><td>×</td><td>.class は <code>app/</code> にあり、build は存在しない</td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java app.Main</code></td><td>×</td><td><code>./app/Main.class</code> を探すが、実物は <code>build/app/</code> にある</td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java build.app.Main</code></td><td>×</td><td>ファイルは見つかるが、中身のクラス名は <code>app.Main</code>。<strong>名前が違う</strong></td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build/app Main</code></td><td>×</td><td>同じく名前が違う。起点をパッケージの中にしてはいけない</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>エラーは2種類ある<span class="tag">実行時</span></div><pre><code>$ java -cp build app.Main          // ○
+item
+
+$ java app.Main                     // ファイルが見つからない
+Error: Could not find or load main class app.Main
+Caused by: java.lang.ClassNotFoundException: app.Main
+
+$ java build.app.Main               // ファイルは見つかるが、名前が違う
+Error: Could not find or load main class build.app.Main
+Caused by: java.lang.NoClassDefFoundError: build/app/Main (wrong name: app/Main)</code></pre></div>
+
+  <div class="point trap"><p><code>ClassNotFoundException</code> は<strong>ファイルが見つからない</strong>、<code>NoClassDefFoundError ... (wrong name)</code> は<strong>見つかったファイルの中身が、指定した名前のクラスではない</strong>という意味です。<br><code>java build.app.Main</code> と書くと、JVM は <code>./build/app/Main.class</code> を見つけます。しかしその中のクラスは <code>package app;</code> で宣言された <code>app.Main</code> なので、名前が合いません。<span class="mk">パッケージ名はソースの package 宣言で決まるもので、置いた場所によって変わるものではありません</span>。</p></div>
+
+  <h3>判定の手順</h3>
+
+  <ol class="tight">
+    <li><strong>javac に <code>-d</code> があるか</strong>を見る。あれば .class は「<code>-d</code> の後ろ／パッケージの階層」の中、なければ .java の隣にできる</li>
+    <li><strong>java の <code>-cp</code></strong> を見る。無ければカレントディレクトリが起点</li>
+    <li>「起点 / パッケージ名の . を / にしたもの / クラス名.class」に、1. でできたファイルがあるかを確かめる</li>
+    <li>java に渡した名前が、<strong>package 宣言どおりの完全修飾名</strong>になっているかを確かめる</li>
+  </ol>
+
+  <div class="point"><p>選択肢が4つ並んでいても、見るのは<strong>「どこにできたか」と「どこを探しているか」が一致しているか</strong>だけです。一致していて、名前も完全修飾名なら ○ です。</p></div>
+
+  <h3>細かいけれど問われる点</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>渡すものの違い</td><td>javac には<strong>ファイルのパス</strong>（<code>app/Main.java</code>）、java には<strong>クラス名</strong>（<code>app.Main</code>）</td></tr>
+      <tr><td>拡張子</td><td><code>java -cp build app.Main.class</code> は ×。<code>ClassNotFoundException: app.Main.class</code></td></tr>
+      <tr><td>スラッシュ区切り</td><td><code>java -cp build app/Main</code> は、実際の JDK では起動ランチャーが <code>/</code> を <code>.</code> に読み替えて<strong>動きます</strong>。ただし正式な指定はドット区切りの完全修飾名なので、選択肢に両方あればドット区切りを選ぶ</td></tr>
+      <tr><td>1ファイルだけ渡した場合</td><td><code>javac -d build app/Main.java</code> だけでも、Main が使っている <code>app/Item.java</code> を javac が探し出して<strong>一緒にコンパイル</strong>し、<code>build/app/Item.class</code> もできる</td></tr>
+      <tr><td>ソース実行モード</td><td>SE 17 では<strong>渡した1ファイルしかコンパイルしない</strong>ので、別ファイルの Item を使う <code>java app/Main.java</code> は動かない（Java 22 以降は複数ファイルも扱える）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>コマンドの基本（なぜ javac はファイル名で java はクラス名なのか）は<a href="#c1-s03">第1章 03</a>、パッケージとディレクトリの対応は<a href="#c1-s05">第1章 05</a>にあります。</p></div>
+</section>

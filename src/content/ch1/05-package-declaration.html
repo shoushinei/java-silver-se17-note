@@ -36,7 +36,7 @@ bin/
 javac -d bin Main.java     // このディレクトリを自動で作ってくれる
 java -cp bin com.example.app.Main   // 実行時は完全修飾名で指定する</code></pre></div>
 
-  <div class="point trap"><p>パッケージに属するクラスを実行するとき、<span class="mk">java コマンドには完全修飾名を渡します</span>。<code>java Main</code> でも <code>java com/example/app/Main</code> でもなく、<strong>ドット区切りの <code>com.example.app.Main</code></strong>。ここも定番です。</p></div>
+  <div class="point trap"><p>パッケージに属するクラスを実行するとき、<span class="mk">java コマンドには完全修飾名を渡します</span>。<code>java Main</code> ではクラスが見つからずエラーです。正式な指定は<strong>ドット区切りの <code>com.example.app.Main</code></strong>で、ここも定番です。<br><code>java com/example/app/Main</code> は、実際の JDK では起動ランチャーが <code>/</code> を <code>.</code> に読み替えるので動きます。選択肢に両方あれば、正式なドット区切りを選んでください。<code>-d</code> と <code>-cp</code> の詳しい仕組みは<a href="#c1-s08">第1章 08</a>にあります。</p></div>
 
   <p>パッケージ名がすべて小文字なのは慣習で、文法上の制約ではありません。ただし <code>java</code> で始まるパッケージ名は使用が禁止されています。</p>
 </section>

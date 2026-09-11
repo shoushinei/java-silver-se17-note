@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート</title>
-<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・65論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
+<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・66論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -522,6 +522,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <a href="#c1-s05"><span class="tn">05</span>パッケージ宣言</a>
     <a href="#c1-s06"><span class="tn">06</span>importの規則</a>
     <a href="#c1-s07"><span class="tn">07</span>アクセス修飾子</a>
+    <a href="#c1-s08"><span class="tn">08</span>-d と -cp</a>
     <a href="#c1-quiz"><span class="tn">▸</span>一問一答</a>
     <a href="#c1-check"><span class="tn">▸</span>直前チェック</a>
   </div>
@@ -812,7 +813,7 @@ Main.class         バイトコード（JVM 用の中間コード。機種に依
 
   <div class="point trap"><p>だから <code>java Main.class</code> は失敗します。JVM はこれをファイル名だと思わず、<span class="mk">「Main パッケージの class というクラス」</span>と解釈するからです。ドットはパッケージの区切りにしか見えません。<br>実際のエラーは <code>ClassNotFoundException: Main.class</code>。<code>.class</code> ファイルが目の前にあっても失敗します。</p></div>
 
-  <p>同じ理由で、パッケージに属するクラスは <code>java com.example.Main</code> とドット区切りで渡します。これは「ディレクトリのパス」ではなく<strong>クラスの完全な名前</strong>です。<code>java com/example/Main</code> が誤りなのもここから導けます。</p>
+  <p>同じ理由で、パッケージに属するクラスは <code>java com.example.Main</code> とドット区切りで渡します。これは「ディレクトリのパス」ではなく<strong>クラスの完全な名前</strong>です。正式な指定はこのドット区切りです（<code>java com/example/Main</code> も実際の JDK では読み替えられて動きますが、試験で選ぶべきは完全修飾名の形です）。</p>
 
   <h3>2つのコマンド</h3>
 
@@ -905,6 +906,8 @@ $ java Main.java        → VERSION 2     // .java を読んでいる</code></pr
       <tr><td><code>javac *.java</code></td><td>カレントの全ソースをコンパイル</td></tr>
     </tbody>
   </table></div>
+
+  <div class="point link"><p><code>-d</code> と <code>-cp</code> の仕組み、どこに .class ができてどこを探すのか、選択肢の判定の手順は<a href="#c1-s08">第1章 08</a>で詳しく扱っています。</p></div>
 
   <h3>問題文の読み分け ── 同じ選択肢が正解にも誤りにもなる</h3>
 
@@ -1028,7 +1031,7 @@ bin/
 javac -d bin Main.java     // このディレクトリを自動で作ってくれる
 java -cp bin com.example.app.Main   // 実行時は完全修飾名で指定する</code></pre></div>
 
-  <div class="point trap"><p>パッケージに属するクラスを実行するとき、<span class="mk">java コマンドには完全修飾名を渡します</span>。<code>java Main</code> でも <code>java com/example/app/Main</code> でもなく、<strong>ドット区切りの <code>com.example.app.Main</code></strong>。ここも定番です。</p></div>
+  <div class="point trap"><p>パッケージに属するクラスを実行するとき、<span class="mk">java コマンドには完全修飾名を渡します</span>。<code>java Main</code> ではクラスが見つからずエラーです。正式な指定は<strong>ドット区切りの <code>com.example.app.Main</code></strong>で、ここも定番です。<br><code>java com/example/app/Main</code> は、実際の JDK では起動ランチャーが <code>/</code> を <code>.</code> に読み替えるので動きます。選択肢に両方あれば、正式なドット区切りを選んでください。<code>-d</code> と <code>-cp</code> の詳しい仕組みは<a href="#c1-s08">第1章 08</a>にあります。</p></div>
 
   <p>パッケージ名がすべて小文字なのは慣習で、文法上の制約ではありません。ただし <code>java</code> で始まるパッケージ名は使用が禁止されています。</p>
 </section>
@@ -1196,6 +1199,120 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
   <div class="point link"><p>第5章とつながります。オーバーライドでは<span class="mk">アクセス範囲を狭められません</span>。<code>protected</code> のメソッドを修飾子なしでオーバーライドすると <code>attempting to assign weaker access privileges; was protected</code> になります。広げる（<code>protected</code> → <code>public</code>）のは自由です。</p></div>
 </section>
 
+<!-- ch1/08-classpath.html · -d と -cp -->
+<section id="c1-s08">
+  <div class="sh"><span class="num">08</span><h2>パッケージ付きのコンパイルと実行 ── -d と -cp</h2></div>
+
+  <p>1ファイルだけなら <code>javac Main.java</code> と <code>java Main</code> で済みます。パッケージに属するクラスが複数になると、<strong>「.class をどこに書き出すか」</strong>と<strong>「JVM にどこを探させるか」</strong>を指定する必要が出てきます。前者を決めるのが <code>javac -d</code>、後者を決めるのが <code>java -cp</code> です。</p>
+
+  <p>この節の例は、次のファイル構成で、<strong>app ディレクトリの1つ上</strong>でコマンドを打つ前提です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>この節で使うファイル構成<span class="tag">前提</span></div><pre><code>作業ディレクトリ（ここでコマンドを打つ）
+└── app/
+    ├── Item.java     // package app;  public class Item { ... }
+    └── Main.java     // package app;  public class Main { main の中で Item を使う }</code></pre></div>
+
+  <h3>大前提 ── JVM はクラスをどう探すか</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>探すファイルの決まり方<span class="tag">最重要</span></div><pre><code>探すファイル ＝ クラスパス / パッケージ名の . を / にしたもの / クラス名.class
+
+java -cp build app.Main    →  build/app/Main.class を探す
+java app.Main              →  ./app/Main.class を探す（-cp が無ければカレントディレクトリ）</code></pre></div>
+
+  <p><code>java</code> に渡すのは<strong>ファイルのパスではなく、クラスの完全修飾名</strong>（<code>app.Main</code>）です。JVM はこれを <code>app/Main.class</code> というパスに読み替え、<strong>クラスパスに書かれた場所を起点にして</strong>そのファイルを探します。<strong>クラスパス</strong>とは「クラスを探し始める場所」の一覧のことで、<code>-cp</code> で指定します。</p>
+
+  <div class="point"><p><span class="mk">パッケージ名とディレクトリの階層は一致していなければなりません</span>（第1章 05）。だから <code>-cp</code> に書くのは<strong>パッケージの一番上のディレクトリ（app）が入っている場所</strong>で、パッケージのディレクトリそのもの（<code>build/app</code>）ではありません。</p></div>
+
+  <h3>javac -d ── .class の書き出し先</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>-d を付けない場合<span class="tag">図</span></div><pre><code>$ javac app/Item.java app/Main.java
+
+app/
+├── Item.java
+├── Item.class      ← .java と同じ場所にできる
+├── Main.java
+└── Main.class</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>-d build を付けた場合<span class="tag">図</span></div><pre><code>$ javac -d build app/Item.java app/Main.java
+
+app/
+├── Item.java
+└── Main.java
+build/              ← 無ければ作られる
+└── app/            ← パッケージ名のディレクトリも自動で作られる
+    ├── Item.class
+    └── Main.class</code></pre></div>
+
+  <p><code>-d</code> の後ろは<strong>書き出し先の一番上のディレクトリ</strong>です。その下にパッケージの階層（<code>app/</code>）を javac が自動で作り、<code>.class</code> を置きます。<code>-d</code> を付けなければ、<code>.class</code> は元の <code>.java</code> と同じディレクトリにできます。<code>-d</code> の d は directory（出力先ディレクトリ）です。</p>
+
+  <h3>java -cp ── クラスを探す場所</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><code>java -cp build app.Main</code></td><td>build を起点に探す</td></tr>
+      <tr><td><code>-classpath build</code> / <code>--class-path build</code></td><td><code>-cp</code> と同じ。長い書き方</td></tr>
+      <tr><td>指定しない</td><td><strong>カレントディレクトリ（.）だけ</strong>を探す（環境変数 CLASSPATH が無い場合）</td></tr>
+      <tr><td><code>-cp build:lib</code>（Windows は <code>build;lib</code>）</td><td>複数の場所を前から順に探す</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><code>-cp</code> の cp は class path です。javac にも同じ <code>-cp</code> があり、こちらは<strong>コンパイル時に参照する、コンパイル済みの .class の場所</strong>を指定します。</p>
+
+  <h3>組み合わせを判定する</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コンパイル</th><th>実行</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build app.Main</code></td><td><strong>○</strong></td><td><code>build/app/Main.class</code> が見つかる</td></tr>
+      <tr><td class="wrap"><code>javac app/Item.java app/Main.java</code></td><td class="wrap"><code>java app.Main</code></td><td><strong>○</strong></td><td><code>-d</code> なしなので <code>./app/Main.class</code> にあり、<code>-cp</code> なしのカレントから見つかる</td></tr>
+      <tr><td class="wrap"><code>javac app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build app.Main</code></td><td>×</td><td>.class は <code>app/</code> にあり、build は存在しない</td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java app.Main</code></td><td>×</td><td><code>./app/Main.class</code> を探すが、実物は <code>build/app/</code> にある</td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java build.app.Main</code></td><td>×</td><td>ファイルは見つかるが、中身のクラス名は <code>app.Main</code>。<strong>名前が違う</strong></td></tr>
+      <tr><td class="wrap"><code>javac -d build app/Item.java app/Main.java</code></td><td class="wrap"><code>java -cp build/app Main</code></td><td>×</td><td>同じく名前が違う。起点をパッケージの中にしてはいけない</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>エラーは2種類ある<span class="tag">実行時</span></div><pre><code>$ java -cp build app.Main          // ○
+item
+
+$ java app.Main                     // ファイルが見つからない
+Error: Could not find or load main class app.Main
+Caused by: java.lang.ClassNotFoundException: app.Main
+
+$ java build.app.Main               // ファイルは見つかるが、名前が違う
+Error: Could not find or load main class build.app.Main
+Caused by: java.lang.NoClassDefFoundError: build/app/Main (wrong name: app/Main)</code></pre></div>
+
+  <div class="point trap"><p><code>ClassNotFoundException</code> は<strong>ファイルが見つからない</strong>、<code>NoClassDefFoundError ... (wrong name)</code> は<strong>見つかったファイルの中身が、指定した名前のクラスではない</strong>という意味です。<br><code>java build.app.Main</code> と書くと、JVM は <code>./build/app/Main.class</code> を見つけます。しかしその中のクラスは <code>package app;</code> で宣言された <code>app.Main</code> なので、名前が合いません。<span class="mk">パッケージ名はソースの package 宣言で決まるもので、置いた場所によって変わるものではありません</span>。</p></div>
+
+  <h3>判定の手順</h3>
+
+  <ol class="tight">
+    <li><strong>javac に <code>-d</code> があるか</strong>を見る。あれば .class は「<code>-d</code> の後ろ／パッケージの階層」の中、なければ .java の隣にできる</li>
+    <li><strong>java の <code>-cp</code></strong> を見る。無ければカレントディレクトリが起点</li>
+    <li>「起点 / パッケージ名の . を / にしたもの / クラス名.class」に、1. でできたファイルがあるかを確かめる</li>
+    <li>java に渡した名前が、<strong>package 宣言どおりの完全修飾名</strong>になっているかを確かめる</li>
+  </ol>
+
+  <div class="point"><p>選択肢が4つ並んでいても、見るのは<strong>「どこにできたか」と「どこを探しているか」が一致しているか</strong>だけです。一致していて、名前も完全修飾名なら ○ です。</p></div>
+
+  <h3>細かいけれど問われる点</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>渡すものの違い</td><td>javac には<strong>ファイルのパス</strong>（<code>app/Main.java</code>）、java には<strong>クラス名</strong>（<code>app.Main</code>）</td></tr>
+      <tr><td>拡張子</td><td><code>java -cp build app.Main.class</code> は ×。<code>ClassNotFoundException: app.Main.class</code></td></tr>
+      <tr><td>スラッシュ区切り</td><td><code>java -cp build app/Main</code> は、実際の JDK では起動ランチャーが <code>/</code> を <code>.</code> に読み替えて<strong>動きます</strong>。ただし正式な指定はドット区切りの完全修飾名なので、選択肢に両方あればドット区切りを選ぶ</td></tr>
+      <tr><td>1ファイルだけ渡した場合</td><td><code>javac -d build app/Main.java</code> だけでも、Main が使っている <code>app/Item.java</code> を javac が探し出して<strong>一緒にコンパイル</strong>し、<code>build/app/Item.class</code> もできる</td></tr>
+      <tr><td>ソース実行モード</td><td>SE 17 では<strong>渡した1ファイルしかコンパイルしない</strong>ので、別ファイルの Item を使う <code>java app/Main.java</code> は動かない（Java 22 以降は複数ファイルも扱える）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>コマンドの基本（なぜ javac はファイル名で java はクラス名なのか）は<a href="#c1-s03">第1章 03</a>、パッケージとディレクトリの対応は<a href="#c1-s05">第1章 05</a>にあります。</p></div>
+</section>
+
 <!-- ch1/quiz.html · 一問一答 -->
 <section id="c1-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
@@ -1238,43 +1355,52 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
     <div class="qa"><p><strong>誤り。正しくは <code>import static</code>。</strong>語順が逆だとコンパイルエラーです。この1点だけを問う問題が出ます。</p></div></details>
 
   <details class="q"><summary><span class="qn">Q13</span><span><code>package com.example;</code> の Main を実行するコマンドは？</span></summary>
-    <div class="qa"><p><strong><code>java com.example.Main</code>。</strong>完全修飾名をドット区切りで渡します。<code>java Main</code> でも <code>java com/example/Main</code> でもありません。クラスパスの起点は <code>-cp</code> で指定します。</p></div></details>
+    <div class="qa"><p><strong><code>java com.example.Main</code>。</strong>完全修飾名をドット区切りで渡すのが正式な形です。<code>java Main</code> はクラスが見つかりません（<code>java com/example/Main</code> は実際の JDK では読み替えられて動きますが、選ぶべきはドット区切り）。クラスパスの起点は <code>-cp</code> で指定します。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q23</span><span><code>java</code> はどうやって2つのモードを切り替えている？</span></summary>
+  <details class="q"><summary><span class="qn">Q14</span><span><code>java</code> はどうやって2つのモードを切り替えている？</span></summary>
     <div class="qa"><p><strong>引数が <code>.java</code> で終わっているかどうかだけ。</strong>終わっていればソース実行モードでその <code>.java</code> を読み、そうでなければクラス名として <code>.class</code> をクラスパスから探します。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q24</span><span>ソース実行モードはバイトコードを経由しない？</span></summary>
+  <details class="q"><summary><span class="qn">Q15</span><span>ソース実行モードはバイトコードを経由しない？</span></summary>
     <div class="qa"><p><strong>経由する。</strong>コンパイルは必ず行われ、バイトコードは作られています。違いは<strong>それをファイルに保存しないこと</strong>だけ。「コンパイルを飛ばしている」は誤解です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q25</span><span>古い <code>.class</code> と書き換えた <code>.java</code> が同居しているとき、<code>java Main.java</code> はどちらを実行する？</span></summary>
+  <details class="q"><summary><span class="qn">Q16</span><span>古い <code>.class</code> と書き換えた <code>.java</code> が同居しているとき、<code>java Main.java</code> はどちらを実行する？</span></summary>
     <div class="qa"><p><strong>.java の方。</strong>ソース実行モードは <code>.class</code> の存在を完全に無視します。<code>java Main</code> なら古い <code>.class</code> が実行されるので、同じディレクトリで出力が食い違います。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q18</span><span><code>javac</code> が作る <code>.class</code> の中身は機械語？</span></summary>
+  <details class="q"><summary><span class="qn">Q17</span><span><code>javac</code> が作る <code>.class</code> の中身は機械語？</span></summary>
     <div class="qa"><p><strong>機械語ではなくバイトコード。</strong>JVM という仮想的なコンピュータ向けの命令です。機種に依存しないので、同じ <code>.class</code> を各 OS の JVM がそれぞれ動かせます。これが Write Once, Run Anywhere の実体。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q19</span><span><code>.class</code> が目の前にあるのに <code>java Main.class</code> が失敗するのはなぜ？</span></summary>
+  <details class="q"><summary><span class="qn">Q18</span><span><code>.class</code> が目の前にあるのに <code>java Main.class</code> が失敗するのはなぜ？</span></summary>
     <div class="qa"><p><strong>JVM がファイル名ではなくクラス名として解釈するから。</strong>ドットはパッケージの区切りにしか見えないので、「Main パッケージの class クラス」を探しにいって <code>ClassNotFoundException</code> になります。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q20</span><span>ソースコードが提示され「実行して sample と表示したい」とある。<code>java Sample</code> は正解？</span></summary>
+  <details class="q"><summary><span class="qn">Q19</span><span>ソースコードが提示され「実行して sample と表示したい」とある。<code>java Sample</code> は正解？</span></summary>
     <div class="qa"><p><strong>不正解。</strong>まだコンパイルしていないので <code>.class</code> が存在せず、<code>Could not find or load main class</code> になります。正解は <code>javac Sample.java</code> → <code>java Sample</code> の2行か、<code>java Sample.java</code> の1行。<strong>問題文にソースが載っているかどうか</strong>で読み分けます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q21</span><span><code>javap Sample</code> を実行すると何が起きる？</span></summary>
+  <details class="q"><summary><span class="qn">Q20</span><span><code>javap Sample</code> を実行すると何が起きる？</span></summary>
     <div class="qa"><p><strong>クラスの構造が表示されるだけで、プログラムは実行されない。</strong><code>javap</code> は逆アセンブラです。<code>jmod</code> はモジュール作成ツールで、これも実行はしません。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q22</span><span><code>java Sample "a "b</code> の <code>args.length</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q21</span><span><code>java Sample "a "b</code> の <code>args.length</code> は？</span></summary>
     <div class="qa"><p><strong>1。</strong>引用符は引数の区切りではなく<strong>空白を無効化するスイッチ</strong>です。閉じた直後の <code>b</code> は空白を挟んでいないので同じ引数の続きになり、<code>args[0]</code> は <code>a b</code>。<code>"a " b</code> なら2個です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q14</span><span>修飾子を何も書かないとどこまで見える？</span></summary>
+  <details class="q"><summary><span class="qn">Q22</span><span>修飾子を何も書かないとどこまで見える？</span></summary>
     <div class="qa"><p><strong>同じパッケージまで。</strong>パッケージプライベートと呼びます。<code>default</code> というアクセス修飾子は<strong>存在しません</strong>。書くのは「何も書かない」ことです。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q15</span><span>別パッケージのサブクラスは protected メンバに必ずアクセスできる？</span></summary>
+  <details class="q"><summary><span class="qn">Q23</span><span>別パッケージのサブクラスは protected メンバに必ずアクセスできる？</span></summary>
     <div class="qa"><p><strong>できない場合がある。</strong>アクセスできるのは <code>this</code> か、<strong>自分と同じ型の参照</strong>を通したときだけ。スーパークラス型の参照経由（<code>Base x</code> の <code>x.prot</code>）はコンパイルエラーです。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q16</span><span>トップレベルのクラスに private は付けられる？</span></summary>
+  <details class="q"><summary><span class="qn">Q24</span><span>トップレベルのクラスに private は付けられる？</span></summary>
     <div class="qa"><p><strong>付けられない。</strong><code>public</code> か修飾子なしの2択です。<code>protected</code> も不可。ネストしたクラスなら4種類すべて使えます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q17</span><span>ローカル変数に private は付けられる？</span></summary>
+  <details class="q"><summary><span class="qn">Q25</span><span>ローカル変数に private は付けられる？</span></summary>
     <div class="qa"><p><strong>付けられない。</strong>スコープはブロックで決まるので、アクセス修飾子に意味がありません。ただし <code>final</code> は付けられます（アクセス修飾子ではないため）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q26</span><span><code>javac -d build app/Main.java</code> の後、<code>java app.Main</code> は？</span></summary>
+    <div class="qa"><p><strong>クラスが見つからずエラー（ClassNotFoundException）。</strong><code>-cp</code> が無いのでカレントの <code>./app/Main.class</code> を探しますが、実物は <code>build/app/Main.class</code> にあります。<code>java -cp build app.Main</code> が正解です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q27</span><span>同じ状況で <code>java build.app.Main</code> は？</span></summary>
+    <div class="qa"><p><strong>エラー（NoClassDefFoundError: wrong name）。</strong>ファイル <code>./build/app/Main.class</code> は見つかりますが、中のクラスは <code>package app;</code> の <code>app.Main</code> なので名前が合いません。パッケージ名は置いた場所ではなく package 宣言で決まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q28</span><span><code>-d</code> を付けずに <code>javac app/Main.java</code> すると、.class はどこにできる？</span></summary>
+    <div class="qa"><p><strong>元の .java と同じ <code>app/</code> の中。</strong>この場合は <code>-cp</code> なしの <code>java app.Main</code> で実行できます。</p></div></details>
 </section>
 
 <!-- ch1/checklist.html · 直前チェック -->
@@ -4773,10 +4899,10 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
   <details class="q"><summary><span class="qn">Q22</span><span><code>record A(int[] arr)</code> で、中身が同じ2つを <code>equals</code> で比べると？</span></summary>
     <div class="qa"><p><strong>false。</strong>自動生成の <code>equals</code> は参照型のコンポーネントをその型の <code>equals</code> で比べます。配列の <code>equals</code> は参照比較なので一致しません。「record は常に中身で比較」は<strong>配列のときだけ成り立ちません</strong>。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q24</span><span><code>javap</code> で record を見ると、クラス宣言はどう表示される？</span></summary>
+  <details class="q"><summary><span class="qn">Q23</span><span><code>javap</code> で record を見ると、クラス宣言はどう表示される？</span></summary>
     <div class="qa"><p><strong><code>public final class Point extends java.lang.Record</code>。</strong>ソースに書いていない <code>final</code> が付いており、親も既に埋まっています。継承も被継承も不可な理由がこの1行に出ています。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q23</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
+  <details class="q"><summary><span class="qn">Q24</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
     <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
 </section>
 
@@ -6565,7 +6691,7 @@ try (r) { }
 <script>
 /* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
 window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
-  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル","-cp","-d","ClassNotFoundException"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
 
 /* ---- scripts/00-app.js ---- */
 /* 全モジュール共通の名前空間。

@@ -39,41 +39,50 @@
     <div class="qa"><p><strong>誤り。正しくは <code>import static</code>。</strong>語順が逆だとコンパイルエラーです。この1点だけを問う問題が出ます。</p></div></details>
 
   <details class="q"><summary><span class="qn">Q13</span><span><code>package com.example;</code> の Main を実行するコマンドは？</span></summary>
-    <div class="qa"><p><strong><code>java com.example.Main</code>。</strong>完全修飾名をドット区切りで渡します。<code>java Main</code> でも <code>java com/example/Main</code> でもありません。クラスパスの起点は <code>-cp</code> で指定します。</p></div></details>
+    <div class="qa"><p><strong><code>java com.example.Main</code>。</strong>完全修飾名をドット区切りで渡すのが正式な形です。<code>java Main</code> はクラスが見つかりません（<code>java com/example/Main</code> は実際の JDK では読み替えられて動きますが、選ぶべきはドット区切り）。クラスパスの起点は <code>-cp</code> で指定します。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q23</span><span><code>java</code> はどうやって2つのモードを切り替えている？</span></summary>
+  <details class="q"><summary><span class="qn">Q14</span><span><code>java</code> はどうやって2つのモードを切り替えている？</span></summary>
     <div class="qa"><p><strong>引数が <code>.java</code> で終わっているかどうかだけ。</strong>終わっていればソース実行モードでその <code>.java</code> を読み、そうでなければクラス名として <code>.class</code> をクラスパスから探します。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q24</span><span>ソース実行モードはバイトコードを経由しない？</span></summary>
+  <details class="q"><summary><span class="qn">Q15</span><span>ソース実行モードはバイトコードを経由しない？</span></summary>
     <div class="qa"><p><strong>経由する。</strong>コンパイルは必ず行われ、バイトコードは作られています。違いは<strong>それをファイルに保存しないこと</strong>だけ。「コンパイルを飛ばしている」は誤解です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q25</span><span>古い <code>.class</code> と書き換えた <code>.java</code> が同居しているとき、<code>java Main.java</code> はどちらを実行する？</span></summary>
+  <details class="q"><summary><span class="qn">Q16</span><span>古い <code>.class</code> と書き換えた <code>.java</code> が同居しているとき、<code>java Main.java</code> はどちらを実行する？</span></summary>
     <div class="qa"><p><strong>.java の方。</strong>ソース実行モードは <code>.class</code> の存在を完全に無視します。<code>java Main</code> なら古い <code>.class</code> が実行されるので、同じディレクトリで出力が食い違います。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q18</span><span><code>javac</code> が作る <code>.class</code> の中身は機械語？</span></summary>
+  <details class="q"><summary><span class="qn">Q17</span><span><code>javac</code> が作る <code>.class</code> の中身は機械語？</span></summary>
     <div class="qa"><p><strong>機械語ではなくバイトコード。</strong>JVM という仮想的なコンピュータ向けの命令です。機種に依存しないので、同じ <code>.class</code> を各 OS の JVM がそれぞれ動かせます。これが Write Once, Run Anywhere の実体。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q19</span><span><code>.class</code> が目の前にあるのに <code>java Main.class</code> が失敗するのはなぜ？</span></summary>
+  <details class="q"><summary><span class="qn">Q18</span><span><code>.class</code> が目の前にあるのに <code>java Main.class</code> が失敗するのはなぜ？</span></summary>
     <div class="qa"><p><strong>JVM がファイル名ではなくクラス名として解釈するから。</strong>ドットはパッケージの区切りにしか見えないので、「Main パッケージの class クラス」を探しにいって <code>ClassNotFoundException</code> になります。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q20</span><span>ソースコードが提示され「実行して sample と表示したい」とある。<code>java Sample</code> は正解？</span></summary>
+  <details class="q"><summary><span class="qn">Q19</span><span>ソースコードが提示され「実行して sample と表示したい」とある。<code>java Sample</code> は正解？</span></summary>
     <div class="qa"><p><strong>不正解。</strong>まだコンパイルしていないので <code>.class</code> が存在せず、<code>Could not find or load main class</code> になります。正解は <code>javac Sample.java</code> → <code>java Sample</code> の2行か、<code>java Sample.java</code> の1行。<strong>問題文にソースが載っているかどうか</strong>で読み分けます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q21</span><span><code>javap Sample</code> を実行すると何が起きる？</span></summary>
+  <details class="q"><summary><span class="qn">Q20</span><span><code>javap Sample</code> を実行すると何が起きる？</span></summary>
     <div class="qa"><p><strong>クラスの構造が表示されるだけで、プログラムは実行されない。</strong><code>javap</code> は逆アセンブラです。<code>jmod</code> はモジュール作成ツールで、これも実行はしません。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q22</span><span><code>java Sample "a "b</code> の <code>args.length</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q21</span><span><code>java Sample "a "b</code> の <code>args.length</code> は？</span></summary>
     <div class="qa"><p><strong>1。</strong>引用符は引数の区切りではなく<strong>空白を無効化するスイッチ</strong>です。閉じた直後の <code>b</code> は空白を挟んでいないので同じ引数の続きになり、<code>args[0]</code> は <code>a b</code>。<code>"a " b</code> なら2個です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q14</span><span>修飾子を何も書かないとどこまで見える？</span></summary>
+  <details class="q"><summary><span class="qn">Q22</span><span>修飾子を何も書かないとどこまで見える？</span></summary>
     <div class="qa"><p><strong>同じパッケージまで。</strong>パッケージプライベートと呼びます。<code>default</code> というアクセス修飾子は<strong>存在しません</strong>。書くのは「何も書かない」ことです。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q15</span><span>別パッケージのサブクラスは protected メンバに必ずアクセスできる？</span></summary>
+  <details class="q"><summary><span class="qn">Q23</span><span>別パッケージのサブクラスは protected メンバに必ずアクセスできる？</span></summary>
     <div class="qa"><p><strong>できない場合がある。</strong>アクセスできるのは <code>this</code> か、<strong>自分と同じ型の参照</strong>を通したときだけ。スーパークラス型の参照経由（<code>Base x</code> の <code>x.prot</code>）はコンパイルエラーです。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q16</span><span>トップレベルのクラスに private は付けられる？</span></summary>
+  <details class="q"><summary><span class="qn">Q24</span><span>トップレベルのクラスに private は付けられる？</span></summary>
     <div class="qa"><p><strong>付けられない。</strong><code>public</code> か修飾子なしの2択です。<code>protected</code> も不可。ネストしたクラスなら4種類すべて使えます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q17</span><span>ローカル変数に private は付けられる？</span></summary>
+  <details class="q"><summary><span class="qn">Q25</span><span>ローカル変数に private は付けられる？</span></summary>
     <div class="qa"><p><strong>付けられない。</strong>スコープはブロックで決まるので、アクセス修飾子に意味がありません。ただし <code>final</code> は付けられます（アクセス修飾子ではないため）。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q26</span><span><code>javac -d build app/Main.java</code> の後、<code>java app.Main</code> は？</span></summary>
+    <div class="qa"><p><strong>クラスが見つからずエラー（ClassNotFoundException）。</strong><code>-cp</code> が無いのでカレントの <code>./app/Main.class</code> を探しますが、実物は <code>build/app/Main.class</code> にあります。<code>java -cp build app.Main</code> が正解です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q27</span><span>同じ状況で <code>java build.app.Main</code> は？</span></summary>
+    <div class="qa"><p><strong>エラー（NoClassDefFoundError: wrong name）。</strong>ファイル <code>./build/app/Main.class</code> は見つかりますが、中のクラスは <code>package app;</code> の <code>app.Main</code> なので名前が合いません。パッケージ名は置いた場所ではなく package 宣言で決まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q28</span><span><code>-d</code> を付けずに <code>javac app/Main.java</code> すると、.class はどこにできる？</span></summary>
+    <div class="qa"><p><strong>元の .java と同じ <code>app/</code> の中。</strong>この場合は <code>-cp</code> なしの <code>java app.Main</code> で実行できます。</p></div></details>
 </section>

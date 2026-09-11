@@ -13,7 +13,10 @@
       "static import",
       "アクセス修飾子",
       "protected",
-      "トップレベル"
+      "トップレベル",
+      "-cp",
+      "-d",
+      "ClassNotFoundException"
     ]
   },
   {
