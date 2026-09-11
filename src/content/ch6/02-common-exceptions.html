@@ -12,6 +12,7 @@
       <tr><td><code>IndexOutOfBoundsException</code></td><td>上2つの<strong>親</strong>。ArrayList の範囲外はこれ</td></tr>
       <tr><td><code>ArithmeticException</code></td><td>整数の 0 除算。<code>1.0/0</code> は例外にならず Infinity</td></tr>
       <tr><td><code>ClassCastException</code></td><td>不正なキャスト</td></tr>
+      <tr><td><code>ArrayStoreException</code></td><td>配列の実体と合わない型の要素を代入。<code>Object[] a = new String[1]; a[0] = 1;</code> はコンパイルが通り、実行時にこれが出る</td></tr>
       <tr><td><code>NumberFormatException</code></td><td><code>Integer.parseInt("abc")</code>。<code>IllegalArgumentException</code> の子</td></tr>
       <tr><td><code>UnsupportedOperationException</code></td><td><code>List.of()</code> に add した場合など</td></tr>
     </tbody>

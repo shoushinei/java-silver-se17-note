@@ -1,0 +1,142 @@
+<section id="c5-s12">
+  <div class="sh"><span class="num">12</span><h2>アクセス修飾子と継承 ── 総まとめ</h2></div>
+
+  <p>アクセス修飾子そのものは第1章 07 で扱いました。ここでは<strong>継承と組み合わさったとき</strong>、特に<strong>親と子でパッケージが違うとき</strong>に何が起きるかをまとめます。以下の例は、親 <code>lib.Parent</code> と子 <code>app.Child</code> が別のパッケージにある前提です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>以下の説明で使う親クラス<span class="tag">前提</span></div><pre><code>package lib;
+
+public class Parent {
+    public    void pub()  { }
+    protected void prot() { }
+              void pkg()  { }   // 修飾子なし
+    private   void priv() { }
+}</code></pre></div>
+
+  <h3>全体像</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>修飾子</th><th>同じパッケージの子に<br>継承されるか</th><th>別パッケージの子に<br>継承されるか</th><th>別パッケージの子の中で<br>this / super 経由</th><th>別パッケージの子の中で<br>親の型の参照経由</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+      <tr><td><code>protected</code></td><td>○</td><td>○</td><td>○</td><td><strong>×</strong></td></tr>
+      <tr><td>なし</td><td>○</td><td><strong>×</strong></td><td>×</td><td>×</td></tr>
+      <tr><td><code>private</code></td><td>×</td><td>×</td><td>×</td><td>×</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>「継承される」とは、<strong>子のメンバとして持てて、オーバーライドできる</strong>という意味です。継承されないメンバは、子に同じ名前のメソッドを書いても<strong>別物の新しいメソッド</strong>になり、<code>@Override</code> を付けるとコンパイルエラーです。</p>
+
+  <div class="point"><p>同じパッケージの中なら、<code>private</code> 以外はすべて<span class="mk">パッケージの権限だけで届きます</span>。表がややこしくなるのは<strong>パッケージが違うとき</strong>だけで、その中心にいるのが <code>protected</code> です。</p></div>
+
+  <h3>1. private は継承されないが、実体はある</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親の private フィールドも子のインスタンスの中にある<span class="tag">OK</span></div><pre><code>public class Parent {
+    private int secret = 42;
+    public int getSecret() { return secret; }
+}
+public class Child extends Parent { }
+
+new Child().getSecret();   // 42</code></pre></div>
+
+  <p><code>new Child()</code> で作られるインスタンスには、<strong>親の private フィールドの領域もちゃんと確保されています</strong>。子のコードから名前で直接触れないだけで、親の public や protected なメソッドを通せば間接的に読み書きできます。「継承されない＝存在しない」ではありません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じ名前のメソッドはオーバーライドにならない<span class="tag">最頻出</span></div><pre><code>public class Parent {
+    private void priv() { System.out.println("Parent"); }
+    public  void call() { priv(); }
+}
+public class Child extends Parent {
+    public void priv() { System.out.println("Child"); }   // 別物の新メソッド
+}
+
+new Child().call();   // Parent</code></pre></div>
+
+  <div class="point trap"><p><code>Child</code> の <code>priv()</code> は親の <code>priv()</code> を<span class="mk">オーバーライドしていません</span>。<code>private</code> は継承されないので、たまたま同じ名前の別メソッドです。だから親の <code>call()</code> から呼ばれるのは親の <code>priv()</code> で、多態は起きません。子の方に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div>
+
+  <h3>2. 修飾子なしは、パッケージが違うと継承されない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージの子からは見えない<span class="tag">NG</span></div><pre><code>package app;
+import lib.Parent;
+
+public class Child extends Parent {
+    void t() { pkg(); }         // コンパイルエラー: cannot find symbol
+    @Override void pkg() { }    // コンパイルエラー: 何もオーバーライドしていない
+}</code></pre></div>
+
+  <p><code>@Override</code> を外せば <code>void pkg() { }</code> は通りますが、それは <code>private</code> と同じく<strong>子が新しく作った別のメソッド</strong>です。</p>
+
+  <h3>3. protected は「参照の型」で決まる</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージの子の中から呼ぶ<span class="tag">最重要</span></div><pre><code>package app;
+import lib.Parent;
+
+public class Child extends Parent {
+    void t() {
+        prot();                    // OK
+        this.prot();               // OK
+        super.prot();              // OK
+
+        Child other = new Child();
+        other.prot();              // OK ← 別のインスタンスでも Child 型なら届く
+
+        new Parent().prot();       // コンパイルエラー
+        Parent p = this;
+        p.prot();                  // コンパイルエラー ← this そのものでも Parent 型なら届かない
+    }
+}
+// error: prot() has protected access in Parent</code></pre></div>
+
+  <div class="point trap"><p>「自分のインスタンスなら OK、別のインスタンスは NG」と覚えると、上の2か所で外します。<span class="mk">判定の基準はインスタンスではなく、参照の型</span>です。<strong>自分のクラス（またはその子孫）の型の参照を通したときだけ</strong>届きます。<code>other</code> は別のインスタンスでも <code>Child</code> 型なので OK、<code>p</code> は <code>this</code> そのものなのに <code>Parent</code> 型なので NG です。</p></div>
+
+  <h3>4. 子と同じパッケージでも、子クラスでなければ届かない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>子と同じパッケージの、継承していないクラスから<span class="tag">最頻出</span></div><pre><code>package app;
+
+public class Main {                     // Child と同じ app パッケージ。継承はしていない
+    public static void main(String[] args) {
+        Child c = new Child();
+        c.pub();                        // OK
+        c.prot();                       // コンパイルエラー
+    }
+}
+// error: prot() has protected access in Parent</code></pre></div>
+
+  <div class="point trap"><p><code>prot()</code> は <code>Child</code> に継承されていますが、<span class="mk">アクセスできるかどうかは、宣言した場所（lib.Parent）を基準に判定されます</span>。<code>Main</code> は <code>lib</code> パッケージの住人でもなく、<code>Parent</code> の子でもないので、どちらの権限も持っていません。「<code>Main</code> と <code>Child</code> は同じパッケージだから呼べる」という選択肢は誤りで、答えは<strong>コンパイルエラー</strong>です。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>逆に、親と同じパッケージからなら届く<span class="tag">対比</span></div><pre><code>package lib;
+
+public class Helper {                   // Parent と同じ lib パッケージ
+    void t() {
+        new app.Child().prot();         // OK ← lib パッケージの権限で届く
+    }
+}</code></pre></div>
+
+  <h3>5. protected コンストラクタ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>super() は呼べるが、new はできない<span class="tag">要注意</span></div><pre><code>// lib/Base.java
+package lib;
+public class Base { protected Base() { } }
+
+// app/Sub.java
+package app;
+public class Sub extends lib.Base {
+    Sub() { super(); }             // OK
+    void t() { new lib.Base(); }   // コンパイルエラー
+}
+// error: Base() has protected access in Base</code></pre></div>
+
+  <p>コンストラクタも同じ考え方です。別パッケージの子に許されるのは、<strong>自分を作る途中で親の部分を初期化する</strong> <code>super()</code> だけです。親を単独で <code>new</code> することはできません。</p>
+
+  <h3>6. オーバーライドで広げるのは可、狭めるのは不可</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>親の修飾子</th><th>子で書ける修飾子</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td><code>public</code> のみ</td></tr>
+      <tr><td><code>protected</code></td><td><code>protected</code> / <code>public</code></td></tr>
+      <tr><td>なし</td><td>なし / <code>protected</code> / <code>public</code>（同じパッケージの子のみ）</td></tr>
+      <tr><td><code>private</code></td><td>オーバーライドできない（継承されない）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>狭めてはいけない理由は第5章 03 のとおりです。親の型で扱ったときに呼べるはずのメソッドが、子の実体では呼べなくなってしまいます。</p></div>
+</section>

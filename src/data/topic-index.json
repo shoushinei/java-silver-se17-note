@@ -46,7 +46,9 @@
       "equals",
       "文字列連結",
       "substring",
-      "charAt"
+      "charAt",
+      "intern",
+      "定数プール"
     ]
   },
   {
@@ -58,7 +60,8 @@
       "length",
       "ArrayList",
       "拡張for",
-      "null"
+      "null",
+      "ArrayStoreException"
     ]
   },
   {
@@ -127,7 +130,8 @@
       "default",
       "sealed",
       "permits",
-      "non-sealed"
+      "non-sealed",
+      "private static"
     ]
   },
   {
@@ -148,7 +152,8 @@
       "NullPointerException",
       "ArrayIndexOutOfBoundsException",
       "ClassCastException",
-      "NumberFormatException"
+      "NumberFormatException",
+      "ArrayStoreException"
     ]
   }
 ]

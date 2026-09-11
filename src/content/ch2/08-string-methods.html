@@ -6,6 +6,44 @@
   <div class="point"><p><strong>ルール1：戻り値を代入しない限り、元の文字列は変わらない。</strong><br>
   <strong>ルール2：位置を指定するメソッドは、すべて 0 から数える。</strong></p></div>
 
+  <h3 id="str-table">メソッド早見表</h3>
+  <p>メソッド名を押すと、そのコード例へ飛びます。各グループの末尾にある「↑ 早見表に戻る」でここへ戻れます。</p>
+
+  <div class="tw"><table class="mt">
+    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr class="g"><td colspan="3">A. 調べる</td></tr>
+      <tr><td><a href="#str-length"><code>length()</code></a></td><td>int</td><td>括弧あり。配列の <code>length</code> と混同しない</td></tr>
+      <tr><td><a href="#str-length"><code>isEmpty()</code></a></td><td>boolean</td><td>長さ0のときだけ true</td></tr>
+      <tr><td><a href="#str-length"><code>isBlank()</code></a></td><td>boolean</td><td>Java 11〜。空白のみでも true</td></tr>
+      <tr><td><a href="#str-charat"><code>charAt(int)</code></a></td><td><strong>char</strong></td><td>0〜length-1。範囲外で例外</td></tr>
+      <tr><td><a href="#str-indexof"><code>indexOf(x)</code></a></td><td>int</td><td><strong>なければ -1</strong></td></tr>
+      <tr><td><a href="#str-indexof"><code>lastIndexOf(x)</code></a></td><td>int</td><td>後ろから探す</td></tr>
+      <tr><td><a href="#str-contains"><code>contains(x)</code></a></td><td>boolean</td><td>空文字列は常に true</td></tr>
+      <tr><td><a href="#str-contains"><code>startsWith</code></a><a href="#str-contains"><code>endsWith</code></a></td><td>boolean</td><td>大文字小文字を区別する</td></tr>
+      <tr><td><a href="#str-equals"><code>equals</code></a><a href="#str-equals"><code>equalsIgnoreCase</code></a></td><td>boolean</td><td>中身を比較</td></tr>
+      <tr><td><a href="#str-equals"><code>compareTo</code></a></td><td><strong>int</strong></td><td>同じなら 0。boolean ではない</td></tr>
+      <tr class="g"><td colspan="3">B. 切り出す</td></tr>
+      <tr><td><a href="#str-substring"><code>substring(int)</code></a></td><td>String</td><td>0〜length まで許される</td></tr>
+      <tr><td><a href="#str-substring"><code>substring(int,int)</code></a></td><td>String</td><td><strong>第2引数は含まない</strong></td></tr>
+      <tr class="g"><td colspan="3">C. 作り変える（新しい String を返す）</td></tr>
+      <tr><td><a href="#str-concat"><code>concat(String)</code></a></td><td>String</td><td>null で NullPointerException</td></tr>
+      <tr><td><a href="#str-replace"><code>replace(a,b)</code></a></td><td>String</td><td>該当箇所を<strong>すべて</strong>置換</td></tr>
+      <tr><td><a href="#str-replaceall"><code>replaceAll</code></a><a href="#str-replaceall"><code>replaceFirst</code></a></td><td>String</td><td>第1引数は<strong>正規表現</strong></td></tr>
+      <tr><td><a href="#str-trim"><code>trim()</code></a><a href="#str-trim"><code>strip()</code></a></td><td>String</td><td>前後のみ。間は残る</td></tr>
+      <tr><td><a href="#str-case"><code>toUpperCase</code></a><a href="#str-case"><code>toLowerCase</code></a></td><td>String</td><td>—</td></tr>
+      <tr><td><a href="#str-case"><code>repeat(int)</code></a></td><td>String</td><td>Java 11〜。負数で例外</td></tr>
+      <tr class="g"><td colspan="3">D. 分ける・つなぐ・変換する</td></tr>
+      <tr><td><a href="#str-split"><code>split(String)</code></a></td><td><strong>String[]</strong></td><td>末尾の空要素は削除される</td></tr>
+      <tr><td><a href="#str-tochararray"><code>toCharArray()</code></a></td><td><strong>char[]</strong></td><td>配列なので長さは <code>length</code></td></tr>
+      <tr><td><a href="#str-join"><code>String.join(...)</code></a></td><td>String</td><td><strong>static</strong>。クラス名で呼ぶ</td></tr>
+      <tr><td><a href="#str-valueof"><code>String.valueOf(x)</code></a></td><td>String</td><td><strong>static</strong>。何でも String にする</td></tr>
+      <tr class="g"><td colspan="3">E. その他</td></tr>
+      <tr><td><a href="#str-intern"><code>intern()</code></a></td><td>String</td><td>定数プールにある同じ中身のインスタンスを返す（07 節）</td></tr>
+      <tr><td><a href="#str-plus"><code>+ 演算子</code></a></td><td>String</td><td>String が現れた位置から後ろが連結になる</td></tr>
+    </tbody>
+  </table></div>
+
   <h3>位置（インデックス）の数え方</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2つの数え方がある<span class="tag">前提</span></div><pre><code>String s = "abcdef";
@@ -20,7 +58,7 @@
 
   <h3>A. 調べるメソッド（戻り値で情報を返す）</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length / isEmpty / isBlank<span class="tag">OK</span></div><pre><code>"abcdef".length();     // 6   ← メソッドなので括弧が必要
+<div class="code" id="str-length" data-v="ok"><div class="cap"><span class="dot ok"></span>length / isEmpty / isBlank<span class="tag">OK</span></div><pre><code>"abcdef".length();     // 6   ← メソッドなので括弧が必要
 "".length();           // 0
 "  ".length();         // 2   ← 空白も1文字
 
@@ -32,7 +70,7 @@
 
   <p><span class="mk">isEmpty は「長さ0」、isBlank は「空白だけ」。</span>isBlank のほうが true になる範囲が広いと覚えてください。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>charAt ── 1文字を取り出す<span class="tag">OK</span></div><pre><code>String s = "abcdef";
+<div class="code" id="str-charat" data-v="ok"><div class="cap"><span class="dot ok"></span>charAt ── 1文字を取り出す<span class="tag">OK</span></div><pre><code>String s = "abcdef";
 s.charAt(0);           // 'a'  ← 戻り値は char
 s.charAt(5);           // 'f'</code></pre></div>
 
@@ -41,7 +79,7 @@ s.charAt(5);           // 'f'</code></pre></div>
 
   <div class="point trap"><p>戻り値が <code>char</code> なので、演算に使うと数値になります。<span class="mk">System.out.println(s.charAt(0) + 1) は 'b' ではなく 98</span>。char + int が int に昇格するためです（第3節）。<code>+ ""</code> を足すか <code>(char)</code> でキャストすれば文字になります。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>indexOf / lastIndexOf ── 位置を探す<span class="tag">最重要</span></div><pre><code>String s = "abcabc";
+<div class="code" id="str-indexof" data-v="ok"><div class="cap"><span class="dot ok"></span>indexOf / lastIndexOf ── 位置を探す<span class="tag">最重要</span></div><pre><code>String s = "abcabc";
 
 s.indexOf("b");        // 1   ← 最初に見つかった位置
 s.indexOf('b');        // 1   ← char 版もある
@@ -52,7 +90,7 @@ s.indexOf("");         // 0   ← 空文字列は必ず 0</code></pre></div>
 
   <p><span class="mk">見つからないときは 0 ではなく -1。</span>「見つかったか」の判定は <code>!= -1</code> で書きます。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>contains / startsWith / endsWith<span class="tag">OK</span></div><pre><code>String s = "Hello World";
+<div class="code" id="str-contains" data-v="ok"><div class="cap"><span class="dot ok"></span>contains / startsWith / endsWith<span class="tag">OK</span></div><pre><code>String s = "Hello World";
 
 s.contains("lo W");        // true  ← 戻り値は boolean
 s.contains("");            // true  ← 空文字列は常に含まれる
@@ -61,7 +99,7 @@ s.startsWith("World", 6);  // true  ← 位置6から判定
 s.endsWith("World");       // true
 s.endsWith("world");       // false ← 大文字小文字は区別される</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>equals / equalsIgnoreCase / compareTo<span class="tag">OK</span></div><pre><code>"abc".equals("abc");                // true
+<div class="code" id="str-equals" data-v="ok"><div class="cap"><span class="dot ok"></span>equals / equalsIgnoreCase / compareTo<span class="tag">OK</span></div><pre><code>"abc".equals("abc");                // true
 "abc".equals("ABC");                // false
 "abc".equalsIgnoreCase("ABC");      // true
 
@@ -72,13 +110,15 @@ s.endsWith("world");       // false ← 大文字小文字は区別される</co
 
   <div class="point trap"><p><code>compareTo</code> の戻り値は <strong>boolean ではなく int</strong>。<span class="mk">同じなら 0</span> を返します。<code>if (a.compareTo(b))</code> と書くとコンパイルエラーです。</p></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>B. 切り出すメソッド</h3>
 
   <p><code>substring</code> は<strong>この章で最も出るメソッド</strong>です。第2引数の扱いだけ正確に。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>第2引数は「含まない」<span class="tag">最重要</span></div><pre><code>String s = "abcdef";
+<div class="code" id="str-substring" data-v="ok"><div class="cap"><span class="dot ok"></span>第2引数は「含まない」<span class="tag">最重要</span></div><pre><code>String s = "abcdef";
 
 s.substring(2);        // "cdef"  ← 位置2から末尾まで
 s.substring(2, 4);     // "cd"    ← 位置2から、位置4の手前まで
@@ -95,11 +135,13 @@ s.substring(6, 6);     // ""</code></pre></div>
 
   <div class="point trap"><p><code>substring(6)</code> は通るのに <code>substring(7)</code> は落ちる。<span class="mk">「長さと同じ位置」までは許される</span>という境界が狙われます。</p></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>C. 作り変えるメソッド（新しい String を返す）</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>concat ── 連結<span class="tag">OK</span></div><pre><code>String s = "Hello";
+<div class="code" id="str-concat" data-v="ok"><div class="cap"><span class="dot ok"></span>concat ── 連結<span class="tag">OK</span></div><pre><code>String s = "Hello";
 s.concat(" World");        // "Hello World" が返るが s は変わらない
 s = s.concat(" World");    // "Hello World"
 
@@ -107,7 +149,7 @@ s.concat(null);            // NullPointerException（+ と違う）</code></pre>
 
   <div class="point trap"><p><code>+</code> なら <code>"a" + null</code> は <code>"anull"</code> になりますが、<span class="mk">concat(null) は NullPointerException</span> です。同じ連結でも挙動が違います。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 置換<span class="tag">OK</span></div><pre><code>String s = "abcabc";
+<div class="code" id="str-replace" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 置換<span class="tag">OK</span></div><pre><code>String s = "abcabc";
 
 s.replace("a", "X");       // "XbcXbc"  ← 該当箇所をすべて置換
 s.replace('a', 'X');       // "XbcXbc"  ← char 版もある
@@ -117,27 +159,29 @@ s.replace("z", "X");       // "abcabc"  ← 該当なしならそのまま
 
   <p>関連メソッドが2つあります。<code>replaceAll</code> は第1引数を<strong>正規表現</strong>として解釈し、<code>replaceFirst</code> は<strong>最初の1つだけ</strong>置換します。「replace は1個目だけ」ではない、という点に注意してください。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace と replaceAll の違い<span class="tag">要注意</span></div><pre><code>"a.b.c".replace(".", "X");      // "aXbXc" ← ピリオドそのもの
+<div class="code" id="str-replaceall" data-v="ok"><div class="cap"><span class="dot ok"></span>replace と replaceAll の違い<span class="tag">要注意</span></div><pre><code>"a.b.c".replace(".", "X");      // "aXbXc" ← ピリオドそのもの
 "a.b.c".replaceAll(".", "X");   // "XXXXX" ← 正規表現の「任意の1文字」</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>trim / strip ── 前後の空白を除去<span class="tag">OK</span></div><pre><code>String s = "  a b  ";
+<div class="code" id="str-trim" data-v="ok"><div class="cap"><span class="dot ok"></span>trim / strip ── 前後の空白を除去<span class="tag">OK</span></div><pre><code>String s = "  a b  ";
 
 s.trim();              // "a b"   ← 間の空白は残る
 s.strip();             // "a b"   ← Java 11〜。Unicode 空白にも対応
 s.stripLeading();      // "a b  "
 s.stripTrailing();     // "  a b"</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>大文字小文字 / 繰り返し<span class="tag">OK</span></div><pre><code>"Hello".toUpperCase();     // "HELLO"
+<div class="code" id="str-case" data-v="ok"><div class="cap"><span class="dot ok"></span>大文字小文字 / 繰り返し<span class="tag">OK</span></div><pre><code>"Hello".toUpperCase();     // "HELLO"
 "Hello".toLowerCase();     // "hello"
 "ab".repeat(3);            // "ababab"（Java 11〜）
 "ab".repeat(0);            // ""
 "ab".repeat(-1);           // IllegalArgumentException</code></pre></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>D. 分ける・つなぐ・変換する</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>split ── 配列に分割<span class="tag">OK</span></div><pre><code>String s = "a,b,c";
+<div class="code" id="str-split" data-v="ok"><div class="cap"><span class="dot ok"></span>split ── 配列に分割<span class="tag">OK</span></div><pre><code>String s = "a,b,c";
 String[] arr = s.split(",");        // {"a", "b", "c"} ← 戻り値は String[]
 arr.length;                          // 3
 
@@ -145,12 +189,12 @@ arr.length;                          // 3
 "a,b,,".split(",");                  // {"a", "b"}     ← 末尾の空要素は削除される
 "abc".split("");                     // {"a", "b", "c"}</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>join ── 連結（static メソッド）<span class="tag">OK</span></div><pre><code>String.join("-", "a", "b", "c");     // "a-b-c"
+<div class="code" id="str-join" data-v="ok"><div class="cap"><span class="dot ok"></span>join ── 連結（static メソッド）<span class="tag">OK</span></div><pre><code>String.join("-", "a", "b", "c");     // "a-b-c"
 String.join("-", List.of("a", "b")); // "a-b"</code></pre></div>
 
   <p><code>join</code> は <code>String.join(...)</code> と<strong>クラス名で呼びます</strong>。インスタンスメソッドではありません。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>valueOf / parseInt ── 型の変換<span class="tag">要注意</span></div><pre><code>String.valueOf(10);          // "10"   ← 何でも String にする（static）
+<div class="code" id="str-valueof" data-v="ok"><div class="cap"><span class="dot ok"></span>valueOf / parseInt ── 型の変換<span class="tag">要注意</span></div><pre><code>String.valueOf(10);          // "10"   ← 何でも String にする（static）
 String.valueOf(true);        // "true"
 String.valueOf(null);        // 曖昧でコンパイルエラーになる場合がある
 
@@ -160,14 +204,16 @@ Integer.parseInt("abc");     // NumberFormatException</code></pre></div>
 
   <div class="point link"><p>第6章とつながります。<span class="mk pink">NumberFormatException は IllegalArgumentException の子で非検査例外</span>なので、catch も throws も義務ではありません。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toCharArray ── 文字の配列にする<span class="tag">OK</span></div><pre><code>char[] c = "abc".toCharArray();   // {'a', 'b', 'c'}
+<div class="code" id="str-tochararray" data-v="ok"><div class="cap"><span class="dot ok"></span>toCharArray ── 文字の配列にする<span class="tag">OK</span></div><pre><code>char[] c = "abc".toCharArray();   // {'a', 'b', 'c'}
 c.length;                          // 3 ← 配列なので括弧なし</code></pre></div>
+
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
 
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>E. 連結演算子 + の罠</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>左から順に評価される<span class="tag">最重要</span></div><pre><code>System.out.println(1 + 2 + "a");    // "3a"  ← 先に 1+2 が計算される
+<div class="code" id="str-plus" data-v="ok"><div class="cap"><span class="dot ok"></span>左から順に評価される<span class="tag">最重要</span></div><pre><code>System.out.println(1 + 2 + "a");    // "3a"  ← 先に 1+2 が計算される
 System.out.println("a" + 1 + 2);    // "a12" ← 先に "a"+1 が文字列になる
 System.out.println(1 + 2 + "a" + 1 + 2);   // "3a12"</code></pre></div>
 
@@ -178,37 +224,9 @@ System.out.println("a" + s);        // "anull"   ← 例外にならない
 System.out.println("a" + 'b');      // "ab"
 System.out.println('a' + 'b');      // 195       ← char + char は int！</code></pre></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
-
-  <h3>メソッド一覧</h3>
-
-  <div class="tw"><table>
-    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
-    <tbody>
-      <tr><td><code>length()</code></td><td>int</td><td>括弧あり。配列の <code>length</code> と混同しない</td></tr>
-      <tr><td><code>isEmpty()</code></td><td>boolean</td><td>長さ0のときだけ true</td></tr>
-      <tr><td><code>isBlank()</code></td><td>boolean</td><td>Java 11〜。空白のみでも true</td></tr>
-      <tr><td><code>charAt(int)</code></td><td>char</td><td>0〜length-1。範囲外で例外</td></tr>
-      <tr><td><code>indexOf(x)</code></td><td>int</td><td><strong>なければ -1</strong></td></tr>
-      <tr><td><code>lastIndexOf(x)</code></td><td>int</td><td>後ろから探す</td></tr>
-      <tr><td><code>contains(x)</code></td><td>boolean</td><td>空文字列は常に true</td></tr>
-      <tr><td><code>startsWith / endsWith</code></td><td>boolean</td><td>大文字小文字を区別する</td></tr>
-      <tr><td><code>equals / equalsIgnoreCase</code></td><td>boolean</td><td>中身を比較</td></tr>
-      <tr><td><code>compareTo</code></td><td><strong>int</strong></td><td>同じなら 0。boolean ではない</td></tr>
-      <tr><td><code>substring(int)</code></td><td>String</td><td>0〜length まで許される</td></tr>
-      <tr><td><code>substring(int,int)</code></td><td>String</td><td><strong>第2引数は含まない</strong></td></tr>
-      <tr><td><code>concat(String)</code></td><td>String</td><td>null で NullPointerException</td></tr>
-      <tr><td><code>replace(a,b)</code></td><td>String</td><td>該当箇所を<strong>すべて</strong>置換</td></tr>
-      <tr><td><code>replaceAll / replaceFirst</code></td><td>String</td><td>第1引数は正規表現</td></tr>
-      <tr><td><code>trim() / strip()</code></td><td>String</td><td>前後のみ。間は残る</td></tr>
-      <tr><td><code>toUpperCase / toLowerCase</code></td><td>String</td><td>—</td></tr>
-      <tr><td><code>repeat(int)</code></td><td>String</td><td>Java 11〜。負数で例外</td></tr>
-      <tr><td><code>split(String)</code></td><td><strong>String[]</strong></td><td>末尾の空要素は削除される</td></tr>
-      <tr><td><code>toCharArray()</code></td><td><strong>char[]</strong></td><td>—</td></tr>
-      <tr><td><code>String.join(...)</code></td><td>String</td><td><strong>static</strong>。クラス名で呼ぶ</td></tr>
-      <tr><td><code>String.valueOf(x)</code></td><td>String</td><td><strong>static</strong></td></tr>
-    </tbody>
-  </table></div>
 
   <h3>チェーンして呼ぶ場合</h3>
 
@@ -223,3 +241,6 @@ System.out.println(s);   // "  Hello World  " ← 元は変わらない</code></
 
   <p>チェーンできるのは、各メソッドが<strong>新しい String を返している</strong>からです。1つずつ結果を書き出せば必ず解けます。</p>
 </section>
+
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+

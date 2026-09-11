@@ -36,4 +36,27 @@ final String f = "Hel";
 System.out.println(a == f + "lo");       // true  ← final なら定数式</code></pre></div>
 
   <div class="point link"><p>ここでも <code>final</code> の1語で結果が反転します。<span class="mk pink">コンパイル時に値が確定するか</span>という同じ判定基準が、型変換・String 比較・第6章の multi-catch すべてに共通して効いています。</p></div>
+
+  <h3>intern() ── 定数プールにある同じ中身のインスタンスを取り出す</h3>
+
+<div class="code" data-v="ok" id="str-intern"><div class="cap"><span class="dot ok"></span>戻り値はプールのインスタンス<span class="tag">要注意</span></div><pre><code>String a = "Hello";                 // プールのインスタンス
+String b = new String("Hello");     // new で新しく作られた別のインスタンス
+String c = b.intern();              // プールから同じ中身のものを取り出す
+
+System.out.println(a == b);         // false
+System.out.println(a == c);         // true  ← c はプールのインスタンス
+System.out.println(b == c);         // false ← b が指す先は変わらない</code></pre></div>
+
+  <p><code>intern()</code> は、<strong>同じ中身の文字列が定数プールにあればそれを返し、無ければプールに登録してから返す</strong>メソッドです。戻り値は必ずプールのインスタンスなので、同じ中身どうしなら <code>==</code> が true になります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>呼んだだけでは何も変わらない<span class="tag">頻出</span></div><pre><code>String a = "Hello";
+String b = new String("Hello");
+b.intern();                                    // 戻り値を捨てている
+System.out.println(a == b);                    // false ← b は new したインスタンスのまま
+
+String h = "Hel";
+System.out.println(a == h + "lo");             // false ← 実行時に作られた別インスタンス
+System.out.println(a == (h + "lo").intern());  // true  ← intern() でプールのものに揃う</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">b.intern() は変数 b の指す先を書き換えるメソッドではありません</span>。プールの参照を<strong>戻り値として返すだけ</strong>なので、受け取らなければ何も起きません。この節の冒頭の「戻り値を代入しない限り変わらない」と同じ構造で、<code>b.intern();</code> と書いただけのコードが引っかけとして出ます。</p></div>
 </section>

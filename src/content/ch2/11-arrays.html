@@ -178,4 +178,23 @@ System.out.println(a[0][0]);   // "X" のまま</code></pre></div></div>
   <p>他のコピー方法もあります。<code>Arrays.copyOf(a, 5)</code> は長さを変えられ、足りない分は既定値で埋まります。</p>
 
   <div class="point link"><p>第4章とつながります。<span class="mk pink">配列は参照型</span>なので、メソッドに渡すと参照がコピーされます。<code>arr[0] = 99</code> は呼び出し元に伝わりますが、<code>arr = new int[]{...}</code> は伝わりません。</p></div>
+
+  <h3>配列の共変性と ArrayStoreException</h3>
+
+  <p>配列は、<code>String[]</code> を <code>Object[]</code> 型の変数に代入できます。String が Object の子なので、<strong>String の配列も Object の配列の子として扱われる</strong>ためです（共変）。</p>
+
+<div class="code" data-v="run" id="arr-store"><div class="cap"><span class="dot run"></span>コンパイルは通るが、実行時に落ちる<span class="tag">要注意</span></div><pre><code>Object[] arr = new String[3];   // OK。String[] は Object[] の子として扱われる
+arr[0] = "a";                   // OK
+arr[1] = 1;                     // ArrayStoreException: java.lang.Integer
+                                // 変数の型は Object[] だが、実体は String[]</code></pre></div>
+
+  <div class="point trap"><p>コンパイラは<strong>変数の型</strong>（<code>Object[]</code>）しか見ないので、<code>arr[1] = 1</code> を通します。しかし実体は <code>String[]</code> で、そこに Integer は入れられません。これを<span class="mk">実行時に配列自身が検査して ArrayStoreException</span> を投げます。「コンパイルエラー」を選ばせる引っかけに注意してください。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>数値の型どうしでも同じ<span class="tag">実行時</span></div><pre><code>Number[] n = new Integer[2];
+n[0] = 1.5;                     // ArrayStoreException: java.lang.Double</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ジェネリクスは最初からコンパイルで弾く<span class="tag">対比</span></div><pre><code>List&lt;Object&gt; list = new ArrayList&lt;String&gt;();   // コンパイルエラー
+// ArrayList&lt;String&gt; は List&lt;Object&gt; に変換できない</code></pre></div>
+
+  <div class="point link"><p>配列は実行時に「自分は String の配列だ」と覚えているので、<strong>入れた瞬間に検査できます</strong>。一方ジェネリクスは実行時に型の情報を持たないため、危険な代入を<strong>最初からコンパイルエラーにして</strong>防ぎます。<br><code>ArrayStoreException</code> は <code>RuntimeException</code> の子（非検査例外）なので、catch も throws も義務ではありません。第6章 02 の一覧にも載せています。</p></div>
 </section>

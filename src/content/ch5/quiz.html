@@ -88,4 +88,13 @@
 
   <details class="q"><summary><span class="qn">Q20</span><span><code>sealed</code> と <code>switch</code> のパターンマッチングは SE 17 の出題範囲？</span></summary>
     <div class="qa"><p><strong>switch のパターンマッチングは範囲外</strong>（SE 17 ではプレビュー機能）。問われるのは <code>sealed</code> の<strong>構文規則</strong> ── permits の範囲、実装側の3択、場所の制約です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span>別パッケージの子クラスの中で <code>Parent p = this; p.prot();</code>（prot は protected）は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>別パッケージの子が protected に届くのは、<strong>自分のクラス（またはその子孫）の型の参照</strong>を通したときだけです。<code>p</code> は <code>this</code> そのものでも型が <code>Parent</code> なので届きません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span>子クラスと同じパッケージにある、継承していないクラスから <code>new Child().prot()</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>protected の判定は<strong>宣言した親クラスの側</strong>が基準です。呼び出し元は親のパッケージの住人でも親の子でもないので、子と同じパッケージでも届きません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span>親の private メソッドと同じ名前のメソッドを子に書き、親の public メソッドの中から呼ぶと、どちらが動く？</span></summary>
+    <div class="qa"><p><strong>親のもの。</strong>private は継承されないので、子のメソッドはオーバーライドではなく別物の新メソッドです。多態は起きず、子に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div></details>
 </section>

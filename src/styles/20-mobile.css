@@ -247,6 +247,13 @@
     background-attachment: local, local, scroll, scroll;
   }
 
+  /* メソッド早見表。td code は折り返さない指定になっているため、
+     replace(int,int,String) のような長い名前が列幅を押し広げ、
+     「要点」列が数文字幅まで潰れていた。早見表のメソッド名だけ折り返しを許す。 */
+  .mt th, .mt td { padding: 7px 8px; }
+  .mt td:first-child { width: 44%; }   /* 名前が単語の途中で折れない程度の幅を確保する */
+  .mt td:first-child code { white-space: normal; overflow-wrap: anywhere; font-size: 11px; }
+
   .qa { padding-left: 16px; }
   .q > summary { padding: 13px 14px; }
   .point { padding: 15px 14px; }

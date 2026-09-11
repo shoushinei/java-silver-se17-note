@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート</title>
-<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・63論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
+<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・64論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,6 +170,41 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .chip b{font-weight:400;opacity:.45;margin-left:5px;font-size:11px}
 .idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
 .idx-h:first-child{margin-top:0}
+
+/* ---- styles/17-method-table.css ---- */
+/* メソッド早見表。表のメソッド名を押すと、本文の該当コード例へ飛ぶ。 */
+.mt td:first-child a {
+  display: inline-block;
+  padding: 3px 0;               /* スマホで指が届くように行の高さを稼ぐ */
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--sumi-3);
+}
+.mt td:first-child a:hover { border-bottom-style: solid; }
+.mt td:first-child a code { cursor: pointer; }
+.mt td:first-child a + a { margin-left: 6px; }
+/* 本文の A〜E の分類に合わせた見出し行 */
+.mt tr.g td {
+  background: var(--washi-2);
+  color: var(--sumi-2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 6px 12px;
+}
+
+/* 飛んだ先を一瞬だけ縁取って、どこに着いたか分かるようにする。
+   動きを減らす設定の環境では 02-base.css がアニメーションごと止める。 */
+.code:target { animation: jumped 1.8s ease-out; }
+@keyframes jumped {
+  0%, 35% { box-shadow: 0 0 0 3px var(--marker); }
+  100%    { box-shadow: 0 0 0 3px rgba(255, 232, 115, 0); }
+}
+
+/* 各グループの末尾に置く「早見表に戻る」 */
+.back { text-align: right; font-size: 12px; margin: -6px 0 10px; }
+.back a { color: var(--sumi-3); text-decoration: none; padding: 6px 0; display: inline-block; }
+.back a:hover { color: var(--sumi); }
 
 /* ---- styles/20-mobile.css ---- */
 /* スマートフォン向けの見た目。狭い画面の調整はすべてこのファイルに集約する。
@@ -421,6 +456,13 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     background-attachment: local, local, scroll, scroll;
   }
 
+  /* メソッド早見表。td code は折り返さない指定になっているため、
+     replace(int,int,String) のような長い名前が列幅を押し広げ、
+     「要点」列が数文字幅まで潰れていた。早見表のメソッド名だけ折り返しを許す。 */
+  .mt th, .mt td { padding: 7px 8px; }
+  .mt td:first-child { width: 44%; }   /* 名前が単語の途中で折れない程度の幅を確保する */
+  .mt td:first-child code { white-space: normal; overflow-wrap: anywhere; font-size: 11px; }
+
   .qa { padding-left: 16px; }
   .q > summary { padding: 13px 14px; }
   .point { padding: 15px 14px; }
@@ -535,6 +577,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <a href="#c5-s09"><span class="tn">09</span>インタフェース</a>
     <a href="#c5-s10"><span class="tn">10</span>default / static / private</a>
     <a href="#c5-s11"><span class="tn">11</span>sealed ★新</a>
+    <a href="#c5-s12"><span class="tn">12</span>アクセス修飾子と継承</a>
     <a href="#c5-quiz"><span class="tn">▸</span>一問一答</a>
     <a href="#c5-check"><span class="tn">▸</span>直前チェック</a>
   </div>
@@ -1109,6 +1152,8 @@ public class Other {                          // extends していない
     }
 }</code></pre></div>
 
+  <div class="point link"><p>継承と組み合わせたときの全体像は<a href="#c5-s12">第5章 12「アクセス修飾子と継承」</a>にまとめています。<span class="mk pink">子クラスと同じパッケージの、継承していないクラスから子の参照経由で protected を呼ぶ</span>パターンなど、パッケージが違うときの判定を一覧にしてあります。</p></div>
+
   <h3>トップレベルのクラスに付けられる修飾子</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2種類しか書けない<span class="tag">NG</span></div><pre><code>private   class Hidden  { }    // error: modifier private not allowed here
@@ -1602,6 +1647,29 @@ final String f = "Hel";
 System.out.println(a == f + "lo");       // true  ← final なら定数式</code></pre></div>
 
   <div class="point link"><p>ここでも <code>final</code> の1語で結果が反転します。<span class="mk pink">コンパイル時に値が確定するか</span>という同じ判定基準が、型変換・String 比較・第6章の multi-catch すべてに共通して効いています。</p></div>
+
+  <h3>intern() ── 定数プールにある同じ中身のインスタンスを取り出す</h3>
+
+<div class="code" data-v="ok" id="str-intern"><div class="cap"><span class="dot ok"></span>戻り値はプールのインスタンス<span class="tag">要注意</span></div><pre><code>String a = "Hello";                 // プールのインスタンス
+String b = new String("Hello");     // new で新しく作られた別のインスタンス
+String c = b.intern();              // プールから同じ中身のものを取り出す
+
+System.out.println(a == b);         // false
+System.out.println(a == c);         // true  ← c はプールのインスタンス
+System.out.println(b == c);         // false ← b が指す先は変わらない</code></pre></div>
+
+  <p><code>intern()</code> は、<strong>同じ中身の文字列が定数プールにあればそれを返し、無ければプールに登録してから返す</strong>メソッドです。戻り値は必ずプールのインスタンスなので、同じ中身どうしなら <code>==</code> が true になります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>呼んだだけでは何も変わらない<span class="tag">頻出</span></div><pre><code>String a = "Hello";
+String b = new String("Hello");
+b.intern();                                    // 戻り値を捨てている
+System.out.println(a == b);                    // false ← b は new したインスタンスのまま
+
+String h = "Hel";
+System.out.println(a == h + "lo");             // false ← 実行時に作られた別インスタンス
+System.out.println(a == (h + "lo").intern());  // true  ← intern() でプールのものに揃う</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">b.intern() は変数 b の指す先を書き換えるメソッドではありません</span>。プールの参照を<strong>戻り値として返すだけ</strong>なので、受け取らなければ何も起きません。この節の冒頭の「戻り値を代入しない限り変わらない」と同じ構造で、<code>b.intern();</code> と書いただけのコードが引っかけとして出ます。</p></div>
 </section>
 
 <!-- ch2/08-string-methods.html · Stringのメソッド -->
@@ -1612,6 +1680,44 @@ System.out.println(a == f + "lo");       // true  ← final なら定数式</cod
 
   <div class="point"><p><strong>ルール1：戻り値を代入しない限り、元の文字列は変わらない。</strong><br>
   <strong>ルール2：位置を指定するメソッドは、すべて 0 から数える。</strong></p></div>
+
+  <h3 id="str-table">メソッド早見表</h3>
+  <p>メソッド名を押すと、そのコード例へ飛びます。各グループの末尾にある「↑ 早見表に戻る」でここへ戻れます。</p>
+
+  <div class="tw"><table class="mt">
+    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr class="g"><td colspan="3">A. 調べる</td></tr>
+      <tr><td><a href="#str-length"><code>length()</code></a></td><td>int</td><td>括弧あり。配列の <code>length</code> と混同しない</td></tr>
+      <tr><td><a href="#str-length"><code>isEmpty()</code></a></td><td>boolean</td><td>長さ0のときだけ true</td></tr>
+      <tr><td><a href="#str-length"><code>isBlank()</code></a></td><td>boolean</td><td>Java 11〜。空白のみでも true</td></tr>
+      <tr><td><a href="#str-charat"><code>charAt(int)</code></a></td><td><strong>char</strong></td><td>0〜length-1。範囲外で例外</td></tr>
+      <tr><td><a href="#str-indexof"><code>indexOf(x)</code></a></td><td>int</td><td><strong>なければ -1</strong></td></tr>
+      <tr><td><a href="#str-indexof"><code>lastIndexOf(x)</code></a></td><td>int</td><td>後ろから探す</td></tr>
+      <tr><td><a href="#str-contains"><code>contains(x)</code></a></td><td>boolean</td><td>空文字列は常に true</td></tr>
+      <tr><td><a href="#str-contains"><code>startsWith</code></a><a href="#str-contains"><code>endsWith</code></a></td><td>boolean</td><td>大文字小文字を区別する</td></tr>
+      <tr><td><a href="#str-equals"><code>equals</code></a><a href="#str-equals"><code>equalsIgnoreCase</code></a></td><td>boolean</td><td>中身を比較</td></tr>
+      <tr><td><a href="#str-equals"><code>compareTo</code></a></td><td><strong>int</strong></td><td>同じなら 0。boolean ではない</td></tr>
+      <tr class="g"><td colspan="3">B. 切り出す</td></tr>
+      <tr><td><a href="#str-substring"><code>substring(int)</code></a></td><td>String</td><td>0〜length まで許される</td></tr>
+      <tr><td><a href="#str-substring"><code>substring(int,int)</code></a></td><td>String</td><td><strong>第2引数は含まない</strong></td></tr>
+      <tr class="g"><td colspan="3">C. 作り変える（新しい String を返す）</td></tr>
+      <tr><td><a href="#str-concat"><code>concat(String)</code></a></td><td>String</td><td>null で NullPointerException</td></tr>
+      <tr><td><a href="#str-replace"><code>replace(a,b)</code></a></td><td>String</td><td>該当箇所を<strong>すべて</strong>置換</td></tr>
+      <tr><td><a href="#str-replaceall"><code>replaceAll</code></a><a href="#str-replaceall"><code>replaceFirst</code></a></td><td>String</td><td>第1引数は<strong>正規表現</strong></td></tr>
+      <tr><td><a href="#str-trim"><code>trim()</code></a><a href="#str-trim"><code>strip()</code></a></td><td>String</td><td>前後のみ。間は残る</td></tr>
+      <tr><td><a href="#str-case"><code>toUpperCase</code></a><a href="#str-case"><code>toLowerCase</code></a></td><td>String</td><td>—</td></tr>
+      <tr><td><a href="#str-case"><code>repeat(int)</code></a></td><td>String</td><td>Java 11〜。負数で例外</td></tr>
+      <tr class="g"><td colspan="3">D. 分ける・つなぐ・変換する</td></tr>
+      <tr><td><a href="#str-split"><code>split(String)</code></a></td><td><strong>String[]</strong></td><td>末尾の空要素は削除される</td></tr>
+      <tr><td><a href="#str-tochararray"><code>toCharArray()</code></a></td><td><strong>char[]</strong></td><td>配列なので長さは <code>length</code></td></tr>
+      <tr><td><a href="#str-join"><code>String.join(...)</code></a></td><td>String</td><td><strong>static</strong>。クラス名で呼ぶ</td></tr>
+      <tr><td><a href="#str-valueof"><code>String.valueOf(x)</code></a></td><td>String</td><td><strong>static</strong>。何でも String にする</td></tr>
+      <tr class="g"><td colspan="3">E. その他</td></tr>
+      <tr><td><a href="#str-intern"><code>intern()</code></a></td><td>String</td><td>定数プールにある同じ中身のインスタンスを返す（07 節）</td></tr>
+      <tr><td><a href="#str-plus"><code>+ 演算子</code></a></td><td>String</td><td>String が現れた位置から後ろが連結になる</td></tr>
+    </tbody>
+  </table></div>
 
   <h3>位置（インデックス）の数え方</h3>
 
@@ -1627,7 +1733,7 @@ System.out.println(a == f + "lo");       // true  ← final なら定数式</cod
 
   <h3>A. 調べるメソッド（戻り値で情報を返す）</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length / isEmpty / isBlank<span class="tag">OK</span></div><pre><code>"abcdef".length();     // 6   ← メソッドなので括弧が必要
+<div class="code" id="str-length" data-v="ok"><div class="cap"><span class="dot ok"></span>length / isEmpty / isBlank<span class="tag">OK</span></div><pre><code>"abcdef".length();     // 6   ← メソッドなので括弧が必要
 "".length();           // 0
 "  ".length();         // 2   ← 空白も1文字
 
@@ -1639,7 +1745,7 @@ System.out.println(a == f + "lo");       // true  ← final なら定数式</cod
 
   <p><span class="mk">isEmpty は「長さ0」、isBlank は「空白だけ」。</span>isBlank のほうが true になる範囲が広いと覚えてください。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>charAt ── 1文字を取り出す<span class="tag">OK</span></div><pre><code>String s = "abcdef";
+<div class="code" id="str-charat" data-v="ok"><div class="cap"><span class="dot ok"></span>charAt ── 1文字を取り出す<span class="tag">OK</span></div><pre><code>String s = "abcdef";
 s.charAt(0);           // 'a'  ← 戻り値は char
 s.charAt(5);           // 'f'</code></pre></div>
 
@@ -1648,7 +1754,7 @@ s.charAt(5);           // 'f'</code></pre></div>
 
   <div class="point trap"><p>戻り値が <code>char</code> なので、演算に使うと数値になります。<span class="mk">System.out.println(s.charAt(0) + 1) は 'b' ではなく 98</span>。char + int が int に昇格するためです（第3節）。<code>+ ""</code> を足すか <code>(char)</code> でキャストすれば文字になります。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>indexOf / lastIndexOf ── 位置を探す<span class="tag">最重要</span></div><pre><code>String s = "abcabc";
+<div class="code" id="str-indexof" data-v="ok"><div class="cap"><span class="dot ok"></span>indexOf / lastIndexOf ── 位置を探す<span class="tag">最重要</span></div><pre><code>String s = "abcabc";
 
 s.indexOf("b");        // 1   ← 最初に見つかった位置
 s.indexOf('b');        // 1   ← char 版もある
@@ -1659,7 +1765,7 @@ s.indexOf("");         // 0   ← 空文字列は必ず 0</code></pre></div>
 
   <p><span class="mk">見つからないときは 0 ではなく -1。</span>「見つかったか」の判定は <code>!= -1</code> で書きます。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>contains / startsWith / endsWith<span class="tag">OK</span></div><pre><code>String s = "Hello World";
+<div class="code" id="str-contains" data-v="ok"><div class="cap"><span class="dot ok"></span>contains / startsWith / endsWith<span class="tag">OK</span></div><pre><code>String s = "Hello World";
 
 s.contains("lo W");        // true  ← 戻り値は boolean
 s.contains("");            // true  ← 空文字列は常に含まれる
@@ -1668,7 +1774,7 @@ s.startsWith("World", 6);  // true  ← 位置6から判定
 s.endsWith("World");       // true
 s.endsWith("world");       // false ← 大文字小文字は区別される</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>equals / equalsIgnoreCase / compareTo<span class="tag">OK</span></div><pre><code>"abc".equals("abc");                // true
+<div class="code" id="str-equals" data-v="ok"><div class="cap"><span class="dot ok"></span>equals / equalsIgnoreCase / compareTo<span class="tag">OK</span></div><pre><code>"abc".equals("abc");                // true
 "abc".equals("ABC");                // false
 "abc".equalsIgnoreCase("ABC");      // true
 
@@ -1679,13 +1785,15 @@ s.endsWith("world");       // false ← 大文字小文字は区別される</co
 
   <div class="point trap"><p><code>compareTo</code> の戻り値は <strong>boolean ではなく int</strong>。<span class="mk">同じなら 0</span> を返します。<code>if (a.compareTo(b))</code> と書くとコンパイルエラーです。</p></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>B. 切り出すメソッド</h3>
 
   <p><code>substring</code> は<strong>この章で最も出るメソッド</strong>です。第2引数の扱いだけ正確に。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>第2引数は「含まない」<span class="tag">最重要</span></div><pre><code>String s = "abcdef";
+<div class="code" id="str-substring" data-v="ok"><div class="cap"><span class="dot ok"></span>第2引数は「含まない」<span class="tag">最重要</span></div><pre><code>String s = "abcdef";
 
 s.substring(2);        // "cdef"  ← 位置2から末尾まで
 s.substring(2, 4);     // "cd"    ← 位置2から、位置4の手前まで
@@ -1702,11 +1810,13 @@ s.substring(6, 6);     // ""</code></pre></div>
 
   <div class="point trap"><p><code>substring(6)</code> は通るのに <code>substring(7)</code> は落ちる。<span class="mk">「長さと同じ位置」までは許される</span>という境界が狙われます。</p></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>C. 作り変えるメソッド（新しい String を返す）</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>concat ── 連結<span class="tag">OK</span></div><pre><code>String s = "Hello";
+<div class="code" id="str-concat" data-v="ok"><div class="cap"><span class="dot ok"></span>concat ── 連結<span class="tag">OK</span></div><pre><code>String s = "Hello";
 s.concat(" World");        // "Hello World" が返るが s は変わらない
 s = s.concat(" World");    // "Hello World"
 
@@ -1714,7 +1824,7 @@ s.concat(null);            // NullPointerException（+ と違う）</code></pre>
 
   <div class="point trap"><p><code>+</code> なら <code>"a" + null</code> は <code>"anull"</code> になりますが、<span class="mk">concat(null) は NullPointerException</span> です。同じ連結でも挙動が違います。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 置換<span class="tag">OK</span></div><pre><code>String s = "abcabc";
+<div class="code" id="str-replace" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 置換<span class="tag">OK</span></div><pre><code>String s = "abcabc";
 
 s.replace("a", "X");       // "XbcXbc"  ← 該当箇所をすべて置換
 s.replace('a', 'X');       // "XbcXbc"  ← char 版もある
@@ -1724,27 +1834,29 @@ s.replace("z", "X");       // "abcabc"  ← 該当なしならそのまま
 
   <p>関連メソッドが2つあります。<code>replaceAll</code> は第1引数を<strong>正規表現</strong>として解釈し、<code>replaceFirst</code> は<strong>最初の1つだけ</strong>置換します。「replace は1個目だけ」ではない、という点に注意してください。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace と replaceAll の違い<span class="tag">要注意</span></div><pre><code>"a.b.c".replace(".", "X");      // "aXbXc" ← ピリオドそのもの
+<div class="code" id="str-replaceall" data-v="ok"><div class="cap"><span class="dot ok"></span>replace と replaceAll の違い<span class="tag">要注意</span></div><pre><code>"a.b.c".replace(".", "X");      // "aXbXc" ← ピリオドそのもの
 "a.b.c".replaceAll(".", "X");   // "XXXXX" ← 正規表現の「任意の1文字」</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>trim / strip ── 前後の空白を除去<span class="tag">OK</span></div><pre><code>String s = "  a b  ";
+<div class="code" id="str-trim" data-v="ok"><div class="cap"><span class="dot ok"></span>trim / strip ── 前後の空白を除去<span class="tag">OK</span></div><pre><code>String s = "  a b  ";
 
 s.trim();              // "a b"   ← 間の空白は残る
 s.strip();             // "a b"   ← Java 11〜。Unicode 空白にも対応
 s.stripLeading();      // "a b  "
 s.stripTrailing();     // "  a b"</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>大文字小文字 / 繰り返し<span class="tag">OK</span></div><pre><code>"Hello".toUpperCase();     // "HELLO"
+<div class="code" id="str-case" data-v="ok"><div class="cap"><span class="dot ok"></span>大文字小文字 / 繰り返し<span class="tag">OK</span></div><pre><code>"Hello".toUpperCase();     // "HELLO"
 "Hello".toLowerCase();     // "hello"
 "ab".repeat(3);            // "ababab"（Java 11〜）
 "ab".repeat(0);            // ""
 "ab".repeat(-1);           // IllegalArgumentException</code></pre></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>D. 分ける・つなぐ・変換する</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>split ── 配列に分割<span class="tag">OK</span></div><pre><code>String s = "a,b,c";
+<div class="code" id="str-split" data-v="ok"><div class="cap"><span class="dot ok"></span>split ── 配列に分割<span class="tag">OK</span></div><pre><code>String s = "a,b,c";
 String[] arr = s.split(",");        // {"a", "b", "c"} ← 戻り値は String[]
 arr.length;                          // 3
 
@@ -1752,12 +1864,12 @@ arr.length;                          // 3
 "a,b,,".split(",");                  // {"a", "b"}     ← 末尾の空要素は削除される
 "abc".split("");                     // {"a", "b", "c"}</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>join ── 連結（static メソッド）<span class="tag">OK</span></div><pre><code>String.join("-", "a", "b", "c");     // "a-b-c"
+<div class="code" id="str-join" data-v="ok"><div class="cap"><span class="dot ok"></span>join ── 連結（static メソッド）<span class="tag">OK</span></div><pre><code>String.join("-", "a", "b", "c");     // "a-b-c"
 String.join("-", List.of("a", "b")); // "a-b"</code></pre></div>
 
   <p><code>join</code> は <code>String.join(...)</code> と<strong>クラス名で呼びます</strong>。インスタンスメソッドではありません。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>valueOf / parseInt ── 型の変換<span class="tag">要注意</span></div><pre><code>String.valueOf(10);          // "10"   ← 何でも String にする（static）
+<div class="code" id="str-valueof" data-v="ok"><div class="cap"><span class="dot ok"></span>valueOf / parseInt ── 型の変換<span class="tag">要注意</span></div><pre><code>String.valueOf(10);          // "10"   ← 何でも String にする（static）
 String.valueOf(true);        // "true"
 String.valueOf(null);        // 曖昧でコンパイルエラーになる場合がある
 
@@ -1767,14 +1879,16 @@ Integer.parseInt("abc");     // NumberFormatException</code></pre></div>
 
   <div class="point link"><p>第6章とつながります。<span class="mk pink">NumberFormatException は IllegalArgumentException の子で非検査例外</span>なので、catch も throws も義務ではありません。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toCharArray ── 文字の配列にする<span class="tag">OK</span></div><pre><code>char[] c = "abc".toCharArray();   // {'a', 'b', 'c'}
+<div class="code" id="str-tochararray" data-v="ok"><div class="cap"><span class="dot ok"></span>toCharArray ── 文字の配列にする<span class="tag">OK</span></div><pre><code>char[] c = "abc".toCharArray();   // {'a', 'b', 'c'}
 c.length;                          // 3 ← 配列なので括弧なし</code></pre></div>
+
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
 
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>E. 連結演算子 + の罠</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>左から順に評価される<span class="tag">最重要</span></div><pre><code>System.out.println(1 + 2 + "a");    // "3a"  ← 先に 1+2 が計算される
+<div class="code" id="str-plus" data-v="ok"><div class="cap"><span class="dot ok"></span>左から順に評価される<span class="tag">最重要</span></div><pre><code>System.out.println(1 + 2 + "a");    // "3a"  ← 先に 1+2 が計算される
 System.out.println("a" + 1 + 2);    // "a12" ← 先に "a"+1 が文字列になる
 System.out.println(1 + 2 + "a" + 1 + 2);   // "3a12"</code></pre></div>
 
@@ -1785,37 +1899,9 @@ System.out.println("a" + s);        // "anull"   ← 例外にならない
 System.out.println("a" + 'b');      // "ab"
 System.out.println('a' + 'b');      // 195       ← char + char は int！</code></pre></div>
 
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
-
-  <h3>メソッド一覧</h3>
-
-  <div class="tw"><table>
-    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
-    <tbody>
-      <tr><td><code>length()</code></td><td>int</td><td>括弧あり。配列の <code>length</code> と混同しない</td></tr>
-      <tr><td><code>isEmpty()</code></td><td>boolean</td><td>長さ0のときだけ true</td></tr>
-      <tr><td><code>isBlank()</code></td><td>boolean</td><td>Java 11〜。空白のみでも true</td></tr>
-      <tr><td><code>charAt(int)</code></td><td>char</td><td>0〜length-1。範囲外で例外</td></tr>
-      <tr><td><code>indexOf(x)</code></td><td>int</td><td><strong>なければ -1</strong></td></tr>
-      <tr><td><code>lastIndexOf(x)</code></td><td>int</td><td>後ろから探す</td></tr>
-      <tr><td><code>contains(x)</code></td><td>boolean</td><td>空文字列は常に true</td></tr>
-      <tr><td><code>startsWith / endsWith</code></td><td>boolean</td><td>大文字小文字を区別する</td></tr>
-      <tr><td><code>equals / equalsIgnoreCase</code></td><td>boolean</td><td>中身を比較</td></tr>
-      <tr><td><code>compareTo</code></td><td><strong>int</strong></td><td>同じなら 0。boolean ではない</td></tr>
-      <tr><td><code>substring(int)</code></td><td>String</td><td>0〜length まで許される</td></tr>
-      <tr><td><code>substring(int,int)</code></td><td>String</td><td><strong>第2引数は含まない</strong></td></tr>
-      <tr><td><code>concat(String)</code></td><td>String</td><td>null で NullPointerException</td></tr>
-      <tr><td><code>replace(a,b)</code></td><td>String</td><td>該当箇所を<strong>すべて</strong>置換</td></tr>
-      <tr><td><code>replaceAll / replaceFirst</code></td><td>String</td><td>第1引数は正規表現</td></tr>
-      <tr><td><code>trim() / strip()</code></td><td>String</td><td>前後のみ。間は残る</td></tr>
-      <tr><td><code>toUpperCase / toLowerCase</code></td><td>String</td><td>—</td></tr>
-      <tr><td><code>repeat(int)</code></td><td>String</td><td>Java 11〜。負数で例外</td></tr>
-      <tr><td><code>split(String)</code></td><td><strong>String[]</strong></td><td>末尾の空要素は削除される</td></tr>
-      <tr><td><code>toCharArray()</code></td><td><strong>char[]</strong></td><td>—</td></tr>
-      <tr><td><code>String.join(...)</code></td><td>String</td><td><strong>static</strong>。クラス名で呼ぶ</td></tr>
-      <tr><td><code>String.valueOf(x)</code></td><td>String</td><td><strong>static</strong></td></tr>
-    </tbody>
-  </table></div>
 
   <h3>チェーンして呼ぶ場合</h3>
 
@@ -1830,6 +1916,8 @@ System.out.println(s);   // "  Hello World  " ← 元は変わらない</code></
 
   <p>チェーンできるのは、各メソッドが<strong>新しい String を返している</strong>からです。1つずつ結果を書き出せば必ず解けます。</p>
 </section>
+
+  <p class="back"><a href="#str-table">↑ 早見表に戻る</a></p>
 
 <!-- ch2/09-stringbuilder.html · StringBuilder -->
 <section id="c2-s09">
@@ -1859,9 +1947,42 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
     </tbody>
   </table></div>
 
+  <h3 id="sb-table">メソッド早見表</h3>
+  <p>メソッド名を押すと、そのコード例へ飛びます。各グループの末尾にある「↑ 早見表に戻る」でここへ戻れます。</p>
+
+  <div class="tw"><table class="mt">
+    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr class="g"><td colspan="3">生成</td></tr>
+      <tr><td><a href="#sb-new"><code>new StringBuilder(...)</code></a></td><td>—</td><td>引数なし・int・String で意味が違う。リテラルからは作れない</td></tr>
+      <tr class="g"><td colspan="3">A. 追加する</td></tr>
+      <tr><td><a href="#sb-append"><code>append(x)</code></a></td><td>String<wbr>Builder</td><td>あらゆる型。null は <code>"null"</code></td></tr>
+      <tr><td><a href="#sb-insert"><code>insert(int, x)</code></a></td><td>String<wbr>Builder</td><td>その位置の<strong>手前</strong>に挿入</td></tr>
+      <tr class="g"><td colspan="3">B. 削除する</td></tr>
+      <tr><td><a href="#sb-delete"><code>delete(int,int)</code></a></td><td>String<wbr>Builder</td><td><strong>第2引数は含まない</strong></td></tr>
+      <tr><td><a href="#sb-delete"><code>deleteCharAt(int)</code></a></td><td>String<wbr>Builder</td><td>1文字削除</td></tr>
+      <tr><td><a href="#sb-setlength"><code>setLength(int)</code></a></td><td><strong>void</strong></td><td>短縮・伸長。capacity は変わらない</td></tr>
+      <tr class="g"><td colspan="3">C. 書き換える</td></tr>
+      <tr><td><a href="#sb-replace"><code>replace(int,int,String)</code></a></td><td>String<wbr>Builder</td><td><strong>位置指定</strong>。String 版と引数が違う</td></tr>
+      <tr><td><a href="#sb-setcharat"><code>setCharAt(int,char)</code></a></td><td><strong>void</strong></td><td>チェーンできない</td></tr>
+      <tr><td><a href="#sb-reverse"><code>reverse()</code></a></td><td>String<wbr>Builder</td><td>並びを逆にする</td></tr>
+      <tr class="g"><td colspan="3">D. 調べる</td></tr>
+      <tr><td><a href="#sb-capacity"><code>length()</code></a></td><td>int</td><td>実際の文字数</td></tr>
+      <tr><td><a href="#sb-capacity"><code>capacity()</code></a></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
+      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>—</td></tr>
+      <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
+      <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
+      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>
+      <tr class="g"><td colspan="3">E. 注意点</td></tr>
+      <tr><td><a href="#sb-equals"><code>equals()</code></a></td><td>boolean</td><td><strong>参照比較</strong>のまま（オーバーライドされていない）</td></tr>
+      <tr><td><a href="#sb-chain"><code>メソッドチェーン</code></a></td><td>—</td><td>自分自身を返すのでつなげられる</td></tr>
+      <tr><td><a href="#sb-plus"><code>+ 演算子</code></a></td><td>—</td><td><strong>使えない</strong>。String 専用</td></tr>
+    </tbody>
+  </table></div>
+
   <h3>生成の形</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型で意味が変わる<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder();       // 空。容量16
+<div class="code" id="sb-new" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型で意味が変わる<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder();       // 空。容量16
 StringBuilder b = new StringBuilder("Hi");   // "Hi" を保持。容量 16+2=18
 StringBuilder c = new StringBuilder(16);     // 空。容量16 ← 数値は「容量」
 StringBuilder d = new StringBuilder("16");   // "16" を保持 ← 文字列は「中身」</code></pre></div>
@@ -1875,7 +1996,7 @@ StringBuilder sb2 = new StringBuilder("Hello");   // OK</code></pre></div>
 
   <h3>A. 追加するメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>append ── 末尾に追加<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("a");
+<div class="code" id="sb-append" data-v="ok"><div class="cap"><span class="dot ok"></span>append ── 末尾に追加<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("a");
 
 sb.append("b");        // "ab"
 sb.append(1);          // "ab1"        ← int も受け取れる
@@ -1890,7 +2011,7 @@ sb.append((Object)null);  // "...null" ← null は "null" という文字列に
 sb.append(1 + 2);      // "3"  ← "12" ではない。引数が先に評価される
 sb.append(1).append(2);    // "312" ← こちらは順に足される</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>insert ── 指定位置に挿入<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcd");
+<div class="code" id="sb-insert" data-v="ok"><div class="cap"><span class="dot ok"></span>insert ── 指定位置に挿入<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcd");
 
 sb.insert(0, "X");     // "Xabcd"  ← 先頭に挿入
 sb.insert(3, "Y");     // "XabYcd" ← 位置3の「手前」に挿入
@@ -1899,28 +2020,32 @@ sb.insert(6, "Z");     // "XabYcdZ" ← 末尾の次の位置まで許される<
 <div class="code" data-v="run"><div class="cap"><span class="dot run"></span>insert の範囲外<span class="tag">実行時</span></div><pre><code>new StringBuilder("abcd").insert(5, "X");   // StringIndexOutOfBoundsException
 // 0〜4 まで許される（長さ4なので、末尾の次は 4）</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>B. 削除するメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>delete / deleteCharAt<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
+<div class="code" id="sb-delete" data-v="ok"><div class="cap"><span class="dot ok"></span>delete / deleteCharAt<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
 
 sb.delete(1, 3);       // "adef"  ← 位置1から、位置3の手前まで削除
 sb.deleteCharAt(0);    // "def"   ← 1文字だけ削除</code></pre></div>
 
   <p><code>substring</code> と同じで、<span class="mk">delete の第2引数も「含まない」</span>。範囲指定の作法は統一されています。削除される文字数は <strong>第2引数 − 第1引数</strong>。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>setLength ── 長さを変える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("Hello");
+<div class="code" id="sb-setlength" data-v="ok"><div class="cap"><span class="dot ok"></span>setLength ── 長さを変える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("Hello");
 
 sb.setLength(2);       // "He"  ← 短くすると切り詰められる
 sb.setLength(4);       // "He\u0000\u0000" ← 長くすると null 文字で埋まる
 sb.setLength(0);       // ""    ← 全消去のイディオム</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>C. 書き換えるメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 範囲を置換<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
+<div class="code" id="sb-replace" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 範囲を置換<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
 sb.replace(1, 3, "XYZ");    // "aXYZdef" ← 位置1〜2 を "XYZ" に置換
 
 // 比較：String の replace は「文字を探して置換」
@@ -1928,11 +2053,11 @@ sb.replace(1, 3, "XYZ");    // "aXYZdef" ← 位置1〜2 を "XYZ" に置換
 
   <div class="point trap"><p>名前は同じ <code>replace</code> でも、<span class="mk">StringBuilder は位置指定（int, int, String）、String は文字指定（String, String）</span>。引数の形がまったく違うので、選択肢で入れ替えられます。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>setCharAt ── 1文字を書き換える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-setcharat" data-v="ok"><div class="cap"><span class="dot ok"></span>setCharAt ── 1文字を書き換える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.setCharAt(0, 'X');       // "Xbc"
 // 戻り値は void。チェーンできない</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>reverse ── 逆順にする<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-reverse" data-v="ok"><div class="cap"><span class="dot ok"></span>reverse ── 逆順にする<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.reverse();               // "cba"
 System.out.println(sb);     // "cba" ← 元のオブジェクトが変わっている
 
@@ -1941,23 +2066,25 @@ String s = new StringBuilder("abc").reverse().toString();   // "cba"</code></pre
 
   <p><code>reverse()</code> は<strong>文字の並びをそのまま逆にする</strong>だけです。戻り値は自分自身なのでチェーンできます。<span class="mk">String には reverse がない</span>ので、回文判定などの問題では StringBuilder を経由する形が出ます。</p>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>D. 調べるメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>String と同名のものが多い<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcabc");
+<div class="code" id="sb-query" data-v="ok"><div class="cap"><span class="dot ok"></span>String と同名のものが多い<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcabc");
 
 sb.length();           // 6
 sb.charAt(1);          // 'b'
 sb.indexOf("b");       // 1   ← なければ -1
 sb.lastIndexOf("b");   // 4
-sb.substring(2);       // "cdef" 相当 ← 戻り値は String！
+sb.substring(2);       // "cabc" ← 戻り値は String！
 sb.substring(1, 3);    // "bc"  ← 元の sb は変わらない
 sb.toString();         // "abcabc" ← String に変換</code></pre></div>
 
-  <div class="point trap"><p><code>sb.substring(...)</code> の戻り値は <strong>StringBuilder ではなく String</strong> です。そして<span class="mk">この操作だけは元のオブジェクトを変更しません</span>。「StringBuilder のメソッドはすべて自分自身を返す」と覚えていると外します。</p></div>
+  <div class="point trap"><p><code>sb.substring(...)</code> の戻り値は <strong>StringBuilder ではなく String</strong> です。そして<span class="mk">名前は編集操作に見えても、元のオブジェクトは変更しません</span>。「StringBuilder のメソッドはすべて自分自身を返す」と覚えていると外します。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length と capacity は別物<span class="tag">要注意</span></div><pre><code>StringBuilder a = new StringBuilder();
+<div class="code" id="sb-capacity" data-v="ok"><div class="cap"><span class="dot ok"></span>length と capacity は別物<span class="tag">要注意</span></div><pre><code>StringBuilder a = new StringBuilder();
 a.length();            // 0   ← 実際の文字数
 a.capacity();          // 16  ← 内部バッファのサイズ（初期値）
 
@@ -1971,11 +2098,13 @@ b.capacity();          // 21  ← 余裕があるので変わらない</code></p
 
   <p>容量が足りなくなると <strong>現在の容量 × 2 + 2</strong> に拡張されます。<code>setLength</code> は capacity を変えません。</p>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>equals はオーバーライドされていない</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>中身が同じでも false<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder("abc");
+<div class="code" id="sb-equals" data-v="ok"><div class="cap"><span class="dot ok"></span>中身が同じでも false<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder("abc");
 StringBuilder b = new StringBuilder("abc");
 
 a.equals(b);                          // false ← Object の equals のまま
@@ -1986,7 +2115,7 @@ a.toString().equals(b.toString());    // true  ← String に変換すれば比�
 
   <h3>メソッドチェーン</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>自分自身を返すのでつなげられる<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-chain" data-v="ok"><div class="cap"><span class="dot ok"></span>自分自身を返すのでつなげられる<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.append("d").insert(0, "X").reverse();
 System.out.println(sb);   // "dcbaX"
 
@@ -1998,36 +2127,15 @@ System.out.println(sb);   // "dcbaX"
 
   <h3>+ 演算子は使えない</h3>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>連結演算子は String 専用<span class="tag">NG</span></div><pre><code>StringBuilder a = new StringBuilder("a");
+<div class="code" id="sb-plus" data-v="err"><div class="cap"><span class="dot err"></span>連結演算子は String 専用<span class="tag">NG</span></div><pre><code>StringBuilder a = new StringBuilder("a");
 StringBuilder b = new StringBuilder("b");
 StringBuilder c = a + b;      // コンパイルエラー
 
 String d = a + "x";           // OK ← String との連結なら toString() が呼ばれる</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
-
-  <h3>メソッド一覧</h3>
-
-  <div class="tw"><table>
-    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
-    <tbody>
-      <tr><td><code>append(x)</code></td><td>StringBuilder</td><td>あらゆる型。null は "null"</td></tr>
-      <tr><td><code>insert(int, x)</code></td><td>StringBuilder</td><td>その位置の<strong>手前</strong>に挿入</td></tr>
-      <tr><td><code>delete(int,int)</code></td><td>StringBuilder</td><td><strong>第2引数は含まない</strong></td></tr>
-      <tr><td><code>deleteCharAt(int)</code></td><td>StringBuilder</td><td>1文字削除</td></tr>
-      <tr><td><code>replace(int,int,String)</code></td><td>StringBuilder</td><td><strong>位置指定</strong>。String 版と引数が違う</td></tr>
-      <tr><td><code>reverse()</code></td><td>StringBuilder</td><td>並びを逆にする</td></tr>
-      <tr><td><code>setCharAt(int,char)</code></td><td><strong>void</strong></td><td>チェーンできない</td></tr>
-      <tr><td><code>setLength(int)</code></td><td><strong>void</strong></td><td>短縮・伸長。capacity は変わらない</td></tr>
-      <tr><td><code>length()</code></td><td>int</td><td>実際の文字数</td></tr>
-      <tr><td><code>capacity()</code></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
-      <tr><td><code>charAt(int)</code></td><td>char</td><td>—</td></tr>
-      <tr><td><code>indexOf / lastIndexOf</code></td><td>int</td><td>なければ -1</td></tr>
-      <tr><td><code>substring(...)</code></td><td><strong>String</strong></td><td><strong>元を変更しない</strong>唯一の操作</td></tr>
-      <tr><td><code>toString()</code></td><td>String</td><td>String に変換</td></tr>
-      <tr><td><code>equals()</code></td><td>boolean</td><td><strong>参照比較</strong>のまま</td></tr>
-    </tbody>
-  </table></div>
 
   <div class="point link"><p><code>StringBuffer</code> という同じ API のクラスもあります。違いは<span class="mk pink">スレッドセーフかどうか</span>だけで、メソッドは同一です。選択肢に混ざっても、動作は StringBuilder と同じと考えて構いません。</p></div>
 </section>
@@ -2280,6 +2388,25 @@ System.out.println(a[0][0]);   // "X" のまま</code></pre></div></div>
   <p>他のコピー方法もあります。<code>Arrays.copyOf(a, 5)</code> は長さを変えられ、足りない分は既定値で埋まります。</p>
 
   <div class="point link"><p>第4章とつながります。<span class="mk pink">配列は参照型</span>なので、メソッドに渡すと参照がコピーされます。<code>arr[0] = 99</code> は呼び出し元に伝わりますが、<code>arr = new int[]{...}</code> は伝わりません。</p></div>
+
+  <h3>配列の共変性と ArrayStoreException</h3>
+
+  <p>配列は、<code>String[]</code> を <code>Object[]</code> 型の変数に代入できます。String が Object の子なので、<strong>String の配列も Object の配列の子として扱われる</strong>ためです（共変）。</p>
+
+<div class="code" data-v="run" id="arr-store"><div class="cap"><span class="dot run"></span>コンパイルは通るが、実行時に落ちる<span class="tag">要注意</span></div><pre><code>Object[] arr = new String[3];   // OK。String[] は Object[] の子として扱われる
+arr[0] = "a";                   // OK
+arr[1] = 1;                     // ArrayStoreException: java.lang.Integer
+                                // 変数の型は Object[] だが、実体は String[]</code></pre></div>
+
+  <div class="point trap"><p>コンパイラは<strong>変数の型</strong>（<code>Object[]</code>）しか見ないので、<code>arr[1] = 1</code> を通します。しかし実体は <code>String[]</code> で、そこに Integer は入れられません。これを<span class="mk">実行時に配列自身が検査して ArrayStoreException</span> を投げます。「コンパイルエラー」を選ばせる引っかけに注意してください。</p></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>数値の型どうしでも同じ<span class="tag">実行時</span></div><pre><code>Number[] n = new Integer[2];
+n[0] = 1.5;                     // ArrayStoreException: java.lang.Double</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ジェネリクスは最初からコンパイルで弾く<span class="tag">対比</span></div><pre><code>List&lt;Object&gt; list = new ArrayList&lt;String&gt;();   // コンパイルエラー
+// ArrayList&lt;String&gt; は List&lt;Object&gt; に変換できない</code></pre></div>
+
+  <div class="point link"><p>配列は実行時に「自分は String の配列だ」と覚えているので、<strong>入れた瞬間に検査できます</strong>。一方ジェネリクスは実行時に型の情報を持たないため、危険な代入を<strong>最初からコンパイルエラーにして</strong>防ぎます。<br><code>ArrayStoreException</code> は <code>RuntimeException</code> の子（非検査例外）なので、catch も throws も義務ではありません。第6章 02 の一覧にも載せています。</p></div>
 </section>
 
 <!-- ch2/12-arraylist.html · ArrayList -->
@@ -2590,46 +2717,52 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
   <details class="q"><summary><span class="qn">Q10</span><span><code>"Hello" == new String("Hello")</code> は？</span></summary>
     <div class="qa"><p><strong>false。</strong>リテラルは定数プールで共有されますが、<code>new</code> は必ず別のインスタンスを作ります。中身の比較は <code>equals()</code> で。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q11</span><span><code>"abcdef".substring(2, 4)</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q11</span><span><code>String b = new String("Hi"); b.intern();</code> の後、<code>b == "Hi"</code> は？</span></summary>
+    <div class="qa"><p><strong>false。</strong><code>intern()</code> はプールのインスタンスを<strong>戻り値として返すだけ</strong>で、変数 <code>b</code> の指す先は変わりません。<code>b = b.intern();</code> と受け取れば true になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q12</span><span><code>"abcdef".substring(2, 4)</code> は？</span></summary>
     <div class="qa"><p><strong>"cd"。</strong>第2引数の位置は含みません。<code>substring(2,2)</code> は空文字列で、例外にはなりません。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q12</span><span>StringBuilder の <code>equals()</code> は中身を比較する？</span></summary>
+  <details class="q"><summary><span class="qn">Q13</span><span>StringBuilder の <code>equals()</code> は中身を比較する？</span></summary>
     <div class="qa"><p><strong>しない。</strong>オーバーライドされていないので参照比較のままです。中身を比べるには <code>toString().equals(...)</code>。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q13</span><span>テキストブロックのインデントは何を基準に除去される？</span></summary>
+  <details class="q"><summary><span class="qn">Q14</span><span>テキストブロックのインデントは何を基準に除去される？</span></summary>
     <div class="qa"><p><strong>最も浅い行の位置。終了の """ の位置も判定に含まれます。</strong>終了 """ を左端に置くと、インデントが除去されなくなります。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q14</span><span><code>List&lt;Integer&gt;</code> に 10,20,30。<code>remove(1)</code> の結果は？</span></summary>
+  <details class="q"><summary><span class="qn">Q15</span><span><code>List&lt;Integer&gt;</code> に 10,20,30。<code>remove(1)</code> の結果は？</span></summary>
     <div class="qa"><p><strong>[10, 30]。</strong>引数が int なので <code>remove(int)</code>（インデックス指定）が選ばれます。値10を消すなら <code>remove(Integer.valueOf(10))</code>。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q15</span><span><code>int e[], f;</code> のとき f の型は？</span></summary>
+  <details class="q"><summary><span class="qn">Q16</span><span><code>int e[], f;</code> のとき f の型は？</span></summary>
     <div class="qa"><p><strong>int（配列ではない）。</strong>角括弧を変数側に書くと、その変数だけが配列になります。<code>int[] e, f;</code> なら両方が配列です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q16</span><span><code>new int[2][]</code> と <code>new int[][3]</code>、通るのは？</span></summary>
+  <details class="q"><summary><span class="qn">Q17</span><span><code>new int[2][]</code> と <code>new int[][3]</code>、通るのは？</span></summary>
     <div class="qa"><p><strong>前者だけ。</strong>後ろの次元は省略できますが、前の次元は省略できません。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q17</span><span><code>System.out.println(new int[3])</code> は何が出る？</span></summary>
+  <details class="q"><summary><span class="qn">Q18</span><span><code>System.out.println(new int[3])</code> は何が出る？</span></summary>
     <div class="qa"><p><strong><code>[I@</code> で始まるハッシュ形式。</strong>配列は toString() をオーバーライドしていないためです。中身を出すには <code>Arrays.toString()</code>。<code>char[]</code> だけは専用オーバーロードがあるので中身が出ます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q18</span><span><code>Item[] items = new Item[3];</code> の後 <code>items[0].price</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q19</span><span><code>Item[] items = new Item[3];</code> の後 <code>items[0].price</code> は？</span></summary>
     <div class="qa"><p><strong>NullPointerException。</strong>箱を3つ用意しただけで、インスタンスは1つも生成されていません。参照型の配列は <code>new Item()</code> を別途書く<strong>2段階</strong>が必要です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q19</span><span><code>String[][] a</code> を <code>for (String[] tmp : a)</code> で回すとき、<code>tmp.length</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q20</span><span><code>String[][] a</code> を <code>for (String[] tmp : a)</code> で回すとき、<code>tmp.length</code> は？</span></summary>
     <div class="qa"><p><strong><code>a[i]</code> の要素数。</strong>tmp は取り出された1行そのものです。全体の行数が欲しいなら <code>a.length</code> と書きます。<strong>ドットの左の変数の型</strong>で決まります。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q20</span><span><code>int[] b = a;</code> と <code>int[] c = a.clone();</code> の違いは？</span></summary>
+  <details class="q"><summary><span class="qn">Q21</span><span><code>int[] b = a;</code> と <code>int[] c = a.clone();</code> の違いは？</span></summary>
     <div class="qa"><p><strong>b は同じ配列を指し、c は別の配列。</strong>b を書き換えると a も変わりますが、c は独立しています。ただし clone は<strong>浅いコピー</strong>なので、2次元配列では中の行が共有されたままです。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q21</span><span>size 1 のリストに <code>add(2, "X")</code> は？</span></summary>
+  <details class="q"><summary><span class="qn">Q22</span><span><code>Object[] a = new String[1]; a[0] = 1;</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルは通り、実行時に ArrayStoreException。</strong>変数の型は <code>Object[]</code> なのでコンパイラは通しますが、実体は <code>String[]</code> なので、配列が実行時に検査して例外を投げます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span>size 1 のリストに <code>add(2, "X")</code> は？</span></summary>
     <div class="qa"><p><strong>IndexOutOfBoundsException。</strong>add で許されるのは <strong>0〜size</strong> まで。飛び地は作れません。set はさらに狭く 0〜size-1 です。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q22</span><span>拡張for文の中で remove して、例外にならないのはどんなとき？</span></summary>
+  <details class="q"><summary><span class="qn">Q24</span><span>拡張for文の中で remove して、例外にならないのはどんなとき？</span></summary>
     <div class="qa"><p><strong>最後から2番目の要素を削除したとき。</strong>削除後に cursor == size となり <code>hasNext()</code> が false を返してループが終わるためです。整合性チェックは <code>next()</code> の中にしかありません。ただし<strong>最後の要素は取りこぼされます</strong>。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q23</span><span><code>new ArrayList&lt;Integer&gt;(3)</code> の size は？</span></summary>
+  <details class="q"><summary><span class="qn">Q25</span><span><code>new ArrayList&lt;Integer&gt;(3)</code> の size は？</span></summary>
     <div class="qa"><p><strong>0。</strong>3 は<strong>初期容量</strong>であって要素数ではありません。StringBuilder(16) と同じ意味で、いくらでも追加できます。</p></div></details>
 
-  <details class="q"><summary><span class="qn">Q24</span><span><code>List.of</code> と <code>Arrays.asList</code> の違いは？</span></summary>
+  <details class="q"><summary><span class="qn">Q26</span><span><code>List.of</code> と <code>Arrays.asList</code> の違いは？</span></summary>
     <div class="qa"><p><strong>List.of は set も不可（不変）、Arrays.asList は set だけ可（固定長）。</strong>asList は元の配列を包んでいるだけなので、set すると<strong>元の配列も変わります</strong>。どちらも add / remove は UnsupportedOperationException。</p></div></details>
 </section>
 
@@ -5172,6 +5305,8 @@ public abstract void m();     // 両方冗長</code></pre></div>
     </tbody>
   </table></div>
 
+  <div class="point"><p><span class="mk">インタフェースのメソッドに付けられるアクセス修飾子は public か private の2つだけ。protected と final は全滅。</span>何も書かなければ public が補われます。この1行で、上の表の可否はすべて説明できます。</p></div>
+
   <div class="point"><p><code>protected</code> が使えないのは、インタフェースが「<span class="mk">誰でも使える約束事</span>」だからです。<code>public</code> か（内部専用の）<code>private</code> の2択しかなく、「サブクラスまで」という中間段階が成立しません。<br><code>final</code> が使えないのは、インタフェースのメソッドが<strong>オーバーライドされるためにある</strong>からです。<code>default</code> に付けようとしても同じ理由で弾かれます。</p></div>
 
   <h3>組み合わせの可否</h3>
@@ -5211,6 +5346,28 @@ public abstract void m();     // 両方冗長</code></pre></div>
   <div class="point"><p>SE 9 で追加された目的は、<code>default</code> が増えたときの<span class="mk">重複を1か所にまとめる</span>ことです。しかも内部の都合なので実装クラスには見せたくない。この2つの要求から生まれました。<br>ただし<strong>文法上は <code>default</code> の存在に依存しません</strong>。<code>default</code> が1つも無くても、呼び出し元が無くてもコンパイルは通ります。<span class="mk">用途としてはセット、文法としては独立</span>と分けて覚えてください。</p></div>
 
   <div class="point trap"><p>「誰からも呼ばれないメソッドは意味がないのでは」と感じても、<strong>コンパイラは文法しか見ません</strong>。未使用の変数やメソッドはエラーになりません。<br>問題文が「<span class="mk">記述してコンパイルできるコードを選べ</span>」なら文法だけ、「実行結果を選べ」なら挙動、と<strong>何が問われているかを先に読む</strong>のがこの試験では一貫して効きます。</p></div>
+
+  <h3>private の呼び出し元 ── static かどうかで変わる</h3>
+
+  <p><code>private</code> は「インタフェース内部の共通処理用」という理解で正しいです。ただし、<strong>インスタンスの <code>private</code> と <code>private static</code> で、呼べる相手が違います</strong>。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>呼び出し元 ＼ 呼び出し先</th><th><code>private</code></th><th><code>private static</code></th></tr></thead>
+    <tbody>
+      <tr><td><code>default</code> メソッド</td><td>○</td><td>○</td></tr>
+      <tr><td><code>private</code> メソッド</td><td>○</td><td>○</td></tr>
+      <tr><td><code>static</code> メソッド</td><td><strong>×</strong></td><td>○</td></tr>
+      <tr><td>実装クラス・外部</td><td>×</td><td>×</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>static から private（インスタンス）は呼べない<span class="tag">要注意</span></div><pre><code>interface J {
+    private void a() { }
+    static void s() { a(); }   // コンパイルエラー
+}
+// error: non-static method a() cannot be referenced from a static context</code></pre></div>
+
+  <div class="point"><p>理由はクラスの <code>static</code> と同じです。<code>static</code> メソッドにはインスタンス（<code>this</code>）が無いので、インスタンスに属する <code>private</code> メソッドは呼べません。<span class="mk">default の共通処理なら private、static の共通処理なら private static</span> と使い分けます。</p></div>
 
   <h3>super. と インタフェース名.super. の使い分け</h3>
 
@@ -5327,6 +5484,150 @@ public sealed interface X permits p2.Y { }
   <div class="point trap"><p><code>sealed</code> の本来の狙いは <code>switch</code> のパターンマッチングで<strong>網羅性を検査させる</strong>ことですが、<span class="mk">switch のパターンマッチングは SE 17 ではプレビュー機能</span>なので出題範囲外です。<br>SE 17 で問われるのは<strong>構文規則の方</strong> ── <code>permits</code> の範囲、実装側の3択、場所の制約です。</p></div>
 </section>
 
+<!-- ch5/12-access-and-inheritance.html · アクセス修飾子と継承 -->
+<section id="c5-s12">
+  <div class="sh"><span class="num">12</span><h2>アクセス修飾子と継承 ── 総まとめ</h2></div>
+
+  <p>アクセス修飾子そのものは第1章 07 で扱いました。ここでは<strong>継承と組み合わさったとき</strong>、特に<strong>親と子でパッケージが違うとき</strong>に何が起きるかをまとめます。以下の例は、親 <code>lib.Parent</code> と子 <code>app.Child</code> が別のパッケージにある前提です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>以下の説明で使う親クラス<span class="tag">前提</span></div><pre><code>package lib;
+
+public class Parent {
+    public    void pub()  { }
+    protected void prot() { }
+              void pkg()  { }   // 修飾子なし
+    private   void priv() { }
+}</code></pre></div>
+
+  <h3>全体像</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>修飾子</th><th>同じパッケージの子に<br>継承されるか</th><th>別パッケージの子に<br>継承されるか</th><th>別パッケージの子の中で<br>this / super 経由</th><th>別パッケージの子の中で<br>親の型の参照経由</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+      <tr><td><code>protected</code></td><td>○</td><td>○</td><td>○</td><td><strong>×</strong></td></tr>
+      <tr><td>なし</td><td>○</td><td><strong>×</strong></td><td>×</td><td>×</td></tr>
+      <tr><td><code>private</code></td><td>×</td><td>×</td><td>×</td><td>×</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>「継承される」とは、<strong>子のメンバとして持てて、オーバーライドできる</strong>という意味です。継承されないメンバは、子に同じ名前のメソッドを書いても<strong>別物の新しいメソッド</strong>になり、<code>@Override</code> を付けるとコンパイルエラーです。</p>
+
+  <div class="point"><p>同じパッケージの中なら、<code>private</code> 以外はすべて<span class="mk">パッケージの権限だけで届きます</span>。表がややこしくなるのは<strong>パッケージが違うとき</strong>だけで、その中心にいるのが <code>protected</code> です。</p></div>
+
+  <h3>1. private は継承されないが、実体はある</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親の private フィールドも子のインスタンスの中にある<span class="tag">OK</span></div><pre><code>public class Parent {
+    private int secret = 42;
+    public int getSecret() { return secret; }
+}
+public class Child extends Parent { }
+
+new Child().getSecret();   // 42</code></pre></div>
+
+  <p><code>new Child()</code> で作られるインスタンスには、<strong>親の private フィールドの領域もちゃんと確保されています</strong>。子のコードから名前で直接触れないだけで、親の public や protected なメソッドを通せば間接的に読み書きできます。「継承されない＝存在しない」ではありません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じ名前のメソッドはオーバーライドにならない<span class="tag">最頻出</span></div><pre><code>public class Parent {
+    private void priv() { System.out.println("Parent"); }
+    public  void call() { priv(); }
+}
+public class Child extends Parent {
+    public void priv() { System.out.println("Child"); }   // 別物の新メソッド
+}
+
+new Child().call();   // Parent</code></pre></div>
+
+  <div class="point trap"><p><code>Child</code> の <code>priv()</code> は親の <code>priv()</code> を<span class="mk">オーバーライドしていません</span>。<code>private</code> は継承されないので、たまたま同じ名前の別メソッドです。だから親の <code>call()</code> から呼ばれるのは親の <code>priv()</code> で、多態は起きません。子の方に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div>
+
+  <h3>2. 修飾子なしは、パッケージが違うと継承されない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージの子からは見えない<span class="tag">NG</span></div><pre><code>package app;
+import lib.Parent;
+
+public class Child extends Parent {
+    void t() { pkg(); }         // コンパイルエラー: cannot find symbol
+    @Override void pkg() { }    // コンパイルエラー: 何もオーバーライドしていない
+}</code></pre></div>
+
+  <p><code>@Override</code> を外せば <code>void pkg() { }</code> は通りますが、それは <code>private</code> と同じく<strong>子が新しく作った別のメソッド</strong>です。</p>
+
+  <h3>3. protected は「参照の型」で決まる</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージの子の中から呼ぶ<span class="tag">最重要</span></div><pre><code>package app;
+import lib.Parent;
+
+public class Child extends Parent {
+    void t() {
+        prot();                    // OK
+        this.prot();               // OK
+        super.prot();              // OK
+
+        Child other = new Child();
+        other.prot();              // OK ← 別のインスタンスでも Child 型なら届く
+
+        new Parent().prot();       // コンパイルエラー
+        Parent p = this;
+        p.prot();                  // コンパイルエラー ← this そのものでも Parent 型なら届かない
+    }
+}
+// error: prot() has protected access in Parent</code></pre></div>
+
+  <div class="point trap"><p>「自分のインスタンスなら OK、別のインスタンスは NG」と覚えると、上の2か所で外します。<span class="mk">判定の基準はインスタンスではなく、参照の型</span>です。<strong>自分のクラス（またはその子孫）の型の参照を通したときだけ</strong>届きます。<code>other</code> は別のインスタンスでも <code>Child</code> 型なので OK、<code>p</code> は <code>this</code> そのものなのに <code>Parent</code> 型なので NG です。</p></div>
+
+  <h3>4. 子と同じパッケージでも、子クラスでなければ届かない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>子と同じパッケージの、継承していないクラスから<span class="tag">最頻出</span></div><pre><code>package app;
+
+public class Main {                     // Child と同じ app パッケージ。継承はしていない
+    public static void main(String[] args) {
+        Child c = new Child();
+        c.pub();                        // OK
+        c.prot();                       // コンパイルエラー
+    }
+}
+// error: prot() has protected access in Parent</code></pre></div>
+
+  <div class="point trap"><p><code>prot()</code> は <code>Child</code> に継承されていますが、<span class="mk">アクセスできるかどうかは、宣言した場所（lib.Parent）を基準に判定されます</span>。<code>Main</code> は <code>lib</code> パッケージの住人でもなく、<code>Parent</code> の子でもないので、どちらの権限も持っていません。「<code>Main</code> と <code>Child</code> は同じパッケージだから呼べる」という選択肢は誤りで、答えは<strong>コンパイルエラー</strong>です。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>逆に、親と同じパッケージからなら届く<span class="tag">対比</span></div><pre><code>package lib;
+
+public class Helper {                   // Parent と同じ lib パッケージ
+    void t() {
+        new app.Child().prot();         // OK ← lib パッケージの権限で届く
+    }
+}</code></pre></div>
+
+  <h3>5. protected コンストラクタ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>super() は呼べるが、new はできない<span class="tag">要注意</span></div><pre><code>// lib/Base.java
+package lib;
+public class Base { protected Base() { } }
+
+// app/Sub.java
+package app;
+public class Sub extends lib.Base {
+    Sub() { super(); }             // OK
+    void t() { new lib.Base(); }   // コンパイルエラー
+}
+// error: Base() has protected access in Base</code></pre></div>
+
+  <p>コンストラクタも同じ考え方です。別パッケージの子に許されるのは、<strong>自分を作る途中で親の部分を初期化する</strong> <code>super()</code> だけです。親を単独で <code>new</code> することはできません。</p>
+
+  <h3>6. オーバーライドで広げるのは可、狭めるのは不可</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>親の修飾子</th><th>子で書ける修飾子</th></tr></thead>
+    <tbody>
+      <tr><td><code>public</code></td><td><code>public</code> のみ</td></tr>
+      <tr><td><code>protected</code></td><td><code>protected</code> / <code>public</code></td></tr>
+      <tr><td>なし</td><td>なし / <code>protected</code> / <code>public</code>（同じパッケージの子のみ）</td></tr>
+      <tr><td><code>private</code></td><td>オーバーライドできない（継承されない）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point link"><p>狭めてはいけない理由は第5章 03 のとおりです。親の型で扱ったときに呼べるはずのメソッドが、子の実体では呼べなくなってしまいます。</p></div>
+</section>
+
 <!-- ch5/quiz.html · 一問一答 -->
 <section id="c5-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
@@ -5418,6 +5719,15 @@ public sealed interface X permits p2.Y { }
 
   <details class="q"><summary><span class="qn">Q20</span><span><code>sealed</code> と <code>switch</code> のパターンマッチングは SE 17 の出題範囲？</span></summary>
     <div class="qa"><p><strong>switch のパターンマッチングは範囲外</strong>（SE 17 ではプレビュー機能）。問われるのは <code>sealed</code> の<strong>構文規則</strong> ── permits の範囲、実装側の3択、場所の制約です。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q21</span><span>別パッケージの子クラスの中で <code>Parent p = this; p.prot();</code>（prot は protected）は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>別パッケージの子が protected に届くのは、<strong>自分のクラス（またはその子孫）の型の参照</strong>を通したときだけです。<code>p</code> は <code>this</code> そのものでも型が <code>Parent</code> なので届きません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span>子クラスと同じパッケージにある、継承していないクラスから <code>new Child().prot()</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>protected の判定は<strong>宣言した親クラスの側</strong>が基準です。呼び出し元は親のパッケージの住人でも親の子でもないので、子と同じパッケージでも届きません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span>親の private メソッドと同じ名前のメソッドを子に書き、親の public メソッドの中から呼ぶと、どちらが動く？</span></summary>
+    <div class="qa"><p><strong>親のもの。</strong>private は継承されないので、子のメソッドはオーバーライドではなく別物の新メソッドです。多態は起きず、子に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div></details>
 </section>
 
 <!-- ch5/checklist.html · 直前チェック -->
@@ -5526,6 +5836,7 @@ public sealed interface X permits p2.Y { }
       <tr><td><code>IndexOutOfBoundsException</code></td><td>上2つの<strong>親</strong>。ArrayList の範囲外はこれ</td></tr>
       <tr><td><code>ArithmeticException</code></td><td>整数の 0 除算。<code>1.0/0</code> は例外にならず Infinity</td></tr>
       <tr><td><code>ClassCastException</code></td><td>不正なキャスト</td></tr>
+      <tr><td><code>ArrayStoreException</code></td><td>配列の実体と合わない型の要素を代入。<code>Object[] a = new String[1]; a[0] = 1;</code> はコンパイルが通り、実行時にこれが出る</td></tr>
       <tr><td><code>NumberFormatException</code></td><td><code>Integer.parseInt("abc")</code>。<code>IllegalArgumentException</code> の子</td></tr>
       <tr><td><code>UnsupportedOperationException</code></td><td><code>List.of()</code> に add した場合など</td></tr>
     </tbody>
@@ -6018,7 +6329,7 @@ try (r) { }
 <script>
 /* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
 window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
-  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException"]}] };
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
 
 /* ---- scripts/00-app.js ---- */
 /* 全モジュール共通の名前空間。

@@ -66,6 +66,8 @@ public class Other {                          // extends していない
     }
 }</code></pre></div>
 
+  <div class="point link"><p>継承と組み合わせたときの全体像は<a href="#c5-s12">第5章 12「アクセス修飾子と継承」</a>にまとめています。<span class="mk pink">子クラスと同じパッケージの、継承していないクラスから子の参照経由で protected を呼ぶ</span>パターンなど、パッケージが違うときの判定を一覧にしてあります。</p></div>
+
   <h3>トップレベルのクラスに付けられる修飾子</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2種類しか書けない<span class="tag">NG</span></div><pre><code>private   class Hidden  { }    // error: modifier private not allowed here

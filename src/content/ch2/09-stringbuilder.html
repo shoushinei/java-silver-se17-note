@@ -25,9 +25,42 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
     </tbody>
   </table></div>
 
+  <h3 id="sb-table">メソッド早見表</h3>
+  <p>メソッド名を押すと、そのコード例へ飛びます。各グループの末尾にある「↑ 早見表に戻る」でここへ戻れます。</p>
+
+  <div class="tw"><table class="mt">
+    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr class="g"><td colspan="3">生成</td></tr>
+      <tr><td><a href="#sb-new"><code>new StringBuilder(...)</code></a></td><td>—</td><td>引数なし・int・String で意味が違う。リテラルからは作れない</td></tr>
+      <tr class="g"><td colspan="3">A. 追加する</td></tr>
+      <tr><td><a href="#sb-append"><code>append(x)</code></a></td><td>String<wbr>Builder</td><td>あらゆる型。null は <code>"null"</code></td></tr>
+      <tr><td><a href="#sb-insert"><code>insert(int, x)</code></a></td><td>String<wbr>Builder</td><td>その位置の<strong>手前</strong>に挿入</td></tr>
+      <tr class="g"><td colspan="3">B. 削除する</td></tr>
+      <tr><td><a href="#sb-delete"><code>delete(int,int)</code></a></td><td>String<wbr>Builder</td><td><strong>第2引数は含まない</strong></td></tr>
+      <tr><td><a href="#sb-delete"><code>deleteCharAt(int)</code></a></td><td>String<wbr>Builder</td><td>1文字削除</td></tr>
+      <tr><td><a href="#sb-setlength"><code>setLength(int)</code></a></td><td><strong>void</strong></td><td>短縮・伸長。capacity は変わらない</td></tr>
+      <tr class="g"><td colspan="3">C. 書き換える</td></tr>
+      <tr><td><a href="#sb-replace"><code>replace(int,int,String)</code></a></td><td>String<wbr>Builder</td><td><strong>位置指定</strong>。String 版と引数が違う</td></tr>
+      <tr><td><a href="#sb-setcharat"><code>setCharAt(int,char)</code></a></td><td><strong>void</strong></td><td>チェーンできない</td></tr>
+      <tr><td><a href="#sb-reverse"><code>reverse()</code></a></td><td>String<wbr>Builder</td><td>並びを逆にする</td></tr>
+      <tr class="g"><td colspan="3">D. 調べる</td></tr>
+      <tr><td><a href="#sb-capacity"><code>length()</code></a></td><td>int</td><td>実際の文字数</td></tr>
+      <tr><td><a href="#sb-capacity"><code>capacity()</code></a></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
+      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>—</td></tr>
+      <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
+      <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
+      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>
+      <tr class="g"><td colspan="3">E. 注意点</td></tr>
+      <tr><td><a href="#sb-equals"><code>equals()</code></a></td><td>boolean</td><td><strong>参照比較</strong>のまま（オーバーライドされていない）</td></tr>
+      <tr><td><a href="#sb-chain"><code>メソッドチェーン</code></a></td><td>—</td><td>自分自身を返すのでつなげられる</td></tr>
+      <tr><td><a href="#sb-plus"><code>+ 演算子</code></a></td><td>—</td><td><strong>使えない</strong>。String 専用</td></tr>
+    </tbody>
+  </table></div>
+
   <h3>生成の形</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型で意味が変わる<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder();       // 空。容量16
+<div class="code" id="sb-new" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型で意味が変わる<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder();       // 空。容量16
 StringBuilder b = new StringBuilder("Hi");   // "Hi" を保持。容量 16+2=18
 StringBuilder c = new StringBuilder(16);     // 空。容量16 ← 数値は「容量」
 StringBuilder d = new StringBuilder("16");   // "16" を保持 ← 文字列は「中身」</code></pre></div>
@@ -41,7 +74,7 @@ StringBuilder sb2 = new StringBuilder("Hello");   // OK</code></pre></div>
 
   <h3>A. 追加するメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>append ── 末尾に追加<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("a");
+<div class="code" id="sb-append" data-v="ok"><div class="cap"><span class="dot ok"></span>append ── 末尾に追加<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("a");
 
 sb.append("b");        // "ab"
 sb.append(1);          // "ab1"        ← int も受け取れる
@@ -56,7 +89,7 @@ sb.append((Object)null);  // "...null" ← null は "null" という文字列に
 sb.append(1 + 2);      // "3"  ← "12" ではない。引数が先に評価される
 sb.append(1).append(2);    // "312" ← こちらは順に足される</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>insert ── 指定位置に挿入<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcd");
+<div class="code" id="sb-insert" data-v="ok"><div class="cap"><span class="dot ok"></span>insert ── 指定位置に挿入<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcd");
 
 sb.insert(0, "X");     // "Xabcd"  ← 先頭に挿入
 sb.insert(3, "Y");     // "XabYcd" ← 位置3の「手前」に挿入
@@ -65,28 +98,32 @@ sb.insert(6, "Z");     // "XabYcdZ" ← 末尾の次の位置まで許される<
 <div class="code" data-v="run"><div class="cap"><span class="dot run"></span>insert の範囲外<span class="tag">実行時</span></div><pre><code>new StringBuilder("abcd").insert(5, "X");   // StringIndexOutOfBoundsException
 // 0〜4 まで許される（長さ4なので、末尾の次は 4）</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>B. 削除するメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>delete / deleteCharAt<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
+<div class="code" id="sb-delete" data-v="ok"><div class="cap"><span class="dot ok"></span>delete / deleteCharAt<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
 
 sb.delete(1, 3);       // "adef"  ← 位置1から、位置3の手前まで削除
 sb.deleteCharAt(0);    // "def"   ← 1文字だけ削除</code></pre></div>
 
   <p><code>substring</code> と同じで、<span class="mk">delete の第2引数も「含まない」</span>。範囲指定の作法は統一されています。削除される文字数は <strong>第2引数 − 第1引数</strong>。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>setLength ── 長さを変える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("Hello");
+<div class="code" id="sb-setlength" data-v="ok"><div class="cap"><span class="dot ok"></span>setLength ── 長さを変える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("Hello");
 
 sb.setLength(2);       // "He"  ← 短くすると切り詰められる
 sb.setLength(4);       // "He\u0000\u0000" ← 長くすると null 文字で埋まる
 sb.setLength(0);       // ""    ← 全消去のイディオム</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>C. 書き換えるメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 範囲を置換<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
+<div class="code" id="sb-replace" data-v="ok"><div class="cap"><span class="dot ok"></span>replace ── 範囲を置換<span class="tag">最重要</span></div><pre><code>StringBuilder sb = new StringBuilder("abcdef");
 sb.replace(1, 3, "XYZ");    // "aXYZdef" ← 位置1〜2 を "XYZ" に置換
 
 // 比較：String の replace は「文字を探して置換」
@@ -94,11 +131,11 @@ sb.replace(1, 3, "XYZ");    // "aXYZdef" ← 位置1〜2 を "XYZ" に置換
 
   <div class="point trap"><p>名前は同じ <code>replace</code> でも、<span class="mk">StringBuilder は位置指定（int, int, String）、String は文字指定（String, String）</span>。引数の形がまったく違うので、選択肢で入れ替えられます。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>setCharAt ── 1文字を書き換える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-setcharat" data-v="ok"><div class="cap"><span class="dot ok"></span>setCharAt ── 1文字を書き換える<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.setCharAt(0, 'X');       // "Xbc"
 // 戻り値は void。チェーンできない</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>reverse ── 逆順にする<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-reverse" data-v="ok"><div class="cap"><span class="dot ok"></span>reverse ── 逆順にする<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.reverse();               // "cba"
 System.out.println(sb);     // "cba" ← 元のオブジェクトが変わっている
 
@@ -107,23 +144,25 @@ String s = new StringBuilder("abc").reverse().toString();   // "cba"</code></pre
 
   <p><code>reverse()</code> は<strong>文字の並びをそのまま逆にする</strong>だけです。戻り値は自分自身なのでチェーンできます。<span class="mk">String には reverse がない</span>ので、回文判定などの問題では StringBuilder を経由する形が出ます。</p>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>D. 調べるメソッド</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>String と同名のものが多い<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcabc");
+<div class="code" id="sb-query" data-v="ok"><div class="cap"><span class="dot ok"></span>String と同名のものが多い<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abcabc");
 
 sb.length();           // 6
 sb.charAt(1);          // 'b'
 sb.indexOf("b");       // 1   ← なければ -1
 sb.lastIndexOf("b");   // 4
-sb.substring(2);       // "cdef" 相当 ← 戻り値は String！
+sb.substring(2);       // "cabc" ← 戻り値は String！
 sb.substring(1, 3);    // "bc"  ← 元の sb は変わらない
 sb.toString();         // "abcabc" ← String に変換</code></pre></div>
 
-  <div class="point trap"><p><code>sb.substring(...)</code> の戻り値は <strong>StringBuilder ではなく String</strong> です。そして<span class="mk">この操作だけは元のオブジェクトを変更しません</span>。「StringBuilder のメソッドはすべて自分自身を返す」と覚えていると外します。</p></div>
+  <div class="point trap"><p><code>sb.substring(...)</code> の戻り値は <strong>StringBuilder ではなく String</strong> です。そして<span class="mk">名前は編集操作に見えても、元のオブジェクトは変更しません</span>。「StringBuilder のメソッドはすべて自分自身を返す」と覚えていると外します。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length と capacity は別物<span class="tag">要注意</span></div><pre><code>StringBuilder a = new StringBuilder();
+<div class="code" id="sb-capacity" data-v="ok"><div class="cap"><span class="dot ok"></span>length と capacity は別物<span class="tag">要注意</span></div><pre><code>StringBuilder a = new StringBuilder();
 a.length();            // 0   ← 実際の文字数
 a.capacity();          // 16  ← 内部バッファのサイズ（初期値）
 
@@ -137,11 +176,13 @@ b.capacity();          // 21  ← 余裕があるので変わらない</code></p
 
   <p>容量が足りなくなると <strong>現在の容量 × 2 + 2</strong> に拡張されます。<code>setLength</code> は capacity を変えません。</p>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
   <h3>equals はオーバーライドされていない</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>中身が同じでも false<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder("abc");
+<div class="code" id="sb-equals" data-v="ok"><div class="cap"><span class="dot ok"></span>中身が同じでも false<span class="tag">最重要</span></div><pre><code>StringBuilder a = new StringBuilder("abc");
 StringBuilder b = new StringBuilder("abc");
 
 a.equals(b);                          // false ← Object の equals のまま
@@ -152,7 +193,7 @@ a.toString().equals(b.toString());    // true  ← String に変換すれば比�
 
   <h3>メソッドチェーン</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>自分自身を返すのでつなげられる<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
+<div class="code" id="sb-chain" data-v="ok"><div class="cap"><span class="dot ok"></span>自分自身を返すのでつなげられる<span class="tag">OK</span></div><pre><code>StringBuilder sb = new StringBuilder("abc");
 sb.append("d").insert(0, "X").reverse();
 System.out.println(sb);   // "dcbaX"
 
@@ -164,36 +205,15 @@ System.out.println(sb);   // "dcbaX"
 
   <h3>+ 演算子は使えない</h3>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>連結演算子は String 専用<span class="tag">NG</span></div><pre><code>StringBuilder a = new StringBuilder("a");
+<div class="code" id="sb-plus" data-v="err"><div class="cap"><span class="dot err"></span>連結演算子は String 専用<span class="tag">NG</span></div><pre><code>StringBuilder a = new StringBuilder("a");
 StringBuilder b = new StringBuilder("b");
 StringBuilder c = a + b;      // コンパイルエラー
 
 String d = a + "x";           // OK ← String との連結なら toString() が呼ばれる</code></pre></div>
 
+  <p class="back"><a href="#sb-table">↑ 早見表に戻る</a></p>
+
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
-
-  <h3>メソッド一覧</h3>
-
-  <div class="tw"><table>
-    <thead><tr><th>メソッド</th><th>戻り値</th><th>要点</th></tr></thead>
-    <tbody>
-      <tr><td><code>append(x)</code></td><td>StringBuilder</td><td>あらゆる型。null は "null"</td></tr>
-      <tr><td><code>insert(int, x)</code></td><td>StringBuilder</td><td>その位置の<strong>手前</strong>に挿入</td></tr>
-      <tr><td><code>delete(int,int)</code></td><td>StringBuilder</td><td><strong>第2引数は含まない</strong></td></tr>
-      <tr><td><code>deleteCharAt(int)</code></td><td>StringBuilder</td><td>1文字削除</td></tr>
-      <tr><td><code>replace(int,int,String)</code></td><td>StringBuilder</td><td><strong>位置指定</strong>。String 版と引数が違う</td></tr>
-      <tr><td><code>reverse()</code></td><td>StringBuilder</td><td>並びを逆にする</td></tr>
-      <tr><td><code>setCharAt(int,char)</code></td><td><strong>void</strong></td><td>チェーンできない</td></tr>
-      <tr><td><code>setLength(int)</code></td><td><strong>void</strong></td><td>短縮・伸長。capacity は変わらない</td></tr>
-      <tr><td><code>length()</code></td><td>int</td><td>実際の文字数</td></tr>
-      <tr><td><code>capacity()</code></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
-      <tr><td><code>charAt(int)</code></td><td>char</td><td>—</td></tr>
-      <tr><td><code>indexOf / lastIndexOf</code></td><td>int</td><td>なければ -1</td></tr>
-      <tr><td><code>substring(...)</code></td><td><strong>String</strong></td><td><strong>元を変更しない</strong>唯一の操作</td></tr>
-      <tr><td><code>toString()</code></td><td>String</td><td>String に変換</td></tr>
-      <tr><td><code>equals()</code></td><td>boolean</td><td><strong>参照比較</strong>のまま</td></tr>
-    </tbody>
-  </table></div>
 
   <div class="point link"><p><code>StringBuffer</code> という同じ API のクラスもあります。違いは<span class="mk pink">スレッドセーフかどうか</span>だけで、メソッドは同一です。選択肢に混ざっても、動作は StringBuilder と同じと考えて構いません。</p></div>
 </section>

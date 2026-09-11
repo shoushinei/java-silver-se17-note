@@ -1,6 +1,6 @@
 {
   "title": "全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート",
-  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・63論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
+  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・64論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
   "brand": "Java Silver<br>SE 17 統合ノート",
   "brandSub": "1Z0-825 / 全6章 完成版",
   "chapters": [
@@ -412,6 +412,12 @@
           "tn": "11",
           "label": "sealed ★新",
           "file": "11-sealed.html"
+        },
+        {
+          "id": "c5-s12",
+          "tn": "12",
+          "label": "アクセス修飾子と継承",
+          "file": "12-access-and-inheritance.html"
         },
         {
           "id": "c5-quiz",

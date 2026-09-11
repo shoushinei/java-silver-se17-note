@@ -112,6 +112,8 @@ public abstract void m();     // 両方冗長</code></pre></div>
     </tbody>
   </table></div>
 
+  <div class="point"><p><span class="mk">インタフェースのメソッドに付けられるアクセス修飾子は public か private の2つだけ。protected と final は全滅。</span>何も書かなければ public が補われます。この1行で、上の表の可否はすべて説明できます。</p></div>
+
   <div class="point"><p><code>protected</code> が使えないのは、インタフェースが「<span class="mk">誰でも使える約束事</span>」だからです。<code>public</code> か（内部専用の）<code>private</code> の2択しかなく、「サブクラスまで」という中間段階が成立しません。<br><code>final</code> が使えないのは、インタフェースのメソッドが<strong>オーバーライドされるためにある</strong>からです。<code>default</code> に付けようとしても同じ理由で弾かれます。</p></div>
 
   <h3>組み合わせの可否</h3>
@@ -151,6 +153,28 @@ public abstract void m();     // 両方冗長</code></pre></div>
   <div class="point"><p>SE 9 で追加された目的は、<code>default</code> が増えたときの<span class="mk">重複を1か所にまとめる</span>ことです。しかも内部の都合なので実装クラスには見せたくない。この2つの要求から生まれました。<br>ただし<strong>文法上は <code>default</code> の存在に依存しません</strong>。<code>default</code> が1つも無くても、呼び出し元が無くてもコンパイルは通ります。<span class="mk">用途としてはセット、文法としては独立</span>と分けて覚えてください。</p></div>
 
   <div class="point trap"><p>「誰からも呼ばれないメソッドは意味がないのでは」と感じても、<strong>コンパイラは文法しか見ません</strong>。未使用の変数やメソッドはエラーになりません。<br>問題文が「<span class="mk">記述してコンパイルできるコードを選べ</span>」なら文法だけ、「実行結果を選べ」なら挙動、と<strong>何が問われているかを先に読む</strong>のがこの試験では一貫して効きます。</p></div>
+
+  <h3>private の呼び出し元 ── static かどうかで変わる</h3>
+
+  <p><code>private</code> は「インタフェース内部の共通処理用」という理解で正しいです。ただし、<strong>インスタンスの <code>private</code> と <code>private static</code> で、呼べる相手が違います</strong>。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>呼び出し元 ＼ 呼び出し先</th><th><code>private</code></th><th><code>private static</code></th></tr></thead>
+    <tbody>
+      <tr><td><code>default</code> メソッド</td><td>○</td><td>○</td></tr>
+      <tr><td><code>private</code> メソッド</td><td>○</td><td>○</td></tr>
+      <tr><td><code>static</code> メソッド</td><td><strong>×</strong></td><td>○</td></tr>
+      <tr><td>実装クラス・外部</td><td>×</td><td>×</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>static から private（インスタンス）は呼べない<span class="tag">要注意</span></div><pre><code>interface J {
+    private void a() { }
+    static void s() { a(); }   // コンパイルエラー
+}
+// error: non-static method a() cannot be referenced from a static context</code></pre></div>
+
+  <div class="point"><p>理由はクラスの <code>static</code> と同じです。<code>static</code> メソッドにはインスタンス（<code>this</code>）が無いので、インスタンスに属する <code>private</code> メソッドは呼べません。<span class="mk">default の共通処理なら private、static の共通処理なら private static</span> と使い分けます。</p></div>
 
   <h3>super. と インタフェース名.super. の使い分け</h3>
 
