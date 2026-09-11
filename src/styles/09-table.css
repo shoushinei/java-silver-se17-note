@@ -4,3 +4,5 @@ th,td{border:1px solid var(--rule);padding:9px 12px;text-align:left;vertical-ali
 th{background:var(--sumi);color:var(--washi);font-weight:700;font-size:13px;letter-spacing:.03em}
 tbody tr:nth-child(even){background:var(--washi)}
 td code{white-space:nowrap}
+/* 例外メッセージのような長いコードを置くセル。td code の nowrap を解除する */
+td.wrap code{white-space:normal;overflow-wrap:anywhere}

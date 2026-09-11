@@ -114,6 +114,7 @@ String s = switch (color) {
       <tr><td>ブロックから値を返す</td><td>—</td><td><code>yield</code></td></tr>
       <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
       <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
+      <tr><td>null を渡すと</td><td colspan="2"><strong>どちらも NullPointerException</strong>。仕組みは <a href="#sw-null">08 の「switch に null を渡すと落ちる」</a></td></tr>
     </tbody>
   </table></div>
 </section>

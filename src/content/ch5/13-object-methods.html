@@ -22,6 +22,8 @@ String s = (x == null) ? "null" : x.toString();   // String.valueOf(x) と同じ
 
   <p>ポイントは2つです。<strong>null のときは toString() を呼ばずに "null" と表示する</strong>ので、例外になりません。null でなければ、そのオブジェクトの <code>toString()</code> が呼ばれます。<strong>オーバーライドしていれば自分の実装、していなければ Object の既定の実装</strong>です。文字列連結の <code>"値: " + x</code> も同じ仕組みで <code>toString()</code> を呼び、null なら <code>"値: null"</code> になります。</p>
 
+  <div class="point link"><p>反対に、<strong>null を確かめずにメソッドを呼んでしまう</strong>のが switch です。<code>switch (s)</code> は裏で <code>s.hashCode()</code> を呼ぶので、s が null なら NullPointerException になります（<a href="#sw-null">第3章 08</a>）。</p></div>
+
   <h3>自作クラスで確かめる</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toString() をオーバーライドしたクラスの配列<span class="tag">最頻出</span></div><pre><code>class Box {

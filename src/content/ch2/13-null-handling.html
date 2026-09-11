@@ -15,7 +15,7 @@ System.out.println(s);       // "null" と表示される
 System.out.println("a" + s); // "anull"
 String.valueOf(s);           // "null" ← static メソッド
 "abc".equals(s);             // false  ← 呼ぶ側が null でない
-Arrays.toString(null);       // "null" ← static メソッド</code></pre></div>
+Arrays.toString((int[]) null); // "null" ← static メソッド（null を直接書くと曖昧でコンパイルエラー）</code></pre></div>
 
   <h3>例外になる操作</h3>
 
@@ -28,9 +28,11 @@ a.length;            // ② フィールドアクセス（配列の length を�
 a[0];                // ③ 添字アクセス
 
 Integer i = null;
-int j = i;           // ④ アンボクシング ← ドットは無いが裏で intValue() が呼ばれる</code></pre></div>
+int j = i;           // ④ アンボクシング ← ドットは無いが裏で intValue() が呼ばれる
 
-  <div class="point trap"><p>④だけがドットのない例外です。<span class="mk">ラッパー型から基本データ型への代入</span>だけは要注意。第3節のボクシングの話とつながります。</p></div>
+switch (s) { case "a": break; }   // ⑤ switch ← ドットは無いが裏で s.hashCode() が呼ばれる</code></pre></div>
+
+  <div class="point trap"><p>④と⑤は<strong>ドットが無いのに例外になる</strong>ものです。どちらも<span class="mk">裏でメソッドが呼ばれている</span>のが理由で、④は<span class="mk">ラッパー型から基本データ型への代入</span>（第3節のボクシング）、⑤は switch が分岐のために <code>hashCode()</code> などを呼ぶためです（<a href="#sw-null">第3章 08</a>）。<br>逆に <code>System.out.println(s)</code> が落ちないのは、println が<strong>中で null を確かめてから</strong>文字列にしているからです。</p></div>
 
   <h3>「配列そのもの」と「配列の中身」を区別する</h3>
 

@@ -64,4 +64,10 @@
 
   <details class="q"><summary><span class="qn">Q21</span><span><code>yield</code> と <code>return</code> の違いは？</span></summary>
     <div class="qa"><p><strong>yield は switch 式だけを抜け、return はメソッドごと抜ける。</strong>だから switch 式の中で return は書けません。yield は予約語ではないので変数名にも使えます。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q22</span><span><code>String s = null;</code> で、default のある <code>switch (s)</code> は？</span></summary>
+    <div class="qa"><p><strong>NullPointerException。</strong>switch は分岐のために裏で <code>s.hashCode()</code> を呼ぶので、default に進む前に落ちます。default は「どの case にも一致しなかったとき」の行き先で、null を受け止める役ではありません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q23</span><span><code>println(s)</code> は落ちないのに <code>switch (s)</code> が落ちるのはなぜ？（s は null）</span></summary>
+    <div class="qa"><p><strong>println は中で null を確かめてから "null" という文字列にする</strong>が、<strong>switch は確かめずに <code>hashCode()</code> を呼ぶ</strong>から。enum なら <code>ordinal()</code>、Integer なら <code>intValue()</code> が呼ばれます。</p></div></details>
 </section>
