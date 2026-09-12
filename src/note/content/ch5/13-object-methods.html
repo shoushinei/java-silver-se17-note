@@ -142,11 +142,52 @@ class R {        // equals(Object) と hashCode() の両方をオーバーライ
 
   <div class="point"><p>逆向きは成り立たなくて構いません。<span class="mk">hashCode が同じでも equals が false</span> ということはあり得ます（別の中身が、たまたま同じ値になる）。「hashCode が等しいなら equals も true」という選択肢は誤りです。</p></div>
 
+  <h3>clone() ── 配列以外は、そのままでは呼べない</h3>
+
+  <p>Object にはもう1つ、コピーを作る <code>clone()</code> があります。ただし <strong><code>protected</code></strong> なので、普通のクラスのインスタンスに対して外から呼ぶとコンパイルエラーです。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>普通のクラスでは呼べない。配列なら呼べる<span class="tag">要注意</span></div><pre><code>class Point { int x; }
+
+Point p = new Point();
+p.clone();                 // コンパイルエラー: clone() has protected access in Object
+
+int[] a = {1, 2};
+int[] b = a.clone();       // OK。配列の clone は public で、戻り値も int[]</code></pre></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>配列の <code>clone()</code></th><th>Object の <code>clone()</code></th></tr></thead>
+    <tbody>
+      <tr><td>アクセス修飾子</td><td><strong>public</strong></td><td><strong>protected</strong></td></tr>
+      <tr><td>戻り値の型</td><td>元と同じ配列型（キャスト不要）</td><td><code>Object</code></td></tr>
+      <tr><td>検査例外</td><td>なし</td><td><code>CloneNotSupportedException</code>（throws か catch が必要）</td></tr>
+      <tr><td>コピーの深さ</td><td colspan="2">どちらも<strong>浅いコピー</strong>（参照先のオブジェクトは共有）</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>自作クラスを clone できるようにするには<span class="tag">参考</span></div><pre><code>class Point implements Cloneable {          // ① Cloneable を実装する
+    int x;
+    @Override
+    public Point clone() throws CloneNotSupportedException {   // ② public でオーバーライド
+        return (Point) super.clone();       // ③ Object の clone を呼ぶ（戻り値は Object）
+    }
+}
+
+Point p = new Point();
+p.x = 5;
+Point q = p.clone();
+q.x = 9;
+System.out.println(p.x + " " + q.x + " " + (p == q));   // 5 9 false
+
+// ① を忘れると、コンパイルは通るが実行時に CloneNotSupportedException</code></pre></div>
+
+  <div class="point"><p><span class="mk">試験で問われるのは、ほぼ配列の clone です</span>（<a href="#c2-s11">第2章 11「clone で一部が共有される」</a>）。自作クラスの clone は、「Object の clone は protected なのでそのままでは呼べない」とだけ押さえておけば十分です。<br>オーバーライドで戻り値を <code>Point</code> にできるのは<a href="#c5-s03">共変戻り値</a>、<code>protected</code> を <code>public</code> に広げられるのは<a href="#c5-s03">アクセスを広げるのは自由</a>という規則のおかげです。</p></div>
+
   <h3>まとめ</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>Object が全クラスに与える3つ<span class="tag">暗記</span></div><pre><code>toString()   既定は「クラス名@16進ハッシュ値」
 equals()     既定は参照比較（==）
 hashCode()   既定はオブジェクトごとの値
+clone()      protected なので普通のクラスでは外から呼べない（配列の clone だけ public）
 
 → どれもオーバーライドされる前提で用意されている
 → println はオブジェクトを受け取ると toString() を呼ぶ

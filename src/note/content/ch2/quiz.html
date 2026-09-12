@@ -88,4 +88,7 @@
 
   <details class="q"><summary><span class="qn">Q29</span><span>存在しないファイルの <code>Path.of("x.txt")</code> を作ると？</span></summary>
     <div class="qa"><p><strong>何も起きない（例外にならない）。</strong>Path は場所を表すだけです。<code>Files.readAllLines</code> などで実際に読むと、NoSuchFileException（IOException の子）になります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q30</span><span><code>StringBuilder[] b = a.clone(); b[0].append("!");</code> のあと、<code>a[0]</code> は変わる？</span></summary>
+    <div class="qa"><p><strong>変わる。</strong>clone は新しい配列（箱）を作るだけで、中の StringBuilder は a と b で共有されています（浅いコピー）。一方 <code>b[0] = new StringBuilder("z");</code> のように要素そのものに代入した場合は、b の箱が変わるだけで a には伝わりません。</p></div></details>
 </section>

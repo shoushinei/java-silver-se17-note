@@ -183,16 +183,68 @@ System.out.println(c[0]); // 1  ← c は無関係
 System.out.println(a == b);   // true
 System.out.println(a == c);   // false</code></pre></div>
 
-  <div class="point trap"><p><code>clone()</code> は<span class="mk">1階層目しかコピーしません（浅いコピー）</span>。2次元配列では中の行が共有されたままです。</p>
-<div class="code" data-v="ok" style="margin-top:12px"><div class="cap"><span class="dot ok"></span>2次元では中身が共有される<span class="tag">要注意</span></div><pre><code>String[][] a = { {"A","B"}, {"C","D"} };
-String[][] b = a.clone();
-b[0][0] = "X";
-System.out.println(a[0][0]);   // "X" ← 元も変わる
+  <p>配列の <code>clone()</code> は <code>public</code> で、戻り値は<strong>元と同じ配列型</strong>です（<code>int[]</code> の clone は <code>int[]</code>）。キャストも例外処理も要りません。クラスの clone との違いは<a href="#c5-s13">第5章 13</a>にあります。</p>
 
-b[0] = new String[]{"Z"};      // 行ごと差し替えれば影響しない
-System.out.println(a[0][0]);   // "X" のまま</code></pre></div></div>
+  <h3>clone で「一部が共有される」── 浅いコピー</h3>
 
-  <p>他のコピー方法もあります。<code>Arrays.copyOf(a, 5)</code> は長さを変えられ、足りない分は既定値で埋まります。</p>
+  <p><code>clone()</code> が作るのは<strong>新しい箱（配列）</strong>だけです。箱の中身は、そのまま書き写されます。書き写されるものが「値」なのか「矢印（参照）」なのかで、共有されるかどうかが決まります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>要素の型</th><th>箱に入っているもの</th><th>clone した後</th></tr></thead>
+    <tbody>
+      <tr><td>基本データ型（<code>int[]</code> など）</td><td>値そのもの</td><td><strong>完全に別物</strong>。片方を変えても、もう片方は変わらない</td></tr>
+      <tr><td>参照型（<code>StringBuilder[]</code> <code>Item[]</code> など）</td><td>オブジェクトへの矢印</td><td>箱は別だが、<strong>指す先のオブジェクトは共有</strong></td></tr>
+      <tr><td>2次元配列（<code>int[][]</code> など）</td><td>行（<code>int[]</code>）への矢印</td><td>外側の箱は別だが、<strong>中の行は共有</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>参照型の配列 ── 中身の変更は伝わり、差し替えは伝わらない<span class="tag">最頻出</span></div><pre><code>StringBuilder[] a = { new StringBuilder("x"), new StringBuilder("y") };
+StringBuilder[] b = a.clone();
+
+b[0].append("!");                  // 指す先のオブジェクトを書き換える
+b[1] = new StringBuilder("z");     // b の箱の矢印を差し替える
+
+System.out.println(a[0] + " " + a[1]);   // x! y  ← [0] は共有なので変わる。[1] は変わらない
+System.out.println(b[0] + " " + b[1]);   // x! z
+System.out.println(a == b);              // false  配列（箱）は別
+System.out.println(a[0] == b[0]);        // true   中のオブジェクトは同じ
+System.out.println(a[1] == b[1]);        // false  差し替えたので別</code></pre></div>
+
+  <div class="point trap"><p>判定は1つだけです。<span class="mk"><code>b[i].メソッド()</code> や <code>b[i].フィールド = …</code> で指す先を書き換えたら、元の配列にも伝わる</span>。<code>b[i] = …</code> で要素そのものに代入したら、b の箱が変わるだけで元の配列には伝わりません。<br><a href="#c4-s03">第4章 03</a>の「参照を渡したメソッドの中で、中身の書き換えは伝わるが、差し替えは伝わらない」とまったく同じ仕組みです。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>String の配列は、共有されていても困らない<span class="tag">対比</span></div><pre><code>String[] s = {"p", "q"};
+String[] t = s.clone();
+t[0] = t[0] + "!";                   // 新しい String を作って t[0] に代入 ＝ 差し替え
+System.out.println(s[0] + " " + t[0]);   // p p!</code></pre></div>
+
+  <p>clone 直後は s[0] と t[0] が同じ String を指しています。ただ String は<a href="#c2-s07">不変</a>で、指す先を書き換えるメソッドがありません。変更は必ず「新しい String を作って代入」＝差し替えになるので、<strong>結果として元の配列には影響しません</strong>。StringBuilder との違いに注意してください。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2次元配列 ── 中の行が共有される<span class="tag">要注意</span></div><pre><code>int[][] m = { {1, 2}, {3, 4} };
+int[][] n = m.clone();
+
+n[0][0] = 9;                     // 共有している行の中身を書き換える
+n[1] = new int[]{7, 7};          // n の箱の矢印を差し替える
+
+System.out.println(m[0][0]);     // 9  ← 元も変わる
+System.out.println(m[1][0]);     // 3  ← 差し替えは伝わらない
+System.out.println(m[0] == n[0]);// true  行は同じもの</code></pre></div>
+
+  <p>2次元配列は「行を要素に持つ配列」なので、上の StringBuilder の例と同じ形です。<code>n[0][0] = 9</code> は <code>n[0]</code> が指す行の中身の書き換え、<code>n[1] = …</code> は要素そのものへの代入です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>行まで別にしたいとき（深いコピー）<span class="tag">参考</span></div><pre><code>int[][] m = { {1, 2}, {3, 4} };
+int[][] d = new int[m.length][];
+for (int i = 0; i &lt; m.length; i++) {
+    d[i] = m[i].clone();         // 行も1つずつ clone する
+}
+d[0][1] = 8;
+System.out.println(m[0][1] + " " + d[0][1]);   // 2 8 ← 元は変わらない</code></pre></div>
+
+  <p>他のコピー方法もあります。<code>Arrays.copyOf(a, 5)</code> は長さを変えられ、足りない分は既定値で埋まります。ただし<span class="mk">copyOf も浅いコピー</span>で、共有のされ方は clone と同じです。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>Arrays.copyOf も中身は共有<span class="tag">要注意</span></div><pre><code>StringBuilder[] a = { new StringBuilder("x") };
+StringBuilder[] c = Arrays.copyOf(a, 2);   // 長さ2。足りない [1] は既定値の null
+c[0].append("?");
+System.out.println(a[0] + " " + c[1]);     // x? null</code></pre></div>
 
   <div class="point link"><p>第4章とつながります。<span class="mk pink">配列は参照型</span>なので、メソッドに渡すと参照がコピーされます。<code>arr[0] = 99</code> は呼び出し元に伝わりますが、<code>arr = new int[]{...}</code> は伝わりません。</p></div>
 
