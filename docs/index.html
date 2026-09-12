@@ -46,6 +46,9 @@ body{margin:0;background:var(--washi);color:var(--sumi);font-family:var(--body);
 .toc a:hover{background:var(--washi-2)}
 .toc a.on{background:var(--sumi);color:var(--washi)}
 .toc a.on .tn{color:var(--marker)}
+.toc a.toc-exam{border:1px solid var(--sumi);color:var(--sumi);font-weight:700;margin:0 0 18px}
+.toc a.toc-exam:hover{background:var(--sumi);color:var(--washi)}
+.toc a.toc-exam .tn{color:inherit}
 .tn{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--sumi-3);flex:none;width:16px}
 .toc-gap{height:14px}
 main{min-width:0;padding:0 44px 120px}
@@ -59,6 +62,11 @@ main{min-width:0;padding:0 44px 120px}
 
 .legend{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 0}
 .lg{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);border-radius:6px;padding:8px 13px;background:#fff;font-size:12.5px}
+.hero-exam{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;max-width:620px;margin:26px 0 0;padding:14px 18px;border:2px solid var(--sumi);border-radius:8px;background:#fff;color:var(--sumi);text-decoration:none;transition:background .15s,color .15s}
+.hero-exam:hover{background:var(--sumi);color:var(--washi)}
+.hx-k{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.04em}
+.hx-d{font-size:12.5px;color:inherit;opacity:.8;flex:1 1 220px}
+.hx-a{font-weight:700;font-size:18px}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
 .dot.ok{background:var(--ok)}.dot.err{background:var(--err)}.dot.run{background:var(--run)}
 
@@ -416,6 +424,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     border-radius: 6px;
   }
   .toc a .cnt { margin-left: auto; }
+  .toc a.toc-exam { padding-left: 10px; }
   .toc-ch > a:last-child { margin-bottom: 8px; }
 
   /* ---------------- 本文 ---------------- */
@@ -507,6 +516,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
   <button type="button" class="toc-close" id="mnav-close" aria-label="目次を閉じる">×</button>
   <div class="toc-brand">Java Silver<br>SE 17 統合ノート</div>
   <div class="toc-sub">1Z0-825 / 全6章 完成版</div>
+  <a class="toc-exam" href="exams/index.html"><span class="tn">✎</span>自作模擬試験</a>
   <div class="search">
     <input id="q" type="search" placeholder="論点を検索（/ で移動）" autocomplete="off" aria-label="ノート内を検索">
     <span class="x" id="qx" role="button" tabindex="0" aria-label="検索を解除">×</span>
@@ -623,6 +633,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <span class="lg"><span class="dot err"></span>コンパイルエラー</span>
     <span class="lg"><span class="dot run"></span>実行時に例外</span>
   </div>
+  <a class="hero-exam" href="exams/index.html"><span class="hx-k">自作模擬試験</span><span class="hx-d">90分・60問。解いたあとは解説から、このノートの該当節へ戻れます</span><span class="hx-a" aria-hidden="true">→</span></a>
 </header>
 
 <section id="idx">
@@ -1705,6 +1716,27 @@ catch (Exception e) { System.out.println(y); }   // コンパイルエラー</co
         System.out.println(this.x);   // 10
     }
 }</code></pre></div>
+
+  <h3>自分自身で初期化する ── <code>int num = num;</code></h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>右辺の num はもうローカル変数<span class="tag">頻出</span></div><pre><code>class Counter {
+    int num = 10;
+    void m() {
+        int num = num;           // コンパイルエラー: variable num might not have been initialized
+        int n = n + 1;           // 同じ理由でコンパイルエラー
+    }
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>フィールドを使うなら this.<span class="tag">OK</span></div><pre><code>class Counter {
+    int num = 10;
+    void m() {
+        int num = this.num + 1;       // OK。フィールドの 10 を使う
+        System.out.println(num);      // 11
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>ローカル変数のスコープは、<span class="mk">宣言したその場所（変数名を書いた位置）から</span>始まります。<code>=</code> の右側に書いた <code>num</code> の時点で、すでに「いま宣言しているローカル変数 num」がフィールドを隠しています。そのローカル変数にはまだ値が入っていないので、未初期化エラーです。<br>「右辺はフィールドの 10 だから 10 が入る」と読ませる引っかけです。フィールド同士でも <code>int x = x + 1;</code> は <code>self-reference in initializer</code> でエラーになります。</p></div>
+
+  <div class="point link"><p>コンストラクタの <code>name = name;</code>（<a href="#c4-s05">第4章 05</a>）はエラーにならず、引数に引数を代入するだけでした。<strong>引数はすでに値を持っている</strong>ので未初期化にならない、というのが違いです。</p></div>
 </section>
 
 <!-- ch2/06-var-type-inference.html · var（型推論） -->
@@ -2418,6 +2450,21 @@ int[][] c = new int[][3];     // コンパイルエラー: 前を省略はでき
 b[0] = new int[5];            // 行ごとに長さを変えられる（ジャグ配列）
 b[1] = new int[2];</code></pre></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>初期化子の入れ子の深さ ＝ 次元の数<span class="tag">頻出</span></div><pre><code>int[][] a = {{1, 2}, {3}};           // OK。行ごとに長さが違ってよい
+int[][] b = {{1}, null, {}};         // OK。null の行、要素0個の行もよい
+int[] c[] = {{1}, {2}};              // OK。int[][] と同じ意味
+int[][] d = new int[][]{{1}, {2, 3}};// OK
+
+int[][] e = {1, 2};                  // コンパイルエラー: int cannot be converted to int[]
+int[][] f = {{1, 2}, 3};             // コンパイルエラー: 3 の場所には int[] が必要
+int[] g = {{1}, {2}};                // コンパイルエラー: 1次元に { } は入れられない
+int[][][] h = {{1, 2}, {3, 4}};      // コンパイルエラー: 3次元なのに2段しかない
+int[][] i = new int[][]{1, 2};       // コンパイルエラー: new でも同じ
+int[][] j = new int[2][]{{1}, {2}};  // コンパイルエラー: サイズと初期化子は併用できない
+int[][] k = new int[2];              // コンパイルエラー: 右辺は1次元</code></pre></div>
+
+  <div class="point"><p>判定のコツは、<span class="mk">一番外側の <code>{ }</code> の中身が「1つ下の次元の型」になっているか</span>を見ることです。<code>int[][]</code> の外側の <code>{ }</code> には <code>int[]</code>（<code>{ }</code> か <code>null</code>）を並べます。<code>int</code> の値がそのまま置かれていたらエラーです。</p></div>
+
   <h3>階層を数える</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>角括弧の数だけ階層がある<span class="tag">最重要</span></div><pre><code>String[][] array = { {"A","B"}, null, {"C","D","E"} };
@@ -2886,6 +2933,27 @@ Path c = new Path("a.txt");              // コンパイルエラー
 
 List&lt;String&gt; d = new ArrayList&lt;&gt;();     // OK
 Path e = Path.of("a.txt");               // OK</code></pre></div>
+
+  <h3>型引数に親子関係は無い ── <code>List&lt;Animal&gt;</code> と <code>List&lt;Dog&gt;</code></h3>
+
+  <p><code>class Dog extends Animal</code> のとき、<strong>要素として</strong>入れるのと、<strong>リストごと</strong>代入するのとで結果が変わります。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親の型のリストに、子を入れるのは OK<span class="tag">OK</span></div><pre><code>List&lt;Animal&gt; animals = new ArrayList&lt;&gt;();
+animals.add(new Dog());          // OK。Dog は Animal の一種
+animals.add(new Animal());       // OK
+Animal first = animals.get(0);   // 取り出すと Animal 型</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>子の型のリストに親は入れられない。リスト同士の代入も不可<span class="tag">頻出</span></div><pre><code>List&lt;Dog&gt; dogs = new ArrayList&lt;&gt;();
+dogs.add(new Animal());                      // コンパイルエラー: Animal cannot be converted to Dog
+
+List&lt;Animal&gt; a1 = new ArrayList&lt;Dog&gt;();      // コンパイルエラー
+List&lt;Animal&gt; a2 = dogs;                      // コンパイルエラー: List&lt;Dog&gt; cannot be converted to List&lt;Animal&gt;
+
+Collection&lt;Dog&gt; c = new ArrayList&lt;Dog&gt;();    // OK ← 変わるのが &lt; &gt; の外側だけならよい</code></pre></div>
+
+  <div class="point trap"><p>Dog が Animal の子でも、<span class="mk"><code>List&lt;Dog&gt;</code> は <code>List&lt;Animal&gt;</code> の子ではありません</span>。もし代入できると、<code>a2.add(new Animal())</code> で Dog 専用のリストに Animal が紛れ込んでしまうからです。<br>親子関係を使えるのは <strong><code>&lt; &gt;</code> の外側</strong>（<code>ArrayList</code> → <code>List</code> → <code>Collection</code>）だけで、<strong><code>&lt; &gt;</code> の中身は左右で完全に一致</strong>させます（右辺を <code>&lt;&gt;</code> にすれば自動で一致します）。</p></div>
+
+  <div class="point link"><p>配列は逆に <code>Animal[] arr = new Dog[1];</code> が<strong>コンパイルできてしまい</strong>、Animal を入れたときに実行時の ArrayStoreException で止まります（<a href="#c2-s11">第2章 11 配列</a>）。ジェネリクスは同じ事故を<span class="mk">コンパイルの時点で</span>防ぐ設計です。</p></div>
 
   <h3>拡張for文で回せるのは「配列」か「Iterable」だけ</h3>
 
@@ -4182,6 +4250,36 @@ m(new String[]{"a"});// 1（配列をそのまま渡せる）</code></pre></div>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2つの制約<span class="tag">NG</span></div><pre><code>void m(String... s, int x) { }      // エラー: 可変長引数は最後だけ
 void m(int... a, String... b) { }   // エラー: 2つは書けない
 void m(int x, String... s) { }      // OK</code></pre></div>
+
+  <h3>戻り値と return の規則</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>int m(){ x * 2; }</code></td><td><strong>×</strong></td><td>式だけでは文にならない（<code>not a statement</code>）。<code>return x * 2;</code> と書く</td></tr>
+      <tr><td><code>String m(boolean f){ if (f) return "y"; }</code></td><td><strong>×</strong></td><td>f が false の経路で値を返していない（<code>missing return statement</code>）</td></tr>
+      <tr><td><code>int m(boolean f){ if (f) return 1; else return 2; }</code></td><td>○</td><td>すべての経路で return している</td></tr>
+      <tr><td><code>int m(){ while (true) { } }</code></td><td>○</td><td>メソッドの終わりに到達しないので return は不要</td></tr>
+      <tr><td><code>int m(){ throw new RuntimeException(); }</code></td><td>○</td><td>同上。例外で抜ける</td></tr>
+      <tr><td><code>int m(){ return 1; System.out.println(); }</code></td><td><strong>×</strong></td><td>return の後ろは到達不能（<code>unreachable statement</code>）</td></tr>
+      <tr><td><code>void m(){ return; }</code></td><td>○</td><td>値なしの return はメソッドを終えるだけ。コンストラクタでも書ける</td></tr>
+      <tr><td><code>void m(){ return 1; }</code></td><td><strong>×</strong></td><td>void は値を返せない（<code>unexpected return value</code>）</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>戻り値は「戻り値型の変数に代入できるか」で判定します（<a href="#c2-s03">第2章 03 型変換</a>と同じ規則）。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値の型変換<span class="tag">要注意</span></div><pre><code>long   a() { return 10; }      // OK。int → long は拡大変換
+double b() { return 10; }      // OK。10.0 が返る
+Object c() { return 1; }       // OK。Integer にボクシングしてから Object へ
+byte   d() { return 10; }      // OK。範囲内の定数なら縮小できる
+char   e() { return 65; }      // OK。'A'
+int    f() { return 1.0; }     // コンパイルエラー: double → int は縮小
+byte   g() { return 200; }     // コンパイルエラー: byte の範囲外
+Integer h() { return 1L; }     // コンパイルエラー: long は Integer にならない
+int    i() { return null; }    // コンパイルエラー: 基本データ型に null は入らない</code></pre></div>
+
+  <div class="point trap"><p>「<code>long</code> のメソッドで <code>return 10;</code> は int だからエラー」は誤りです。<span class="mk">return は代入と同じ</span>で、<code>long x = 10;</code> が通るなら <code>return 10;</code> も通ります。<br>メソッドが値を返すかどうかは、<strong>メソッドの最後まで流れ着く経路があるか</strong>で決まります。<code>while (true)</code> や <code>throw</code> で終わるなら return は要りません。</p></div>
 </section>
 
 <!-- ch4/04-constructors.html · コンストラクタ -->
@@ -5290,6 +5388,42 @@ A a = new B();
 a.m(5);        // A ← オーバーライドされていないので親のものが動く</code></pre></div>
 
   <div class="point trap"><p>オーバーライドのつもりで<span class="mk">引数の型を書き間違える</span>と、静かにオーバーロードになります。コンパイルは通り、出力だけが変わる。<br><code>@Override</code> を付けていればここで止まります。黒本はこの引っかけを多用します。</p></div>
+
+  <h3>呼ばれるメソッドは2段階で決まる</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>段階</th><th>いつ</th><th>何を見るか</th><th>決まること</th></tr></thead>
+    <tbody>
+      <tr><td>① オーバーロードの選択</td><td><strong>コンパイル時</strong></td><td>変数の型（宣言型）と、引数の<strong>宣言型</strong></td><td>どの<strong>シグネチャ</strong>（引数の形）を呼ぶか</td></tr>
+      <tr><td>② オーバーライドの選択</td><td><strong>実行時</strong></td><td>実体の型</td><td>①で決めたシグネチャの、<strong>どのクラスの</strong>メソッドを動かすか</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>引数の実体が ArrayList でも、変数の型で選ばれる<span class="tag">頻出</span></div><pre><code>class Printer {
+    void print(Collection&lt;String&gt; c) { System.out.print("C "); }
+    void print(List&lt;String&gt; l)       { System.out.print("L "); }
+}
+
+Collection&lt;String&gt; c = new ArrayList&lt;&gt;();
+Printer p = new Printer();
+p.print(c);                        // C ← 変数 c の型は Collection
+p.print((List&lt;String&gt;) c);         // L ← キャストで型を変えれば List 版
+p.print(new ArrayList&lt;String&gt;());  // L ← ArrayList は List にも Collection にも合う。より具体的な List 版</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>① と ② が両方効く<span class="tag">最頻出</span></div><pre><code>class A {
+    void who(Object o) { System.out.print("A-Object "); }
+    void who(String s) { System.out.print("A-String "); }
+}
+class B extends A {
+    void who(Object o) { System.out.print("B-Object "); }   // who(Object) だけオーバーライド
+}
+
+A a = new B();
+Object o = "x";
+a.who(o);       // B-Object
+a.who("x");     // A-String</code></pre></div>
+
+  <div class="point"><p><code>a.who(o)</code>: ① 引数 <code>o</code> の宣言型は <code>Object</code>。中身が文字列でも <code>who(Object)</code> が選ばれます。② 実体は B で、B は <code>who(Object)</code> をオーバーライドしているので「B-Object」。<br><code>a.who("x")</code>: ① 引数は <code>String</code> なので <code>who(String)</code>。② B は <code>who(String)</code> をオーバーライドしていないので、A のものが動き「A-String」。<br><span class="mk">オーバーロードは「実体」を見ない、オーバーライドは「実体」を見る</span>。この1行で両方の問題が解けます。</p></div>
 </section>
 
 <!-- ch5/05-declared-vs-runtime-type.html · 宣言型か実体型か ★核心 -->
@@ -5463,6 +5597,30 @@ sb = new StringBuilder();  // error</code></pre></div>
   <div class="point trap"><p>参照型の <code>final</code> が固定するのは<span class="mk">矢印であって、指す先の中身ではありません</span>。「<code>final</code> なら中身も変えられない」は誤りで、選択肢に出ます。<br>本当に中身も不変にしたければ <code>record</code> や不変クラスを使います。</p></div>
 
   <div class="point"><p><code>final</code> クラスの例は <code>String</code>、<code>Integer</code> などのラッパークラス、そして <code>record</code>（暗黙）。<br><code>abstract</code> とは<strong>正反対の意味</strong>なので同時には付けられません。「継承を強制する」と「継承を禁止する」は両立しません。</p></div>
+
+  <h3>abstract / final / インタフェースの組み合わせ ── 一覧</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>abstract final class A</code></td><td><strong>×</strong></td><td>継承の強制と禁止で矛盾（<code>illegal combination of modifiers</code>）</td></tr>
+      <tr><td><code>final interface I</code></td><td><strong>×</strong></td><td>インタフェースは実装されるためにある</td></tr>
+      <tr><td><code>abstract interface I</code></td><td>○</td><td>インタフェースは暗黙に abstract。書いても冗長なだけ</td></tr>
+      <tr><td>abstract クラスの <code>final void m(){ }</code></td><td>○</td><td>本体があるので問題ない。子はオーバーライドできないだけ</td></tr>
+      <tr><td>abstract クラスの <code>static void m(){ }</code></td><td>○</td><td>インスタンス不要なので、クラス名で呼べる</td></tr>
+      <tr><td>普通のクラスの <code>abstract void m();</code></td><td><strong>×</strong></td><td>abstract メソッドを持つクラスは abstract でなければならない</td></tr>
+      <tr><td>final クラスの <code>abstract void m();</code></td><td><strong>×</strong></td><td>同上。しかも final なので誰も実装できない</td></tr>
+      <tr><td><code>final abstract void m();</code></td><td><strong>×</strong></td><td>オーバーライドの強制と禁止で矛盾</td></tr>
+      <tr><td><code>private abstract void m();</code></td><td><strong>×</strong></td><td>子から見えないので実装できない</td></tr>
+      <tr><td><code>static abstract void m();</code></td><td><strong>×</strong></td><td>static はオーバーライドされない</td></tr>
+      <tr><td><code>protected abstract void m();</code></td><td>○</td><td>子から見えるので実装できる</td></tr>
+      <tr><td><code>abstract void m(){ }</code></td><td><strong>×</strong></td><td>abstract メソッドに本体は書けない</td></tr>
+      <tr><td>インタフェースの <code>final void m();</code></td><td><strong>×</strong></td><td>インタフェースのメソッドに final は付けられない（<a href="#c5-s10">節10</a>）</td></tr>
+      <tr><td>コンストラクタに <code>final</code> / <code>abstract</code> / <code>static</code></td><td><strong>×</strong></td><td>コンストラクタは継承もオーバーライドもされない（<code>modifier ... not allowed here</code>）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>覚え方は2つだけです。<span class="mk">abstract は「子に書かせる」、final は「子に触らせない」</span>。子に書かせるには、子から見えて（private ×）、子がオーバーライドできる（static ×・final ×）必要があります。<br>そして<strong>abstract メソッドが1つでもあれば、クラスも abstract</strong>。この2点から表の ○× はすべて導けます。</p></div>
 </section>
 
 <!-- ch5/09-interface.html · インタフェース -->
@@ -5532,6 +5690,37 @@ I i = new Impl();           // OK。型として使うのは自由</code></pre><
   </table></div>
 
   <div class="point"><p><code>new I(){ ... }</code> のように後ろに <code>{ }</code> が続く形（匿名クラス）は通りますが、これは<strong>インタフェースを実装した名前の無いクラスをその場で定義している</strong>だけで、インタフェースのインスタンス化ではありません。<span class="mk">匿名クラスは SE 17 の出題範囲外</span>です。</p></div>
+
+  <h3>同じメソッドを2つのインタフェースから受け継ぐとき</h3>
+
+  <p>同じ名前・同じ引数の抽象メソッドを、2つのインタフェースから受け継ぐことがあります。<strong>1つのメソッドで両方の約束を満たせるか</strong>で決まります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>2つの宣言の戻り値型</th><th>結果</th><th>実装クラスが書く戻り値型</th></tr></thead>
+    <tbody>
+      <tr><td>同じ（<code>void run()</code> と <code>void run()</code>）</td><td>○</td><td>それと同じ。1つ書けば両方を実装したことになる</td></tr>
+      <tr><td>片方が他方の子（<code>List</code> と <code>Collection</code>）</td><td>○</td><td><strong>子のほう</strong>（<code>List</code>）か、さらにその子</td></tr>
+      <tr><td>互いに親子関係が無い（<code>List</code> と <code>Set</code>、<code>int</code> と <code>long</code>）</td><td><strong>×</strong></td><td>どう書いても両方は満たせない</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>List と Collection なら両立する<span class="tag">OK</span></div><pre><code>interface A { List&lt;String&gt; items(); }
+interface B { Collection&lt;String&gt; items(); }
+
+class C implements A, B {
+    public List&lt;String&gt; items() { return List.of("x"); }   // OK。List は Collection の子
+}
+// public Collection&lt;String&gt; items() と書くと、A の約束（List を返す）を満たせずエラー</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>List と Set は両立しない<span class="tag">頻出</span></div><pre><code>interface A { List&lt;String&gt; items(); }
+interface B { Set&lt;String&gt; items(); }
+
+interface AB extends A, B { }      // コンパイルエラー: types B and A are incompatible
+class C implements A, B { ... }    // 同じくコンパイルエラー</code></pre></div>
+
+  <div class="point"><p>List でもあり Set でもあるものを返すメソッドは書けないので、<span class="mk">受け継いだ時点で</span>エラーになります。実装クラスだけでなく、<code>extends A, B</code> と書いた<strong>インタフェース自身</strong>がエラーになるのがポイントです。<br>戻り値の親子関係は<a href="#c5-s03">節03 共変戻り値</a>、List・Set・Collection の関係は<a href="#c2-s14">第2章 14</a>で確認できます。基本データ型には親子関係が無いので、<code>int</code> と <code>long</code> も両立しません。</p></div>
+
+  <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
 </section>
 
 <!-- ch5/10-interface-methods.html · default / static / private -->
@@ -5600,6 +5789,32 @@ new Sub().m();      // クラスが勝つ</code></pre></div>
   </table></div>
 
   <div class="point"><p><code>private</code> メソッド（SE 9以降）は、<span class="mk">複数の default メソッドで共通処理をくくり出す</span>ために追加されました。<code>private static</code> も書けます。外部からは一切見えません。</p></div>
+
+  <h3>サブインタフェースの default で、親の抽象メソッドを実装する</h3>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>インタフェースがインタフェースの穴を埋める<span class="tag">頻出</span></div><pre><code>interface Shape {
+    double area();                               // 抽象メソッド
+}
+interface Square extends Shape {
+    double side();
+    default double area() { return side() * side(); }   // 親の area() を default で実装
+}
+class Tile implements Square {
+    public double side() { return 2; }           // area() は書かなくてよい
+}
+
+Shape s = new Tile();
+System.out.println(s.area());    // 4.0</code></pre></div>
+
+  <div class="point"><p>インタフェースは、<code>extends</code> した親インタフェースの抽象メソッドを <span class="mk"><code>default</code> メソッドとして書き直せば「実装済み」にできます</span>。Tile に残っている義務は、まだ本体の無い <code>side()</code> だけです。<br>Tile の中に area() が見当たらなくても、コンパイルエラーにはなりません。「どこかで本体が書かれているか」を、親インタフェースまでたどって確かめます。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>逆向き ── default を抽象メソッドに戻す<span class="tag">要注意</span></div><pre><code>interface Greeter { default void hi() { System.out.println("hi"); } }
+interface Silent extends Greeter { void hi(); }   // 本体無しで宣言し直す → 再び抽象
+
+class Mute implements Silent { }
+// error: Mute is not abstract and does not override abstract method hi() in Silent</code></pre></div>
+
+  <div class="point trap"><p>サブインタフェースで本体無しで宣言し直すと、<span class="mk">親の default は引き継がれず、抽象メソッドに戻ります</span>。実装クラスは hi() を書かなければなりません。<br>判定の基準は、<strong>実装クラスから見て一番近い宣言に本体があるかどうか</strong>です。</p></div>
 
 
   <h3>メソッドに本体を書けるかは、修飾子で決まる</h3>
@@ -6888,7 +7103,7 @@ NoteApp.chapters = NoteApp.chapters || [];
 /* スクロール位置に追従して、目次の現在地に .on を付ける。
    スマホでは目次が畳まれていて見えないので、上部バーにも章と節を出す。 */
 (function () {
-  var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a[href^="#"]'));
   var secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
 
   var now = document.getElementById("mnav-now");
@@ -7047,7 +7262,7 @@ NoteApp.search = (function () {
   });
 
   var linkOf = {};
-  Array.prototype.slice.call(document.querySelectorAll(".toc a")).forEach(function (a) {
+  Array.prototype.slice.call(document.querySelectorAll('.toc a[href^="#"]')).forEach(function (a) {
     linkOf[a.getAttribute("href").slice(1)] = a;
   });
   var heads = Array.prototype.slice.call(document.querySelectorAll(".toc-h"));

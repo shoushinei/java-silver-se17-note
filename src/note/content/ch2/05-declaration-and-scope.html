@@ -1,0 +1,78 @@
+<section id="c2-s05">
+  <div class="sh"><span class="num">05</span><h2>宣言・初期化・スコープ</h2></div>
+
+  <h3>ローカル変数は初期化が必須</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>未初期化のまま使用<span class="tag">NG</span></div><pre><code>void m() {
+    int x;
+    System.out.println(x);   // コンパイルエラー: 初期化されていない
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>フィールドは既定値が入る<span class="tag">OK</span></div><pre><code>class Sample {
+    int x;              // 0
+    String s;           // null
+    boolean b;          // false
+
+    void m() { System.out.println(x); }   // OK。0 が出力される
+}</code></pre></div>
+
+  <div class="point"><p><span class="mk">ローカル変数には既定値がなく、フィールドにはある。</span>この非対称が問われます。宣言だけして使わなければローカル変数もエラーにならないので、<strong>「使ったかどうか」</strong>が判定の分かれ目です。</p></div>
+
+  <h3>分岐で初期化した場合</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>すべての経路で初期化されていない<span class="tag">NG</span></div><pre><code>int x;
+if (flag) { x = 1; }
+System.out.println(x);   // コンパイルエラー: flag が false の経路がある</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>else があれば通る<span class="tag">OK</span></div><pre><code>int x;
+if (flag) { x = 1; } else { x = 2; }
+System.out.println(x);   // OK</code></pre></div>
+
+  <div class="point link"><p>第6章の「到達不能コード」と同じ判定方法です。<span class="mk pink">コンパイラは全経路を調べる</span>ので、1つでも初期化されない経路があればエラーになります。</p></div>
+
+  <h3>ブロックスコープ</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ブロックを出ると消える<span class="tag">NG</span></div><pre><code>{
+    int x = 10;
+}
+System.out.println(x);       // コンパイルエラー
+
+for (int i = 0; i < 3; i++) { }
+System.out.println(i);       // コンパイルエラー: i は for の中だけ
+
+try { int y = 10; }
+catch (Exception e) { System.out.println(y); }   // コンパイルエラー</code></pre></div>
+
+  <h3>同名の変数</h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>入れ子のブロックで同名は不可<span class="tag">NG</span></div><pre><code>int x = 10;
+{
+    int x = 20;      // コンパイルエラー: 外側と重複
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>フィールドとローカル変数の同名は可<span class="tag">OK</span></div><pre><code>class Sample {
+    int x = 10;
+    void m() {
+        int x = 20;              // OK。フィールドを隠す（シャドーイング）
+        System.out.println(x);        // 20
+        System.out.println(this.x);   // 10
+    }
+}</code></pre></div>
+
+  <h3>自分自身で初期化する ── <code>int num = num;</code></h3>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>右辺の num はもうローカル変数<span class="tag">頻出</span></div><pre><code>class Counter {
+    int num = 10;
+    void m() {
+        int num = num;           // コンパイルエラー: variable num might not have been initialized
+        int n = n + 1;           // 同じ理由でコンパイルエラー
+    }
+}</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>フィールドを使うなら this.<span class="tag">OK</span></div><pre><code>class Counter {
+    int num = 10;
+    void m() {
+        int num = this.num + 1;       // OK。フィールドの 10 を使う
+        System.out.println(num);      // 11
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>ローカル変数のスコープは、<span class="mk">宣言したその場所（変数名を書いた位置）から</span>始まります。<code>=</code> の右側に書いた <code>num</code> の時点で、すでに「いま宣言しているローカル変数 num」がフィールドを隠しています。そのローカル変数にはまだ値が入っていないので、未初期化エラーです。<br>「右辺はフィールドの 10 だから 10 が入る」と読ませる引っかけです。フィールド同士でも <code>int x = x + 1;</code> は <code>self-reference in initializer</code> でエラーになります。</p></div>
+
+  <div class="point link"><p>コンストラクタの <code>name = name;</code>（<a href="#c4-s05">第4章 05</a>）はエラーにならず、引数に引数を代入するだけでした。<strong>引数はすでに値を持っている</strong>ので未初期化にならない、というのが違いです。</p></div>
+</section>

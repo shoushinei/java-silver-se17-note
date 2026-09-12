@@ -1,0 +1,59 @@
+<section id="c5-s04">
+  <div class="sh"><span class="num">04</span><h2>オーバーライドとオーバーロードの区別</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>オーバーライド</th><th>オーバーロード</th></tr></thead>
+    <tbody>
+      <tr><td>場所</td><td><strong>親子関係</strong>の間</td><td>同じクラス内でもよい</td></tr>
+      <tr><td>引数リスト</td><td><strong>完全一致</strong></td><td><strong>違う</strong></td></tr>
+      <tr><td>戻り値型</td><td>同じかサブ型</td><td>無関係（区別に使われない）</td></tr>
+      <tr><td>どれが呼ばれるか</td><td><strong>実行時</strong>の実体型で決まる</td><td><strong>コンパイル時</strong>の宣言型で決まる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>引数を1文字変えるとオーバーロードになる<span class="tag">最頻出</span></div><pre><code>class A { void m(int x){ System.out.println("A"); } }
+class B extends A {
+    void m(long x){ System.out.println("B"); }     // 引数が違う → オーバーロード
+}
+
+A a = new B();
+a.m(5);        // A ← オーバーライドされていないので親のものが動く</code></pre></div>
+
+  <div class="point trap"><p>オーバーライドのつもりで<span class="mk">引数の型を書き間違える</span>と、静かにオーバーロードになります。コンパイルは通り、出力だけが変わる。<br><code>@Override</code> を付けていればここで止まります。黒本はこの引っかけを多用します。</p></div>
+
+  <h3>呼ばれるメソッドは2段階で決まる</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>段階</th><th>いつ</th><th>何を見るか</th><th>決まること</th></tr></thead>
+    <tbody>
+      <tr><td>① オーバーロードの選択</td><td><strong>コンパイル時</strong></td><td>変数の型（宣言型）と、引数の<strong>宣言型</strong></td><td>どの<strong>シグネチャ</strong>（引数の形）を呼ぶか</td></tr>
+      <tr><td>② オーバーライドの選択</td><td><strong>実行時</strong></td><td>実体の型</td><td>①で決めたシグネチャの、<strong>どのクラスの</strong>メソッドを動かすか</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>引数の実体が ArrayList でも、変数の型で選ばれる<span class="tag">頻出</span></div><pre><code>class Printer {
+    void print(Collection&lt;String&gt; c) { System.out.print("C "); }
+    void print(List&lt;String&gt; l)       { System.out.print("L "); }
+}
+
+Collection&lt;String&gt; c = new ArrayList&lt;&gt;();
+Printer p = new Printer();
+p.print(c);                        // C ← 変数 c の型は Collection
+p.print((List&lt;String&gt;) c);         // L ← キャストで型を変えれば List 版
+p.print(new ArrayList&lt;String&gt;());  // L ← ArrayList は List にも Collection にも合う。より具体的な List 版</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>① と ② が両方効く<span class="tag">最頻出</span></div><pre><code>class A {
+    void who(Object o) { System.out.print("A-Object "); }
+    void who(String s) { System.out.print("A-String "); }
+}
+class B extends A {
+    void who(Object o) { System.out.print("B-Object "); }   // who(Object) だけオーバーライド
+}
+
+A a = new B();
+Object o = "x";
+a.who(o);       // B-Object
+a.who("x");     // A-String</code></pre></div>
+
+  <div class="point"><p><code>a.who(o)</code>: ① 引数 <code>o</code> の宣言型は <code>Object</code>。中身が文字列でも <code>who(Object)</code> が選ばれます。② 実体は B で、B は <code>who(Object)</code> をオーバーライドしているので「B-Object」。<br><code>a.who("x")</code>: ① 引数は <code>String</code> なので <code>who(String)</code>。② B は <code>who(String)</code> をオーバーライドしていないので、A のものが動き「A-String」。<br><span class="mk">オーバーロードは「実体」を見ない、オーバーライドは「実体」を見る</span>。この1行で両方の問題が解けます。</p></div>
+</section>

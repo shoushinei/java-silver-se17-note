@@ -1,0 +1,48 @@
+<section id="c5-s08">
+  <div class="sh"><span class="num">08</span><h2>final</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>付ける先</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td><strong>クラス</strong></td><td>継承できない（<code>cannot inherit from final</code>）</td></tr>
+      <tr><td><strong>メソッド</strong></td><td>オーバーライドできない</td></tr>
+      <tr><td><strong>変数</strong></td><td>再代入できない</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>final 変数は「参照が固定される」だけ<span class="tag">要注意</span></div><pre><code>final int[] arr = {1, 2};
+arr[0] = 100;              // OK。中身は変えられる
+arr = new int[]{3};        // error: cannot assign a value to final variable arr
+
+final StringBuilder sb = new StringBuilder("a");
+sb.append("b");            // OK
+sb = new StringBuilder();  // error</code></pre></div>
+
+  <div class="point trap"><p>参照型の <code>final</code> が固定するのは<span class="mk">矢印であって、指す先の中身ではありません</span>。「<code>final</code> なら中身も変えられない」は誤りで、選択肢に出ます。<br>本当に中身も不変にしたければ <code>record</code> や不変クラスを使います。</p></div>
+
+  <div class="point"><p><code>final</code> クラスの例は <code>String</code>、<code>Integer</code> などのラッパークラス、そして <code>record</code>（暗黙）。<br><code>abstract</code> とは<strong>正反対の意味</strong>なので同時には付けられません。「継承を強制する」と「継承を禁止する」は両立しません。</p></div>
+
+  <h3>abstract / final / インタフェースの組み合わせ ── 一覧</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>abstract final class A</code></td><td><strong>×</strong></td><td>継承の強制と禁止で矛盾（<code>illegal combination of modifiers</code>）</td></tr>
+      <tr><td><code>final interface I</code></td><td><strong>×</strong></td><td>インタフェースは実装されるためにある</td></tr>
+      <tr><td><code>abstract interface I</code></td><td>○</td><td>インタフェースは暗黙に abstract。書いても冗長なだけ</td></tr>
+      <tr><td>abstract クラスの <code>final void m(){ }</code></td><td>○</td><td>本体があるので問題ない。子はオーバーライドできないだけ</td></tr>
+      <tr><td>abstract クラスの <code>static void m(){ }</code></td><td>○</td><td>インスタンス不要なので、クラス名で呼べる</td></tr>
+      <tr><td>普通のクラスの <code>abstract void m();</code></td><td><strong>×</strong></td><td>abstract メソッドを持つクラスは abstract でなければならない</td></tr>
+      <tr><td>final クラスの <code>abstract void m();</code></td><td><strong>×</strong></td><td>同上。しかも final なので誰も実装できない</td></tr>
+      <tr><td><code>final abstract void m();</code></td><td><strong>×</strong></td><td>オーバーライドの強制と禁止で矛盾</td></tr>
+      <tr><td><code>private abstract void m();</code></td><td><strong>×</strong></td><td>子から見えないので実装できない</td></tr>
+      <tr><td><code>static abstract void m();</code></td><td><strong>×</strong></td><td>static はオーバーライドされない</td></tr>
+      <tr><td><code>protected abstract void m();</code></td><td>○</td><td>子から見えるので実装できる</td></tr>
+      <tr><td><code>abstract void m(){ }</code></td><td><strong>×</strong></td><td>abstract メソッドに本体は書けない</td></tr>
+      <tr><td>インタフェースの <code>final void m();</code></td><td><strong>×</strong></td><td>インタフェースのメソッドに final は付けられない（<a href="#c5-s10">節10</a>）</td></tr>
+      <tr><td>コンストラクタに <code>final</code> / <code>abstract</code> / <code>static</code></td><td><strong>×</strong></td><td>コンストラクタは継承もオーバーライドもされない（<code>modifier ... not allowed here</code>）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>覚え方は2つだけです。<span class="mk">abstract は「子に書かせる」、final は「子に触らせない」</span>。子に書かせるには、子から見えて（private ×）、子がオーバーライドできる（static ×・final ×）必要があります。<br>そして<strong>abstract メソッドが1つでもあれば、クラスも abstract</strong>。この2点から表の ○× はすべて導けます。</p></div>
+</section>

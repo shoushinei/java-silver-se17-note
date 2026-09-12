@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}} 振り返り ── Java Silver SE 17 模擬試験</title>
+<meta name="description" content="{{title}}の全問題と正解・解説。テストをせずに読み返せます。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+<!--{{styles}}-->
+</style>
+</head>
+<body class="mode-review">
+
+<header class="xbar">
+  <div class="ttl"><a href="../">{{title}}</a><small>振り返り</small></div>
+  <a class="btn primary" href="./">テストを受ける</a>
+  <a class="btn ghost" href="{{noteHref}}">統合ノート</a>
+</header>
+
+<div class="wrap">
+  <section class="rv-head">
+    <h1>{{title}} ── 問題と解説</h1>
+    <p class="lead">全 {{total}} 問の問題・正解・解説です。テストをせずにそのまま読めます。解説の最後に、その問題の論点を扱っている統合ノートの節へのリンクがあります。</p>
+    <div class="rv-tools" id="rv-tools">
+      <span style="font-size:12.5px;color:var(--sumi-3)">章で絞る:</span>
+      <button type="button" data-chf="all" aria-pressed="true">すべて</button>
+<!--{{chapterButtons}}-->
+      <button type="button" id="hide-toggle" aria-pressed="false" style="margin-left:auto">正解と解説を隠す</button>
+    </div>
+    <nav class="rv-index" aria-label="問題番号">
+<!--{{index}}-->
+    </nav>
+  </section>
+
+  <main id="qlist">
+<!--{{questions}}-->
+  </main>
+</div>
+
+<script>
+<!--{{scripts}}-->
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>自作模擬試験 ── Java Silver SE 17</title>
+<meta name="description" content="Java Silver SE 17 の自作模擬試験の一覧。時間制限つきのテストと、問題・解説を読む振り返りページがあります。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+<!--{{styles}}-->
+</style>
+</head>
+<body class="mode-list">
+
+<header class="xbar">
+  <div class="ttl">自作模擬試験<small>Java Silver SE 17</small></div>
+  <a class="btn ghost" href="../">統合ノート</a>
+</header>
+
+<div class="wrap">
+  <section class="intro">
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 自作模擬試験</div>
+    <h1>模擬試験</h1>
+    <p class="lead">統合ノートで学んだ論点を、本番に近い形式で確かめるための模擬試験です。どの試験も「時間制限つきのテスト」と「問題と解説を読む振り返り」の2通りで使えます。</p>
+    <div class="xlist">
+<!--{{cards}}-->
+    </div>
+    <p class="crumbs"><a href="../">← 統合ノート（テキスト）に戻る</a></p>
+  </section>
+</div>
+
+<script>
+/* 各試験の最新の受験結果を、このブラウザの保存内容から表示する */
+(function () {
+  Array.prototype.forEach.call(document.querySelectorAll("[data-exam]"), function (el) {
+    var h = null;
+    try { h = JSON.parse(localStorage.getItem("java-silver-exam:" + el.dataset.exam + ":history")); } catch (e) { /* 読めなければ何も出さない */ }
+    if (!h || !h.length) return;
+    var best = h.reduce(function (m, x) { return x.correct > m.correct ? x : m; }, h[0]);
+    el.textContent = "前回 " + h[0].correct + " / " + h[0].total + "（" + Math.round(h[0].rate * 100) + "%）・最高 " +
+      best.correct + " / " + best.total + "・受験 " + h.length + " 回";
+  });
+})();
+</script>
+</body>
+</html>
