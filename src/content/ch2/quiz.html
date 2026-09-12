@@ -79,4 +79,13 @@
 
   <details class="q"><summary><span class="qn">Q26</span><span><code>List.of</code> と <code>Arrays.asList</code> の違いは？</span></summary>
     <div class="qa"><p><strong>List.of は set も不可（不変）、Arrays.asList は set だけ可（固定長）。</strong>asList は元の配列を包んでいるだけなので、set すると<strong>元の配列も変わります</strong>。どちらも add / remove は UnsupportedOperationException。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q27</span><span>拡張for文で直接回せないのは？ 配列 / List / Set / Map / Path / String</span></summary>
+    <div class="qa"><p><strong>Map と String。</strong>拡張for文で回せるのは配列か Iterable を実装した型だけです。Path は Iterable&lt;Path&gt; を継承しているので回せます。Map は <code>keySet()</code> などを、String は <code>toCharArray()</code> を回します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q28</span><span><code>Collection&lt;String&gt; c = new ArrayList&lt;&gt;(); c.get(0);</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>実体は ArrayList でも、変数の型 Collection に <code>get</code> は無いからです。呼べるメソッドは変数の型で決まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q29</span><span>存在しないファイルの <code>Path.of("x.txt")</code> を作ると？</span></summary>
+    <div class="qa"><p><strong>何も起きない（例外にならない）。</strong>Path は場所を表すだけです。<code>Files.readAllLines</code> などで実際に読むと、NoSuchFileException（IOException の子）になります。</p></div></details>
 </section>

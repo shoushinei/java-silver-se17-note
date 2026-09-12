@@ -64,7 +64,12 @@
       "ArrayList",
       "拡張for",
       "null",
-      "ArrayStoreException"
+      "ArrayStoreException",
+      "Iterable",
+      "Collection",
+      "Path",
+      "Map",
+      "Files"
     ]
   },
   {

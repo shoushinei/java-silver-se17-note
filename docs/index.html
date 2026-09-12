@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート</title>
-<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・66論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
+<meta name="description" content="Java Silver SE 17 (1Z0-825) の試験範囲を全6章・67論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -541,6 +541,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <a href="#c2-s11"><span class="tn">11</span>配列</a>
     <a href="#c2-s12"><span class="tn">12</span>ArrayList</a>
     <a href="#c2-s13"><span class="tn">13</span>nullとの付き合い方</a>
+    <a href="#c2-s14"><span class="tn">14</span>Iterable / Collection / Path</a>
     <a href="#c2-quiz"><span class="tn">▸</span>一問一答</a>
     <a href="#c2-check"><span class="tn">▸</span>直前チェック</a>
   </div>
@@ -2562,6 +2563,8 @@ List&lt;String&gt; list = new ArrayList&lt;&gt;();</code></pre></div>
 
   <p><code>java.util</code> パッケージなので、<span class="mk">import が必要</span>です。<code>java.lang</code> と違い自動 import されません。</p>
 
+  <div class="point link"><p><code>List</code> と <code>ArrayList</code> の関係、<code>Collection</code> や <code>Iterable</code> 型の変数に入れたとき何が呼べるか、拡張for文で回せる型は<a href="#c2-s14">第2章 14</a>にまとめています。</p></div>
+
   <h3>型引数のルール</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>4つの書き方はすべてコンパイルが通る<span class="tag">要注意</span></div><pre><code>ArrayList&lt;String&gt; a = new ArrayList&lt;&gt;();          // 標準形
@@ -2824,6 +2827,141 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
   <div class="point link"><p>第6章の判定基準がそのまま使えます。<span class="mk pink">null は「呼ばれたとき」だけ例外になる</span>ので、選択肢を読むときは「ドットがあるか」だけを探してください。</p></div>
 </section>
 
+<!-- ch2/14-collection-types.html · Iterable / Collection / Path -->
+<section id="c2-s14">
+  <div class="sh"><span class="num">14</span><h2>Iterable / Collection / List / Path の関係</h2></div>
+
+  <p>問題文では、変数の型として <code>ArrayList</code> や <code>List</code> だけでなく、<code>Collection</code> や <code>Iterable</code>、<code>Path</code> も使われます。これらは<strong>どれもインタフェース</strong>で、親子関係でつながっています。<strong>上にある型ほど約束していることが少なく、呼べるメソッドも少ない</strong>、というのが全体を貫く見方です。</p>
+
+  <h3>全体図</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親子関係（上が親）<span class="tag">最重要</span></div><pre><code>Iterable&lt;T&gt;                 「1つずつ取り出せる」＝拡張for文で回せる、とだけ約束する
+ ├── Collection&lt;E&gt;          要素の集まり。add / remove / size / contains
+ │    ├── List&lt;E&gt;           順番と位置（インデックス）がある。重複してよい
+ │    │    └── ArrayList&lt;E&gt;  ← 実際に new するのはこのクラス
+ │    ├── Set&lt;E&gt;            重複しない
+ │    │    └── HashSet&lt;E&gt;
+ │    └── Queue&lt;E&gt;          先頭から順に取り出す
+ └── Path                    ファイルやディレクトリの「場所」（Iterable&lt;Path&gt; を継承）
+
+Map&lt;K, V&gt;                   キーと値の組。Collection でも Iterable でもない（別系統）
+ └── HashMap&lt;K, V&gt;</code></pre></div>
+
+  <div class="point"><p><span class="mk">ArrayList と HashSet と HashMap 以外は、すべてインタフェース</span>です。インタフェースは <code>new</code> できないので、実物を作るときは <code>new ArrayList&lt;&gt;()</code> や <code>List.of(...)</code>、<code>Path.of(...)</code> を使います。</p></div>
+
+  <h3>それぞれの正体</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>型</th><th>種類 / パッケージ</th><th>何を表すか</th><th>主なメソッド</th></tr></thead>
+    <tbody>
+      <tr><td><code>Iterable&lt;T&gt;</code></td><td>インタフェース<br><code>java.lang</code>（import 不要）</td><td>1つずつ取り出せるもの</td><td class="wrap"><code>iterator()</code> <code>forEach(...)</code></td></tr>
+      <tr><td><code>Collection&lt;E&gt;</code></td><td>インタフェース<br><code>java.util</code></td><td>要素の集まり</td><td class="wrap"><code>add</code> <code>remove</code> <code>contains</code> <code>size</code> <code>isEmpty</code> <code>clear</code></td></tr>
+      <tr><td><code>List&lt;E&gt;</code></td><td>インタフェース<br><code>java.util</code></td><td>順番のある集まり</td><td class="wrap">上に加えて <code>get(int)</code> <code>set(int, E)</code> <code>add(int, E)</code> <code>indexOf</code></td></tr>
+      <tr><td><code>ArrayList&lt;E&gt;</code></td><td><strong>クラス</strong><br><code>java.util</code></td><td>List の代表的な実装</td><td class="wrap">List のすべて</td></tr>
+      <tr><td><code>Path</code></td><td>インタフェース<br><code>java.nio.file</code></td><td>ファイルの場所（パス）</td><td class="wrap"><code>getFileName()</code> <code>getParent()</code> <code>getNameCount()</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p><code>Iterable</code> は <code>java.lang</code> パッケージなので <strong>import なしで使えます</strong>。<code>Collection</code> と <code>List</code> は <code>java.util</code>、<code>Path</code> は <code>java.nio.file</code> なので import が必要です。import が無いと <code>cannot find symbol</code> のコンパイルエラーになります（第1章 06）。</p></div>
+
+  <h3>親の型の変数に入れられる。呼べるメソッドは変数の型で決まる</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ ArrayList でも、変数の型で呼べるものが変わる<span class="tag">最頻出</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("a", "b"));
+Collection&lt;String&gt; col = list;          // OK（子 → 親）
+Iterable&lt;String&gt;   it  = list;          // OK
+
+col.add("c");                            // OK  Collection にある
+col.size();                              // OK
+col.get(0);                              // コンパイルエラー: get は List にしかない
+it.size();                               // コンパイルエラー: Iterable には size も無い
+
+List&lt;String&gt; l2 = col;                   // コンパイルエラー: 親 → 子はキャストが必要
+List&lt;String&gt; l3 = (List&lt;String&gt;) col;    // OK（実体が ArrayList なので）</code></pre></div>
+
+  <p>変数 <code>col</code> が指しているのは <code>ArrayList</code> で、実物は <code>get</code> を持っています。それでも <code>col.get(0)</code> がエラーになるのは、<strong>コンパイラは変数の型（<code>Collection</code>）しか見ない</strong>からです。<a href="#c5-s05">第5章 05「宣言型か実体型か」</a>と同じ規則で、クラスの継承だけでなくインタフェースでも同じように働きます。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>インタフェースは new できない<span class="tag">NG</span></div><pre><code>List&lt;String&gt; a = new List&lt;&gt;();          // コンパイルエラー: List is abstract; cannot be instantiated
+Collection&lt;String&gt; b = new Collection&lt;&gt;();   // コンパイルエラー
+Path c = new Path("a.txt");              // コンパイルエラー
+
+List&lt;String&gt; d = new ArrayList&lt;&gt;();     // OK
+Path e = Path.of("a.txt");               // OK</code></pre></div>
+
+  <h3>拡張for文で回せるのは「配列」か「Iterable」だけ</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>型</th><th>拡張for文</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td>配列</td><td><strong>○</strong></td><td>言語が特別に扱う</td></tr>
+      <tr><td><code>Iterable</code> / <code>Collection</code> / <code>List</code> / <code>Set</code></td><td><strong>○</strong></td><td>どれも Iterable（またはその子）</td></tr>
+      <tr><td><code>Path</code></td><td><strong>○</strong></td><td><code>Iterable&lt;Path&gt;</code> を継承している。パスの各部分を1つずつ取り出す</td></tr>
+      <tr><td><code>Map</code></td><td><strong>×</strong></td><td>Iterable ではない。<code>keySet()</code> / <code>values()</code> / <code>entrySet()</code> を回す</td></tr>
+      <tr><td><code>String</code></td><td><strong>×</strong></td><td>Iterable ではない。<code>toCharArray()</code> で <code>char[]</code> にすれば回せる</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>Map と String は直接回せない<span class="tag">頻出</span></div><pre><code>Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+for (String k : map) { }              // コンパイルエラー: for-each not applicable to expression type
+for (char c : "abc") { }              // コンパイルエラー: 同じ
+
+for (String k : map.keySet()) { }     // OK  キーの Set
+for (Integer v : map.values()) { }    // OK  値の Collection
+for (char c : "abc".toCharArray()) { }   // OK  char[]</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>Path も拡張for文で回せる<span class="tag">要注意</span></div><pre><code>Path path = Path.of("dir", "sub", "file.txt");
+for (Path p : path) {
+    System.out.print(p + " ");        // dir sub file.txt
+}</code></pre></div>
+
+  <div class="point trap"><p><code>Path</code> は「ファイルの場所」なので、回せると思わない人が多い型です。<span class="mk">Path は Iterable&lt;Path&gt; を継承しているので、拡張for文に使えます</span>。取り出されるのはファイルの中身ではなく、<strong>パスを区切った各部分</strong>（<code>dir</code>、<code>sub</code>、<code>file.txt</code>）です。反対に、名前から回せそうに見える <code>Map</code> と <code>String</code> は回せません。</p></div>
+
+  <h3>Path ── ファイルの「場所」を表す型</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>作り方と主なメソッド<span class="tag">OK</span></div><pre><code>import java.nio.file.Path;
+import java.nio.file.Paths;
+
+Path p1 = Path.of("dir", "sub", "file.txt");   // Java 11 以降
+Path p2 = Paths.get("dir/sub/file.txt");       // 古くからある書き方。結果は同じ
+
+p1.getFileName();     // file.txt
+p1.getParent();       // dir/sub
+p1.getNameCount();    // 3
+
+Path.of("no/such/file.txt");   // 例外にならない ← 場所を表すだけで、ファイルを確かめない</code></pre></div>
+
+  <p><code>Path</code> は<strong>場所を表すだけ</strong>で、ファイルが本当にあるかは確かめません。存在しないパスを作っても例外になりません。実際にファイルを読み書きするのは <code>Files</code> クラスの static メソッドです。区切り文字の表示は OS によって違い、Windows では <code>dir\sub</code> と表示されます。</p>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>Files のメソッドは検査例外を投げる<span class="tag">第6章とつながる</span></div><pre><code>import java.nio.file.*;
+
+void read() {
+    Files.readAllLines(Path.of("a.txt"));
+    // コンパイルエラー: unreported exception IOException;
+    //                   must be caught or declared to be thrown
+}
+
+void read2() throws IOException {          // throws で宣言すれば OK（import java.io.IOException も必要）
+    Files.readAllLines(Path.of("a.txt"));  // ファイルが無ければ実行時に NoSuchFileException
+}</code></pre></div>
+
+  <div class="point link"><p><code>Files</code> のメソッドはファイル操作に失敗する可能性があるので、<strong>検査例外の IOException</strong> を投げると宣言されています。だから catch するか throws で宣言しないとコンパイルエラーです。無いファイルを読んだときの <code>NoSuchFileException</code> は IOException の子です。検査例外とは何かは<a href="#c6-s01">第6章 01</a>、throws の書き方は<a href="#c6-s07">第6章 07</a>、try-with-resources は<a href="#c6-s09">第6章 09</a>にあります。</p></div>
+
+  <h3>名前が似ているもの</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>名前</th><th>正体</th></tr></thead>
+    <tbody>
+      <tr><td><code>Collection</code></td><td>インタフェース。要素の集まり</td></tr>
+      <tr><td><code>Collections</code></td><td><strong>クラス</strong>。<code>Collections.sort(list)</code> のような static メソッドを集めた道具箱</td></tr>
+      <tr><td><code>Path</code></td><td>インタフェース。ファイルの場所</td></tr>
+      <tr><td><code>Paths</code></td><td><strong>クラス</strong>。<code>Paths.get(...)</code> で Path を作る</td></tr>
+      <tr><td><code>Files</code></td><td><strong>クラス</strong>。ファイル操作の static メソッドを集めた道具箱</td></tr>
+      <tr><td><code>Arrays</code></td><td><strong>クラス</strong>。配列用の static メソッドを集めた道具箱（<code>Arrays.toString</code> など）</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>末尾に <strong>s が付くものは、static メソッドを集めたクラス</strong>という共通点があります。<code>Collection</code> と <code>Collections</code>、<code>Path</code> と <code>Paths</code> を取り違えた選択肢に注意してください。</p></div>
+</section>
+
 <!-- ch2/quiz.html · 一問一答 -->
 <section id="c2-quiz">
   <div class="sh"><span class="num">▸</span><h2>一問一答</h2></div>
@@ -2906,6 +3044,15 @@ List.of("a", null);       // NullPointerException ← 生成時点で落ちる</
 
   <details class="q"><summary><span class="qn">Q26</span><span><code>List.of</code> と <code>Arrays.asList</code> の違いは？</span></summary>
     <div class="qa"><p><strong>List.of は set も不可（不変）、Arrays.asList は set だけ可（固定長）。</strong>asList は元の配列を包んでいるだけなので、set すると<strong>元の配列も変わります</strong>。どちらも add / remove は UnsupportedOperationException。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q27</span><span>拡張for文で直接回せないのは？ 配列 / List / Set / Map / Path / String</span></summary>
+    <div class="qa"><p><strong>Map と String。</strong>拡張for文で回せるのは配列か Iterable を実装した型だけです。Path は Iterable&lt;Path&gt; を継承しているので回せます。Map は <code>keySet()</code> などを、String は <code>toCharArray()</code> を回します。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q28</span><span><code>Collection&lt;String&gt; c = new ArrayList&lt;&gt;(); c.get(0);</code> は？</span></summary>
+    <div class="qa"><p><strong>コンパイルエラー。</strong>実体は ArrayList でも、変数の型 Collection に <code>get</code> は無いからです。呼べるメソッドは変数の型で決まります。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q29</span><span>存在しないファイルの <code>Path.of("x.txt")</code> を作ると？</span></summary>
+    <div class="qa"><p><strong>何も起きない（例外にならない）。</strong>Path は場所を表すだけです。<code>Files.readAllLines</code> などで実際に読むと、NoSuchFileException（IOException の子）になります。</p></div></details>
 </section>
 
 <!-- ch2/checklist.html · 直前チェック -->
@@ -6691,7 +6838,7 @@ try (r) { }
 <script>
 /* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
 window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
-  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル","-cp","-d","ClassNotFoundException"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル","-cp","-d","ClassNotFoundException"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException","Iterable","Collection","Path","Map","Files"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException"]}] };
 
 /* ---- scripts/00-app.js ---- */
 /* 全モジュール共通の名前空間。

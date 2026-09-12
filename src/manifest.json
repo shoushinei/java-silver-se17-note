@@ -1,6 +1,6 @@
 {
   "title": "全6章 完成版 ── Java Silver SE 17 (1Z0-825) 統合ノート",
-  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・66論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
+  "description": "Java Silver SE 17 (1Z0-825) の試験範囲を全6章・67論点にまとめた学習ノート。コード例は「通る／コンパイルエラー／実行時例外」の3分類つき。",
   "brand": "Java Silver<br>SE 17 統合ノート",
   "brandSub": "1Z0-825 / 全6章 完成版",
   "chapters": [
@@ -157,6 +157,12 @@
           "tn": "13",
           "label": "nullとの付き合い方",
           "file": "13-null-handling.html"
+        },
+        {
+          "id": "c2-s14",
+          "tn": "14",
+          "label": "Iterable / Collection / Path",
+          "file": "14-collection-types.html"
         },
         {
           "id": "c2-quiz",
