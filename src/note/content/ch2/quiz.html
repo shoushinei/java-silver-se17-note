@@ -91,4 +91,7 @@
 
   <details class="q"><summary><span class="qn">Q30</span><span><code>StringBuilder[] b = a.clone(); b[0].append("!");</code> のあと、<code>a[0]</code> は変わる？</span></summary>
     <div class="qa"><p><strong>変わる。</strong>clone は新しい配列（箱）を作るだけで、中の StringBuilder は a と b で共有されています（浅いコピー）。一方 <code>b[0] = new StringBuilder("z");</code> のように要素そのものに代入した場合は、b の箱が変わるだけで a には伝わりません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q31</span><span><code>int[][][] q = p.clone(); q[0][1] = new int[]{0};</code> のあと、<code>p[0][1][0]</code> は？</span></summary>
+    <div class="qa"><p><strong>0（p にも伝わる）。</strong>clone で別々になるのは一番外側の箱だけで、<code>q[0]</code> は p と共有している箱です。その枠を差し替えたので p からも見えます。p に伝わらないのは <code>q[1] = …</code> のような<strong>添字1つの代入だけ</strong>です。</p></div></details>
 </section>

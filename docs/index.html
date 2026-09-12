@@ -216,6 +216,26 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .back a { color: var(--sumi-3); text-decoration: none; padding: 6px 0; display: inline-block; }
 .back a:hover { color: var(--sumi); }
 
+/* ---- styles/18-figure.css ---- */
+/* 参照の図（配列の clone など）。SVG の色と文字はここで決める */
+.fig{margin:18px 0;padding:14px 12px 10px;border:1px solid var(--rule);border-radius:8px;background:#fff}
+.fig svg{display:block;width:100%;max-width:460px;height:auto;margin:0 auto}
+.fig figcaption{font-size:12.5px;line-height:1.6;color:var(--sumi-3);text-align:center;margin-top:8px}
+.fig text{font-family:var(--mono);font-size:14px;fill:var(--sumi)}
+.fig text.var{font-weight:700;font-size:16px}
+.fig text.lb{font-family:var(--body);font-size:11.5px;fill:var(--sumi-2)}
+.fig text.ix{font-size:10.5px;fill:var(--sumi-3)}
+.fig .bx{fill:var(--washi-2);stroke:var(--sumi);stroke-width:1.5}
+.fig .row{fill:#FFF6C2;stroke:var(--sumi);stroke-width:1.5}
+.fig .new{fill:var(--ok-bg);stroke:var(--ok);stroke-width:1.5}
+.fig .chg{fill:var(--err-bg)}
+.fig .sep{stroke:var(--sumi);stroke-width:1.2}
+.fig .pt{fill:var(--sumi)}
+.fig .ar{stroke:var(--sumi-2);stroke-width:1.4;fill:none}
+.fig .ar.own{stroke:var(--ok)}
+.fig .ahd{fill:var(--sumi-2)}
+.fig .ahd.own{fill:var(--ok)}
+
 /* ---- styles/20-mobile.css ---- */
 /* スマートフォン向けの見た目。狭い画面の調整はすべてこのファイルに集約する。
    連結順が最後なので、ここに書いた指定が他のファイルより優先される。
@@ -2600,25 +2620,101 @@ System.out.println(s[0] + " " + t[0]);   // p p!</code></pre></div>
 
   <p>clone 直後は s[0] と t[0] が同じ String を指しています。ただ String は<a href="#c2-s07">不変</a>で、指す先を書き換えるメソッドがありません。変更は必ず「新しい String を作って代入」＝差し替えになるので、<strong>結果として元の配列には影響しません</strong>。StringBuilder との違いに注意してください。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2次元配列 ── 中の行が共有される<span class="tag">要注意</span></div><pre><code>int[][] m = { {1, 2}, {3, 4} };
-int[][] n = m.clone();
+<figure class="fig"><svg viewBox="0 0 440 220" role="img" aria-label="a と b は別々の外側の箱を指し、どちらの箱の矢印も同じ2つの行を指している">
+  <defs><marker id="ah-c1" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker></defs>
+  <text class="var" x="12" y="51">a</text><line class="ar" x1="28" y1="45" x2="52" y2="45" marker-end="url(#ah-c1)"/>
+  <rect class="bx" x="54" y="27" width="84" height="36" rx="3"/><line class="sep" x1="96" y1="27" x2="96" y2="63"/>
+  <text class="ix" x="75" y="20" text-anchor="middle">[0]</text><text class="ix" x="117" y="20" text-anchor="middle">[1]</text>
+  <text class="var" x="12" y="181">b</text><line class="ar" x1="28" y1="175" x2="52" y2="175" marker-end="url(#ah-c1)"/>
+  <rect class="bx" x="54" y="157" width="84" height="36" rx="3"/><line class="sep" x1="96" y1="157" x2="96" y2="193"/>
+  <text class="ix" x="75" y="209" text-anchor="middle">[0]</text><text class="ix" x="117" y="209" text-anchor="middle">[1]</text>
+  <text class="lb" x="96" y="102" text-anchor="middle">外側の箱は</text><text class="lb" x="96" y="118" text-anchor="middle">a と b で別々</text>
+  <rect class="row" x="250" y="58" width="76" height="32" rx="3"/><line class="sep" x1="288" y1="58" x2="288" y2="90"/>
+  <text x="269" y="79" text-anchor="middle">1</text><text x="307" y="79" text-anchor="middle">2</text>
+  <rect class="row" x="250" y="126" width="76" height="32" rx="3"/><line class="sep" x1="288" y1="126" x2="288" y2="158"/>
+  <text x="269" y="147" text-anchor="middle">3</text><text x="307" y="147" text-anchor="middle">4</text>
+  <text class="lb" x="288" y="186" text-anchor="middle">行の実体は1組だけ（共有）</text>
+  <line class="ar" x1="75" y1="45" x2="248" y2="68" marker-end="url(#ah-c1)"/><line class="ar" x1="117" y1="45" x2="248" y2="134" marker-end="url(#ah-c1)"/>
+  <line class="ar" x1="75" y1="175" x2="248" y2="82" marker-end="url(#ah-c1)"/><line class="ar" x1="117" y1="175" x2="248" y2="150" marker-end="url(#ah-c1)"/>
+  <circle class="pt" cx="75" cy="45" r="3.5"/><circle class="pt" cx="117" cy="45" r="3.5"/><circle class="pt" cx="75" cy="175" r="3.5"/><circle class="pt" cx="117" cy="175" r="3.5"/>
+</svg><figcaption><code>int[][] b = a.clone();</code> の直後。新しく作られたのは<strong>外側の箱1個だけ</strong>。箱の中の矢印は写しなので、同じ行を指す</figcaption></figure>
 
-n[0][0] = 9;                     // 共有している行の中身を書き換える
-n[1] = new int[]{7, 7};          // n の箱の矢印を差し替える
+  <p>別々なのは外側の箱だけで（<code>a == b</code> は false）、行は共有です（<code>a[0] == b[0]</code> は true）。</p>
 
-System.out.println(m[0][0]);     // 9  ← 元も変わる
-System.out.println(m[1][0]);     // 3  ← 差し替えは伝わらない
-System.out.println(m[0] == n[0]);// true  行は同じもの</code></pre></div>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2次元配列 ── 中の行が共有される<span class="tag">要注意</span></div><pre><code>int[][] a = { {1, 2}, {3, 4} };
+int[][] b = a.clone();
 
-  <p>2次元配列は「行を要素に持つ配列」なので、上の StringBuilder の例と同じ形です。<code>n[0][0] = 9</code> は <code>n[0]</code> が指す行の中身の書き換え、<code>n[1] = …</code> は要素そのものへの代入です。</p>
+b[0][0] = 9;                     // 共有している行の中身を書き換える
+b[1] = new int[]{7, 8};          // b の箱の枠を差し替える
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>行まで別にしたいとき（深いコピー）<span class="tag">参考</span></div><pre><code>int[][] m = { {1, 2}, {3, 4} };
-int[][] d = new int[m.length][];
-for (int i = 0; i &lt; m.length; i++) {
-    d[i] = m[i].clone();         // 行も1つずつ clone する
+System.out.println(a[0][0]);     // 9  ← 元も変わる
+System.out.println(a[1][0]);     // 3  ← 差し替えは伝わらない
+System.out.println(a[0] == b[0]);// true  行は同じもの
+System.out.println(a[1] == b[1]);// false 付け替えたので別</code></pre></div>
+
+<figure class="fig"><svg viewBox="0 0 440 250" role="img" aria-label="0行目は共有のまま9に書き換わり、b の1番の枠だけが新しい行7と8を指している">
+  <defs><marker id="ah-c2" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker><marker id="ah-c2o" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd own" d="M0 0L8 4L0 8z"/></marker></defs>
+  <text class="var" x="12" y="51">a</text><line class="ar" x1="28" y1="45" x2="52" y2="45" marker-end="url(#ah-c2)"/>
+  <rect class="bx" x="54" y="27" width="84" height="36" rx="3"/><line class="sep" x1="96" y1="27" x2="96" y2="63"/>
+  <text class="ix" x="75" y="20" text-anchor="middle">[0]</text><text class="ix" x="117" y="20" text-anchor="middle">[1]</text>
+  <text class="var" x="12" y="211">b</text><line class="ar" x1="28" y1="205" x2="52" y2="205" marker-end="url(#ah-c2)"/>
+  <rect class="bx" x="54" y="187" width="84" height="36" rx="3"/><line class="sep" x1="96" y1="187" x2="96" y2="223"/>
+  <text class="ix" x="75" y="239" text-anchor="middle">[0]</text><text class="ix" x="117" y="239" text-anchor="middle">[1]</text>
+  <rect class="row" x="250" y="40" width="76" height="32" rx="3"/><rect class="chg" x="251" y="41" width="36.5" height="30"/><line class="sep" x1="288" y1="40" x2="288" y2="72"/>
+  <text x="269" y="61" text-anchor="middle">9</text><text x="307" y="61" text-anchor="middle">2</text>
+  <rect class="row" x="250" y="104" width="76" height="32" rx="3"/><line class="sep" x1="288" y1="104" x2="288" y2="136"/>
+  <text x="269" y="125" text-anchor="middle">3</text><text x="307" y="125" text-anchor="middle">4</text>
+  <rect class="new" x="250" y="190" width="76" height="32" rx="3"/><line class="sep" x1="288" y1="190" x2="288" y2="222"/>
+  <text x="269" y="211" text-anchor="middle">7</text><text x="307" y="211" text-anchor="middle">8</text>
+  <text class="lb" x="336" y="61">両方から見える</text><text class="lb" x="336" y="125">a だけが指す</text><text class="lb" x="336" y="211">b だけが指す</text>
+  <line class="ar" x1="75" y1="45" x2="248" y2="52" marker-end="url(#ah-c2)"/><line class="ar" x1="117" y1="45" x2="248" y2="116" marker-end="url(#ah-c2)"/>
+  <line class="ar" x1="75" y1="205" x2="248" y2="64" marker-end="url(#ah-c2)"/><line class="ar own" x1="117" y1="205" x2="248" y2="206" marker-end="url(#ah-c2o)"/>
+  <circle class="pt" cx="75" cy="45" r="3.5"/><circle class="pt" cx="117" cy="45" r="3.5"/><circle class="pt" cx="75" cy="205" r="3.5"/><circle class="pt" cx="117" cy="205" r="3.5"/>
+</svg><figcaption>続けて <code>b[0][0] = 9;</code> と <code>b[1] = new int[]{7, 8};</code> を実行した後。9 は共有している行に書き込まれ、<strong>b[1] の矢印だけ</strong>が新しい行（緑）に付け替わった</figcaption></figure>
+
+  <div class="point trap"><p><span class="mk">b 専用なのは外側の箱の枠だけ</span>です。だから a に伝わらないのは <strong>添字1つの代入（<code>b[1] = …</code>）だけ</strong>。<code>b[0][0] = …</code> のように添字が2つ以上なら、共有している行を触るので a にも伝わります。</p></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>付け替えた枠はその後も別。付け替えていない枠は共有のまま<span class="tag">要注意</span></div><pre><code>int[][] a = { {1, 2}, {3, 4} };
+int[][] b = a.clone();
+b[1] = new int[]{7, 8};    // b[1] だけ新しい行に付け替え
+b[1][0] = 100;             // 付け替えた先を触る → a には伝わらない
+b[0][1] = 555;             // 付け替えていない行 → 共有のまま
+
+System.out.println(a[1][0]);   // 3
+System.out.println(a[0][1]);   // 555</code></pre></div>
+
+  <p>一度付け替えた枠の先は、もう a と別の行です。付け替えは<strong>その枠1つだけ</strong>の話で、他の枠の共有は切れません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>3次元でも、別々なのは一番外側の箱だけ<span class="tag">引っかけ</span></div><pre><code>int[][][] p = { { {1, 2}, {3, 4} }, { {5, 6} } };
+int[][][] q = p.clone();
+
+q[0][0][0] = 99;           // 添字3つ → 共有部分
+q[0][1] = new int[]{0};    // 差し替えだが添字2つ。q[0] は共有の箱なので p にも伝わる
+q[1] = new int[][]{ {7} }; // 添字1つ → q 専用の枠
+
+System.out.println(p[0][0][0]);   // 99
+System.out.println(p[0][1][0]);   // 0  ← 差し替えなのに伝わる
+System.out.println(p[1][0][0]);   // 5</code></pre></div>
+
+  <div class="point trap"><p>「添字を最後まで付けたら共有、途中で止めたら分離」と覚えると、3次元で間違えます。<code>q[0][1]</code> は、共有している2段目の箱 <code>q[0]</code> の枠です。<span class="mk">何次元でも、分離するのは添字1つの代入だけ</span>です。</p></div>
+
+  <div class="point link"><p>「付け替えは伝わらない、先を触ると伝わる」は、clone 以外でも同じ判定です。</p>
+  <div class="tw" style="margin-top:10px"><table>
+    <thead><tr><th>場面</th><th>変数・枠そのものに代入</th><th><code>.</code> や <code>[ ]</code> で先を触る</th></tr></thead>
+    <tbody>
+      <tr><td>clone した配列</td><td><code>b[1] = …</code> → 元に伝わらない</td><td><code>b[1][0] = …</code> → 伝わる</td></tr>
+      <tr><td>メソッドの引数（<a href="#c4-s03">第4章 03</a>）</td><td><code>arr = …</code> → 呼び出し元に伝わらない</td><td><code>arr[0] = …</code> → 伝わる</td></tr>
+      <tr><td><code>final int[] arr</code>（<a href="#c5-s08">第5章 08</a>）</td><td><code>arr = …</code> → コンパイルエラー</td><td><code>arr[0] = …</code> → できる</td></tr>
+    </tbody>
+  </table></div></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>行まで別にしたいとき（深いコピー）<span class="tag">参考</span></div><pre><code>int[][] a = { {1, 2}, {3, 4} };
+int[][] d = new int[a.length][];
+for (int i = 0; i &lt; a.length; i++) {
+    d[i] = a[i].clone();         // 行も1つずつ clone する
 }
 d[0][1] = 8;
-System.out.println(m[0][1] + " " + d[0][1]);   // 2 8 ← 元は変わらない</code></pre></div>
+System.out.println(a[0][1] + " " + d[0][1]);   // 2 8 ← 元は変わらない</code></pre></div>
 
   <p>他のコピー方法もあります。<code>Arrays.copyOf(a, 5)</code> は長さを変えられ、足りない分は既定値で埋まります。ただし<span class="mk">copyOf も浅いコピー</span>で、共有のされ方は clone と同じです。</p>
 
@@ -3176,6 +3272,9 @@ void read2() throws IOException {          // throws で宣言すれば OK（imp
 
   <details class="q"><summary><span class="qn">Q30</span><span><code>StringBuilder[] b = a.clone(); b[0].append("!");</code> のあと、<code>a[0]</code> は変わる？</span></summary>
     <div class="qa"><p><strong>変わる。</strong>clone は新しい配列（箱）を作るだけで、中の StringBuilder は a と b で共有されています（浅いコピー）。一方 <code>b[0] = new StringBuilder("z");</code> のように要素そのものに代入した場合は、b の箱が変わるだけで a には伝わりません。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q31</span><span><code>int[][][] q = p.clone(); q[0][1] = new int[]{0};</code> のあと、<code>p[0][1][0]</code> は？</span></summary>
+    <div class="qa"><p><strong>0（p にも伝わる）。</strong>clone で別々になるのは一番外側の箱だけで、<code>q[0]</code> は p と共有している箱です。その枠を差し替えたので p からも見えます。p に伝わらないのは <code>q[1] = …</code> のような<strong>添字1つの代入だけ</strong>です。</p></div></details>
 </section>
 
 <!-- ch2/checklist.html · 直前チェック -->

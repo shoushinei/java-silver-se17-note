@@ -1,0 +1,18 @@
+/* 参照の図（配列の clone など）。SVG の色と文字はここで決める */
+.fig{margin:18px 0;padding:14px 12px 10px;border:1px solid var(--rule);border-radius:8px;background:#fff}
+.fig svg{display:block;width:100%;max-width:460px;height:auto;margin:0 auto}
+.fig figcaption{font-size:12.5px;line-height:1.6;color:var(--sumi-3);text-align:center;margin-top:8px}
+.fig text{font-family:var(--mono);font-size:14px;fill:var(--sumi)}
+.fig text.var{font-weight:700;font-size:16px}
+.fig text.lb{font-family:var(--body);font-size:11.5px;fill:var(--sumi-2)}
+.fig text.ix{font-size:10.5px;fill:var(--sumi-3)}
+.fig .bx{fill:var(--washi-2);stroke:var(--sumi);stroke-width:1.5}
+.fig .row{fill:#FFF6C2;stroke:var(--sumi);stroke-width:1.5}
+.fig .new{fill:var(--ok-bg);stroke:var(--ok);stroke-width:1.5}
+.fig .chg{fill:var(--err-bg)}
+.fig .sep{stroke:var(--sumi);stroke-width:1.2}
+.fig .pt{fill:var(--sumi)}
+.fig .ar{stroke:var(--sumi-2);stroke-width:1.4;fill:none}
+.fig .ar.own{stroke:var(--ok)}
+.fig .ahd{fill:var(--sumi-2)}
+.fig .ahd.own{fill:var(--ok)}
