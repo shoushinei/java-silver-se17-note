@@ -105,7 +105,8 @@ pre code{font-family:inherit}
 /* ---- styles/08-callout.css ---- */
 .point{border:1px solid var(--rule);border-radius:8px;background:#fff;padding:16px 18px;margin:22px 0;position:relative}
 .point::before{content:"試験ポイント";position:absolute;top:-9px;left:14px;background:var(--sumi);color:var(--washi);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:2px 9px;border-radius:3px}
-.point p:last-child{margin-bottom:0}
+.point p:last-child,.point ul:last-child{margin-bottom:0}
+.point ul li:last-child{margin-bottom:0}
 .point.trap::before{content:"よく出る罠";background:var(--err)}
 .point.link::before{content:"他の章とつながる";background:var(--ok)}
 .point.new::before{content:"SE 17 で新登場";background:#1D5FA8}
@@ -4559,6 +4560,52 @@ static void k(int... x)  { System.out.println("varargs"); }
 k(5);                    // Integer ← ボクシングが可変長より優先</code></pre></div>
 
   <div class="point"><p>覚え方は<span class="mk">「面倒な処理ほど後回し」</span>です。拡大変換は数値を広げるだけ、ボクシングはオブジェクトを作る、可変長引数は配列を作る。<strong>コンパイラは手間の少ない方から試します</strong>。<br>第2章の「拡大変換とボクシングは組み合わせられない」もここに繋がります。<code>m(Long)</code> しかないところに <code>int</code> を渡すと、<strong>拡大してからボクシングはできない</strong>のでエラーになります。</p></div>
+
+  <h3>順位は「使える候補」の中で比べる</h3>
+
+  <p>コンパイラはまず、<strong>引数の数と型で呼び出せるメソッドだけを候補に残し</strong>、その中で上の順位を比べます。候補が1つしか残らなければ、順位に関係なくそれが選ばれます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>3つの候補に、いろいろな引数を渡す<span class="tag">最頻出</span></div><pre><code>static void show(double v)  { System.out.print("D"); }
+static void show(Integer v) { System.out.print("I"); }
+static void show(int... v)  { System.out.print("V"); }
+
+byte b = 2;
+show(b);                    // D  byte → double（拡大変換）
+show(10);                   // D  int → double（拡大変換）。ボクシングと可変長より先
+show('A');                  // D  char → double も拡大変換
+show(10L);                  // D  long → double
+show(Integer.valueOf(5));   // I  完全一致
+show();                     // V  引数0個で呼べるのは int... だけ
+show(1, 2);                 // V  引数2個も int... だけ</code></pre></div>
+
+  <div class="point trap"><p>引っかかりやすいのは次の2点です。</p>
+    <ul>
+      <li><strong>拡大変換は隣の型だけではありません。</strong>byte・short・char・int・long は、どれも double まで一気に届きます（<a href="#c2-s03">第2章 03</a>の図の右向き全部）。「<code>10</code> は int だから <code>int...</code> に行く」は誤りで、可変長引数は他の候補が1つも使えないときの<span class="mk">最後の手段</span>です。</li>
+      <li><strong>可変長引数は「0個以上」を受け取ります。</strong><code>show()</code> は長さ0の配列を渡す正しい呼び出しで、コンパイルエラーではありません（<a href="#c4-s03">第4章 03</a>）。引数を1つ要求する <code>show(double)</code> と <code>show(Integer)</code> は0個では呼べないので、候補は <code>int...</code> だけです。</li>
+    </ul>
+  </div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>候補が1つも無ければコンパイルエラー<span class="tag">対比</span></div><pre><code>static void show(double v) { }
+show();     // コンパイルエラー: method show cannot be applied to given types</code></pre></div>
+
+  <h3>拡大変換の候補が複数あれば、一番近い型</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>long と double のどちらにも届くとき<span class="tag">要注意</span></div><pre><code>static void w(long v)   { System.out.print("L"); }
+static void w(double v) { System.out.print("D"); }
+
+w(1);       // L  int から近いのは long
+w('c');     // L  char → int → long
+w(1.5f);    // D  float から届くのは double だけ</code></pre></div>
+
+  <h3>ボクシングしてから広げるのは OK、広げてからボクシングは NG</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>変換の順番で結果が変わる<span class="tag">要注意</span></div><pre><code>static void o(Object v) { System.out.print("O"); }
+static void l(Long v)   { }
+
+o(1);       // O  int → Integer（ボクシング）→ Object（親の型へ）はできる
+l(1);       // コンパイルエラー: int → long（拡大）→ Long（ボクシング）はできない</code></pre></div>
+
+  <div class="point"><p>Integer は Object の子なので、ボクシングした後に Object 型の引数へ渡せます。一方、int を Long にするには「long に広げてからボクシング」の2段階が必要で、これは許されません。<span class="mk"><code>Long</code> に渡したいなら <code>1L</code> と書きます</span>。</p></div>
 </section>
 
 <!-- ch4/07-static.html · static -->
@@ -5303,6 +5350,9 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
 
   <details class="q"><summary><span class="qn">Q24</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
     <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q25</span><span><code>show(double)</code>・<code>show(Integer)</code>・<code>show(int...)</code> があるとき、<code>show(10)</code> と <code>show()</code> は？</span></summary>
+    <div class="qa"><p><strong><code>show(10)</code> は double 版、<code>show()</code> は int... 版。</strong>int → double は拡大変換なので、ボクシングや可変長より先に選ばれます。引数0個で呼べるのは可変長引数だけなので、<code>show()</code> はエラーにならず int... 版です（長さ0の配列）。</p></div></details>
 </section>
 
 <!-- ch4/checklist.html · 直前チェック -->
@@ -5323,7 +5373,7 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
     <li><span class="box">✓</span><span class="cktx">name = name; はフィールドを変えない。this. が必要</span></li>
     <li><span class="box">✓</span><span class="cktx">this() は最初の1文だけ。super() と同時には書けない</span></li>
     <li><span class="box">✓</span><span class="cktx">オーバーロードの区別は引数リストのみ。戻り値型は無関係</span></li>
-    <li><span class="box">✓</span><span class="cktx">解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数</span></li>
+    <li><span class="box">✓</span><span class="cktx">解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数。比べるのは呼び出せる候補の中だけ</span></li>
     <li><span class="box">✓</span><span class="cktx">static からインスタンスメンバと this は参照できない。逆は可</span></li>
     <li><span class="box">✓</span><span class="cktx">null 参照からの static 呼び出しは NPE にならない</span></li>
     <li><span class="box">✓</span><span class="cktx">初期化は static（1回・書いた順）→ インスタンス（毎回・書いた順）→ コンストラクタ</span></li>

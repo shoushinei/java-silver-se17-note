@@ -15,7 +15,7 @@
     <li><span class="box">✓</span><span class="cktx">name = name; はフィールドを変えない。this. が必要</span></li>
     <li><span class="box">✓</span><span class="cktx">this() は最初の1文だけ。super() と同時には書けない</span></li>
     <li><span class="box">✓</span><span class="cktx">オーバーロードの区別は引数リストのみ。戻り値型は無関係</span></li>
-    <li><span class="box">✓</span><span class="cktx">解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数</span></li>
+    <li><span class="box">✓</span><span class="cktx">解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数。比べるのは呼び出せる候補の中だけ</span></li>
     <li><span class="box">✓</span><span class="cktx">static からインスタンスメンバと this は参照できない。逆は可</span></li>
     <li><span class="box">✓</span><span class="cktx">null 参照からの static 呼び出しは NPE にならない</span></li>
     <li><span class="box">✓</span><span class="cktx">初期化は static（1回・書いた順）→ インスタンス（毎回・書いた順）→ コンストラクタ</span></li>

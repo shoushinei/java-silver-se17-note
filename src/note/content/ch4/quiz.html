@@ -97,4 +97,7 @@
 
   <details class="q"><summary><span class="qn">Q24</span><span>コンポーネントが0個の record やローカル record は書ける？</span></summary>
     <div class="qa"><p><strong>どちらも書ける。</strong><code>record Empty() { }</code> は <code>Empty[]</code> と表示され、メソッド内に定義するローカル record も可能です。可変長引数（<code>int... nums</code>）やジェネリックもコンポーネントにできます。ネストした record は暗黙に <code>static</code>。</p></div></details>
+
+  <details class="q"><summary><span class="qn">Q25</span><span><code>show(double)</code>・<code>show(Integer)</code>・<code>show(int...)</code> があるとき、<code>show(10)</code> と <code>show()</code> は？</span></summary>
+    <div class="qa"><p><strong><code>show(10)</code> は double 版、<code>show()</code> は int... 版。</strong>int → double は拡大変換なので、ボクシングや可変長より先に選ばれます。引数0個で呼べるのは可変長引数だけなので、<code>show()</code> はエラーにならず int... 版です（長さ0の配列）。</p></div></details>
 </section>
