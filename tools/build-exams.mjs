@@ -6,8 +6,9 @@
  *
  * 出力（docs/exams/ からの相対パス）
  *   index.html          試験の一覧
- *   01/index.html       テストモード（開始画面・受験・採点結果）
- *   01/review.html      振り返りモード（全問・正解・解説）
+ *   01/index.html       テストモード（開始画面と受験記録・受験・採点結果と見直し）
+ *   01/review.html      振り返りモード（テストをせずに 1 問ずつ正解・解説を読む）
+ *   どちらも _engine/exam.html と exam.js から作る
  *
  * 問題の解説にある「統合ノートの参照」は、ノートの manifest.json で節が
  * 実在するかを確かめ、無ければビルドを止める。
@@ -118,9 +119,7 @@ export async function buildExams(manifest) {
   const css = await styles();
   const highlight = (await readFile(path.join(NOTE, "scripts", "01-highlight.js"), "utf8")).trim();
   const examJs = (await readFile(path.join(ENGINE, "exam.js"), "utf8")).trim();
-  const reviewJs = (await readFile(path.join(ENGINE, "review.js"), "utf8")).trim();
-  const testTpl = await readFile(path.join(ENGINE, "test.html"), "utf8");
-  const reviewTpl = await readFile(path.join(ENGINE, "review.html"), "utf8");
+  const examTpl = await readFile(path.join(ENGINE, "exam.html"), "utf8");
   const listTpl = await readFile(path.join(ENGINE, "list.html"), "utf8");
   const chapters = chapterNames(manifest);
 
@@ -140,6 +139,7 @@ export async function buildExams(manifest) {
       "{{passPercent}}": String(Math.round(meta.passRate * 100)),
       "{{noteHref}}": NOTE_HREF,
       "<!--{{styles}}-->": css,
+      "<!--{{scripts}}-->": highlight + "\n\n" + examJs,
     };
     const usedChapters = {};
     for (const q of questions) usedChapters[sections[q.refs[0].id].chapter] = true;
@@ -151,20 +151,24 @@ export async function buildExams(manifest) {
       chapters: chapterMeta, noteHref: NOTE_HREF,
     }).replace(/</g, "\\u003c");
 
-    files[`${id}/index.html`] = fill(testTpl, {
+    // テストのページと振り返りのページは同じテンプレート・同じスクリプト。body のクラスで出し分ける
+    files[`${id}/index.html`] = fill(examTpl, {
       ...common,
+      "{{pageTitle}}": escapeHtml(meta.title),
+      "{{pageDesc}}": escapeHtml(meta.description),
+      "{{bodyClass}}": "page-test mode-intro",
       "<!--{{questions}}-->": questions.map((q, i) => renderArticle(q, i + 1, sections, "test")).join("\n"),
       "{{meta}}": metaJson,
-      "<!--{{scripts}}-->": highlight + "\n\n" + examJs,
-    }, "test.html");
+    }, "exam.html（テスト）");
 
-    files[`${id}/review.html`] = fill(reviewTpl, {
+    files[`${id}/review.html`] = fill(examTpl, {
       ...common,
-      "<!--{{chapterButtons}}-->": Object.keys(chapterMeta).map((k) => `      <button type="button" data-chf="${k}" aria-pressed="false">第${k.slice(1)}章</button>`).join("\n"),
-      "<!--{{index}}-->": questions.map((q, i) => `      <a href="#q${i + 1}" data-ch="${sections[q.refs[0].id].chapter}">${i + 1}</a>`).join("\n"),
+      "{{pageTitle}}": escapeHtml(meta.title) + " 振り返り",
+      "{{pageDesc}}": escapeHtml(meta.title) + "の全問題と正解・解説。テストをせずに読み返せます。",
+      "{{bodyClass}}": "page-review mode-review",
       "<!--{{questions}}-->": questions.map((q, i) => renderArticle(q, i + 1, sections, "review")).join("\n"),
-      "<!--{{scripts}}-->": highlight + "\n\n" + reviewJs,
-    }, "review.html");
+      "{{meta}}": metaJson,
+    }, "exam.html（振り返り）");
 
     cards.push(`      <div class="xcard">
         <h2>${escapeHtml(meta.title)}</h2>

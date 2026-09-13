@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{pageTitle}} ── Java Silver SE 17 模擬試験</title>
+<meta name="description" content="{{pageDesc}}">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>document.documentElement.className = "js";</script>
+<style>
+<!--{{styles}}-->
+</style>
+</head>
+<!-- 1 つのテンプレートで 2 ページを作る。
+     page-test    01/index.html   開始前 → 受験 → 採点結果と振り返り（mode-intro / mode-test / mode-result）
+     page-review  01/review.html  テストをせずに問題と解説を読む（mode-review）
+     どの画面でも「1 問ずつ表示＋横に問題番号の一覧」という同じ形で見る。 -->
+<body class="{{bodyClass}}">
+
+<header class="xbar">
+  <div class="ttl"><a href="../">{{title}}</a><small class="only-review">振り返り</small></div>
+  <span class="count only-test" id="count"></span>
+  <span class="count only-test" id="flagcount"></span>
+  <span class="timer only-test" id="timer" aria-live="off">{{minutes}}:00</span>
+  <span class="hscore only-result" id="hscore"></span>
+  <button type="button" class="btn navopen" id="navopen">問題一覧</button>
+  <button type="button" class="btn primary only-test" id="submit">提出</button>
+  <button type="button" class="btn ghost only-result" id="to-intro">記録一覧へ</button>
+  <a class="btn ghost only-intro" href="review.html">振り返り</a>
+  <a class="btn primary only-review" href="./">テストを受ける</a>
+  <a class="btn ghost only-intro-review" href="{{noteHref}}">統合ノート</a>
+</header>
+
+<div class="wrap">
+
+  <!-- 開始前 -->
+  <section class="intro only-intro">
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 自作模擬試験</div>
+    <h1>{{title}}</h1>
+    <p class="lead">{{description}}</p>
+    <div class="facts">
+      <div class="fact"><b>{{total}}</b><span>問</span></div>
+      <div class="fact"><b>{{minutes}}</b><span>分</span></div>
+      <div class="fact"><b>{{passPercent}}%</b><span>合格ライン（目安）</span></div>
+    </div>
+
+    <div class="resume" id="resume" hidden>
+      <p id="resume-text"></p>
+      <button type="button" class="btn primary" id="resume-btn">続きから再開</button>
+    </div>
+
+    <div class="modes">
+      <div class="mode-card">
+        <h2>テストモード</h2>
+        <p>{{minutes}} 分の時間制限つきで本番と同じように解きます。提出すると採点し、全問の ○× と正解・解説を見直せます。結果は受験記録として保存されます。</p>
+        <button type="button" class="btn primary" id="start">テストを始める</button>
+      </div>
+      <div class="mode-card">
+        <h2>振り返りモード</h2>
+        <p>テストをせずに、問題・正解・解説をそのまま読めるページです。何度でも読み返せます。</p>
+        <a class="btn" href="review.html">問題と解説を読む</a>
+      </div>
+    </div>
+
+    <h2 class="sub-h">受験記録</h2>
+    <p class="note-s">提出した回の得点・選んだ答え・見直しマーク・振り返りメモが保存されます。「結果を開く」で、その回の ○× と解説をいつでも見直せます。</p>
+    <div id="history"></div>
+
+    <h2 class="sub-h">ルール</h2>
+    <ul class="rules">
+      <li>時間はテスト開始の時刻から数えます。ページを閉じても時間は進み、{{minutes}} 分になると自動で提出されます。</li>
+      <li>全問を解いていなくても、いつでも提出できます。未回答の問題は不正解になります。</li>
+      <li>気になる問題には「見直し」のマークを付けておけます。問題一覧から、マークした問題や未回答の問題だけに絞れます。</li>
+      <li>「2つ選択」などの問題は、正解をすべて選んだときだけ正解です。</li>
+      <li>キーボード: ← → で前後の問題、A〜H で選択、M で見直しマーク。</li>
+      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは共有されません）。</li>
+    </ul>
+  </section>
+
+  <div class="viewer">
+    <div class="vmain">
+
+      <!-- 採点結果の概要。問題一覧の「結果」を押すと、いつでもここに戻れる -->
+      <section class="result only-result" id="summary">
+        <div class="score">
+          <div class="big" id="r-score"></div>
+          <div>
+            <div class="judge" id="r-judge"></div>
+            <div class="meta" id="r-meta"></div>
+          </div>
+        </div>
+        <div class="tally" id="r-tally"></div>
+        <h2 class="sub-h">章ごとの正答率 <small>章名を押すと統合ノートのその章へ</small></h2>
+        <div class="bars" id="r-bars"></div>
+        <div class="actions-row">
+          <button type="button" class="btn primary" id="review-start">問1から見直す</button>
+          <button type="button" class="btn" id="review-wrong">間違えた問題だけ見直す</button>
+          <button type="button" class="btn ghost" id="again">もう一度受ける</button>
+        </div>
+      </section>
+
+      <!-- 振り返りページの操作 -->
+      <div class="rv-tools only-review">
+        <button type="button" id="hide-toggle" aria-pressed="false">正解と解説を隠す</button>
+        <span>隠すと、問題ごとの「答えを見る」で1問ずつ確かめられます。</span>
+      </div>
+
+      <main id="qlist">
+<!--{{questions}}-->
+      </main>
+
+      <div class="pager">
+        <button type="button" class="btn" id="prev">← 前へ</button>
+        <span class="pos" id="pos"></span>
+        <button type="button" class="btn primary" id="next">次へ →</button>
+      </div>
+    </div>
+
+    <aside class="navside" id="navside" aria-label="問題一覧">
+      <div class="navpanel">
+        <h2><span id="navtitle">問題一覧</span> <button type="button" class="navclose" id="navclose" aria-label="閉じる">×</button></h2>
+        <button type="button" class="tosum only-result" id="tosum">結果の概要</button>
+        <div class="navfilter" id="navfilter"></div>
+        <div class="grid" id="grid"></div>
+        <div class="legend2" id="legend"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="modal" id="modal" hidden><div class="dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
+
+<script type="application/json" id="exam-meta">{{meta}}</script>
+<script>
+<!--{{scripts}}-->
+</script>
+</body>
+</html>
