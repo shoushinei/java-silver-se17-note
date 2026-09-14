@@ -96,4 +96,18 @@ class B extends A { static void m(){} } // error（非static を static で）</
       <tr><td>引数リストは型・数・順番すべてが同じ</td><td><strong>○ 正しい</strong></td></tr>
     </tbody>
   </table></div>
+
+  <h3>ジェネリクスを含むオーバーライド</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>&lt; &gt; の中身まで見て判定する<span class="tag">要注意</span></div><pre><code>class A {
+    List&lt;Number&gt; get(Set&lt;CharSequence&gt; s) { return null; }
+}
+class B extends A {   // 下の4つは、どれか1つだけを書いた場合の判定
+    ArrayList&lt;Number&gt; get(Set&lt;CharSequence&gt; s) { return null; }  // OK。共変戻り値
+    List&lt;Integer&gt;     get(Set&lt;CharSequence&gt; s) { return null; }  // エラー: List&lt;Integer&gt; は List&lt;Number&gt; の子ではない
+    List&lt;Number&gt;      get(Set&lt;String&gt; s)       { return null; }  // エラー: name clash
+    List&lt;Number&gt;      get(TreeSet&lt;String&gt; s)   { return null; }  // OK。引数の型が違うのでオーバーロード
+}</code></pre></div>
+
+  <div class="point"><p>戻り値の共変は <strong><code>&lt; &gt;</code> の外側</strong>だけで効きます。ArrayList は List の子なので <code>ArrayList&lt;Number&gt;</code> は OK ですが、中身の Integer と Number に親子関係があっても <code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子になりません（<a href="#c2-s14">第2章 14</a>）。<br>引数の <code>Set&lt;String&gt;</code> と <code>Set&lt;CharSequence&gt;</code> は、コンパイル後に <code>&lt; &gt;</code> が消える（型消去）と<strong>どちらも Set</strong> になります。引数リストが「違う」のでオーバーライドにならず、消した後は「同じ」なのでオーバーロードとしても共存できず、<span class="mk"><code>name clash</code> というコンパイルエラー</span>になります。同じクラスの中に <code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> を並べても同じエラーです。</p></div>
 </section>

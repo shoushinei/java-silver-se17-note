@@ -21,6 +21,32 @@
 }
 // 出力: 0 2</code></pre></div>
 
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ループの中の switch の break は、switch だけを抜ける<span class="tag">頻出</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {
+    switch (i) {
+        case 1: break;         // switch を抜けるだけ。for は続く
+    }
+    System.out.print(i);       // i が 1 のときも実行される
+}
+// 出力: 012</code></pre></div>
+
+  <div class="point"><p>ループの中に switch があるとき、<span class="mk">break はいちばん内側の switch を、continue は外側のループを</span>対象にします。ループごと抜けたいなら、ループにラベルを付けて <code>break ラベル名;</code> と書きます（下のラベル付き break）。</p></div>
+
+  <h3>直後の文は到達不能になる</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>break・continue の直後、while (false) の本体<span class="tag">NG</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {
+    continue;
+    System.out.println(i);     // コンパイルエラー: unreachable statement
+}
+while (true) {
+    break;
+    System.out.println();      // コンパイルエラー
+}
+while (false) { }              // コンパイルエラー: 本体に到達できない
+
+if (false) { System.out.println(); }   // OK ← if だけは例外</code></pre></div>
+
+  <div class="point trap"><p>break・continue・return・throw の<strong>直後</strong>の文は、絶対に実行されないのでコンパイルエラーです。<code>if (i == 1) continue;</code> のように条件付きなら、後ろの文に届く経路があるので問題ありません。<br>条件が定数の false の <code>while</code> や <code>for</code> もエラーですが、<span class="mk"><code>if (false)</code> だけは許されます</span>（デバッグ用に処理を一時的に止める書き方を認めるため）。</p></div>
+
   <h3>continue と for の更新部</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>更新部は実行される<span class="tag">要注意</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {

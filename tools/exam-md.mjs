@@ -78,6 +78,18 @@ export function renderBlocks(md, { numberJava = false } = {}) {
       out.push(renderCode(info, body.join("\n"), { numbered }));
       continue;
     }
+    // 表: 「| 見出し | 見出し |」「|---|---|」「| 値 | 値 |」の連続した行
+    if (/^\|.*\|\s*$/.test(line) && /^\|[\s:-]+(\|[\s:-]+)*\|\s*$/.test(lines[i + 1] || "")) {
+      flushPara(); flushList();
+      const cells = (l) => l.trim().replace(/^\||\|$/g, "").split("|").map((c) => renderInline(c.trim()));
+      const head = cells(line);
+      const rows = [];
+      for (i += 2; i < lines.length && /^\|.*\|\s*$/.test(lines[i]); i++) rows.push(cells(lines[i]));
+      i--;
+      out.push(`<div class="tw"><table><thead><tr>${head.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>` +
+        rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("") + "</tbody></table></div>");
+      continue;
+    }
     if (/^- /.test(line)) { flushPara(); list.push(line.slice(2).trim()); continue; }
     if (!line.trim()) { flushPara(); flushList(); continue; }
     flushList();

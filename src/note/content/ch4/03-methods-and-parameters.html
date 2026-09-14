@@ -42,7 +42,8 @@ void m(int x, String... s) { }      // OK</code></pre></div>
       <tr><td><code>int m(){ x * 2; }</code></td><td><strong>×</strong></td><td>式だけでは文にならない（<code>not a statement</code>）。<code>return x * 2;</code> と書く</td></tr>
       <tr><td><code>String m(boolean f){ if (f) return "y"; }</code></td><td><strong>×</strong></td><td>f が false の経路で値を返していない（<code>missing return statement</code>）</td></tr>
       <tr><td><code>int m(boolean f){ if (f) return 1; else return 2; }</code></td><td>○</td><td>すべての経路で return している</td></tr>
-      <tr><td><code>int m(){ while (true) { } }</code></td><td>○</td><td>メソッドの終わりに到達しないので return は不要</td></tr>
+      <tr><td><code>int m(int[] a){ for (int x : a) { return x; } }</code></td><td><strong>×</strong></td><td>ループが1回も回らない経路（配列が空など）に return が無い（<code>missing return statement</code>）。ループの後ろにも return が要る</td></tr>
+      <tr><td><code>int m(){ while (true) { } }</code></td><td>○</td><td>メソッドの終わりに到達しないので return は不要（条件が定数の true のときだけ）</td></tr>
       <tr><td><code>int m(){ throw new RuntimeException(); }</code></td><td>○</td><td>同上。例外で抜ける</td></tr>
       <tr><td><code>int m(){ return 1; System.out.println(); }</code></td><td><strong>×</strong></td><td>return の後ろは到達不能（<code>unreachable statement</code>）</td></tr>
       <tr><td><code>void m(){ return; }</code></td><td>○</td><td>値なしの return はメソッドを終えるだけ。コンストラクタでも書ける</td></tr>

@@ -10,6 +10,14 @@ var s = "hello";                     // String</code></pre></div>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>型は後から変えられない<span class="tag">NG</span></div><pre><code>var i = 10;
 i = "hello";     // コンパイルエラー: i は int で確定済み</code></pre></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>var と &lt;&gt; を一緒に使うと Object になる<span class="tag">要注意</span></div><pre><code>var list = new ArrayList&lt;&gt;();     // ArrayList&lt;Object&gt; と推論される
+list.add("a");                     // OK（何でも入る）
+list.add(1);                       // OK
+Object o = list.get(0);            // OK
+String s = list.get(0);            // コンパイルエラー: Object を String に代入できない</code></pre></div>
+
+  <p>左辺の var も右辺の <code>&lt;&gt;</code> も、<strong>相手から型を決めてもらう</strong>書き方です。両方を使うと手がかりが無いので、要素の型は Object に決まります。要素の型を決めたいなら、どちらか一方に書きます（<code>var list = new ArrayList&lt;String&gt;();</code>）。</p>
+
   <h3>使えない場所</h3>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>宣言のパターン<span class="tag">NG</span></div><pre><code>var a;                   // エラー: 初期化が必須
 var b = null;            // エラー: 型を推論できない

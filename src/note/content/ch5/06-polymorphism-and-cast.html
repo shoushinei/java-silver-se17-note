@@ -29,4 +29,37 @@ p.only();       // error: cannot find symbol ── P に only() は無い
 ((C)p).only();  // OK。キャストして宣言型を変える</code></pre></div>
 
   <div class="point"><p><span class="mk">「どのメソッドを書けるか」は宣言型、「どの実装が動くか」は実体型</span>。この2軸の分離がポリモーフィズムの本体です。<br>コンパイラは実行時に何が入るかを知らないので、変数の型に書かれているものしか許可できません。</p></div>
+
+  <h3>キャストはどこに掛かるか</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>キャストは . より結合が弱い<span class="tag">頻出</span></div><pre><code>P p = new C();
+((C) p).only();     // OK。p を C として扱ってから only() を呼ぶ
+(C) p.only();       // エラー: (C) (p.only()) と読まれる
+                    //   P に only() は無く、キャストだけの式は文にもならない（not a statement）</code></pre></div>
+
+  <p>キャストより、<code>.</code> によるメソッド呼び出しやフィールドの参照のほうが先に結びつきます。<code>(C) p.only()</code> は「p.only() の<strong>結果</strong>をキャストする」という意味になるので、子のメソッドを呼びたいときは <span class="mk"><code>((C) p)</code> のようにキャストした式全体を括弧で囲みます</span>。</p>
+
+  <h3>コンパイルが通るキャスト、通らないキャスト</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>キャスト元 → キャスト先</th><th>コンパイル</th><th>実行時</th></tr></thead>
+    <tbody>
+      <tr><td>親クラス → 子クラス</td><td>○</td><td>実体が違えば ClassCastException</td></tr>
+      <tr><td>親子関係の無いクラス → クラス（兄弟など）</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>final <strong>でない</strong>クラス → インタフェース（実装していなくても）</td><td>○</td><td>実体が実装していなければ ClassCastException</td></tr>
+      <tr><td>final クラス → 実装していないインタフェース</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>インタフェース → インタフェース</td><td>○</td><td>実体しだい</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>インタフェースへのキャストは通りやすい<span class="tag">要注意</span></div><pre><code>class Animal { }
+final class Stone { }
+interface Pet { }
+
+Animal a = new Animal();
+Pet p1 = (Pet) a;       // コンパイルは通る → 実行時に ClassCastException
+Stone s = new Stone();
+Pet p2 = (Pet) s;       // コンパイルエラー: Stone は final で、Pet を実装していない</code></pre></div>
+
+  <div class="point"><p>Animal は Pet を実装していませんが、<span class="mk">Animal の子のどれかが Pet を実装しているかもしれない</span>ので、コンパイラは可能性を否定できず、キャストを許します。Stone は final で子を作れないので、Pet になる可能性が無く、エラーにできます。<br>クラス同士の場合は、親子関係の外にある型にはどうやってもなれないので、兄弟へのキャストはエラーです（<a href="#c5-s14">節14</a>）。</p></div>
 </section>

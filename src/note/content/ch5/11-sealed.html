@@ -46,6 +46,7 @@ final class B implements S { }
       <tr><td><code>permits</code> の省略</td><td><strong>同一ファイル内なら可</strong>。コンパイラが推論する</td></tr>
       <tr><td><code>sealed</code> + <code>final</code></td><td>不可（意味が矛盾）</td></tr>
       <tr><td><code>record</code> に <code>sealed</code></td><td>不可（既に final）</td></tr>
+      <tr><td>子が1つも無い <code>sealed</code></td><td>不可（<code>sealed class must have subclasses</code>）。permits を書くか、同じファイルに子を書く</td></tr>
     </tbody>
   </table></div>
 

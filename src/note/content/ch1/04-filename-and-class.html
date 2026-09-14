@@ -31,4 +31,6 @@ class Main {
 // java Main        → 実行できる（java に渡すのはクラス名。ファイル名は無関係）</code></pre></div>
 
   <p>public がなければファイル名は自由です。実行時に指定するのは<strong>クラス名</strong>なので、ファイル名が何であっても <code>java Main</code> で起動します。</p>
+
+  <div class="point"><p>main メソッドは <span class="mk">public でないクラスに書いても起動に使えます</span>。1つのファイルに main を持つクラスが2つあれば、<code>javac</code> で両方の .class ができ、<code>java A</code> なら A の main、<code>java B</code> なら B の main が動きます。どの main を動かすかは、java コマンドに渡したクラス名で決まります。</p></div>
 </section>

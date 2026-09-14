@@ -88,4 +88,18 @@ o(1);       // O  int → Integer（ボクシング）→ Object（親の型へ�
 l(1);       // コンパイルエラー: int → long（拡大）→ Long（ボクシング）はできない</code></pre></div>
 
   <div class="point"><p>Integer は Object の子なので、ボクシングした後に Object 型の引数へ渡せます。一方、int を Long にするには「long に広げてからボクシング」の2段階が必要で、これは許されません。<span class="mk"><code>Long</code> に渡したいなら <code>1L</code> と書きます</span>。</p></div>
+
+  <h3>配列や null を渡したとき</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>配列も親子関係で選ばれる<span class="tag">要注意</span></div><pre><code>static void m(Object o)   { System.out.print("Object "); }
+static void m(Object[] a) { System.out.print("Object[] "); }
+static void m(long[] a)   { System.out.print("long[] "); }
+
+m(new int[3]);      // Object    ← int[] は Object[] でも long[] でもない
+m(new String[1]);   // Object[]  ← String[] は Object[] の子。Object より具体的
+m(new int[2][2]);   // Object[]  ← 要素の int[] は Object なので、int[][] は Object[] の子
+m(new long[1]);     // long[]
+m(null);            // コンパイルエラー: Object[] と long[] のどちらともいえず、あいまい</code></pre></div>
+
+  <div class="point trap"><p>配列の型どうしには拡大変換がありません。<span class="mk">int[] は long[] にも Object[] にもならず、Object の子として扱われるだけ</span>です（<a href="#c5-s14">第5章 14</a>）。<br><code>null</code> はどの参照型の引数にも渡せるので、候補が複数あると<strong>より子の型</strong>が選ばれ、子どうしに親子関係が無ければあいまいでエラーになります。可変長引数 <code>T...</code> も配列 <code>T[]</code> として候補に入るので、<code>m(String)</code> と <code>m(Integer...)</code> があるところへ <code>m(null)</code> と書いても、あいまいでエラーです。</p></div>
 </section>

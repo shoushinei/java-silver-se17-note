@@ -78,6 +78,17 @@ class B { }                    // OK（修飾子なし＝同一パッケージ�
 
   <div class="point trap"><p>トップレベルの型に付けられるのは <code>public</code> か<strong>修飾子なし</strong>の2択だけです。<code>private</code> と <code>protected</code> は<span class="mk">「外側に自分を囲むものがある」ことが前提</span>の修飾子なので、ファイル直下のクラスには意味を持ちません。<br>ネストしたクラス（クラスの中のクラス）なら4種類すべて使えます。</p></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>クラスが見えなければ、public なメンバも使えない<span class="tag">要注意</span></div><pre><code>package lib;
+class Helper {                            // 修飾子なし
+    public static String hello() { return "hi"; }
+}
+
+package app;
+import lib.Helper;                        // error: Helper is not public in lib;
+                                          //        cannot be accessed from outside package</code></pre></div>
+
+  <div class="point"><p>アクセスは<span class="mk">「クラスが見えるか」→「メンバが見えるか」の順に2段階で</span>判定されます。修飾子なしのクラスは別のパッケージからは型そのものが見えないので、import もできず、中のメソッドが public でも使えません。<br>同じパッケージの public クラスが Helper を使い、そのメソッド経由で呼ばせるのは問題ありません。</p></div>
+
   <h3>フィールドとメソッド以外</h3>
 
   <div class="tw"><table>

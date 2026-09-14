@@ -18,7 +18,8 @@
  *   @javac                      すべての .java をコンパイル。成功を期待する
  *   @javac-error [文字列]       コンパイル失敗を期待する（文字列はエラー出力に含まれること）
  *   @run Main 引数...           java -cp out Main を実行（"A B" のような引用符も可）
- *   @stdout                     直前の実行の標準出力。@end までの行と完全一致を期待する
+ *   @stdout                     直前の実行の標準出力。@end までの行と完全一致を期待する（正常終了も期待する）
+ *   @output                     @stdout と同じだが終了状態を問わない。「途中まで表示して例外」を @exception と組で確かめる
  *   @exception 例外名           直前の実行がこの例外で落ちることを期待する
  *   @sh コマンド                シェルで実行（-d や -cp を試す問題用）
  *   @fails                      直前の @sh が失敗（終了コード 0 以外）することを期待する
@@ -52,16 +53,16 @@ function tokenize(s) {
 function parseCases(src) {
   const cases = [];
   let cur = null;
-  let block = null;           // { kind: "file" | "stdout", name, lines }
+  let block = null;           // { kind: "file" | "stdout" | "output", name, lines }
   const endBlock = () => {
     if (!block) return;
     if (block.kind === "file") cur.files.push({ name: block.name, text: block.lines.join("\n") + "\n" });
-    else cur.steps.push({ op: "stdout", text: block.lines.join("\n") });
+    else cur.steps.push({ op: block.kind, text: block.lines.join("\n") });
     block = null;
   };
   for (const line of src.split("\n")) {
     const d = line.match(/^@(\S+)\s*(.*)$/);
-    if (!d || (block && block.kind === "stdout" && d[1] !== "end")) {
+    if (!d || (block && block.kind !== "file" && d[1] !== "end")) {
       if (block) block.lines.push(line);
       else if (line.trim()) throw new Error("検証の書式が読めない行: " + line);
       continue;
@@ -73,7 +74,7 @@ function parseCases(src) {
     if (!cur) throw new Error("@case より前に " + line);
     if (op === "stem") cur.useStem = true;
     else if (op === "file") block = { kind: "file", name: arg, lines: [] };
-    else if (op === "stdout") block = { kind: "stdout", lines: [] };
+    else if (op === "stdout" || op === "output") block = { kind: op, lines: [] };
     else cur.steps.push({ op, arg });
   }
   endBlock();
@@ -119,10 +120,10 @@ async function runCase(c, stemFiles) {
         last = spawnSync("java", [...JAVA_OPTS, "-cp", "out", cls, ...args], { cwd: dir, encoding: "utf8" });
       } else if (s.op === "sh") {
         last = spawnSync(s.arg, { cwd: dir, encoding: "utf8", shell: true });
-      } else if (s.op === "stdout") {
-        if (!last) return fail("@stdout の前に実行がない");
+      } else if (s.op === "stdout" || s.op === "output") {
+        if (!last) return fail(`@${s.op} の前に実行がない`);
         const got = (last.stdout || "").replace(/\r\n/g, "\n").replace(/\n$/, "");
-        if (last.status !== 0) return fail("正常終了のはずが失敗:\n" + last.stderr);
+        if (s.op === "stdout" && last.status !== 0) return fail("正常終了のはずが失敗:\n" + last.stderr);
         if (got !== s.text) return fail(`出力が違う\n  期待: ${JSON.stringify(s.text)}\n  実際: ${JSON.stringify(got)}`);
       } else if (s.op === "exception") {
         if (!last) return fail("@exception の前に実行がない");
