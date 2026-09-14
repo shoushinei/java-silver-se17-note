@@ -19,6 +19,7 @@
       <li><span class="box">✓</span><span class="cktx">try(...) に書けるのは AutoCloseable を実装した型だけ</span></li>
     <li><span class="box">✓</span><span class="cktx">括弧の中は変数宣言。close() の呼び出しはコンパイラが生成する</span></li>
     <li><span class="box">✓</span><span class="cktx">Java 9 の try(r) 形式は final か実質 final でなければ不可</span></li>
+    <li><span class="box">✓</span><span class="cktx">親子の組: NumberFormat ⊂ IllegalArgument、ArrayIndex/StringIndex ⊂ IndexOutOfBounds、FileNotFound ⊂ IOException。IOException は RuntimeException の子ではない</span></li>
 </ul>
   <button class="reset" id="c6-ckreset" type="button">チェックをすべて外す</button>
 

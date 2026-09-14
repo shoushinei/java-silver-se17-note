@@ -1,20 +1,127 @@
 <section id="c6-s01">
   <div class="sh"><span class="num">01</span><h2>クラス階層と3つの分類</h2></div>
 
-  <p>すべての判断はこの階層から派生します。まずこの形を覚えてください。</p>
+  <p>すべての判断はこの階層から派生します。catch の順番も multi-catch も「どちらが親か」で決まるので、<strong>親子関係そのものを覚えておく</strong>必要があります。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラス階層<span class="tag">図</span></div><pre><code>Throwable
-├── Error                        ← 非検査。捕まえない
-└── Exception                    ← 捕捉の対象
-    ├── RuntimeException         ← 非検査
-    │   ├── NullPointerException
-    │   ├── ArithmeticException
-    │   └── ...
-    └── IOException など          ← 検査例外
-        └── FileNotFoundException</code></pre></div>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラス階層の全体像（上が親）<span class="tag">暗記</span></div>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Throwable</span><span class="ht-p">java.lang</span><span class="ht-d">すべての例外とエラーの親</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">Error</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">プログラムでは捕まえない</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n">VirtualMachineError</span><span class="ht-g ht-uc">非検査</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">OutOfMemoryError</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">メモリ不足</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">StackOverflowError</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">再帰が深すぎる</span></div></li>
+              </ul>
+            </li>
+            <li><div class="ht-l"><span class="ht-n">LinkageError</span><span class="ht-g ht-uc">非検査</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">NoClassDefFoundError</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">実行時にクラスが見つからない</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">ExceptionInInitializerError</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">static 初期化で例外が起きた</span></div></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="ht-ckd"><div class="ht-l"><span class="ht-n">Exception</span><span class="ht-g ht-ck">検査</span><span class="ht-d">この下は RuntimeException 系を除いてすべて検査例外</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n">RuntimeException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">この下はすべて非検査。catch も throws も任意</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">ArithmeticException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">整数の 0 除算</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">ArrayStoreException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">配列の実体に合わない型を代入</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">ClassCastException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">実体と合わないキャスト</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">IllegalArgumentException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">不正な引数</span></div>
+                  <ul>
+                    <li><div class="ht-l"><span class="ht-n">NumberFormatException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">Integer.parseInt("abc")</span></div></li>
+                  </ul>
+                </li>
+                <li><div class="ht-l"><span class="ht-n">IllegalStateException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">今の状態では呼べない</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">IndexOutOfBoundsException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">ArrayList の範囲外 get / set / remove</span></div>
+                  <ul>
+                    <li><div class="ht-l"><span class="ht-n">ArrayIndexOutOfBoundsException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">配列の範囲外</span></div></li>
+                    <li><div class="ht-l"><span class="ht-n">StringIndexOutOfBoundsException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">charAt / substring の範囲外</span></div></li>
+                  </ul>
+                </li>
+                <li><div class="ht-l"><span class="ht-n">NegativeArraySizeException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">new int[-1]</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">NullPointerException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">null にドットを付けた・null のアンボクシング</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">UnsupportedOperationException</span><span class="ht-g ht-uc">非検査</span><span class="ht-d">List.of(...) に add / set</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">ConcurrentModificationException</span><span class="ht-g ht-uc">非検査</span><span class="ht-p">java.util</span><span class="ht-d">拡張 for 文の中で remove</span></div></li>
+                <li><div class="ht-l"><span class="ht-n">NoSuchElementException</span><span class="ht-g ht-uc">非検査</span><span class="ht-p">java.util</span><span class="ht-d">取り出す要素が無い</span></div></li>
+              </ul>
+            </li>
+            <li class="ht-ckd"><div class="ht-l"><span class="ht-n">IOException</span><span class="ht-g ht-ck">検査</span><span class="ht-p">java.io</span><span class="ht-d">入出力</span></div>
+              <ul>
+                <li class="ht-ckd"><div class="ht-l"><span class="ht-n">FileNotFoundException</span><span class="ht-g ht-ck">検査</span><span class="ht-p">java.io</span><span class="ht-d">new FileReader("無いファイル")</span></div></li>
+                <li class="ht-ckd"><div class="ht-l"><span class="ht-n">FileSystemException</span><span class="ht-g ht-ck">検査</span><span class="ht-p">java.nio.file</span></div>
+                  <ul>
+                    <li class="ht-ckd"><div class="ht-l"><span class="ht-n">NoSuchFileException</span><span class="ht-g ht-ck">検査</span><span class="ht-p">java.nio.file</span><span class="ht-d">Files.readAllLines(無いパス)</span></div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="ht-ckd"><div class="ht-l"><span class="ht-n">SQLException</span><span class="ht-g ht-ck">検査</span><span class="ht-p">java.sql</span><span class="ht-d">データベース</span></div></li>
+            <li class="ht-ckd"><div class="ht-l"><span class="ht-n">ReflectiveOperationException</span><span class="ht-g ht-ck">検査</span></div>
+              <ul>
+                <li class="ht-ckd"><div class="ht-l"><span class="ht-n">ClassNotFoundException</span><span class="ht-g ht-ck">検査</span><span class="ht-d">Class.forName("無いクラス")</span></div></li>
+              </ul>
+            </li>
+            <li class="ht-ckd"><div class="ht-l"><span class="ht-n">CloneNotSupportedException</span><span class="ht-g ht-ck">検査</span><span class="ht-d">Cloneable でないのに clone</span></div></li>
+            <li class="ht-ckd"><div class="ht-l"><span class="ht-n">InterruptedException</span><span class="ht-g ht-ck">検査</span><span class="ht-d">Thread.sleep の待機を中断された</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">自作の例外</span><span class="ht-d">extends Exception なら検査、extends RuntimeException なら非検査</span></div></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <div class="ht-legend"><span><span class="ht-g ht-ck">検査</span>検査例外（catch か throws が必須）</span><span><span class="ht-g ht-uc">非検査</span>非検査例外</span></div>
+</div>
 
   <p>検査例外かどうかの判定は、次の1行がすべてです。</p>
   <p><span class="mk">Exception の子孫で、かつ RuntimeException の子孫でないものが「検査例外」。</span>それ以外（Error 系と RuntimeException 系）はすべて「非検査例外」です。</p>
+
+  <div class="point trap"><p>名前だけでは判定できない組が狙われます。</p>
+    <ul>
+      <li><strong>IOException は RuntimeException の子ではない</strong>（兄弟）。だから検査例外</li>
+      <li><strong>NumberFormatException は RuntimeException の孫</strong>。「Format」でも入出力とは無関係で、非検査</li>
+      <li><strong>FileNotFoundException と NoSuchFileException は IOException の子孫</strong>。検査例外</li>
+      <li><strong>ArrayIndexOutOfBoundsException と StringIndexOutOfBoundsException は兄弟</strong>。親は共通の IndexOutOfBoundsException</li>
+      <li><strong>Error は Exception の子ではない</strong>。<code>catch (Exception e)</code> では捕まらない</li>
+    </ul>
+  </div>
+
+  <h3>catch に並べるときの親子早見表</h3>
+
+  <p>同じ try に並べるなら、<strong>左の列（子）を上、右の列（親）を下</strong>に書きます。逆にすると下の catch に到達できず、コンパイルエラーです（<a href="#c6-s04">節04</a>）。multi-catch の <code>|</code> には、同じ行の2つを並べられません（<a href="#c6-s05">節05</a>）。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>子（上に書く）</th><th>親（下に書く）</th></tr></thead>
+    <tbody>
+      <tr><td><code>NumberFormatException</code></td><td><code>IllegalArgumentException</code></td></tr>
+      <tr><td><code>ArrayIndexOutOfBoundsException</code><br><code>StringIndexOutOfBoundsException</code></td><td><code>IndexOutOfBoundsException</code></td></tr>
+      <tr><td><code>FileNotFoundException</code><br><code>NoSuchFileException</code></td><td><code>IOException</code></td></tr>
+      <tr><td>非検査例外すべて（NullPointerException など）</td><td><code>RuntimeException</code></td></tr>
+      <tr><td>IOException・SQLException・RuntimeException など</td><td><code>Exception</code></td></tr>
+      <tr><td><code>Exception</code>・<code>Error</code></td><td><code>Throwable</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親子関係を知らないと解けない3問<span class="tag">最頻出</span></div><pre><code>try { Integer.parseInt(s); }
+catch (IllegalArgumentException e) { }
+catch (NumberFormatException e) { }            // コンパイルエラー: 親が先
+
+try { arr[i] = 1; }
+catch (IndexOutOfBoundsException e) { }
+catch (ArrayIndexOutOfBoundsException e) { }   // コンパイルエラー: 親が先
+
+try { new FileReader("a.txt"); }
+catch (FileNotFoundException | IOException e) { }   // コンパイルエラー: 親子を | で並べた</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親子関係が無い（兄弟）なら順番は自由、| でも並べられる<span class="tag">OK</span></div><pre><code>catch (ArithmeticException e) { } catch (NullPointerException e) { }      // どちらが先でもよい
+catch (ArithmeticException | NullPointerException e) { }                  // OK
+catch (Exception e) { } catch (Error e) { }                                // OK。Error は Exception の子ではない
+catch (FileNotFoundException e) { } catch (IOException e) { }              // OK。子 → 親の順</code></pre></div>
+
+  <p>例外以外も含めた標準クラスの親子関係は、<a href="#c5-s14">第5章 14「型の親子関係 総まとめ」</a>にまとめています。</p>
 
   <h3>3分類の違い</h3>
   <div class="tw"><table>

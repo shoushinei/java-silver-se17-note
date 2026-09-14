@@ -1,0 +1,169 @@
+<section id="c5-s14">
+  <div class="sh"><span class="num">14</span><h2>型の親子関係 総まとめ</h2></div>
+
+  <p>代入できるか・キャストが要るか・catch の順番・multi-catch・拡張 for 文で回せるか。これらはすべて<strong>「2つの型が親子関係にあるか」</strong>で決まります。試験に出る標準クラスの親子関係を、ここに1か所にまとめます。</p>
+
+  <h3>判定のルールは3つだけ</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>関係</th><th>代入</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td>子 → 親</td><td><strong>そのまま代入できる</strong></td><td><code>Number n = Integer.valueOf(1);</code></td></tr>
+      <tr><td>親 → 子</td><td><strong>キャストが必要</strong>。実体が違えば実行時に ClassCastException</td><td><code>Integer i = (Integer) n;</code></td></tr>
+      <tr><td>親子関係なし（兄弟など）</td><td><strong>キャストしてもコンパイルエラー</strong></td><td><code>Long l = (Long) i;</code>（i は Integer）</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>クラスの木 ── すべての親は Object</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>標準クラスの親子関係（上が親）<span class="tag">暗記</span></div>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Object</span><span class="ht-d">すべてのクラスの親。extends を書かなければ暗黙にこれ</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">Number</span><span class="ht-g ht-ab">abstract</span><span class="ht-d">数値ラッパーの親</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n">Byte</span><span class="ht-g ht-fn">final</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">Short</span><span class="ht-g ht-fn">final</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">Integer</span><span class="ht-g ht-fn">final</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">Long</span><span class="ht-g ht-fn">final</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">Float</span><span class="ht-g ht-fn">final</span></div></li>
+            <li><div class="ht-l"><span class="ht-n">Double</span><span class="ht-g ht-fn">final</span></div></li>
+          </ul>
+        </li>
+        <li><div class="ht-l"><span class="ht-n">Boolean</span><span class="ht-g ht-fn">final</span><span class="ht-d">Number の子ではない</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">Character</span><span class="ht-g ht-fn">final</span><span class="ht-d">Number の子ではない</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">String</span><span class="ht-g ht-fn">final</span><span class="ht-d">CharSequence・Comparable を実装</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">StringBuilder</span><span class="ht-g ht-fn">final</span><span class="ht-d">CharSequence を実装。String の子ではない</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">Throwable</span><span class="ht-d">例外の木 → 第6章 01</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">Record</span><span class="ht-g ht-ab">abstract</span><span class="ht-d">すべての record の親（暗黙に継承）</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">Enum</span><span class="ht-g ht-ab">abstract</span><span class="ht-d">すべての enum の親（暗黙に継承）</span></div></li>
+        <li><div class="ht-l"><span class="ht-n ht-w">ArrayList / HashSet / HashMap など</span><span class="ht-d">コレクションの実装クラス（下のインタフェースの木）</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">すべての配列</span><span class="ht-d">int[] も String[] も Object の子</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">自作のクラス</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <div class="ht-legend"><span><span class="ht-g ht-fn">final</span>継承できない</span><span><span class="ht-g ht-ab">abstract</span>new できない</span></div>
+</div>
+
+  <div class="point trap"><p>ラッパークラスは<span class="mk">6つの数値型だけが Number の子</span>で、Boolean と Character は Object の直接の子です。そして Integer・Long・Double などは<strong>互いに兄弟</strong>なので、代入もキャストもできません。ラッパーも String も StringBuilder もすべて <code>final</code> なので、継承（<code>extends Integer</code>）はできません。</p></div>
+
+  <h3>インタフェースの木</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>インタフェースと、それを実装する主なクラス（上が親）<span class="tag">暗記</span></div>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Iterable&lt;T&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">拡張 for 文で回せる</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">Collection&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.util</span><span class="ht-d">要素の集まり</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n">List&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">順番と位置がある</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">ArrayList&lt;E&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+              </ul>
+            </li>
+            <li><div class="ht-l"><span class="ht-n">Set&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">重複しない</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">HashSet&lt;E&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+              </ul>
+            </li>
+            <li><div class="ht-l"><span class="ht-n">Queue&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">先頭から順に取り出す</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">ArrayDeque&lt;E&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><div class="ht-l"><span class="ht-n">Path</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.nio.file</span><span class="ht-d">ファイルの場所。Comparable&lt;Path&gt; も継承</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Map&lt;K, V&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.util</span><span class="ht-d">キーと値の組。Collection でも Iterable でもない</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">HashMap&lt;K, V&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">CharSequence</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">文字の並び</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">String</span><span class="ht-g ht-cl">クラス</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">StringBuilder</span><span class="ht-g ht-cl">クラス</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Comparable&lt;T&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">大小を比べられる</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n ht-w">String・StringBuilder・ラッパークラスすべて・Enum・Path</span><span class="ht-g ht-cl">クラス</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">AutoCloseable</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">try-with-resources に書ける</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">Closeable</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.io</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n ht-w">FileReader・BufferedReader・Scanner</span><span class="ht-g ht-cl">クラス</span></div></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Cloneable</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">clone() でコピーできる</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n ht-w">すべての配列・ArrayList</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <div class="ht-legend"><span><span class="ht-g ht-if">インタフェース</span>インタフェース（new できない）</span><span><span class="ht-g ht-cl">クラス</span>クラス</span></div>
+</div>
+
+  <p>コレクションの詳しい違いは<a href="#c2-s14">第2章 14</a>、try-with-resources は<a href="#c6-s09">第6章 09</a>、配列の clone は<a href="#c2-s11">第2章 11</a>にあります。</p>
+
+  <h3>代入できるか ── よく出る組み合わせ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>○ はコンパイルできる、× はコンパイルエラー<span class="tag">最頻出</span></div><pre><code>Number n = 1;                              // ○ int → Integer（ボクシング）→ Number（親へ）
+Object o = 1;                              // ○ 同上。Object はすべての親
+Number n = 'a';                            // × Character は Number の子ではない
+Number n = true;                           // × Boolean も Number の子ではない
+Integer i = 1;  Long l = i;                // × Integer と Long は兄弟
+Long l = (Long) i;                         // × 兄弟はキャストしても不可
+
+CharSequence cs = new StringBuilder();     // ○ StringBuilder は CharSequence を実装
+String s = new StringBuilder("a");         // × StringBuilder は String の子ではない
+String s = cs;                             // × 親 → 子。(String) cs とキャストすれば通る
+
+Object o = new int[1];                     // ○ 配列はすべて Object の子
+Object[] oa = new String[1];               // ○ String[] は Object[] の子（配列の共変性）
+Object[] oa = new int[1];                  // × int[] は Object[] の子ではない（int は Object でないため）
+
+Iterable&lt;String&gt; it = new ArrayList&lt;String&gt;();          // ○ ArrayList → List → Collection → Iterable
+Collection&lt;String&gt; c = new HashMap&lt;String, String&gt;();  // × Map は Collection ではない
+List&lt;Object&gt; lo = new ArrayList&lt;String&gt;();             // × &lt; &gt; の中身は親子でも不可（第2章 14）
+
+AutoCloseable ac = new Scanner("x");       // ○ Scanner → Closeable → AutoCloseable
+Exception e = new FileNotFoundException(); // ○ 子孫 → 祖先
+RuntimeException r = new IOException();    // × IOException は RuntimeException の子ではない</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>親 → 子のキャストは、実体が違えば実行時に落ちる<span class="tag">対比</span></div><pre><code>Number n = 1L;                 // 実体は Long
+Integer i = (Integer) n;       // コンパイルは通るが ClassCastException（Long は Integer ではない）</code></pre></div>
+
+  <div class="point"><p>コンパイラが見るのは<strong>変数の型どうしの親子関係</strong>だけです（<a href="#c5-s05">節05</a>）。Number と Integer は親子なのでキャストは書けますが、実体が Long だったことは実行してみるまで分かりません。一方 Integer と Long は兄弟なので、実体を見るまでもなく<span class="mk">コンパイルの時点でエラー</span>になります。</p></div>
+
+  <h3>親子関係で決まる、ほかのルール</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>場面</th><th>親子関係がどう効くか</th></tr></thead>
+    <tbody>
+      <tr><td>拡張 for 文</td><td>配列か <code>Iterable</code> の子孫だけ回せる。<code>Map</code> や <code>String</code> は回せない（<a href="#c2-s14">第2章 14</a>）</td></tr>
+      <tr><td>try-with-resources</td><td><code>AutoCloseable</code> の子孫だけ書ける。StringBuilder は書けない（<a href="#c6-s09">第6章 09</a>）</td></tr>
+      <tr><td>catch の順番</td><td>子を上、親を下。逆だとコンパイルエラー（<a href="#c6-s01">第6章 01 の早見表</a>）</td></tr>
+      <tr><td>multi-catch</td><td>親子関係にある2つは <code>|</code> で並べられない（<a href="#c6-s05">第6章 05</a>）</td></tr>
+      <tr><td>オーバーライドの戻り値</td><td>親と同じか、その子の型なら可（共変戻り値。<a href="#c5-s03">節03</a>）</td></tr>
+      <tr><td>オーバーロードの選択</td><td>引数の型に一番近い親が選ばれる（<a href="#c4-s06">第4章 06</a>）</td></tr>
+      <tr><td>record</td><td>暗黙に <code>Record</code> を継承しているので <code>extends</code> は書けない。<code>implements</code> は書ける（<a href="#c4-s10">第4章 10</a>）</td></tr>
+    </tbody>
+  </table></div>
+</section>

@@ -141,7 +141,12 @@
       "non-sealed",
       "private static",
       "toString",
-      "hashCode"
+      "hashCode",
+      "Object",
+      "Number",
+      "CharSequence",
+      "Comparable",
+      "型の親子関係"
     ]
   },
   {
@@ -163,7 +168,14 @@
       "ArrayIndexOutOfBoundsException",
       "ClassCastException",
       "NumberFormatException",
-      "ArrayStoreException"
+      "ArrayStoreException",
+      "IOException",
+      "FileNotFoundException",
+      "IllegalArgumentException",
+      "IndexOutOfBoundsException",
+      "RuntimeException",
+      "Throwable",
+      "AutoCloseable"
     ]
   }
 ]

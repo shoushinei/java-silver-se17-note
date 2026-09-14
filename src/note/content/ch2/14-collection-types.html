@@ -5,17 +5,38 @@
 
   <h3>全体図</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親子関係（上が親）<span class="tag">最重要</span></div><pre><code>Iterable&lt;T&gt;                 「1つずつ取り出せる」＝拡張for文で回せる、とだけ約束する
- ├── Collection&lt;E&gt;          要素の集まり。add / remove / size / contains
- │    ├── List&lt;E&gt;           順番と位置（インデックス）がある。重複してよい
- │    │    └── ArrayList&lt;E&gt;  ← 実際に new するのはこのクラス
- │    ├── Set&lt;E&gt;            重複しない
- │    │    └── HashSet&lt;E&gt;
- │    └── Queue&lt;E&gt;          先頭から順に取り出す
- └── Path                    ファイルやディレクトリの「場所」（Iterable&lt;Path&gt; を継承）
-
-Map&lt;K, V&gt;                   キーと値の組。Collection でも Iterable でもない（別系統）
- └── HashMap&lt;K, V&gt;</code></pre></div>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>親子関係（上が親）<span class="tag">最重要</span></div>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Iterable&lt;T&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.lang</span><span class="ht-d">「1つずつ取り出せる」＝拡張 for 文で回せる、とだけ約束する</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">Collection&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.util</span><span class="ht-d">要素の集まり。add / remove / size / contains</span></div>
+          <ul>
+            <li><div class="ht-l"><span class="ht-n">List&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">順番と位置（インデックス）がある。重複してよい</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">ArrayList&lt;E&gt;</span><span class="ht-g ht-cl">クラス</span><span class="ht-d">実際に new するのはこのクラス</span></div></li>
+              </ul>
+            </li>
+            <li><div class="ht-l"><span class="ht-n">Set&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">重複しない</span></div>
+              <ul>
+                <li><div class="ht-l"><span class="ht-n">HashSet&lt;E&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+              </ul>
+            </li>
+            <li><div class="ht-l"><span class="ht-n">Queue&lt;E&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-d">先頭から順に取り出す</span></div></li>
+          </ul>
+        </li>
+        <li><div class="ht-l"><span class="ht-n">Path</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.nio.file</span><span class="ht-d">ファイルやディレクトリの「場所」（Iterable&lt;Path&gt; を継承）</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <ul class="ht">
+    <li><div class="ht-l"><span class="ht-n">Map&lt;K, V&gt;</span><span class="ht-g ht-if">インタフェース</span><span class="ht-p">java.util</span><span class="ht-d">キーと値の組。Collection でも Iterable でもない（別系統）</span></div>
+      <ul>
+        <li><div class="ht-l"><span class="ht-n">HashMap&lt;K, V&gt;</span><span class="ht-g ht-cl">クラス</span></div></li>
+      </ul>
+    </li>
+  </ul>
+  <div class="ht-legend"><span><span class="ht-g ht-if">インタフェース</span>インタフェース（new できない）</span><span><span class="ht-g ht-cl">クラス</span>クラス</span></div>
+</div>
 
   <div class="point"><p><span class="mk">ArrayList と HashSet と HashMap 以外は、すべてインタフェース</span>です。インタフェースは <code>new</code> できないので、実物を作るときは <code>new ArrayList&lt;&gt;()</code> や <code>List.of(...)</code>、<code>Path.of(...)</code> を使います。</p></div>
 

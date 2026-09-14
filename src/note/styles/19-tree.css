@@ -1,0 +1,35 @@
+/* クラスの親子関係の木（第2章 14・第5章 14・第6章 01）。クラス名は ht- で始める（ほかと衝突させない）。
+   罫線文字（├ └ │）は Web フォントに含まれておらず、環境によって幅がずれて列が崩れるので、
+   線は CSS の枠線で描く。説明は名前の後ろに並べ、狭い画面では折り返す。 */
+.code .ht{list-style:none;margin:0;padding:14px 16px 12px;font-size:13px;line-height:1.55;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ht ul{list-style:none;margin:0;padding:0 0 0 5px}
+.ht li{position:relative;margin:0;padding:3px 0 3px 20px}
+.ht > li{padding-left:0}
+.ht + .ht{padding-top:10px;border-top:1px dashed var(--rule)}
+/* 親から子への線: 横線は1行目の高さの中央へ、縦線は次の兄弟まで伸ばす */
+.ht ul > li::before{content:"";position:absolute;left:0;top:0;width:14px;height:13px;border-left:1.5px solid #B9B4A6;border-bottom:1.5px solid #B9B4A6;border-bottom-left-radius:3px}
+.ht ul > li::after{content:"";position:absolute;left:0;top:13px;bottom:0;border-left:1.5px solid #B9B4A6}
+.ht ul > li:last-child::after{display:none}
+.ht-l{display:flex;flex-wrap:wrap;align-items:baseline;gap:1px 8px}
+.ht-n{font-family:var(--mono);font-weight:700;color:var(--sumi);white-space:nowrap}
+.ht-d{font-size:12px;color:var(--sumi-2)}
+.ht-p{font-family:var(--mono);font-size:11px;color:var(--sumi-3)}
+.ht-g{font-family:var(--mono);font-size:10px;font-weight:700;line-height:1.5;border:1px solid currentColor;border-radius:3px;padding:0 5px;white-space:nowrap}
+.ht-ck{color:var(--err);background:var(--err-bg)}
+.ht-uc{color:var(--sumi-3)}
+.ht-fn{color:#1D5FA8}
+.ht-ab{color:#8B2E8B}
+.ht-if{color:var(--ok);background:var(--ok-bg)}
+.ht-cl{color:var(--sumi-2)}
+.ht-ckd > .ht-l .ht-n{color:var(--err)}
+.ht-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 16px 10px;border-top:1px solid var(--rule);font-size:11.5px;color:var(--sumi-3)}
+.ht-legend .ht-g{margin-right:5px}
+.ht-n.ht-w{white-space:normal}
+@media (max-width:480px){
+  .code .ht{font-size:12px;padding:12px 4px 10px 10px}
+  .ht li{padding-left:16px}
+  .ht ul{padding-left:3px}
+  .ht-n{font-size:11px}
+  .ht ul > li::before{width:11px;height:12px}
+  .ht ul > li::after{top:12px}
+}
