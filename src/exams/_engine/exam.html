@@ -27,6 +27,7 @@
   <span class="timer only-test" id="timer" aria-live="off">{{minutes}}:00</span>
   <span class="hscore only-result" id="hscore"></span>
   <button type="button" class="btn navopen" id="navopen">問題一覧</button>
+  <button type="button" class="btn ghost only-test" id="pause">中断</button>
   <button type="button" class="btn primary only-test" id="submit">提出</button>
   <button type="button" class="btn ghost only-result" id="to-intro">記録一覧へ</button>
   <a class="btn ghost only-intro" href="review.html">振り返り</a>
@@ -48,14 +49,14 @@
     </div>
 
     <div class="resume" id="resume" hidden>
-      <p id="resume-text"></p>
+      <p><b id="resume-title"></b><span id="resume-text"></span></p>
       <button type="button" class="btn primary" id="resume-btn">続きから再開</button>
     </div>
 
     <div class="modes">
       <div class="mode-card">
         <h2>テストモード</h2>
-        <p>{{minutes}} 分の時間制限つきで本番と同じように解きます。提出すると採点し、全問の ○× と正解・解説を見直せます。結果は受験記録として保存されます。</p>
+        <p>{{minutes}} 分の時間制限つきで本番と同じように解きます。用事ができたら「中断」で時計を止めて、あとから続きを受けられます。提出すると採点し、全問の ○× と正解・解説を見直せます。結果は受験記録として保存されます。</p>
         <button type="button" class="btn primary" id="start">テストを始める</button>
       </div>
       <div class="mode-card">
@@ -71,7 +72,8 @@
 
     <h2 class="sub-h">ルール</h2>
     <ul class="rules">
-      <li>時間はテスト開始の時刻から数えます。ページを閉じても時間は進み、{{minutes}} 分になると自動で提出されます。</li>
+      <li>時間はテスト開始の時刻から数えます。「中断」を押さずにページを閉じた場合も時間は進み、{{minutes}} 分になると自動で提出されます。</li>
+      <li><b>中断</b>を押すと時計が止まり、問題は表示されなくなります。回答・見直しマーク・残り時間はこのブラウザに保存され、次に開いたときに「続きから再開」で戻れます。</li>
       <li>全問を解いていなくても、いつでも提出できます。未回答の問題は不正解になります。</li>
       <li>気になる問題には「見直し」のマークを付けておけます。問題一覧から、マークした問題や未回答の問題だけに絞れます。</li>
       <li>「2つ選択」などの問題は、正解をすべて選んだときだけ正解です。</li>

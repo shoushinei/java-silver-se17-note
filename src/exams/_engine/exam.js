@@ -9,10 +9,12 @@
      mode-review  振り返りのページ
 
    保存（localStorage。キーは java-silver-exam:<試験ID>:...）
-     session  受験中の状態。再読み込みしても続きから再開できる
+     session  受験中の状態。再読み込みしても続きから再開できる。
+              「中断」を押すと pausedAt が入り、時計を止めたまま保存される
      history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ
      seq      受験回の通し番号
-   制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。 */
+   制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。
+   ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。 */
 (function () {
   var meta = JSON.parse(document.getElementById("exam-meta").textContent);
   var KEY = "java-silver-exam:" + meta.id + ":";
@@ -48,7 +50,7 @@
   var mode = "";
   var cur = 1;           // 表示中の問題番号。採点結果では 0 が「結果の概要」
   var filter = "all";    // 問題一覧の絞り込み
-  var S = null;          // 受験中の状態 { startedAt, answers: {no: [key...]}, flags: [no...], cur, submitted }
+  var S = null;          // 受験中の状態 { startedAt, answers: {no: [key...]}, flags: [no...], cur, submitted, pausedAt, pauses }
   var R = null;          // 表示中の受験記録（history の 1 件）
   var timerId = null;
 
@@ -111,6 +113,13 @@
     return save("history", h);
   }
 
+  function noteOf(r) {          // 所要時間に添える但し書き
+    var a = [];
+    if (r.timeUp) a.push("時間切れ");
+    if (r.pauses) a.push("中断 " + r.pauses + " 回");
+    return a.length ? "（" + a.join("・") + "）" : "";
+  }
+
   function renderHistory() {
     var h = historyList();
     var box = $("history");
@@ -122,7 +131,7 @@
       return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) + "</td>" +
              "<td><b>" + r.correct + "</b> / " + r.total + "（" + Math.round(r.rate * 100) + "%）" + (r === best && h.length > 1 ? ' <span class="tag-best">最高</span>' : "") + "</td>" +
              '<td class="' + (r.passed ? "pass" : "fail") + '">' + (r.passed ? "合格" : "不合格") + "</td>" +
-             "<td>" + fmt(r.usedMs) + (r.timeUp ? "（時間切れ）" : "") + "</td>" +
+             "<td>" + fmt(r.usedMs) + noteOf(r) + "</td>" +
              "<td>" + (memo ? "メモ " + memo + " 件" : "") + "</td>" +
              '<td class="ops"><button type="button" class="btn" data-open="' + r.at + '">結果を開く</button>' +
              '<button type="button" class="btn ghost del" data-del="' + r.at + '" aria-label="第' + r.no + '回の記録を削除">削除</button></td></tr>';
@@ -152,12 +161,18 @@
     var sess = load("session");
     var resume = $("resume");
     if (sess && !sess.submitted) {
-      var left = sess.startedAt + LIMIT_MS - Date.now();
+      // 中断中は、押した時点の残り時間で止まっている
+      var left = sess.startedAt + LIMIT_MS - (sess.pausedAt || Date.now());
       var done = Object.keys(sess.answers).filter(function (k) { return sess.answers[k].length; }).length;
+      var state = "回答済み " + done + " / " + N + " 問、残り " + fmt(left);
       resume.hidden = false;
-      $("resume-text").textContent = left > 0
-        ? "受験の途中です（回答済み " + done + " / " + N + " 問、残り " + fmt(left) + "）。"
-        : "前回の受験は制限時間を過ぎています。続きを開くと、その時点の回答で採点します。";
+      resume.classList.toggle("paused", !!sess.pausedAt);
+      $("resume-title").textContent = sess.pausedAt ? "中断中です" : left > 0 ? "受験の途中です" : "制限時間を過ぎています";
+      $("resume-text").textContent = sess.pausedAt
+        ? "（" + state + "）。時計は止まっています。再開すると、この残り時間から続きます。"
+        : left > 0
+          ? "（" + state + "）。中断していないので時計は進んでいます。"
+          : "。続きを開くと、その時点の回答で採点します。";
     } else {
       resume.hidden = true;
     }
@@ -335,7 +350,7 @@
 
   function start(fresh) {
     if (fresh || !S) {
-      S = { startedAt: Date.now(), answers: {}, flags: [], cur: 1, submitted: false };
+      S = { startedAt: Date.now(), answers: {}, flags: [], cur: 1, submitted: false, pausedAt: 0, pauses: 0 };
       save("session", S);
     }
     R = null;
@@ -420,6 +435,33 @@
     if (q.flagBtn) q.flagBtn.addEventListener("click", function () { if (mode === "test") toggleFlag(q); });
   });
 
+  /* ---------------- 中断 ---------------- */
+
+  // 時計を止めて開始前の画面へ戻る。問題は表示されなくなるが、回答と残り時間は残る
+  function pause() {
+    if (mode !== "test" || !S) return;
+    clearInterval(timerId);
+    S.cur = cur;
+    S.pausedAt = Date.now();
+    S.pauses = (S.pauses || 0) + 1;
+    var ok = save("session", S);
+    toIntro();
+    if (!ok) {
+      showModal("<h2>保存できませんでした</h2><p>このブラウザの保存領域が使えないため、中断した状態を残せません。" +
+                "このまま再開すると、回答が失われている可能性があります。</p>" +
+                '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>');
+    }
+  }
+  $("pause").addEventListener("click", function () {
+    if (mode !== "test" || !S) return;
+    var left = S.startedAt + LIMIT_MS - Date.now();
+    showModal("<h2>テストを中断しますか？</h2>" +
+              "<p>残り時間 <b>" + fmt(left) + "</b> のまま時計が止まり、問題は表示されなくなります。" +
+              "回答・見直しマークはこのブラウザに保存され、「続きから再開」でここから続けられます。</p>" +
+              '<div class="actions"><button type="button" class="btn" data-close>テストに戻る</button>' +
+              '<button type="button" class="btn primary" id="pause-ok">中断する</button></div>');
+  });
+
   /* ---------------- 提出 ---------------- */
 
   function chipList(nos) {
@@ -463,6 +505,7 @@
     var j = e.target.closest("[data-jump]");
     if (j) { hideModal(); go(+j.dataset.jump); return; }
     if (e.target.closest("[data-submit]")) { hideModal(); submit(false); return; }
+    if (e.target.closest("#pause-ok")) { hideModal(); pause(); return; }
     if (e.target.closest("#restart-ok")) { hideModal(); drop("session"); S = null; start(true); return; }
     var d = e.target.closest("[data-del-ok]");
     if (d) {
@@ -490,6 +533,7 @@
       answers: S.answers,
       flags: S.flags,
       timeUp: !!timeUp,
+      pauses: S.pauses || 0,
       notes: {},
     };
     var hist = historyList();
@@ -545,7 +589,8 @@
     $("r-judge").className = "judge " + (r.passed ? "pass" : "fail");
     $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験<br>" +
       "正答率 <b>" + Math.round(r.rate * 100) + "%</b>（合格ライン " + Math.round(meta.passRate * 100) + "%）<br>" +
-      "所要時間 " + fmt(r.usedMs) + " / " + meta.minutes + ":00" + (r.timeUp ? "（時間切れで提出）" : "");
+      "所要時間 " + fmt(r.usedMs) + " / " + meta.minutes + ":00" + (r.timeUp ? "（時間切れで提出）" : "") +
+      (r.pauses ? "　中断 " + r.pauses + " 回（止めていた時間は含みません）" : "");
     $("r-tally").innerHTML =
       '<button type="button" data-tally="ok" class="t-ok"><b>○ ' + cnt.ok + "</b>正解</button>" +
       '<button type="button" data-tally="wrong" class="t-ng"><b>× ' + (cnt.ng + cnt.none) + "</b>不正解・未回答" + (cnt.none ? "（未回答 " + cnt.none + "）" : "") + "</button>" +
@@ -642,6 +687,11 @@
   $("resume-btn").addEventListener("click", function () {
     S = load("session");
     if (!S) return;
+    if (S.pausedAt) {          // 止めていた分だけ開始時刻を後ろへずらす
+      S.startedAt += Math.max(0, Date.now() - S.pausedAt);
+      S.pausedAt = 0;
+      save("session", S);
+    }
     if (S.startedAt + LIMIT_MS <= Date.now()) { submit(true); return; }
     start(false);
   });
