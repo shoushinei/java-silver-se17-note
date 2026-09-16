@@ -148,7 +148,10 @@
       "Number",
       "CharSequence",
       "Comparable",
-      "型の親子関係",
+      "型の関係",
+      "配列の共変性",
+      "型引数",
+      "共変戻り値",
       "name clash"
     ]
   },

@@ -1237,7 +1237,7 @@ public class FileLoader extends Loader {
 <p class="ans">正解：<b>D</b></p>
 <ul><li><code>m(&quot;A&quot;)</code>: String 版と Object 版の両方に渡せますが、String は Object の子で<strong>より具体的</strong>なので String 版です。</li><li><code>m(10)</code>: int をそのまま受け取れる m は無いので、次の段階でボクシングを試します。10 → Integer にすれば、Integer は Object の子なので <strong>Object 版</strong>に渡せます。ここで決まるので、可変長引数（Integer...）までは進みません。可変長引数は最後の段階なので、Object 版と比べられることもなく、あいまいにもなりません（A・C は誤り）。</li><li><code>m()</code>: 引数 0 個で呼べるのは可変長引数だけです。</li><li><code>m(10, 20)</code>: 引数 2 個で呼べるのも可変長引数だけです。</li></ul>
 <p>「Integer... のほうが Integer に近いから m(10) は Varargs」と考えさせる引っかけです。可変長引数は、ほかの候補が1つも使えないときにだけ選ばれます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── 解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数。比べるのは呼び出せる候補の中だけ</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の親子関係 総まとめ」</a> <span>── ボクシングした Integer は、親の型 Object の引数に渡せる</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── 解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数。比べるのは呼び出せる候補の中だけ</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── ボクシングした Integer は、親の型 Object の引数に渡せる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q17" data-no="17" data-answer="E" data-pick="1" data-ch="c2">
@@ -1323,7 +1323,7 @@ public class Main {
 <p class="ans">正解：<b>B, E</b></p>
 <ul><li>7 行目: <code>((Dog) a)</code> で a を Dog として扱ってから <code>.bark()</code> を呼んでいます。正しい。</li><li>8 行目: キャストは <code>.</code>（メソッド呼び出し）より<strong>結合が弱い</strong>ので、<code>(Dog) (a.bark())</code> と解釈されます。まず Animal 型の a に bark() が無いのでエラーです。そもそも「キャストするだけの式」は文として書けません。</li><li>9 行目: Animal は final ではないので、「Animal の子のどれかが Runnable を実装しているかもしれない」とコンパイラは判断し、インタフェースへのキャストを<strong>許します</strong>。実際には Dog は Runnable ではないので、実行すれば ClassCastException になりますが、コンパイルエラーではありません。</li><li>10 行目: eat() は Animal にあるので正しい。</li><li>11 行目: 変数 a の型は Animal で、bark() は Animal にありません。実体が Dog でもエラーです。</li></ul>
 <p>8 行目のように、子のメソッドを呼ぶには <strong>キャストした式全体を括弧で囲む</strong>必要があります。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── キャストは . より結合が弱い。(Dog) a.bark() は a.bark() の結果をキャストしようとする</span></li><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── 呼べるメソッドは変数の型で決まる</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の親子関係 総まとめ」</a> <span>── final でないクラスからインタフェースへのキャストはコンパイルできる</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── キャストは . より結合が弱い。(Dog) a.bark() は a.bark() の結果をキャストしようとする</span></li><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── 呼べるメソッドは変数の型で決まる</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── final でないクラスからインタフェースへのキャストはコンパイルできる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q19" data-no="19" data-answer="C" data-pick="1" data-ch="c3">
@@ -1497,7 +1497,7 @@ public class Main {
 <p class="ans">正解：<b>A</b></p>
 <ul><li><code>a == b</code>: 127 はキャッシュの範囲（-128〜127）なので、ボクシングで<strong>同じ Integer インスタンス</strong>が使われます。true。</li><li><code>c == d</code>: 128 は範囲外なので、別々のインスタンスが作られます。<code>==</code> は参照の比較なので false。</li><li><code>c.equals(d)</code>: 中身の比較なので true。</li><li><code>a.equals(e)</code>: Integer の equals は、<strong>引数も Integer のときだけ</strong> true になり得ます。e は Long なので、値が同じ 127 でも false です（B は誤り）。</li><li><code>e == 127</code>: 片方が基本データ型なので、e が<strong>アンボクシング</strong>されて long の 127 と int の 127 の比較になります。値が同じなので true。コンパイルエラーにはなりません（E は誤り）。</li></ul>
 <p>Integer と Long はどちらも Number の子ですが、互いに兄弟で、equals では別物として扱われます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── -128〜127 のボクシングはキャッシュされた同じ Integer を返す</span></li><li><a href="../../index.html#c3-s04">第3章 04「比較と等価性」</a> <span>── ラッパーと基本型を == で比べるとアンボクシングされて値の比較になる</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の親子関係 総まとめ」</a> <span>── Integer と Long は兄弟。Integer の equals は Integer 以外には false</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── -128〜127 のボクシングはキャッシュされた同じ Integer を返す</span></li><li><a href="../../index.html#c3-s04">第3章 04「比較と等価性」</a> <span>── ラッパーと基本型を == で比べるとアンボクシングされて値の比較になる</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── Integer と Long は兄弟。Integer の equals は Integer 以外には false</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q23" data-no="23" data-answer="B,C" data-pick="2" data-ch="c1">
@@ -2007,7 +2007,7 @@ C</code></pre></div></div>
 <p>Number の子は、6つの数値のラッパー（Byte・Short・Integer・Long・Float・Double）だけです。<strong>Character は数字の文字を入れていても Number ではありません</strong>（A は、'4' を数えた誤り）。</p>
 <p><code>null instanceof Number</code> は、例外にならず false になります。<code>&amp;&amp;</code> の右側の <code>n.intValue()</code> は、左が true のときしか評価されないので、null で呼ばれることもありません（C は誤り）。</p>
 <p>Number に当てはまる 3 つとも intValue() が正なので、count は 3 です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s14">第5章 14「型の親子関係 総まとめ」</a> <span>── Number の子は Byte・Short・Integer・Long・Float・Double。Character と Boolean は Number ではない</span></li><li><a href="../../index.html#c4-s09">第4章 09「instanceof ★新」</a> <span>── null に instanceof を使うと false。パターン変数は &amp;&amp; の右側で使える</span></li><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── 基本データ型の値は、Object の配列に入れるときにボクシングされる</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── Number の子は Byte・Short・Integer・Long・Float・Double。Character と Boolean は Number ではない</span></li><li><a href="../../index.html#c4-s09">第4章 09「instanceof ★新」</a> <span>── null に instanceof を使うと false。パターン変数は &amp;&amp; の右側で使える</span></li><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── 基本データ型の値は、Object の配列に入れるときにボクシングされる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q33" data-no="33" data-answer="A" data-pick="1" data-ch="c4">
@@ -2514,7 +2514,7 @@ public class Main {
 <p>配列も「型」として親子関係で判定します。</p>
 <div class="tw"><table><thead><tr><th>引数</th><th>型</th><th>選ばれる f</th><th>理由</th></tr></thead><tbody><tr><td><code>new int[3]</code></td><td>int[]</td><td>O</td><td>int は Object ではないので、int[] は Object[] の子ではない。配列はすべて Object の子</td></tr><tr><td><code>new Integer[3]</code></td><td>Integer[]</td><td>A</td><td>Integer は Object の子なので、Integer[] は Object[] の子。Object より具体的</td></tr><tr><td><code>5</code></td><td>int</td><td>L</td><td>int → long の拡大変換（ボクシングより先）</td></tr><tr><td><code>new int[2][2]</code></td><td>int[][]</td><td>A</td><td>要素の int[] は Object なので、int[][] は Object[] の子</td></tr><tr><td><code>5.0</code></td><td>double</td><td>O</td><td>double → long は縮小なので不可。ボクシングで Double → Object</td></tr></tbody></table></div>
 <p>「int[] は数字の配列だから Object[]（A）」と考えさせるのが1つ目の引っかけで、「2次元なら int[] と同じく O」と考えさせるのが4つ目の引っかけです。f(5.0) は候補が Object 版しか残らないので、あいまいにはなりません（E は誤り）。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは引数の型に最も近い候補が選ばれる。int は long へ拡大、double はボクシングして Object へ</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の親子関係 総まとめ」</a> <span>── int[] は Object の子だが Object[] の子ではない。Integer[] や int[][] は Object[] の子</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは引数の型に最も近い候補が選ばれる。int は long へ拡大、double はボクシングして Object へ</span></li><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── int[] は Object の子だが Object[] の子ではない。Integer[] や int[][] は Object[] の子</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q43" data-no="43" data-answer="B" data-pick="1" data-ch="c5">

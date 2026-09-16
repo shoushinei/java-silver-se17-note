@@ -110,4 +110,33 @@ class B extends A {   // 下の4つは、どれか1つだけを書いた場合�
 }</code></pre></div>
 
   <div class="point"><p>戻り値の共変は <strong><code>&lt; &gt;</code> の外側</strong>だけで効きます。ArrayList は List の子なので <code>ArrayList&lt;Number&gt;</code> は OK ですが、中身の Integer と Number に親子関係があっても <code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子になりません（<a href="#c2-s14">第2章 14</a>）。<br>引数の <code>Set&lt;String&gt;</code> と <code>Set&lt;CharSequence&gt;</code> は、コンパイル後に <code>&lt; &gt;</code> が消える（型消去）と<strong>どちらも Set</strong> になります。引数リストが「違う」のでオーバーライドにならず、消した後は「同じ」なのでオーバーロードとしても共存できず、<span class="mk"><code>name clash</code> というコンパイルエラー</span>になります。同じクラスの中に <code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> を並べても同じエラーです。</p></div>
+
+  <h3>「サブクラスに定義できるメソッドはどれか」の解き方</h3>
+
+  <p>親のメソッドを1つ見せて、子に書ける宣言を選ばせる形式です。<code>&lt; &gt;</code> が付くと急に難しく見えますが、<strong>引数 → 戻り値 → 修飾子</strong>の順に見れば機械的に切れます。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>見るところ</th><th>判定</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>引数リストを、<code>&lt; &gt;</code> の中身まで含めて親と見比べる</td><td class="wrap">・完全に同じ → <strong>オーバーライド</strong>。2 へ進む<br>・<code>&lt; &gt;</code> の<strong>外側</strong>が違う（<code>Set</code> → <code>TreeSet</code>）→ 別のメソッド＝<strong>オーバーロード</strong>。戻り値もアクセスも自由 → ○<br>・<code>&lt; &gt;</code> の<strong>中身だけ</strong>が違う（<code>Set&lt;CharSequence&gt;</code> → <code>Set&lt;String&gt;</code>）→ 型消去すると同じ → <strong>name clash</strong> で ×</td></tr>
+      <tr><td><strong>2</strong></td><td>戻り値</td><td class="wrap"><code>&lt; &gt;</code> の<strong>外側</strong>は子に狭めてよい（<code>List</code> → <code>ArrayList</code>）。<code>&lt; &gt;</code> の<strong>中身</strong>は完全一致でなければ ×</td></tr>
+      <tr><td><strong>3</strong></td><td>アクセス修飾子・検査例外</td><td class="wrap">狭める／増やすと ×（上の表と同じ）</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>親が <code>public List&lt;Number&gt; get(Set&lt;CharSequence&gt; s)</code> のとき、子に書ける／書けないは次のように分かれます。<strong>どれか1つだけを子に書いた場合</strong>の判定です。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>子に書く宣言</th><th>判定</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>ArrayList&lt;Integer&gt; get(Set&lt;String&gt; s)</code></td><td>×</td><td>1 で脱落。name clash</td></tr>
+      <tr><td><code>List&lt;Integer&gt; get(TreeSet&lt;String&gt; s)</code></td><td><strong>○</strong></td><td>引数の<strong>外側</strong>が違う → 別のメソッド。戻り値は問われない</td></tr>
+      <tr><td><code>List&lt;Integer&gt; get(Set&lt;String&gt; s)</code></td><td>×</td><td>1 で脱落。name clash</td></tr>
+      <tr><td><code>List&lt;Object&gt; get(Set&lt;CharSequence&gt; s)</code></td><td>×</td><td>2 で脱落。戻り値の中身が違う</td></tr>
+      <tr><td><code>List&lt;Integer&gt; get(Set&lt;CharSequence&gt; s)</code></td><td>×</td><td>同上。Integer が Number の子でも関係ない</td></tr>
+      <tr><td><code>ArrayList&lt;Number&gt; get(Set&lt;CharSequence&gt; s)</code></td><td><strong>○</strong></td><td>中身は同じで、外側だけ子に狭めた＝共変戻り値</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>2つ選ばせる問題では、<span class="mk">オーバーロードに逃げたもの（引数の外側を変える）と、共変戻り値で通るもの（戻り値の外側だけ子にする）が1つずつ</span>という作りがよく出ます。<br>エラーメッセージも見分けの助けになります。引数で外したときは <code>name clash ... have the same erasure, yet neither overrides the other</code>、戻り値で外したときは <code>attempting to use incompatible return type</code> です。<br>唱えるのは1つだけ ── <strong><code>&lt; &gt;</code> の中身は引数でも戻り値でも完全一致。緩められるのは外側だけ</strong>（<a href="#c5-s14">第5章 14</a>の④）。</p></div>
 </section>
