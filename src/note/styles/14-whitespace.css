@@ -1,4 +1,4 @@
-/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）。
+/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）と、リストの箱の図（第2章 12）。
    図の中身（残る空白・改行・文字数）は、Java で実際に作った文字列と照合してから書いている。
    空白は文字（·）ではなく背景の点で描く。Web フォントに無い記号で幅がずれ、列が崩れるのを防ぐため。 */
 .ws{margin:16px 0 20px;border:1px solid var(--rule);border-radius:8px;background:#fff;overflow:hidden}
@@ -49,6 +49,11 @@
 .ws-legend i{height:1.4em}
 .ws-base-mark{display:inline-block;width:0;height:18px;border-left:2px solid var(--err)}
 .ws-h4{font-size:14px;margin:22px 0 4px;color:var(--sumi-2)}
+
+/* ArrayList の remove の前後（第2章 12）。箱は上の .ch を使い回す */
+.rmv{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 12px}
+.rmv-ar{font-size:18px;color:var(--sumi-3);line-height:28px}
+.ch.del b{background:var(--err-bg);border-color:var(--err);color:var(--err);text-decoration:line-through}
 
 @media (max-width:480px){
   .ws-sec{padding:9px 10px 11px}

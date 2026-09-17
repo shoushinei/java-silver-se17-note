@@ -161,7 +161,7 @@ a{color:var(--sumi)}
 :focus-visible{outline:2.5px solid var(--err);outline-offset:2px;border-radius:3px}
 
 /* ---- styles/14-whitespace.css ---- */
-/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）。
+/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）と、リストの箱の図（第2章 12）。
    図の中身（残る空白・改行・文字数）は、Java で実際に作った文字列と照合してから書いている。
    空白は文字（·）ではなく背景の点で描く。Web フォントに無い記号で幅がずれ、列が崩れるのを防ぐため。 */
 .ws{margin:16px 0 20px;border:1px solid var(--rule);border-radius:8px;background:#fff;overflow:hidden}
@@ -212,6 +212,11 @@ a{color:var(--sumi)}
 .ws-legend i{height:1.4em}
 .ws-base-mark{display:inline-block;width:0;height:18px;border-left:2px solid var(--err)}
 .ws-h4{font-size:14px;margin:22px 0 4px;color:var(--sumi-2)}
+
+/* ArrayList の remove の前後（第2章 12）。箱は上の .ch を使い回す */
+.rmv{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 12px}
+.rmv-ar{font-size:18px;color:var(--sumi-3);line-height:28px}
+.ch.del b{background:var(--err-bg);border-color:var(--err);color:var(--err);text-decoration:line-through}
 
 @media (max-width:480px){
   .ws-sec{padding:9px 10px 11px}
@@ -3113,20 +3118,66 @@ list.set(2, "X");              // IndexOutOfBoundsException</code></pre></div>
 
   <p>ArrayList は連続した並びなので、<span class="mk">途中に空きを作れません</span>。配列と違い「まだ存在しない位置」に代入することはできません。</p>
 
-  <h3>remove ── 引数の型で動作が変わる</h3>
+  <h3>remove ── 同じ名前のメソッドが2つある</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>int リテラルだけが位置指定<span class="tag">最重要</span></div><pre><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;(List.of(10, 20, 30));
+  <p>ArrayList には、<code>remove</code> という名前のメソッドが<strong>2つ</strong>用意されています。「何番目を消すか」を渡すものと、「どの値を消すか」を渡すものです。</p>
 
-list.remove(1);                     // [10, 30] ← インデックス1を削除
-list.remove(Integer.valueOf(10));   // [20, 30] ← 値10を削除
-list.remove(new Integer(10));       // 同上（Object 版が選ばれる）</code></pre></div>
+  <div class="tw"><table>
+    <thead><tr><th>メソッド</th><th>( ) に渡すもの</th><th>戻り値</th><th>見つからないとき</th></tr></thead>
+    <tbody>
+      <tr><td><code>remove(int index)</code></td><td><strong>位置</strong>（0 から数える）</td><td>消した要素</td><td>IndexOutOfBoundsException</td></tr>
+      <tr><td><code>remove(Object o)</code></td><td><strong>値</strong>（equals で比べ、前から探して1つ消す）</td><td>消せたら <code>true</code></td><td><code>false</code>（例外にならない）</td></tr>
+    </tbody>
+  </table></div>
 
-  <div class="point link"><p><code>remove(int)</code> と <code>remove(Object)</code> は<strong>オーバーロード</strong>です。<span class="mk pink">完全一致 → 拡大変換 → ボクシング → 可変長引数</span>という第4章の解決順序がそのまま効いています。</p></div>
+  <div class="point"><p>このように<span class="mk">名前が同じで、引数の型だけが違うメソッドを並べること</span>を<strong>オーバーロード</strong>といいます（詳しくは<a href="#c4-s06">第4章 06</a>）。呼ぶ側は名前だけを書き、Java が <code>( )</code> の中に書いた値の<strong>型</strong>を見て、どちらを使うかをコンパイルの時点で決めます。</p></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>戻り値と例外も違う<span class="tag">要注意</span></div><pre><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;(List.of(10, 20, 30));
+  <div class="ws">
+    <div class="ws-sec"><div class="ws-lb"><code>list.remove(1);</code> ── 1 は int なので「位置」</div>
+      <div class="rmv">
+        <div class="chs"><span class="ch"><b>10</b><small>0</small></span><span class="ch del"><b>20</b><small>1</small></span><span class="ch"><b>30</b><small>2</small></span></div>
+        <span class="rmv-ar">→</span>
+        <div class="chs"><span class="ch"><b>10</b><small>0</small></span><span class="ch"><b>30</b><small>1</small></span></div>
+      </div>
+      <div class="ws-note">位置 1 にある <b>20</b> が消える。戻り値は消した要素の <b>20</b>。後ろの 30 は位置 1 に詰まる</div>
+    </div>
+    <div class="ws-sec"><div class="ws-lb"><code>list.remove(Integer.valueOf(10));</code> ── Integer なので「値」</div>
+      <div class="rmv">
+        <div class="chs"><span class="ch del"><b>10</b><small>0</small></span><span class="ch"><b>20</b><small>1</small></span><span class="ch"><b>30</b><small>2</small></span></div>
+        <span class="rmv-ar">→</span>
+        <div class="chs"><span class="ch"><b>20</b><small>0</small></span><span class="ch"><b>30</b><small>1</small></span></div>
+      </div>
+      <div class="ws-note">値が <b>10</b> の要素を探して消す。戻り値は <b>true</b></div>
+    </div>
+  </div>
 
-list.remove(Integer.valueOf(99));   // false。見つからなくても例外にならない
-list.remove(99);                    // IndexOutOfBoundsException</code></pre></div>
+  <p>箱の中が値、箱の下の数字が位置です。どちらの例も、元は <code>[10, 20, 30]</code> のリストです。</p>
+
+  <h3>どちらが呼ばれるか ── ( ) の中の型で決まる</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>呼び出し（元は [10, 20, 30]）</th><th>( ) の中の型</th><th>呼ばれるもの</th><th>結果</th></tr></thead>
+    <tbody>
+      <tr><td><code>list.remove(1)</code></td><td>int</td><td><code>remove(int)</code></td><td><code>[10, 30]</code>。戻り値 20</td></tr>
+      <tr><td><code>list.remove(10)</code></td><td>int</td><td><code>remove(int)</code></td><td><strong>IndexOutOfBoundsException</strong>（位置 10 は無い）</td></tr>
+      <tr><td><code>list.remove(Integer.valueOf(10))</code></td><td>Integer</td><td><code>remove(Object)</code></td><td><code>[20, 30]</code>。戻り値 true</td></tr>
+      <tr><td><code>list.remove((Integer) 20)</code></td><td>Integer</td><td><code>remove(Object)</code></td><td><code>[10, 30]</code>。戻り値 true</td></tr>
+      <tr><td><code>list.remove(Integer.valueOf(99))</code></td><td>Integer</td><td><code>remove(Object)</code></td><td>変わらない。戻り値 false</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>引っかけは <code>list.remove(10)</code> です。「値 10 を消す」ように見えますが、<code>10</code> は int なので <code>remove(int)</code> にそのまま当てはまり、<span class="mk">「位置 10 を消す」になって例外</span>が出ます。<br>Java は、int を Integer に包んで（ボクシング）<code>remove(Object)</code> を使うより、<strong>何も変換せずに当てはまる <code>remove(int)</code> を優先</strong>するからです。値として消したいときは、<code>Integer.valueOf(10)</code> や <code>(Integer) 10</code> で<strong>先に Integer にしてから</strong>渡します。</p></div>
+
+  <p>迷うのは <code>List&lt;Integer&gt;</code> のときだけです。<code>List&lt;String&gt;</code> で <code>list.remove("b")</code> と書けば、<code>"b"</code> は int にはなれないので、迷わず <code>remove(Object)</code> が呼ばれます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>続けて呼ぶと、前の結果に対して効く<span class="tag">要注意</span></div><pre><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;(List.of(10, 20, 30));
+list.remove(1);                     // 位置 1 の 20 を消す    → [10, 30]
+list.remove(Integer.valueOf(10));   // 値が 10 の要素を消す  → [30]
+System.out.println(list);           // [30]
+
+List&lt;Integer&gt; nums = new ArrayList&lt;&gt;(List.of(10, 20, 30, 10));
+nums.remove(Integer.valueOf(10));   // 前から探して最初の1つだけ消す
+System.out.println(nums);           // [20, 30, 10]</code></pre></div>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>値の削除は equals で判定される<span class="tag">要注意</span></div><pre><code>class Item { int id; Item(int id) { this.id = id; } }
 
