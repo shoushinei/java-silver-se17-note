@@ -160,6 +160,66 @@ footer{margin-top:70px;padding-top:22px;border-top:3px solid var(--sumi);font-si
 a{color:var(--sumi)}
 :focus-visible{outline:2.5px solid var(--err);outline-offset:2px;border-radius:3px}
 
+/* ---- styles/14-whitespace.css ---- */
+/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）。
+   図の中身（残る空白・改行・文字数）は、Java で実際に作った文字列と照合してから書いている。
+   空白は文字（·）ではなく背景の点で描く。Web フォントに無い記号で幅がずれ、列が崩れるのを防ぐため。 */
+.ws{margin:16px 0 20px;border:1px solid var(--rule);border-radius:8px;background:#fff;overflow:hidden}
+.ws-sec{padding:10px 14px 12px}
+.ws-sec + .ws-sec{border-top:1px dashed var(--rule)}
+.ws-lb{font-size:11.5px;font-weight:700;color:var(--sumi-3);margin-bottom:6px;letter-spacing:.03em}
+.ws-lb code{font-size:11px}
+.ws-note{font-size:12px;color:var(--sumi-2);margin-top:6px}
+.ws-note b{font-family:var(--mono)}
+
+/* ソース。目盛り・各行・基準線は同じ等幅フォントなので 1ch ＝ 1 文字 */
+.ws-src{font-family:var(--mono);font-size:14px;line-height:1.75;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ws-row{white-space:pre;min-height:1.75em}
+.ws-row.ruler{color:var(--sumi-3);opacity:.6;font-size:14px;letter-spacing:0}
+.ws-row.open{color:var(--sumi-3)}
+.ws-grid{position:relative;display:inline-block;min-width:100%}
+.ws-grid::before{content:"";position:absolute;top:0;bottom:0;left:calc(var(--k) * 1ch);border-left:2px solid var(--err);opacity:.75}
+.ws i,.ws-legend i{font-style:normal;display:inline-block;width:1ch}
+.ws i.cut,.ws-legend i.cut{background:#E4DFD2 radial-gradient(circle,#A59E8E 1.4px,transparent 1.8px)}
+.ws i.sp,.ws-legend i.sp{background:#FFF1B8 radial-gradient(circle,var(--sumi) 1.5px,transparent 1.9px)}
+.ws em.esc,.ws-legend em.esc{font-style:normal;color:#8B2E8B;background:#F6E8F6;border-radius:2px}
+.ws b.nl,.ws-legend b.nl{color:#1D5FA8;font-weight:700;font-family:var(--body);font-size:16px;line-height:1;margin-left:3px}
+.ws .dl{color:var(--sumi-3)}
+
+/* できる文字列。箱 1 つが 1 文字、下の数字が位置 */
+.chs{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 3px}
+.ch{display:flex;flex-direction:column;align-items:center}
+.ch b{display:flex;align-items:center;justify-content:center;min-width:24px;height:28px;padding:0 3px;border:1px solid #B9B4A6;border-radius:4px;background:#fff;font-family:var(--mono);font-size:14px;font-weight:400;color:var(--sumi)}
+.ch small{font-family:var(--mono);font-size:9.5px;line-height:1.5;color:var(--sumi-3)}
+.ch.sp b{background:#FFF1B8 radial-gradient(circle,var(--sumi) 1.5px,transparent 1.9px)}
+.ch.nl b{background:#E3EEF9;border-color:#1D5FA8;color:#1D5FA8;font-weight:700;font-size:12px}
+.ch.tab b{background:#F6E8F6;border-color:#8B2E8B;color:#8B2E8B;font-weight:700;font-size:12px}
+.chs-len{align-self:center;margin-left:10px;font-size:13px;color:var(--sumi-2);white-space:nowrap}
+.chs-len b{font-family:var(--mono);font-size:15px;color:var(--sumi)}
+
+/* println の表示。左に行番号 */
+.ws-out{list-style:none;margin:0;padding:0;counter-reset:ln;font-family:var(--mono);font-size:14px;line-height:1.75;border-left:3px solid var(--sumi);background:var(--washi-2);border-radius:0 4px 4px 0;overflow-x:auto}
+.ws-out li{display:flex;white-space:pre;padding-right:10px}
+.ws-out li::before{counter-increment:ln;content:counter(ln);flex:none;width:2.4em;padding-right:10px;text-align:right;font-size:11px;color:var(--sumi-3);align-self:center}
+.ws-out i.sp{background:radial-gradient(circle,#A59E8E 1.4px,transparent 1.8px)}
+.ws-out i.tab{width:calc(var(--w) * 1ch);color:#8B2E8B;background:#F6E8F6;border-radius:2px;font-size:12px;text-align:left}
+.ws-out .empty{font-family:var(--body);font-size:12px;color:var(--sumi-3)}
+
+/* 凡例と小見出し */
+.ws-legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 14px;margin:12px 0;border:1px solid var(--rule);border-radius:8px;background:#fff;font-size:12.5px;color:var(--sumi-2)}
+.ws-legend > span{display:inline-flex;align-items:center;gap:6px}
+.ws-legend i,.ws-legend em{font-family:var(--mono);font-size:14px;line-height:1.4}
+.ws-legend i{height:1.4em}
+.ws-base-mark{display:inline-block;width:0;height:18px;border-left:2px solid var(--err)}
+.ws-h4{font-size:14px;margin:22px 0 4px;color:var(--sumi-2)}
+
+@media (max-width:480px){
+  .ws-sec{padding:9px 10px 11px}
+  .ws-src,.ws-out{font-size:13px}
+  .ws-row.ruler{font-size:13px}
+  .ch b{min-width:21px;height:26px;font-size:13px}
+}
+
 /* ---- styles/15-chapter.css ---- */
 .toc-h{font-family:var(--disp);font-weight:800;font-size:12px;letter-spacing:.06em;color:var(--sumi);margin:20px 0 7px;padding-left:8px;border-left:3px solid var(--err)}
 .chap{margin-top:86px;padding:30px 0 4px;border-top:3px solid var(--sumi)}
@@ -610,7 +670,7 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
     <a href="#c2-s07"><span class="tn">07</span>Stringの不変性</a>
     <a href="#c2-s08"><span class="tn">08</span>Stringのメソッド</a>
     <a href="#c2-s09"><span class="tn">09</span>StringBuilder</a>
-    <a href="#c2-s10"><span class="tn">10</span>テキストブロック</a>
+    <a href="#c2-s10"><span class="tn">10</span>テキストブロック・エスケープ</a>
     <a href="#c2-s11"><span class="tn">11</span>配列</a>
     <a href="#c2-s12"><span class="tn">12</span>ArrayList</a>
     <a href="#c2-s13"><span class="tn">13</span>nullとの付き合い方</a>
@@ -2396,71 +2456,231 @@ String d = a + "x";           // OK ← String との連結なら toString() が
   <div class="point link"><p><code>StringBuffer</code> という同じ API のクラスもあります。違いは<span class="mk pink">スレッドセーフかどうか</span>だけで、メソッドは同一です。選択肢に混ざっても、動作は StringBuilder と同じと考えて構いません。</p></div>
 </section>
 
-<!-- ch2/10-text-blocks.html · テキストブロック -->
+<!-- ch2/10-text-blocks.html · テキストブロック・エスケープ -->
 <section id="c2-s10">
-  <div class="sh"><span class="num">10</span><h2>テキストブロック</h2></div>
+  <div class="sh"><span class="num">10</span><h2>テキストブロックとエスケープシーケンス</h2></div>
 
   <div class="point new"><p>SE 11 Silver には存在しなかった項目です。11 の教材では一切カバーされていないので、ここは新規に固める必要があります。</p></div>
 
-  <p><code>"""</code> で囲んで、複数行の文字列をそのまま書ける構文です（Java 15〜）。</p>
+  <p><code>"""</code> で囲むと、複数行の文字列をそのまま書けます（Java 15〜）。ただし、書いた見た目がそのまま文字列になるわけではありません。コンパイラが次の順番で手を入れます。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本形<span class="tag">形</span></div><pre><code>String s = """
-    Hello
-    World""";
-// "Hello\nWorld"</code></pre></div>
+  <div class="tw"><table>
+    <thead><tr><th>順</th><th>コンパイラがすること</th><th>結果</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>行ごとに分け、<strong>全行に共通する字下げ</strong>を取り除く</td><td>一番浅い行が左端に来る</td></tr>
+      <tr><td><strong>2</strong></td><td>各行の<strong>行末の空白</strong>を取り除く</td><td>目に見えない空白は残らない</td></tr>
+      <tr><td><strong>3</strong></td><td><code>\n</code> <code>\t</code> <code>\s</code> などの<strong>エスケープシーケンス</strong>を1文字に変える</td><td>ここで初めて改行・タブ・空白になる</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p><span class="mk">エスケープは最後</span>、というのが大事です。1 と 2 の時点では <code>\n</code> も <code>\s</code> もただの2文字なので、<code>\n</code> を書いても行は増えず字下げの計算に影響しません。<code>\s</code> は行末の空白として消されずに残ります。</p></div>
+
+  <h3>図の読み方</h3>
+
+  <div class="ws-legend">
+    <span><i class="cut"> </i> 取り除かれる空白</span>
+    <span><i class="sp"> </i> 文字列に残る空白</span>
+    <span><b class="nl">↵</b> 文字列に入る改行（<code>\n</code> 1文字）</span>
+    <span><em class="esc">\t</em> エスケープシーケンス</span>
+    <span><span class="ws-base-mark"></span> 字下げの基準。ここより左は消える</span>
+  </div>
+
+  <p>ソースの上の数字は、左端から何文字目か（0 から数える）の目盛りです。「できる文字列」の箱の数がそのまま <code>length()</code>、箱の下の数字は <code>charAt</code> で使う位置です。</p>
+
+  <h3>基本形 ── 開始の """ の直後の改行は入らない</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>最後の行と同じ行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>H</b><small>0</small></span><span class="ch"><b>e</b><small>1</small></span><span class="ch"><b>l</b><small>2</small></span><span class="ch"><b>l</b><small>3</small></span><span class="ch"><b>o</b><small>4</small></span><span class="ch nl"><b>\n</b><small>5</small></span><span class="ch"><b>W</b><small>6</small></span><span class="ch"><b>o</b><small>7</small></span><span class="ch"><b>r</b><small>8</small></span><span class="ch"><b>l</b><small>9</small></span><span class="ch"><b>d</b><small>10</small></span><span class="chs-len">length() = <b>11</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 2 行</div><ol class="ws-out"><li>Hello</li><li>World</li></ol></div>
+</div>
+
+  <p>中身は <code>Hello</code> の行と <code>World</code> の行の2行です。改行（↵）が入るのは <code>Hello</code> の行末だけで、開始の <code>"""</code> の直後の改行は文字列に<strong>入りません</strong>。閉じる <code>"""</code> が <code>World</code> と同じ行にあるので、末尾にも改行は付きません。<span class="mk">5 + 1 + 5 = 11 文字</span>です。</p>
 
   <h3>ルール1 ── 開始の """ の後は改行が必須</h3>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ行に文字を書けない<span class="tag">NG</span></div><pre><code>String s = """Hello
-    World""";        // コンパイルエラー</code></pre></div>
+    """;
+// error: illegal text block open delimiter sequence, missing line terminator</code></pre></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>改行してから書く<span class="tag">OK</span></div><pre><code>String s = """
-    Hello
-    World""";</code></pre></div>
+  <p>閉じる <code>"""</code> は中身と同じ行に置けます。<span class="mk">改行が必須なのは開始側だけ</span>です。</p>
 
-  <p>終了の <code>"""</code> は同じ行に置けます。<span class="mk">改行が必須なのは開始側だけ。</span></p>
+  <h3>ルール2 ── 字下げの基準は「一番浅い行」</h3>
 
-  <h3>ルール2 ── インデントは「最も浅い行」を基準に除去される</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>付随的な空白の除去<span class="tag">最重要</span></div><pre><code>String s = """
-        Hello
-      World
-        """;
-// 最も浅いのは終了の """ の位置（6文字）
-// → 各行から6文字ぶんのインデントが取り除かれる
-// "  Hello\nWorld\n"</code></pre></div>
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:6"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="sp"> </i><i class="sp"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="sp"> </i><i class="sp"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>6</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch sp"><b></b><small>0</small></span><span class="ch sp"><b></b><small>1</small></span><span class="ch"><b>H</b><small>2</small></span><span class="ch"><b>e</b><small>3</small></span><span class="ch"><b>l</b><small>4</small></span><span class="ch"><b>l</b><small>5</small></span><span class="ch"><b>o</b><small>6</small></span><span class="ch nl"><b>\n</b><small>7</small></span><span class="ch"><b>W</b><small>8</small></span><span class="ch"><b>o</b><small>9</small></span><span class="ch"><b>r</b><small>10</small></span><span class="ch"><b>l</b><small>11</small></span><span class="ch"><b>d</b><small>12</small></span><span class="ch nl"><b>\n</b><small>13</small></span><span class="chs-len">length() = <b>14</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 3 行</div><ol class="ws-out"><li><i class="sp"> </i><i class="sp"> </i>Hello</li><li>World</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
 
-  <p><strong>終了の <code>"""</code> の位置も判定に含まれます。</strong>これが最も左にあれば、その位置が基準になります。</p>
+  <p>基準を決めるのは、<strong>中身のある行</strong>と<strong>閉じる <code>"""</code> の行</strong>のうち、一番浅いものです。この例では <code>World</code> の行（6文字）が一番浅いので、どの行も左から6文字が消えます。閉じる <code>"""</code> の行は8文字なので基準になりません。<code>Hello</code> の行は8文字字下げしていたので、<span class="mk">差の2文字が空白として残ります</span>。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>終了位置を変えると結果が変わる<span class="tag">要注意</span></div><pre><code>String a = """
-    Hello
-    """;          // 終了が4文字目 → "Hello\n"
+  <h4 class="ws-h4">閉じる """ を左に出すと、字下げが残る</h4>
 
-String b = """
-    Hello
-""";              // 終了が0文字目 → "    Hello\n"</code></pre></div>
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:0"><div class="ws-row"><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>0</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch sp"><b></b><small>0</small></span><span class="ch sp"><b></b><small>1</small></span><span class="ch sp"><b></b><small>2</small></span><span class="ch sp"><b></b><small>3</small></span><span class="ch"><b>H</b><small>4</small></span><span class="ch"><b>e</b><small>5</small></span><span class="ch"><b>l</b><small>6</small></span><span class="ch"><b>l</b><small>7</small></span><span class="ch"><b>o</b><small>8</small></span><span class="ch nl"><b>\n</b><small>9</small></span><span class="chs-len">length() = <b>10</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 2 行</div><ol class="ws-out"><li><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i>Hello</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
 
-  <h3>ルール3 ── 末尾の改行</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>終了 """ の位置で改行の有無が決まる<span class="tag">要注意</span></div><pre><code>String a = """
-    Hello""";     // "Hello"     ← 末尾に改行なし
+  <p>閉じる <code>"""</code> が0文字目にあるので基準が0になり、<code>Hello</code> の前の4文字の空白が<strong>すべて残ります</strong>。</p>
 
-String b = """
-    Hello
-    """;          // "Hello\n"   ← 末尾に改行あり</code></pre></div>
+  <h4 class="ws-h4">閉じる """ を右に下げても、中身は削られない</h4>
 
-  <h3>ルール4 ── 2つのエスケープ</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>行末の \ と \s<span class="tag">要注意</span></div><pre><code>String a = """
-    Hello \
-    World""";
-// "Hello World" ← 行末の \ で改行を打ち消す（連結される）
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i><i class="sp"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>H</b><small>0</small></span><span class="ch"><b>e</b><small>1</small></span><span class="ch"><b>l</b><small>2</small></span><span class="ch"><b>l</b><small>3</small></span><span class="ch"><b>o</b><small>4</small></span><span class="ch nl"><b>\n</b><small>5</small></span><span class="chs-len">length() = <b>6</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 2 行</div><ol class="ws-out"><li>Hello</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
 
-String b = """
-    Hello   \s
-    World""";
-// \s は空白1文字として扱われ、その手前の空白も保持される</code></pre></div>
+  <div class="point trap"><p>閉じる <code>"""</code> は、<span class="mk">中身より左にあるときだけ</span>基準を動かします。中身より右に下げても、一番浅い <code>Hello</code> の行（4文字）が基準なので結果は変わりません。</p></div>
 
-  <p>通常のエスケープ（<code>\n</code> <code>\t</code> <code>\"</code>）も使えます。ただし<span class="mk">ダブルクォート1個は、そのまま書いてもエスケープ不要</span>です。</p>
+  <h4 class="ws-h4">空白だけの行は、基準に数えない</h4>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クォートの扱い<span class="tag">OK</span></div><pre><code>String s = """
-    彼は "Hello" と言った""";     // OK。エスケープ不要</code></pre></div>
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>A<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>B<span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>最後の行と同じ行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>A</b><small>0</small></span><span class="ch nl"><b>\n</b><small>1</small></span><span class="ch nl"><b>\n</b><small>2</small></span><span class="ch"><b>B</b><small>3</small></span><span class="chs-len">length() = <b>4</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 3 行</div><ol class="ws-out"><li>A</li><li><span class="empty">（空行）</span></li><li>B</li></ol></div>
+</div>
+
+  <p>真ん中の行は空白2文字だけの行です。こうした行は<strong>基準の計算に入らず</strong>（入れば基準が2になってしまう）、中身は空になって改行1文字だけが残ります。</p>
+
+  <h3>ルール3 ── 末尾の改行は、閉じる """ の場所で決まる</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>H</b><small>0</small></span><span class="ch"><b>e</b><small>1</small></span><span class="ch"><b>l</b><small>2</small></span><span class="ch"><b>l</b><small>3</small></span><span class="ch"><b>o</b><small>4</small></span><span class="ch nl"><b>\n</b><small>5</small></span><span class="chs-len">length() = <b>6</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 2 行</div><ol class="ws-out"><li>Hello</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
+
+  <p>閉じる <code>"""</code> を<strong>独立した行</strong>に書くと、<code>Hello</code> の行末の改行が入り <code>"Hello\n"</code>（6文字）になります。基本形のように<strong>中身と同じ行</strong>に書けば、改行は付きません。</p>
+
+  <div class="point trap"><p>末尾に改行がある文字列を <code>println</code> すると、println 自身の改行と合わせて<span class="mk">最後に空行が1つ見えます</span>。「何行表示されるか」は、文字列の中の <code>\n</code> の数 ＋ 1 で数えます。</p></div>
+
+  <h3>ルール4 ── 行末の空白は消える。残したいときは \s</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>A<i class="cut tr"> </i><i class="cut tr"> </i><i class="cut tr"> </i><b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>B<i class="sp"> </i><i class="sp"> </i><em class="esc">\s</em><b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>A</b><small>0</small></span><span class="ch nl"><b>\n</b><small>1</small></span><span class="ch"><b>B</b><small>2</small></span><span class="ch sp"><b></b><small>3</small></span><span class="ch sp"><b></b><small>4</small></span><span class="ch sp"><b></b><small>5</small></span><span class="ch nl"><b>\n</b><small>6</small></span><span class="chs-len">length() = <b>7</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 3 行</div><ol class="ws-out"><li>A</li><li>B<i class="sp"> </i><i class="sp"> </i><i class="sp"> </i></li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
+
+  <p><code>A</code> の後ろの空白3文字は<strong>行末の空白</strong>なので消えます。<code>B</code> の行は末尾が <code>\s</code>（空白ではなく2文字の記号）なので、その手前の空白2文字は行末の空白ではなくなり、<strong>残ります</strong>。最後に <code>\s</code> が空白1文字になり、<code>B</code> の後ろには空白が3文字並びます。</p>
+
+  <h3>ルール5 ── 行末の \ で、改行を消す</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<i class="sp"> </i><em class="esc">\</em></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>最後の行と同じ行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>H</b><small>0</small></span><span class="ch"><b>e</b><small>1</small></span><span class="ch"><b>l</b><small>2</small></span><span class="ch"><b>l</b><small>3</small></span><span class="ch"><b>o</b><small>4</small></span><span class="ch sp"><b></b><small>5</small></span><span class="ch"><b>W</b><small>6</small></span><span class="ch"><b>o</b><small>7</small></span><span class="ch"><b>r</b><small>8</small></span><span class="ch"><b>l</b><small>9</small></span><span class="ch"><b>d</b><small>10</small></span><span class="chs-len">length() = <b>11</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 1 行</div><ol class="ws-out"><li>Hello<i class="sp"> </i>World</li></ol></div>
+</div>
+
+  <p>行末の <code>\</code> は「ここで改行しない」という意味で、次の行とつながります。<code>\</code> の手前の空白は行末の空白ではないので残ります。<code>World</code> の行の字下げは、ルール2 ですでに消えているので入りません。</p>
+
+  <h3>エスケープシーケンス ── 2文字で書いて、1文字になる</h3>
+
+  <p><code>\</code> で始まる書き方は、普通の文字列リテラル（<code>"..."</code>）でもテキストブロックでも使えます。ソースでは2文字ですが、<strong>文字列の中では1文字</strong>で、<code>length()</code> もそう数えます。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>文字</th><th>長さ</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr><td><code>\n</code></td><td>改行</td><td>1</td><td>表示では次の行に移る</td></tr>
+      <tr><td><code>\t</code></td><td>タブ</td><td>1</td><td>表示では次のタブ位置（多くの環境で8文字ごと）まで空くが、<strong>文字としては1つ</strong></td></tr>
+      <tr><td><code>\"</code></td><td><code>"</code></td><td>1</td><td><code>"..."</code> の中に <code>"</code> を書くとき</td></tr>
+      <tr><td><code>\'</code></td><td><code>'</code></td><td>1</td><td><code>char c = '\'';</code> のとき</td></tr>
+      <tr><td><code>\\</code></td><td><code>\</code></td><td>1</td><td>バックスラッシュそのもの</td></tr>
+      <tr><td><code>\s</code></td><td>空白</td><td>1</td><td>Java 15〜。行末の空白を残すのに使う</td></tr>
+      <tr><td><code>\</code>＋改行</td><td>（なし）</td><td>0</td><td><strong>テキストブロックだけ</strong>。改行を消して次の行とつなぐ</td></tr>
+    </tbody>
+  </table></div>
+
+  <h4 class="ws-h4">\t はタブ1文字</h4>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row">String s = &quot;a<em class="esc">\t</em>b&quot;;</div></div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>a</b><small>0</small></span><span class="ch tab"><b>\t</b><small>1</small></span><span class="ch"><b>b</b><small>2</small></span><span class="chs-len">length() = <b>3</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 1 行</div><ol class="ws-out"><li>a<i class="tab" style="--w:7">→</i>b</li></ol></div>
+</div>
+
+  <h4 class="ws-h4">\n で表示が2行になる</h4>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row">String s = &quot;a<em class="esc">\n</em>b&quot;;</div></div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>a</b><small>0</small></span><span class="ch nl"><b>\n</b><small>1</small></span><span class="ch"><b>b</b><small>2</small></span><span class="chs-len">length() = <b>3</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 2 行</div><ol class="ws-out"><li>a</li><li>b</li></ol></div>
+</div>
+
+  <h4 class="ws-h4">\\n は「\ と n」の2文字で、改行にならない</h4>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row">String s = &quot;a<em class="esc">\\</em>nb&quot;;</div></div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>a</b><small>0</small></span><span class="ch"><b>\</b><small>1</small></span><span class="ch"><b>n</b><small>2</small></span><span class="ch"><b>b</b><small>3</small></span><span class="chs-len">length() = <b>4</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 1 行</div><ol class="ws-out"><li>a\nb</li></ol></div>
+</div>
+
+  <div class="point trap"><p>Windows のパスは引っかけになります。<code>"C:\\temp"</code> は <code>C:\temp</code>（7文字）ですが、<span class="mk"><code>\</code> を1つしか書かないと <code>\t</code> がタブになり</span>、<code>C:</code>＋タブ＋<code>emp</code> の6文字になります。コンパイルエラーにならないので気づきにくいところです。</p></div>
+
+  <h4 class="ws-h4">正しい書き方 ── バックスラッシュは2つ</h4>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row">String s = &quot;C:<em class="esc">\\</em>temp&quot;;</div></div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>C</b><small>0</small></span><span class="ch"><b>:</b><small>1</small></span><span class="ch"><b>\</b><small>2</small></span><span class="ch"><b>t</b><small>3</small></span><span class="ch"><b>e</b><small>4</small></span><span class="ch"><b>m</b><small>5</small></span><span class="ch"><b>p</b><small>6</small></span><span class="chs-len">length() = <b>7</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 1 行</div><ol class="ws-out"><li>C:\temp</li></ol></div>
+</div>
+
+  <h4 class="ws-h4">1つしか書かないと、タブになる</h4>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row">String s = &quot;C:<em class="esc">\t</em>emp&quot;;</div></div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>C</b><small>0</small></span><span class="ch"><b>:</b><small>1</small></span><span class="ch tab"><b>\t</b><small>2</small></span><span class="ch"><b>e</b><small>3</small></span><span class="ch"><b>m</b><small>4</small></span><span class="ch"><b>p</b><small>5</small></span><span class="chs-len">length() = <b>6</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 1 行</div><ol class="ws-out"><li>C:<i class="tab" style="--w:6">→</i>emp</li></ol></div>
+</div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>決められていない組み合わせはコンパイルエラー<span class="tag">NG</span></div><pre><code>String a = "\q";          // error: illegal escape character
+String b = "C:\users";    // error: illegal unicode escape  ← \u は Unicode の書き方として読まれる
+char   c = '\t';          // OK。char にも使える（1文字）</code></pre></div>
+
+  <h3>テキストブロックの中の \n と \t</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>A<em class="esc">\t</em>B<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>C<em class="esc">\n</em>D<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>A</b><small>0</small></span><span class="ch tab"><b>\t</b><small>1</small></span><span class="ch"><b>B</b><small>2</small></span><span class="ch nl"><b>\n</b><small>3</small></span><span class="ch"><b>C</b><small>4</small></span><span class="ch nl"><b>\n</b><small>5</small></span><span class="ch"><b>D</b><small>6</small></span><span class="ch nl"><b>\n</b><small>7</small></span><span class="chs-len">length() = <b>8</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 4 行</div><ol class="ws-out"><li>A<i class="tab" style="--w:7">→</i>B</li><li>C</li><li>D</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
+
+  <p>ソースの中身は2行ですが、<code>\n</code> は3番目の処理で改行になるので、<strong>行が1つ増えます</strong>。改行は、行末の ↵ が2つと <code>\n</code> が1つで合計3つ。<code>println</code> の表示は <span class="mk">3 ＋ 1 ＝ 4 行</span>（最後は空行）です。<code>\t</code> は表示では広く空きますが、文字としては1つです。</p>
+
+  <h3>クォートの扱い</h3>
+
+<div class="ws">
+  <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>say<i class="sp"> </i>&quot;Hi&quot;<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><em class="esc">\&quot;</em>&quot;&quot;<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
+  <div class="ws-note">基準は <b>4</b> 文字目（赤い線）。閉じる <code>"""</code> は<b>独立した行</b>にある</div></div>
+  <div class="ws-sec"><div class="ws-lb">できる文字列 ── 箱1つが1文字</div><div class="chs"><span class="ch"><b>s</b><small>0</small></span><span class="ch"><b>a</b><small>1</small></span><span class="ch"><b>y</b><small>2</small></span><span class="ch sp"><b></b><small>3</small></span><span class="ch"><b>&quot;</b><small>4</small></span><span class="ch"><b>H</b><small>5</small></span><span class="ch"><b>i</b><small>6</small></span><span class="ch"><b>&quot;</b><small>7</small></span><span class="ch nl"><b>\n</b><small>8</small></span><span class="ch"><b>&quot;</b><small>9</small></span><span class="ch"><b>&quot;</b><small>10</small></span><span class="ch"><b>&quot;</b><small>11</small></span><span class="ch nl"><b>\n</b><small>12</small></span><span class="chs-len">length() = <b>13</b></span></div></div>
+  <div class="ws-sec"><div class="ws-lb"><code>System.out.println(s);</code> の表示 ── 3 行</div><ol class="ws-out"><li>say<i class="sp"> </i>&quot;Hi&quot;</li><li>&quot;&quot;&quot;</li><li><span class="empty">（空行）</span></li></ol></div>
+</div>
+
+  <p>テキストブロックの中では、<code>"</code> を1つや2つ書くだけならエスケープは要りません。<code>"""</code> を3つ続けて書くと閉じる記号と区別できないので、<code>\"""</code> のように1つ目をエスケープします。</p>
+
+  <h3>行数と文字数を数える手順</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>すること</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>中身のある行と、閉じる <code>"""</code> だけの行のうち、一番浅い字下げを探す（空白だけの行は除く）。その左を全行で消す</td></tr>
+      <tr><td><strong>2</strong></td><td>各行の行末の空白を消す（<code>\s</code> や <code>\</code> の手前の空白は残る）</td></tr>
+      <tr><td><strong>3</strong></td><td>中身の行の終わりごとに改行1文字。ただし<strong>最後の行の後ろに付くのは、閉じる <code>"""</code> が独立した行のときだけ</strong>。行末が <code>\</code> なら付かない</td></tr>
+      <tr><td><strong>4</strong></td><td><code>\n</code> <code>\t</code> <code>\s</code> <code>\"</code> <code>\\</code> を1文字として数える</td></tr>
+      <tr><td><strong>5</strong></td><td><code>println</code> の表示行数は、文字列の中の改行の数 ＋ 1</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <!-- ch2/11-arrays.html · 配列 -->
@@ -7922,7 +8142,7 @@ try (r) { }
 <script>
 /* ---- build.mjs が manifest.json / topic-index.json から生成 ---- */
 window.NoteApp = { chapters: ["c1","c2","c3","c4","c5","c6"],
-  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル","-cp","-d","ClassNotFoundException"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException","Iterable","Collection","Path","Map","Files"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算","到達不能"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション","型消去"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode","Object","Number","CharSequence","Comparable","型の関係","配列の共変性","型引数","共変戻り値","name clash"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException","IOException","FileNotFoundException","IllegalArgumentException","IndexOutOfBoundsException","RuntimeException","Throwable","AutoCloseable"]}] };
+  topicIndex: [{"group":"起動と環境","terms":["main","コマンドライン引数","javac","バイトコード","JVM","クラスパス","パッケージ","import","static import","アクセス修飾子","protected","トップレベル","-cp","-d","ClassNotFoundException"]},{"group":"型と変換","terms":["基本データ型","リテラル","型変換","キャスト","拡大変換","縮小変換","var","オートボクシング","アンボクシング","Integer","既定値","スコープ","命名規約","予約語","識別子"]},{"group":"文字列","terms":["String","StringBuilder","テキストブロック","エスケープシーケンス","不変","equals","文字列連結","substring","charAt","intern","定数プール"]},{"group":"配列とリスト","terms":["配列","2次元配列","ジャグ配列","length","ArrayList","拡張for","null","ArrayStoreException","Iterable","Collection","Path","Map","Files"]},{"group":"演算子と制御","terms":["優先順位","インクリメント","複合代入","短絡評価","三項演算子","switch 式","yield","ラベル","break","continue","無限ループ","do-while","ビット演算","到達不能"]},{"group":"クラス","terms":["コンストラクタ","デフォルトコンストラクタ","this","this()","オーバーロード","可変長引数","値渡し","参照","static","初期化ブロック","初期化の順序","ガベージコレクション","型消去"]},{"group":"SE 17 新機能","terms":["record","標準コンストラクタ","正規コンストラクタ","コンパクトコンストラクタ","コンポーネント","instanceof","パターン変数","アクセサ"]},{"group":"継承とインタフェース","terms":["継承","extends","implements","super","オーバーライド","隠蔽","ポリモーフィズム","ダウンキャスト","抽象クラス","abstract","final","インタフェース","default","sealed","permits","non-sealed","private static","toString","hashCode","Object","Number","CharSequence","Comparable","型の関係","配列の共変性","型引数","共変戻り値","name clash"]},{"group":"例外処理","terms":["例外","検査例外","非検査例外","Error","try-with-resources","multi-catch","finally","return","throw","throws","catch の順序","オーバーライド","NullPointerException","ArrayIndexOutOfBoundsException","ClassCastException","NumberFormatException","ArrayStoreException","IOException","FileNotFoundException","IllegalArgumentException","IndexOutOfBoundsException","RuntimeException","Throwable","AutoCloseable"]}] };
 
 /* ---- scripts/00-app.js ---- */
 /* 全モジュール共通の名前空間。

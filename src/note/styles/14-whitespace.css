@@ -1,0 +1,58 @@
+/* 空白・改行・エスケープを見えるようにする図（第2章 10 テキストブロック）。
+   図の中身（残る空白・改行・文字数）は、Java で実際に作った文字列と照合してから書いている。
+   空白は文字（·）ではなく背景の点で描く。Web フォントに無い記号で幅がずれ、列が崩れるのを防ぐため。 */
+.ws{margin:16px 0 20px;border:1px solid var(--rule);border-radius:8px;background:#fff;overflow:hidden}
+.ws-sec{padding:10px 14px 12px}
+.ws-sec + .ws-sec{border-top:1px dashed var(--rule)}
+.ws-lb{font-size:11.5px;font-weight:700;color:var(--sumi-3);margin-bottom:6px;letter-spacing:.03em}
+.ws-lb code{font-size:11px}
+.ws-note{font-size:12px;color:var(--sumi-2);margin-top:6px}
+.ws-note b{font-family:var(--mono)}
+
+/* ソース。目盛り・各行・基準線は同じ等幅フォントなので 1ch ＝ 1 文字 */
+.ws-src{font-family:var(--mono);font-size:14px;line-height:1.75;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ws-row{white-space:pre;min-height:1.75em}
+.ws-row.ruler{color:var(--sumi-3);opacity:.6;font-size:14px;letter-spacing:0}
+.ws-row.open{color:var(--sumi-3)}
+.ws-grid{position:relative;display:inline-block;min-width:100%}
+.ws-grid::before{content:"";position:absolute;top:0;bottom:0;left:calc(var(--k) * 1ch);border-left:2px solid var(--err);opacity:.75}
+.ws i,.ws-legend i{font-style:normal;display:inline-block;width:1ch}
+.ws i.cut,.ws-legend i.cut{background:#E4DFD2 radial-gradient(circle,#A59E8E 1.4px,transparent 1.8px)}
+.ws i.sp,.ws-legend i.sp{background:#FFF1B8 radial-gradient(circle,var(--sumi) 1.5px,transparent 1.9px)}
+.ws em.esc,.ws-legend em.esc{font-style:normal;color:#8B2E8B;background:#F6E8F6;border-radius:2px}
+.ws b.nl,.ws-legend b.nl{color:#1D5FA8;font-weight:700;font-family:var(--body);font-size:16px;line-height:1;margin-left:3px}
+.ws .dl{color:var(--sumi-3)}
+
+/* できる文字列。箱 1 つが 1 文字、下の数字が位置 */
+.chs{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 3px}
+.ch{display:flex;flex-direction:column;align-items:center}
+.ch b{display:flex;align-items:center;justify-content:center;min-width:24px;height:28px;padding:0 3px;border:1px solid #B9B4A6;border-radius:4px;background:#fff;font-family:var(--mono);font-size:14px;font-weight:400;color:var(--sumi)}
+.ch small{font-family:var(--mono);font-size:9.5px;line-height:1.5;color:var(--sumi-3)}
+.ch.sp b{background:#FFF1B8 radial-gradient(circle,var(--sumi) 1.5px,transparent 1.9px)}
+.ch.nl b{background:#E3EEF9;border-color:#1D5FA8;color:#1D5FA8;font-weight:700;font-size:12px}
+.ch.tab b{background:#F6E8F6;border-color:#8B2E8B;color:#8B2E8B;font-weight:700;font-size:12px}
+.chs-len{align-self:center;margin-left:10px;font-size:13px;color:var(--sumi-2);white-space:nowrap}
+.chs-len b{font-family:var(--mono);font-size:15px;color:var(--sumi)}
+
+/* println の表示。左に行番号 */
+.ws-out{list-style:none;margin:0;padding:0;counter-reset:ln;font-family:var(--mono);font-size:14px;line-height:1.75;border-left:3px solid var(--sumi);background:var(--washi-2);border-radius:0 4px 4px 0;overflow-x:auto}
+.ws-out li{display:flex;white-space:pre;padding-right:10px}
+.ws-out li::before{counter-increment:ln;content:counter(ln);flex:none;width:2.4em;padding-right:10px;text-align:right;font-size:11px;color:var(--sumi-3);align-self:center}
+.ws-out i.sp{background:radial-gradient(circle,#A59E8E 1.4px,transparent 1.8px)}
+.ws-out i.tab{width:calc(var(--w) * 1ch);color:#8B2E8B;background:#F6E8F6;border-radius:2px;font-size:12px;text-align:left}
+.ws-out .empty{font-family:var(--body);font-size:12px;color:var(--sumi-3)}
+
+/* 凡例と小見出し */
+.ws-legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 14px;margin:12px 0;border:1px solid var(--rule);border-radius:8px;background:#fff;font-size:12.5px;color:var(--sumi-2)}
+.ws-legend > span{display:inline-flex;align-items:center;gap:6px}
+.ws-legend i,.ws-legend em{font-family:var(--mono);font-size:14px;line-height:1.4}
+.ws-legend i{height:1.4em}
+.ws-base-mark{display:inline-block;width:0;height:18px;border-left:2px solid var(--err)}
+.ws-h4{font-size:14px;margin:22px 0 4px;color:var(--sumi-2)}
+
+@media (max-width:480px){
+  .ws-sec{padding:9px 10px 11px}
+  .ws-src,.ws-out{font-size:13px}
+  .ws-row.ruler{font-size:13px}
+  .ch b{min-width:21px;height:26px;font-size:13px}
+}
