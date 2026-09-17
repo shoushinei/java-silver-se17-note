@@ -1,0 +1,26 @@
+/* 型変換の判定を色で分ける表（第2章 03）。
+   .cv-i 暗黙でよい / .cv-c キャストが必要 / .cv-x 変換できない（エラー・例外） / .cv-s 同じ型。
+   コードの色分けが .c .s などを使っているので、cv- を付けて衝突させない */
+.cvm th, .cvm td { text-align: center; padding: 7px 4px; font-family: var(--mono); font-size: 13px; }
+.cvm thead th { font-size: 11.5px; }
+.cvm tbody th { background: var(--washi-2); color: var(--sumi); font-size: 12px; font-weight: 700; text-align: right; padding-right: 8px; }
+.cvm td { font-weight: 700; font-size: 15px; }
+td.cv-i, span.cv-i { color: var(--ok); }
+td.cv-c, span.cv-c { color: var(--run); }
+td.cv-x, span.cv-x { color: var(--err); }
+.cvm td.cv-i { background: var(--ok-bg); }
+.cvm td.cv-c { background: var(--run-bg); }
+.cvm td.cv-x { background: var(--err-bg); }
+.cvm td.cv-s { color: var(--sumi-3); font-weight: 400; }
+.cv-3 td.cv-i, .cv-3 td.cv-c, .cv-3 td.cv-x { font-weight: 700; white-space: nowrap; }
+.cv-3 th { white-space: nowrap; }
+td.cv-i small, td.cv-c small { font-weight: 400; color: var(--sumi-3); }
+.cv-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: -4px 0 16px; font-size: 12.5px; font-weight: 700; }
+.cv-h4 { font-size: 14.5px; margin: 24px 0 6px; }
+
+@media (max-width: 480px) {
+  .cvm th, .cvm td { padding: 6px 2px; font-size: 12px; }
+  .cvm thead th { font-size: 9.5px; letter-spacing: -.02em; }
+  .cvm tbody th { font-size: 10px; padding-right: 4px; }
+  .cvm td { font-size: 13px; }
+}

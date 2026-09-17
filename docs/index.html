@@ -249,6 +249,34 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
 .idx-h:first-child{margin-top:0}
 
+/* ---- styles/17-conv-table.css ---- */
+/* 型変換の判定を色で分ける表（第2章 03）。
+   .cv-i 暗黙でよい / .cv-c キャストが必要 / .cv-x 変換できない（エラー・例外） / .cv-s 同じ型。
+   コードの色分けが .c .s などを使っているので、cv- を付けて衝突させない */
+.cvm th, .cvm td { text-align: center; padding: 7px 4px; font-family: var(--mono); font-size: 13px; }
+.cvm thead th { font-size: 11.5px; }
+.cvm tbody th { background: var(--washi-2); color: var(--sumi); font-size: 12px; font-weight: 700; text-align: right; padding-right: 8px; }
+.cvm td { font-weight: 700; font-size: 15px; }
+td.cv-i, span.cv-i { color: var(--ok); }
+td.cv-c, span.cv-c { color: var(--run); }
+td.cv-x, span.cv-x { color: var(--err); }
+.cvm td.cv-i { background: var(--ok-bg); }
+.cvm td.cv-c { background: var(--run-bg); }
+.cvm td.cv-x { background: var(--err-bg); }
+.cvm td.cv-s { color: var(--sumi-3); font-weight: 400; }
+.cv-3 td.cv-i, .cv-3 td.cv-c, .cv-3 td.cv-x { font-weight: 700; white-space: nowrap; }
+.cv-3 th { white-space: nowrap; }
+td.cv-i small, td.cv-c small { font-weight: 400; color: var(--sumi-3); }
+.cv-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: -4px 0 16px; font-size: 12.5px; font-weight: 700; }
+.cv-h4 { font-size: 14.5px; margin: 24px 0 6px; }
+
+@media (max-width: 480px) {
+  .cvm th, .cvm td { padding: 6px 2px; font-size: 12px; }
+  .cvm thead th { font-size: 9.5px; letter-spacing: -.02em; }
+  .cvm tbody th { font-size: 10px; padding-right: 4px; }
+  .cvm td { font-size: 13px; }
+}
+
 /* ---- styles/17-method-table.css ---- */
 /* メソッド早見表。表のメソッド名を押すと、本文の該当コード例へ飛ぶ。 */
 .mt td:first-child a {
@@ -1720,62 +1748,334 @@ long   e = 100_L;      // エラー: 接尾辞の隣</code></pre></div>
 <section id="c2-s03">
   <div class="sh"><span class="num">03</span><h2>型変換</h2></div>
 
-  <h3>拡大変換（自動）と縮小変換（キャスト必須）</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変換の方向<span class="tag">図</span></div><pre><code>byte → short → int → long → float → double     ← この向きは自動
-char ─────────↗
+  <p>型変換は、ある型の値を<strong>別の型の変数に入れる・別の型として計算する</strong>ときに起きます。どんな組み合わせでも、答えは次の3つのどれかです。</p>
 
-double → float → long → int → short → byte     ← この向きはキャスト必須
-int → char</code></pre></div>
+  <div class="tw"><table class="cv-3">
+    <thead><tr><th>判定</th><th>意味</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td class="cv-i">暗黙でよい</td><td>何も書かなくても、コンパイラが自動で変換する</td><td><code>long l = 10;</code></td></tr>
+      <tr><td class="cv-c">キャストが必要</td><td><code>(型)</code> を書けば変換できる。書かないとコンパイルエラー</td><td><code>int i = (int) 3.9;</code></td></tr>
+      <tr><td class="cv-x">変換できない</td><td>キャストを書いてもコンパイルエラー</td><td><code>int i = (int) true;</code></td></tr>
+    </tbody>
+  </table></div>
 
-  <p><code>long → float</code> が拡大変換なのは直感に反しますが、float のほうが表現範囲が広いためです。<strong>精度は失われます</strong>が、コンパイルは通ります。</p>
+  <p>どれになるかは、<strong>変換の種類</strong>で決まります。まず種類の地図を見て、そのあと1つずつ説明します。罠はこの節の最後にまとめてあります。</p>
 
-  <h3>罠1 ── byte・short・char の演算は int に昇格する</h3>
-  <p>この章で<strong>最頻出</strong>です。</p>
+  <h3>全体の地図 ── 変換は5種類</h3>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>byte + byte は int<span class="tag">NG</span></div><pre><code>byte a = 1, b = 2;
-byte c = a + b;      // コンパイルエラー: a + b の結果は int</code></pre></div>
+  <div class="tw"><table>
+    <thead><tr><th>種類</th><th>向き</th><th>書き方</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td><strong>① 拡大変換</strong></td><td>基本データ型 → 範囲の<strong>広い</strong>基本データ型</td><td class="cv-i">暗黙</td><td><code>long l = 10;</code></td></tr>
+      <tr><td><strong>② 縮小変換</strong></td><td>基本データ型 → 範囲の<strong>狭い</strong>基本データ型</td><td class="cv-c">キャスト<br><small>（書かなくてよい場面が3つ）</small></td><td><code>int i = (int) 10L;</code></td></tr>
+      <tr><td><strong>③ ボクシング</strong></td><td>基本データ型 → 対応するラッパー</td><td class="cv-i">暗黙</td><td><code>Integer i = 5;</code></td></tr>
+      <tr><td><strong>④ アンボクシング</strong></td><td>ラッパー → 対応する基本データ型</td><td class="cv-i">暗黙</td><td><code>int n = i;</code></td></tr>
+      <tr><td><strong>⑤ 参照型の変換</strong></td><td>子 → 親 ／ 親 → 子</td><td><span class="cv-i">暗黙</span> ／ <span class="cv-c">キャスト</span></td><td><code>Object o = "a";</code><br><code>String s = (String) o;</code></td></tr>
+      <tr><td><strong>変換できない</strong></td><td>boolean ⇄ 数値、文字列 ⇄ 数値、無関係な参照型</td><td class="cv-x">不可</td><td><code>(int) "12"</code></td></tr>
+    </tbody>
+  </table></div>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>キャストすれば通る<span class="tag">OK</span></div><pre><code>byte c = (byte)(a + b);</code></pre></div>
+  <h3>① ② 基本データ型どうし ── 変換表</h3>
 
-  <h3>罠2 ── 複合代入演算子は暗黙のキャストを含む</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>意味は同じでも結果が違う<span class="tag">要注意</span></div><pre><code>byte a = 1;
-a += 2;       // OK。+= に暗黙の縮小キャストが組み込まれている
-a++;          // OK。同じ理由
-a = a + 2;    // コンパイルエラー</code></pre></div>
+  <p>行が変換<strong>元</strong>、列が変換<strong>先</strong>です。変数どうしの代入（<code>short s = b;</code> のような形）で確かめた結果です。</p>
 
-  <div class="point trap"><p><span class="mk"><code>a += 2</code> は通るが <code>a = a + 2</code> はエラー。</span>この非対称が選択肢に並びます。意味は同じなのに結果が違う、という点だけ覚えてください。</p></div>
+  <div class="tw"><table class="cvm">
+    <thead><tr><th>元 ＼ 先</th><th>byte</th><th>short</th><th>char</th><th>int</th><th>long</th><th>float</th><th>double</th><th>boolean</th></tr></thead>
+    <tbody>
+      <tr><th>byte</th><td class="cv-s">―</td><td class="cv-i">○</td><td class="cv-c">△</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>short</th><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-c">△</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>char</th><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>int</th><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>long</th><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-i">○</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>float</th><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-i">○</td><td class="cv-x">×</td></tr>
+      <tr><th>double</th><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-c">△</td><td class="cv-s">―</td><td class="cv-x">×</td></tr>
+      <tr><th>boolean</th><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-x">×</td><td class="cv-s">―</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cv-legend"><span class="cv-i">○ 暗黙でよい（拡大変換）</span><span class="cv-c">△ キャストが必要（縮小変換）</span><span class="cv-x">× 変換できない</span></div>
 
-  <h3>罠3 ── コンパイル時定数なら縮小変換が通る</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>final の有無で結果が変わる<span class="tag">要注意</span></div><pre><code>byte a = 10;            // OK。10 は範囲内の定数
-byte b = 200;           // コンパイルエラー: 範囲外
+  <p>表を覚える必要はありません。次の一本道が分かれば、表は全部作れます。</p>
 
+<figure class="fig"><svg viewBox="0 0 460 156" role="img" aria-label="byte short int long float double が左から右へ矢印でつながり、char が int に合流している">
+  <defs><marker id="ah-cv" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker></defs>
+  <text class="lb" x="9" y="16">この向きは暗黙（拡大変換）。途中を飛ばしてもよい</text>
+  <rect class="bx" x="9" y="26" width="62" height="28" rx="3"/><text class="sm" x="40" y="45" text-anchor="middle">byte</text>
+  <rect class="bx" x="85" y="26" width="62" height="28" rx="3"/><text class="sm" x="116" y="45" text-anchor="middle">short</text>
+  <rect class="bx" x="161" y="26" width="62" height="28" rx="3"/><text class="sm" x="192" y="45" text-anchor="middle">int</text>
+  <rect class="bx" x="237" y="26" width="62" height="28" rx="3"/><text class="sm" x="268" y="45" text-anchor="middle">long</text>
+  <rect class="bx" x="313" y="26" width="62" height="28" rx="3"/><text class="sm" x="344" y="45" text-anchor="middle">float</text>
+  <rect class="bx" x="389" y="26" width="62" height="28" rx="3"/><text class="sm" x="420" y="45" text-anchor="middle">double</text>
+  <line class="ar" x1="71" y1="40" x2="83" y2="40" marker-end="url(#ah-cv)"/>
+  <line class="ar" x1="147" y1="40" x2="159" y2="40" marker-end="url(#ah-cv)"/>
+  <line class="ar" x1="223" y1="40" x2="235" y2="40" marker-end="url(#ah-cv)"/>
+  <line class="ar" x1="299" y1="40" x2="311" y2="40" marker-end="url(#ah-cv)"/>
+  <line class="ar" x1="375" y1="40" x2="387" y2="40" marker-end="url(#ah-cv)"/>
+  <rect class="bx" x="85" y="86" width="62" height="26" rx="3"/><text class="sm" x="116" y="104" text-anchor="middle">char</text>
+  <line class="ar" x1="147" y1="99" x2="190" y2="58" marker-end="url(#ah-cv)"/>
+  <line class="ar" x1="445" y1="134" x2="14" y2="134" marker-end="url(#ah-cv)"/>
+  <text class="lb" x="230" y="128" text-anchor="middle">この向きはキャストが必要（縮小変換）</text>
+</svg><figcaption>矢印の向き（右）に進むなら暗黙、逆向き（左）ならキャスト。<code>char</code> は <code>int</code> の手前で合流するので、<code>byte</code>・<code>short</code> とは<strong>どちら向きもキャスト</strong>が必要です。<code>boolean</code> はこの図に入らず、どの型とも変換できません</figcaption></figure>
+
+  <div class="tw"><table>
+    <thead><tr><th>表から読み取ること</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td>右向きは<strong>飛ばしてもよい</strong>（<code>byte → double</code> も暗黙）</td><td>範囲が広い型には、狭い型の値が必ず収まる</td></tr>
+      <tr><td><code>short → char</code>・<code>char → short</code> は<strong>どちらも</strong>キャスト</td><td>同じ16ビットでも、char は 0〜65535（負の数なし）、short は -32768〜32767 で、範囲が重ならない</td></tr>
+      <tr><td><code>byte → char</code> もキャスト</td><td>char は負の数を表せない</td></tr>
+      <tr><td><code>long → float</code> は暗黙</td><td>float は 32 ビットだが、表せる<strong>範囲</strong>は long より広い（桁の細かさは落ちる）</td></tr>
+      <tr><td><code>boolean</code> は全部 ×</td><td>true/false は数値ではない。<code>(int) true</code> もエラー</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>暗黙の拡大変換でも、細かい桁は落ちることがある<span class="tag">要注意</span></div><pre><code>int big = 123456789;
+float f = big;                 // 暗黙で OK
+System.out.println(f);         // 1.23456792E8
+System.out.println((int) f);   // 123456792 ← 元の 123456789 に戻らない</code></pre></div>
+
+  <p>「拡大変換は値が変わらない」は、整数どうし（<code>int → long</code> など）と <code>float → double</code> の話です。<code>int → float</code>・<code>long → float</code>・<code>long → double</code> は、暗黙でできても<strong>細かい桁が丸められる</strong>ことがあります。</p>
+
+  <h3>② 縮小変換 ── キャストすると値はどうなるか</h3>
+
+  <p>キャストは「範囲を超えるかもしれないが、承知の上で変換する」という宣言です。<span class="mk">コンパイルは通り、実行時の例外にもならず、値のほうが変わります</span>。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>キャスト</th><th>結果</th><th>何が起きたか</th></tr></thead>
+    <tbody>
+      <tr><td><code>(byte) 200</code></td><td><strong>-56</strong></td><td rowspan="3">整数 → 狭い整数：入りきらない<strong>上の桁（ビット）を捨てる</strong>。一周して負の数になることもある</td></tr>
+      <tr><td><code>(byte) 300</code></td><td><strong>44</strong></td></tr>
+      <tr><td><code>(short) 40000</code></td><td><strong>-25536</strong></td></tr>
+      <tr><td><code>(int) 3.99</code></td><td><strong>3</strong></td><td rowspan="2">小数 → 整数：小数点以下を<strong>切り捨てる</strong>（0 に近い方へ。四捨五入しない）</td></tr>
+      <tr><td><code>(int) -3.99</code></td><td><strong>-3</strong></td></tr>
+      <tr><td><code>(int) 1e10</code></td><td><strong>2147483647</strong></td><td>小数 → 整数で範囲外なら、int の最大値に<strong>張りつく</strong>（一周しない）</td></tr>
+      <tr><td><code>(char) 65</code></td><td><strong>'A'</strong></td><td rowspan="2">char と整数は、文字コードで行き来する</td></tr>
+      <tr><td><code>(int) 'A'</code></td><td><strong>65</strong></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>キャストが掛かるのは、すぐ右の1つだけ<span class="tag">要注意</span></div><pre><code>System.out.println(7 / 2);             // 3     int ÷ int
+System.out.println((double) 7 / 2);    // 3.5   7 を double にしてから割る
+System.out.println((double) (7 / 2));  // 3.0   先に int どうしで割って 3、それを double に
+System.out.println(7 / 2.0);           // 3.5   片方が double なので double で計算（④）</code></pre></div>
+
+  <h3>② の続き ── キャストを書かなくても縮小できる3つの場面</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>場面</th><th>例</th><th>条件・注意</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1. 定数の代入</strong></td><td><code>byte b = 10;</code><br><code>char c = 65;</code><br><code>final int x = 10; byte b = x;</code></td><td>右辺が<strong>コンパイル時に値が決まる定数</strong>で、<strong>範囲内</strong>のとき。変換先は <code>byte</code>・<code>short</code>・<code>char</code> だけ</td></tr>
+      <tr><td><strong>2. 複合代入</strong></td><td><code>b += 300;</code></td><td><code>+=</code> <code>-=</code> <code>*=</code> などは、<strong>キャストが最初から組み込まれている</strong>。範囲を超えても通り、値が変わる</td></tr>
+      <tr><td><strong>3. <code>++</code> と <code>--</code></strong></td><td><code>b++;</code></td><td>複合代入と同じく、キャストが組み込まれている</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>定数の特例が効く・効かない<span class="tag">最頻出</span></div><pre><code>byte a = 10;              // OK  定数で、範囲内
+byte b = 200;             // ×   定数でも範囲外
 final int x = 10;
-byte c = x;             // OK。final なのでコンパイル時に確定
-
+byte c = x;               // OK  final なので定数
 int y = 10;
-byte d = y;             // コンパイルエラー: final でない</code></pre></div>
+byte d = y;               // ×   final でない変数は定数ではない
+int e = 10L;              // ×   long の定数は int に縮小できない（特例は byte・short・char への代入だけ）
+float f = 1.5;            // ×   1.5 は double の定数。float への特例は無い
 
-  <div class="point link"><p><code>final</code> という1語の有無だけで合否が変わります。第4章の「実質的に final」や第6章の multi-catch の変数と同じ考え方で、<span class="mk pink">コンパイラが値を確定できるかどうか</span>が判定基準です。</p></div>
+static void take(byte v) { }
+take(10);                 // ×   メソッドの引数には、定数の特例が効かない
+take((byte) 10);          // OK</code></pre></div>
 
-  <h3>ボクシングと拡大変換は組み合わせられない</h3>
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2段階の変換は不可<span class="tag">NG</span></div><pre><code>Long a = 5;      // コンパイルエラー
-// int → long（拡大変換）→ Long（ボクシング）の2段階は許されない</code></pre></div>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複合代入は通るが、値が変わることがある<span class="tag">最頻出</span></div><pre><code>byte b = 10;
+b = b + 1;       // ×  b + 1 は int（④）。int を byte に入れるにはキャストが要る
+b += 1;          // OK b = (byte)(b + 1) と同じ
+b++;             // OK
+b += 300;        // OK ただし 10 + 1 + 1 + 300 = 312 → (byte) 312 → 56
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>1段階なら通る<span class="tag">OK</span></div><pre><code>Long a = 5L;              // long → Long のボクシングだけ
-Integer b = 5;            // int → Integer のボクシングだけ
-long c = Integer.valueOf(5);   // アンボクシング → 拡大変換</code></pre></div>
+int i = 5;
+i += 1.5;        // OK i = (int)(i + 1.5) → 6
+i = i + 1.5;     // ×  i + 1.5 は double</code></pre></div>
 
-  <h3>Integer キャッシュ</h3>
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>127 と 128 で結果が変わる<span class="tag">最重要</span></div><pre><code>Integer a = 127, b = 127;
-System.out.println(a == b);   // true
+  <h3>演算するときの型 ── 数値昇格</h3>
 
+  <p>2つの数を計算するとき、Java は計算の前に<strong>両方を同じ型にそろえます</strong>。そろえ先は上から順に決まります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>順</th><th>どちらかが…</th><th>計算の型</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>double</code></td><td><strong>double</strong></td></tr>
+      <tr><td>2</td><td><code>float</code></td><td><strong>float</strong></td></tr>
+      <tr><td>3</td><td><code>long</code></td><td><strong>long</strong></td></tr>
+      <tr><td>4</td><td>それ以外（<code>byte</code> <code>short</code> <code>char</code> <code>int</code> だけ）</td><td><strong>int</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>4 番目が大事です。<span class="mk"><code>byte + byte</code> も <code>short + short</code> も <code>char + char</code> も、結果は int</span>です。<code>-b</code> のような単項のマイナスも int になります。<br>だから <code>byte c = a + b;</code> は「int を byte に入れる」ことになってエラーです。ただし <code>a</code> と <code>b</code> が <code>final</code> の定数なら、<code>a + b</code> も定数になるので、範囲内なら特例 1 で代入できます。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>計算の結果の型<span class="tag">最頻出</span></div><pre><code>byte a = 1, b = 2;
+byte c = a + b;              // ×  a + b は int
+byte d = (byte) (a + b);     // OK
+final byte p = 1, q = 2;
+byte r = p + q;              // OK 定数どうしなので、結果も定数
+
+long  x = 1 * 2L;            // OK long
+int   y = 1 * 2L;            // ×  long
+float z = 1.5f + 1;          // OK float
+int   w = 5 + 1.0;           // ×  double</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>char の計算は、文字コードの int になる<span class="tag">要注意</span></div><pre><code>char c = 'A';
+System.out.println(c + 1);          // 66    char + int → int
+System.out.println((char) (c + 1)); // B     int を char に戻す
+c++;
+System.out.println(c);              // B     ++ にはキャストが組み込まれている
+System.out.println('a' + 'b');      // 195   char + char → int（97 + 98）
+System.out.println("" + 'a' + 'b'); // ab    左に String があると連結になる</code></pre></div>
+
+  <h3>③ ④ ボクシングとアンボクシング</h3>
+
+  <p>基本データ型にはそれぞれ、値をオブジェクトとして包む<strong>ラッパークラス</strong>があります。コレクション（<code>List&lt;Integer&gt;</code>）や <code>Object</code> 型の変数には基本データ型を直接入れられないので、包む必要があります。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>基本データ型</th><th>byte</th><th>short</th><th><strong>char</strong></th><th><strong>int</strong></th><th>long</th><th>float</th><th>double</th><th>boolean</th></tr></thead>
+    <tbody>
+      <tr><td>ラッパークラス</td><td>Byte</td><td>Short</td><td><strong>Character</strong></td><td><strong>Integer</strong></td><td>Long</td><td>Float</td><td>Double</td><td>Boolean</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>名前が単純に大文字になるだけではないのは、<code>char → Character</code> と <code>int → Integer</code> の2つです。</p>
+
+  <h4 class="cv-h4">4つの用語</h4>
+
+  <div class="tw"><table>
+    <thead><tr><th>用語</th><th>意味</th><th>書いたコード</th><th>コンパイラがすること</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ボクシング</strong></td><td>基本データ型 → ラッパー（包む）</td><td><code>Integer.valueOf(5)</code></td><td>―</td></tr>
+      <tr><td><strong>アンボクシング</strong></td><td>ラッパー → 基本データ型（ほどく）</td><td><code>i.intValue()</code></td><td>―</td></tr>
+      <tr><td><strong>オートボクシング</strong></td><td>ボクシングを<strong>コンパイラが自動で</strong>行うこと</td><td><code>Integer i = 5;</code></td><td><code>Integer i = Integer.valueOf(5);</code> に書き換える</td></tr>
+      <tr><td><strong>オートアンボクシング</strong></td><td>アンボクシングを<strong>コンパイラが自動で</strong>行うこと</td><td><code>int n = i;</code></td><td><code>int n = i.intValue();</code> に書き換える</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>「オート」が付くのは、<span class="mk">変換の中身は同じで、自分で書くか自動かの違いだけ</span>です。Java 5 からは自動で行われるので、試験で「ボクシング」と言えば、ふつうはこの自動の変換を指します。</p></div>
+
+  <h4 class="cv-h4">自動で起きる場面</h4>
+
+  <div class="tw"><table>
+    <thead><tr><th>場面</th><th>例</th><th>起きること</th></tr></thead>
+    <tbody>
+      <tr><td>代入</td><td><code>Integer i = 5;</code> ／ <code>int n = i;</code></td><td>ボクシング ／ アンボクシング</td></tr>
+      <tr><td>メソッドの引数・戻り値</td><td><code>list.add(5);</code></td><td>5 を Integer に包んで渡す</td></tr>
+      <tr><td>計算</td><td><code>i + 1</code></td><td>i をほどいて int で計算</td></tr>
+      <tr><td>比較</td><td><code>i == 5</code></td><td>片方が基本データ型なら、ほどいて<strong>値</strong>で比べる</td></tr>
+      <tr><td><code>Object</code> に入れる</td><td><code>Object[] a = {1, 'a', 2.0, true};</code></td><td>中身はそれぞれ Integer・Character・Double・Boolean になる</td></tr>
+    </tbody>
+  </table></div>
+
+  <h4 class="cv-h4">できる・できない ── 1段階ずつしか進めない</h4>
+
+  <p>ボクシングで行き来できるのは<strong>対応するペアだけ</strong>（int ⇄ Integer、long ⇄ Long …）です。ペアでない型へは、次のように組み合わせて届くかどうかで決まります。</p>
+
+  <div class="tw"><table class="cv-3">
+    <thead><tr><th>コード</th><th>判定</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>Integer a = 5;</code></td><td class="cv-i">○</td><td>int → Integer（ペア）</td></tr>
+      <tr><td><code>Long a = 5;</code></td><td class="cv-x">×</td><td>int → long → Long の<strong>2段階</strong>。広げてから包むのは不可</td></tr>
+      <tr><td><code>Long a = 5L;</code></td><td class="cv-i">○</td><td>long → Long（ペア）</td></tr>
+      <tr><td><code>Long a = (long) 5;</code></td><td class="cv-i">○</td><td>キャストで先に long にしてあるので、包むだけ</td></tr>
+      <tr><td><code>Double a = 5;</code></td><td class="cv-x">×</td><td>int → double → Double の2段階</td></tr>
+      <tr><td><code>Integer a = 5L;</code></td><td class="cv-x">×</td><td>long は Integer のペアではない</td></tr>
+      <tr><td><code>Object a = 5;</code> ／ <code>Number a = 5;</code></td><td class="cv-i">○</td><td>int → Integer に包んでから、<strong>親の型</strong>へ（⑤）。包んでから親へは可</td></tr>
+      <tr><td><code>long a = Integer.valueOf(5);</code></td><td class="cv-i">○</td><td>Integer → int にほどいてから、long へ広げる。<strong>ほどいてから広げるのは可</strong></td></tr>
+      <tr><td><code>int a = (int) Long.valueOf(5);</code></td><td class="cv-x">×</td><td>Long → long → int は、ほどいてから<strong>狭める</strong>。キャストを書いても不可</td></tr>
+      <tr><td><code>Byte a = 10;</code></td><td class="cv-i">○</td><td>定数の特例（範囲内の定数 → byte）のあとに包む。<code>Short</code>・<code>Character</code> も同じ</td></tr>
+      <tr><td><code>int x = 10; Byte a = x;</code></td><td class="cv-x">×</td><td>x は定数ではないので特例が効かない</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>まとめると、<span class="mk">包む・ほどく以外に進めるのは「包んだあと親へ」と「ほどいたあと広げる」だけ</span>です。「広げてから包む」（<code>Long a = 5;</code>）と「ほどいてから狭める」はできません。<br>オーバーロードでどのメソッドが選ばれるかにも、この規則がそのまま効きます（<a href="#c4-s06">第4章 06</a>）。</p></div>
+
+  <h4 class="cv-h4">ラッパーの比較と null</h4>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ラッパーどうしの == は参照の比較<span class="tag">最重要</span></div><pre><code>Integer a = 127, b = 127;
+System.out.println(a == b);        // true
 Integer c = 128, d = 128;
-System.out.println(c == d);   // false</code></pre></div>
+System.out.println(c == d);        // false
+System.out.println(c.equals(d));   // true  値の比較には equals
+System.out.println(c == 128);      // true  片方が int なので、ほどいて値で比べる</code></pre></div>
 
-  <p>オートボクシングは内部で <code>Integer.valueOf()</code> を呼びますが、<span class="mk">-128 〜 127 の範囲はキャッシュされた同一インスタンスが返る</span>ためです。値の比較には必ず <code>equals()</code> を使います。</p>
+  <p>オートボクシングは内部で <code>Integer.valueOf()</code> を呼びます。<span class="mk">-128 〜 127 の値は、あらかじめ用意された同じインスタンスが返る</span>ので、<code>==</code> でも true になります。範囲外は毎回新しいインスタンスなので false です。</p>
 
-<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>null のアンボクシング<span class="tag">実行時</span></div><pre><code>Integer i = null;
-int j = i;      // コンパイルは通り、実行時に NullPointerException</code></pre></div>
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>型が違うと equals は false、null をほどくと例外<span class="tag">実行時</span></div><pre><code>Long l = 1L;
+System.out.println(l.equals(1));   // false  1 は Integer に包まれる。Long と Integer は別の型
+System.out.println(l == 1);        // true   ほどいて値で比べる
+
+Integer n = null;
+int x = n;                         // コンパイルは通り、実行時に NullPointerException
+                                   // n.intValue() を呼ぶのと同じだから</code></pre></div>
+
+  <h3>⑤ 参照型どうし</h3>
+
+  <p>クラスやインタフェースの型どうしは、<strong>親子関係</strong>で決まります。基本データ型の「広い・狭い」の代わりに「親・子」を使う、と考えると同じ形です。</p>
+
+  <div class="tw"><table class="cv-3">
+    <thead><tr><th>向き</th><th>判定</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td>子 → 親（アップキャスト）</td><td class="cv-i">暗黙</td><td><code>Object o = "a";</code></td></tr>
+      <tr><td>親 → 子（ダウンキャスト）</td><td class="cv-c">キャスト</td><td><code>String s = (String) o;</code> ── 実体が違えば<strong>実行時に ClassCastException</strong></td></tr>
+      <tr><td>親子関係が無い</td><td class="cv-x">×</td><td><code>Integer i = (Integer) "a";</code></td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>基本データ型のキャストとの違い<span class="tag">対比</span></div><pre><code>Object o = 1;              // 中身は Integer
+Long l = (Long) o;         // コンパイルは通るが ClassCastException（Integer は Long ではない）
+long m = (long) 1;         // 基本データ型なら、値を変換するので問題ない</code></pre></div>
+
+  <p>参照型のキャストは<strong>値を作り変えません</strong>。「この変数の中身は本当はこの型のはずだ」と伝えるだけなので、違っていれば実行時に失敗します。詳しくは<a href="#c5-s06">第5章 06</a>、型の親子関係は<a href="#c5-s14">第5章 14</a>にあります。</p>
+
+  <h3>変換できないもの</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>組み合わせ</th><th>例（すべてコンパイルエラー）</th><th>代わりの方法</th></tr></thead>
+    <tbody>
+      <tr><td>boolean ⇄ 数値</td><td><code>(int) true</code> ／ <code>(boolean) 1</code></td><td><code>flag ? 1 : 0</code> ／ <code>n != 0</code></td></tr>
+      <tr><td>文字列 → 数値</td><td><code>(int) "12"</code></td><td><code>Integer.parseInt("12")</code></td></tr>
+      <tr><td>数値 → 文字列</td><td><code>(String) 12</code></td><td><code>String.valueOf(12)</code> ／ <code>"" + 12</code></td></tr>
+      <tr><td>ペアでないラッパー</td><td><code>Long l = Integer.valueOf(5);</code></td><td><code>Long.valueOf(i)</code>（i を long に広げてから包む）</td></tr>
+      <tr><td>親子関係の無い参照型</td><td><code>(Integer) "a"</code></td><td>―</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>判定の手順</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>確かめること</th><th>答え</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>boolean と数値、文字列と数値の組み合わせか</td><td>そうなら<strong>変換できない</strong></td></tr>
+      <tr><td><strong>2</strong></td><td>両方とも基本データ型か</td><td>一本道の右向きなら暗黙、左向きならキャスト。ただし<strong>定数・複合代入・++ --</strong> ならキャスト不要</td></tr>
+      <tr><td><strong>3</strong></td><td>基本データ型とラッパーか</td><td>ペアなら暗黙。ペアでなければ「包んでから親へ」「ほどいてから広げる」で届くときだけ可</td></tr>
+      <tr><td><strong>4</strong></td><td>両方とも参照型か</td><td>子 → 親は暗黙、親 → 子はキャスト（実行時に失敗しうる）、無関係は不可</td></tr>
+      <tr><td><strong>5</strong></td><td>計算の途中か</td><td>先に数値昇格（double → float → long → int）で計算の型を決めてから、1〜4 を当てはめる</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>よく出る罠 ── ここまでのまとめ</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コード</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>byte c = a + b;</code>（a, b は byte の変数）</td><td class="cv-x">コンパイルエラー</td><td>byte + byte は int（数値昇格）</td></tr>
+      <tr><td><code>b = b + 1;</code> と <code>b += 1;</code></td><td>前者は <span class="cv-x">エラー</span>、後者は <span class="cv-i">OK</span></td><td>複合代入にはキャストが組み込まれている</td></tr>
+      <tr><td><code>byte b = 10;</code> ／ <code>byte b = 200;</code></td><td><span class="cv-i">OK</span> ／ <span class="cv-x">エラー</span></td><td>定数の特例は範囲内だけ</td></tr>
+      <tr><td><code>int x = 10; byte b = x;</code></td><td class="cv-x">コンパイルエラー</td><td>final でない変数は定数ではない</td></tr>
+      <tr><td><code>take(10);</code>（引数が byte）</td><td class="cv-x">コンパイルエラー</td><td>引数には定数の特例が効かない</td></tr>
+      <tr><td><code>float f = 1.5;</code></td><td class="cv-x">コンパイルエラー</td><td>1.5 は double。<code>1.5f</code> と書く</td></tr>
+      <tr><td><code>Long l = 5;</code></td><td class="cv-x">コンパイルエラー</td><td>広げてから包むのは不可</td></tr>
+      <tr><td><code>long l = Integer.valueOf(5);</code></td><td class="cv-i">OK</td><td>ほどいてから広げるのは可</td></tr>
+      <tr><td><code>(byte) 200</code></td><td>-56</td><td>上の桁が捨てられる。例外にはならない</td></tr>
+      <tr><td><code>(int) -3.99</code></td><td>-3</td><td>0 に近い方へ切り捨て</td></tr>
+      <tr><td><code>(double) (7 / 2)</code></td><td>3.0</td><td>割り算が先に int で行われる</td></tr>
+      <tr><td><code>'a' + 'b'</code></td><td>195</td><td>char + char は int</td></tr>
+      <tr><td>Integer の <code>127 == 127</code> ／ <code>128 == 128</code></td><td>true ／ false</td><td>-128〜127 だけ同じインスタンス</td></tr>
+      <tr><td><code>Long.valueOf(1).equals(1)</code></td><td>false</td><td>1 は Integer に包まれ、型が違う</td></tr>
+      <tr><td><code>Integer n = null; int x = n;</code></td><td class="cv-x">NullPointerException</td><td>null をほどこうとした</td></tr>
+      <tr><td><code>Object o = 1; Long l = (Long) o;</code></td><td class="cv-x">ClassCastException</td><td>中身は Integer。参照型のキャストは値を変えない</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <!-- ch2/04-identifiers.html · 識別子の規則 -->
