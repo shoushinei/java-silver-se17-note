@@ -348,13 +348,13 @@ new R5(3).x();        // 3000</code></pre></div>
   <h3>できること・できないこと</h3>
 
   <div class="tw"><table>
-    <thead><tr><th></th><th>可否</th><th>エラーメッセージ</th></tr></thead>
+    <thead><tr><th></th><th>可否</th><th>要点（× はエラーメッセージ）</th></tr></thead>
     <tbody>
-      <tr><td>static フィールド・メソッド</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>インスタンスメソッド</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>インタフェースの実装</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>ネスト・ローカル・ジェネリック</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>コンポーネントの可変長引数</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>static フィールド・メソッド</td><td><strong>○</strong></td><td>フィールドは <strong>static なら追加できる</strong>（インスタンスフィールドは不可）</td></tr>
+      <tr><td>インスタンスメソッド</td><td><strong>○</strong></td><td>自由に書ける。アクセサと同名にするときだけ「引数なし・同じ型・public」の形を守る</td></tr>
+      <tr><td>インタフェースの実装</td><td><strong>○</strong></td><td><code>implements</code> は書ける。書けないのは <code>extends</code> だけ</td></tr>
+      <tr><td>ネスト・ローカル・ジェネリック</td><td><strong>○</strong></td><td><code>record Pair&lt;T&gt;(T a, T b)</code> も可。クラスの中に書いた record は<strong>暗黙に static</strong></td></tr>
+      <tr><td>コンポーネントの可変長引数</td><td><strong>○</strong></td><td><code>record V(String n, int... v)</code>。メソッドと同じく<strong>最後のコンポーネントだけ</strong>。アクセサ <code>v()</code> は <code>int[]</code> を返す</td></tr>
       <tr><td>インスタンスフィールドの追加</td><td>×</td><td><code>field declaration must be static</code></td></tr>
       <tr><td>他クラスの継承（<code>extends</code>）</td><td>×</td><td>暗黙に <code>Record</code> を継承済み</td></tr>
       <tr><td>record を継承する</td><td>×</td><td><code>cannot inherit from final</code></td></tr>

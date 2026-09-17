@@ -47,7 +47,7 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
       <tr class="g"><td colspan="3">D. 調べる</td></tr>
       <tr><td><a href="#sb-capacity"><code>length()</code></a></td><td>int</td><td>実際の文字数</td></tr>
       <tr><td><a href="#sb-capacity"><code>capacity()</code></a></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
-      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>—</td></tr>
+      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>0〜<code>length()</code>-1。<strong>capacity ではなく length が基準</strong>で、範囲外は StringIndexOutOfBoundsException</td></tr>
       <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
       <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
       <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>

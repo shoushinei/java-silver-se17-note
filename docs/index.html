@@ -1003,7 +1003,7 @@ Caused by: java.lang.ClassNotFoundException: Sample</code></pre></div>
       <tr><td>問われているもの</td><td>コマンド単体の妥当性</td><td><strong>出力までの手順</strong></td></tr>
       <tr><td>前提</td><td><code>.class</code> は既にある</td><td><code>.java</code> しか無い</td></tr>
       <tr><td><code>java Sample</code></td><td>○ 正しい</td><td><strong>× コンパイルがまだ</strong></td></tr>
-      <tr><td><code>javac Sample.java</code><br><code>java Sample</code></td><td>—</td><td>○</td></tr>
+      <tr><td><code>javac Sample.java</code><br><code>java Sample</code></td><td>△ 余計。<code>.class</code> はもうあるので、聞かれているのは <code>java</code> だけ</td><td>○</td></tr>
       <tr><td><code>java Sample.java</code></td><td>○</td><td>○</td></tr>
     </tbody>
   </table></div>
@@ -1962,7 +1962,7 @@ System.out.println(a == (h + "lo").intern());  // true  ← intern() でプー�
       <tr><td><a href="#str-replace"><code>replace(a,b)</code></a></td><td>String</td><td>該当箇所を<strong>すべて</strong>置換</td></tr>
       <tr><td><a href="#str-replaceall"><code>replaceAll</code></a><a href="#str-replaceall"><code>replaceFirst</code></a></td><td>String</td><td>第1引数は<strong>正規表現</strong></td></tr>
       <tr><td><a href="#str-trim"><code>trim()</code></a><a href="#str-trim"><code>strip()</code></a></td><td>String</td><td>前後のみ。間は残る</td></tr>
-      <tr><td><a href="#str-case"><code>toUpperCase</code></a><a href="#str-case"><code>toLowerCase</code></a></td><td>String</td><td>—</td></tr>
+      <tr><td><a href="#str-case"><code>toUpperCase</code></a><a href="#str-case"><code>toLowerCase</code></a></td><td>String</td><td>新しい String を返す。<strong>代入しないと元は変わらない</strong>。英字以外（数字・記号・空白）はそのまま</td></tr>
       <tr><td><a href="#str-case"><code>repeat(int)</code></a></td><td>String</td><td>Java 11〜。負数で例外</td></tr>
       <tr class="g"><td colspan="3">D. 分ける・つなぐ・変換する</td></tr>
       <tr><td><a href="#str-split"><code>split(String)</code></a></td><td><strong>String[]</strong></td><td>末尾の空要素は削除される</td></tr>
@@ -2225,7 +2225,7 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
       <tr class="g"><td colspan="3">D. 調べる</td></tr>
       <tr><td><a href="#sb-capacity"><code>length()</code></a></td><td>int</td><td>実際の文字数</td></tr>
       <tr><td><a href="#sb-capacity"><code>capacity()</code></a></td><td>int</td><td>既定16。溢れたら ×2+2</td></tr>
-      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>—</td></tr>
+      <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>0〜<code>length()</code>-1。<strong>capacity ではなく length が基準</strong>で、範囲外は StringIndexOutOfBoundsException</td></tr>
       <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
       <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
       <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>
@@ -3571,7 +3571,7 @@ System.out.println(o instanceof String);   // true</code></pre></div>
       <tr><td><code>&amp;</code></td><td>かつ</td><td><strong>必ず評価する</strong></td></tr>
       <tr><td><code>|</code></td><td>または</td><td><strong>必ず評価する</strong></td></tr>
       <tr><td><code>^</code></td><td>排他的論理和（片方だけ true なら true）</td><td>必ず評価する</td></tr>
-      <tr><td><code>!</code></td><td>否定</td><td>—</td></tr>
+      <tr><td><code>!</code></td><td>否定</td><td>右辺は無い（項が1つの単項演算子）。<strong>boolean 専用</strong>で <code>!1</code> はコンパイルエラー</td></tr>
     </tbody>
   </table></div>
 
@@ -3919,7 +3919,7 @@ String s = switch (color) {
       <tr><td>break</td><td>必要</td><td><strong>書けない</strong></td></tr>
       <tr><td>値を返す</td><td>不可</td><td>可能</td></tr>
       <tr><td>複数ラベル</td><td><code>case 1: case 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
-      <tr><td>ブロックから値を返す</td><td>—</td><td><code>yield</code></td></tr>
+      <tr><td>ブロックから値を返す</td><td>そもそも値を返さない（<code>yield</code> は書けない）</td><td><code>yield</code></td></tr>
       <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
       <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
       <tr><td>null を渡すと</td><td colspan="2"><strong>どちらも NullPointerException</strong>。仕組みは <a href="#sw-null">08 の「switch に null を渡すと落ちる」</a></td></tr>
@@ -5317,13 +5317,13 @@ new R5(3).x();        // 3000</code></pre></div>
   <h3>できること・できないこと</h3>
 
   <div class="tw"><table>
-    <thead><tr><th></th><th>可否</th><th>エラーメッセージ</th></tr></thead>
+    <thead><tr><th></th><th>可否</th><th>要点（× はエラーメッセージ）</th></tr></thead>
     <tbody>
-      <tr><td>static フィールド・メソッド</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>インスタンスメソッド</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>インタフェースの実装</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>ネスト・ローカル・ジェネリック</td><td><strong>○</strong></td><td>—</td></tr>
-      <tr><td>コンポーネントの可変長引数</td><td><strong>○</strong></td><td>—</td></tr>
+      <tr><td>static フィールド・メソッド</td><td><strong>○</strong></td><td>フィールドは <strong>static なら追加できる</strong>（インスタンスフィールドは不可）</td></tr>
+      <tr><td>インスタンスメソッド</td><td><strong>○</strong></td><td>自由に書ける。アクセサと同名にするときだけ「引数なし・同じ型・public」の形を守る</td></tr>
+      <tr><td>インタフェースの実装</td><td><strong>○</strong></td><td><code>implements</code> は書ける。書けないのは <code>extends</code> だけ</td></tr>
+      <tr><td>ネスト・ローカル・ジェネリック</td><td><strong>○</strong></td><td><code>record Pair&lt;T&gt;(T a, T b)</code> も可。クラスの中に書いた record は<strong>暗黙に static</strong></td></tr>
+      <tr><td>コンポーネントの可変長引数</td><td><strong>○</strong></td><td><code>record V(String n, int... v)</code>。メソッドと同じく<strong>最後のコンポーネントだけ</strong>。アクセサ <code>v()</code> は <code>int[]</code> を返す</td></tr>
       <tr><td>インスタンスフィールドの追加</td><td>×</td><td><code>field declaration must be static</code></td></tr>
       <tr><td>他クラスの継承（<code>extends</code>）</td><td>×</td><td>暗黙に <code>Record</code> を継承済み</td></tr>
       <tr><td>record を継承する</td><td>×</td><td><code>cannot inherit from final</code></td></tr>
@@ -5897,9 +5897,9 @@ p.only();       // error: cannot find symbol ── P に only() は無い
     <thead><tr><th>キャスト元 → キャスト先</th><th>コンパイル</th><th>実行時</th></tr></thead>
     <tbody>
       <tr><td>親クラス → 子クラス</td><td>○</td><td>実体が違えば ClassCastException</td></tr>
-      <tr><td>親子関係の無いクラス → クラス（兄弟など）</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>親子関係の無いクラス → クラス（兄弟など）</td><td><strong>×</strong></td><td>実行まで行かない。どんな実体でも両方の型にはなれないため（<code>Long l = (Long) i;</code> など）</td></tr>
       <tr><td>final <strong>でない</strong>クラス → インタフェース（実装していなくても）</td><td>○</td><td>実体が実装していなければ ClassCastException</td></tr>
-      <tr><td>final クラス → 実装していないインタフェース</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>final クラス → 実装していないインタフェース</td><td><strong>×</strong></td><td>実行まで行かない。子クラスを作れないので、実装する実体が現れる可能性が無いため</td></tr>
       <tr><td>インタフェース → インタフェース</td><td>○</td><td>実体しだい</td></tr>
     </tbody>
   </table></div>

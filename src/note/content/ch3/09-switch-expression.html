@@ -111,7 +111,7 @@ String s = switch (color) {
       <tr><td>break</td><td>必要</td><td><strong>書けない</strong></td></tr>
       <tr><td>値を返す</td><td>不可</td><td>可能</td></tr>
       <tr><td>複数ラベル</td><td><code>case 1: case 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
-      <tr><td>ブロックから値を返す</td><td>—</td><td><code>yield</code></td></tr>
+      <tr><td>ブロックから値を返す</td><td>そもそも値を返さない（<code>yield</code> は書けない）</td><td><code>yield</code></td></tr>
       <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
       <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
       <tr><td>null を渡すと</td><td colspan="2"><strong>どちらも NullPointerException</strong>。仕組みは <a href="#sw-null">08 の「switch に null を渡すと落ちる」</a></td></tr>

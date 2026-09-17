@@ -45,9 +45,9 @@ p.only();       // error: cannot find symbol ── P に only() は無い
     <thead><tr><th>キャスト元 → キャスト先</th><th>コンパイル</th><th>実行時</th></tr></thead>
     <tbody>
       <tr><td>親クラス → 子クラス</td><td>○</td><td>実体が違えば ClassCastException</td></tr>
-      <tr><td>親子関係の無いクラス → クラス（兄弟など）</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>親子関係の無いクラス → クラス（兄弟など）</td><td><strong>×</strong></td><td>実行まで行かない。どんな実体でも両方の型にはなれないため（<code>Long l = (Long) i;</code> など）</td></tr>
       <tr><td>final <strong>でない</strong>クラス → インタフェース（実装していなくても）</td><td>○</td><td>実体が実装していなければ ClassCastException</td></tr>
-      <tr><td>final クラス → 実装していないインタフェース</td><td><strong>×</strong></td><td>—</td></tr>
+      <tr><td>final クラス → 実装していないインタフェース</td><td><strong>×</strong></td><td>実行まで行かない。子クラスを作れないので、実装する実体が現れる可能性が無いため</td></tr>
       <tr><td>インタフェース → インタフェース</td><td>○</td><td>実体しだい</td></tr>
     </tbody>
   </table></div>

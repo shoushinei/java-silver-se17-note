@@ -149,7 +149,7 @@ Caused by: java.lang.ClassNotFoundException: Sample</code></pre></div>
       <tr><td>問われているもの</td><td>コマンド単体の妥当性</td><td><strong>出力までの手順</strong></td></tr>
       <tr><td>前提</td><td><code>.class</code> は既にある</td><td><code>.java</code> しか無い</td></tr>
       <tr><td><code>java Sample</code></td><td>○ 正しい</td><td><strong>× コンパイルがまだ</strong></td></tr>
-      <tr><td><code>javac Sample.java</code><br><code>java Sample</code></td><td>—</td><td>○</td></tr>
+      <tr><td><code>javac Sample.java</code><br><code>java Sample</code></td><td>△ 余計。<code>.class</code> はもうあるので、聞かれているのは <code>java</code> だけ</td><td>○</td></tr>
       <tr><td><code>java Sample.java</code></td><td>○</td><td>○</td></tr>
     </tbody>
   </table></div>
