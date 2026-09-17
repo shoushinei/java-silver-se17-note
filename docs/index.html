@@ -307,6 +307,51 @@ mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
 .fig .dash{stroke:var(--sumi-3);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
 .fig .x{stroke:var(--err);stroke-width:2.5;stroke-linecap:round}
 
+/* ---- styles/19-flow.css ---- */
+/* 実行の順番を左から右へ並べる図（第6章 09 try-with-resources）。
+   1 つの箱が 1 つの出来事。上の小さな文字が種類で、色でも区別する。 */
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:stretch;gap:8px 20px}
+.flow li{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:40px;padding:3px 10px 4px;border:1.5px solid var(--sumi-3);border-radius:6px;background:#fff;font-family:var(--mono);font-size:13px;font-weight:700;line-height:1.35;color:var(--sumi);white-space:nowrap}
+.flow li small{font-family:var(--body);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--sumi-3)}
+.flow li:not(:last-child)::after{content:"";position:absolute;right:-15px;top:50%;width:0;height:0;margin-top:-5px;border:5px solid transparent;border-left:7px solid #B9B4A6;border-right:0}
+.flow .fl-open{border-color:var(--ok);background:var(--ok-bg)}
+.flow .fl-open small{color:var(--ok)}
+.flow .fl-body{border-color:var(--sumi-2);background:var(--washi-2)}
+.flow .fl-close{border-color:#1D5FA8;background:#E3EEF9}
+.flow .fl-close small{color:#1D5FA8}
+.flow .fl-catch{border-color:var(--run);background:var(--run-bg)}
+.flow .fl-catch small{color:var(--run)}
+.flow .fl-fin{border-color:#8B2E8B;background:#F6E8F6}
+.flow .fl-fin small{color:#8B2E8B}
+.flow .fl-err,.flow .fl-err2{border-color:var(--err);background:var(--err-bg);color:var(--err)}
+.flow .fl-err small,.flow .fl-err2 small{color:var(--err)}
+.flow .fl-err2{border-style:dashed}
+.flow .fl-skip{border-style:dashed;border-color:#C9C4B6;background:transparent;color:var(--sumi-3);font-weight:400;text-decoration:line-through}
+.flow .fl-skip small{text-decoration:none}
+.flow .fl-out{border-color:var(--sumi);background:var(--sumi);color:var(--washi)}
+.flow .fl-out small{color:#CFCAB9}
+
+.flow-legend{margin:12px 0 16px;padding:10px 14px;border:1px solid var(--rule);border-radius:8px;background:#fff}
+.flow-legend .flow{gap:6px 8px}
+.flow-legend .flow li{min-height:0;padding:2px 8px;font-size:11.5px}
+.flow-legend .flow li::after{display:none}
+
+.tf{margin:14px 0;border:1px solid var(--rule);border-radius:8px;background:#fff;padding:12px 14px}
+.tf-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:10px}
+.tf-no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--sumi);color:var(--washi);font-family:var(--mono);font-size:12px;font-weight:700}
+.tf-ttl{font-weight:700;font-size:14.5px}
+.tf-tag{font-size:11px;font-weight:700;color:#fff;background:var(--err);border-radius:4px;padding:1px 7px}
+.tf-out{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin-top:10px;font-size:12px;color:var(--sumi-3)}
+.tf-out span{font-weight:700}
+.tf-note{margin:6px 0 0;font-size:13.5px;color:var(--sumi-2)}
+
+@media (max-width:480px){
+  .tf{padding:10px 10px}
+  .flow{gap:8px 16px}
+  .flow li{min-height:36px;padding:2px 8px 3px;font-size:12px}
+  .flow li:not(:last-child)::after{right:-12px}
+}
+
 /* ---- styles/19-tree.css ---- */
 /* クラスの親子関係の木（第2章 14・第5章 14・第6章 01）。クラス名は ht- で始める（ほかと衝突させない）。
    罫線文字（├ └ │）は Web フォントに含まれておらず、環境によって幅がずれて列が崩れるので、
@@ -7958,20 +8003,123 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
     // 宣言は a → b、close は b → a
 }</code></pre></div>
 
-  <h3>実行順序の罠</h3>
-  <p><span class="mk">close() は catch や finally より先に実行されます。</span></p>
+  <h3>実行の順番 ── まず3つの原則</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>try → close → catch → finally<span class="tag">最重要</span></div><pre><code>try (Res r = new Res()) {
-    System.out.println("try");
-    throw new Exception();
-} catch (Exception e) {
-    System.out.println("catch");
-} finally {
-    System.out.println("finally");
+  <div class="tw"><table>
+    <thead><tr><th></th><th>原則</th><th>ポイント</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td><code>( )</code> の中のリソースを、<strong>左から順に1つずつ作る</strong>。作り終わったものだけが「あとで閉じる対象」になる</td><td>途中で例外が出たら、そこから右のリソースは作られず、<strong>本体 <code>{ }</code> も実行されない</strong></td></tr>
+      <tr><td><strong>2</strong></td><td>try を抜けるとき（正常に終わっても、例外でも、return でも）、閉じる対象を<strong>作ったのと逆の順</strong>に close する</td><td>1つの close で例外が出ても、残りも必ず閉じる</td></tr>
+      <tr><td><strong>3</strong></td><td>全部閉じ終わってから、<strong>catch → finally</strong></td><td>catch と finally は、<strong>リソースがもう閉じた状態</strong>で動く</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>一番の引っかけは原則 3 です。<span class="mk">close は catch より先</span>。「例外が起きた → すぐ catch → 最後に close」と考えると、<code>open A catch B close A finally</code> のような誤りの選択肢を選んでしまいます。</p></div>
+
+  <h3>実行の順番 ── パターン別</h3>
+
+  <p>どのパターンも、下のコードの「どこで例外が起きるか」だけを変えたものです。<code>open</code> はコンストラクタ、<code>close</code> は close()、<code>body</code> は本体 <code>{ }</code> で表示します。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>共通のコード<span class="tag">形</span></div><pre><code>class Res implements AutoCloseable {
+    private final String name;
+    Res(String name) {
+        // ← ここで例外が出ると「作る途中で例外」（パターン 3・4）
+        this.name = name;
+        System.out.print("open " + name + " ");
+    }
+    public void close() {
+        System.out.print("close " + name + " ");
+        // ← ここで例外が出ると「close で例外」（パターン 5・6）
+    }
 }
-// 出力: try → (close の中身) → catch → finally</code></pre></div>
 
-  <div class="point trap"><p>「close と catch のどちらが先か」は定番の出題です。<strong>リソースの後始末が終わってから例外処理に入る</strong>、と覚えてください。</p></div>
+try (Res a = new Res("A"); Res b = new Res("B")) {
+    System.out.print("body ");
+    // ← ここで例外が出ると「本体で例外」（パターン 2・6・7）
+} catch (IllegalStateException e) {
+    System.out.print("catch ");
+} finally {
+    System.out.print("finally");
+}</code></pre></div>
+
+  <div class="flow-legend"><ol class="flow"><li class="fl-open">作る</li><li class="fl-body">本体</li><li class="fl-close">閉じる</li><li class="fl-err">例外が起きた所</li><li class="fl-skip">実行されない</li><li class="fl-catch">catch</li><li class="fl-fin">finally</li></ol></div>
+
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">1</span><span class="tf-ttl">例外が起きない</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-open"><small>作る</small>open B</li><li class="fl-body"><small>本体</small>body</li><li class="fl-close"><small>閉じる</small>close B</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A open B body close B close A finally</code></div>
+    <p class="tf-note">作った順（A → B）の<strong>逆</strong>で閉じます。catch は例外が無いので飛ばされ、finally は必ず動きます。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">2</span><span class="tf-ttl">本体 { } の途中で例外</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-open"><small>作る</small>open B</li><li class="fl-err"><small>例外</small>body で例外</li><li class="fl-close"><small>閉じる</small>close B</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-catch"><small>catch</small>catch</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A open B body close B close A catch finally</code></div>
+    <p class="tf-note">例外が起きても、<strong>先に全部閉じてから</strong> catch に入ります。「例外 → すぐ catch」ではありません。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">3</span><span class="tf-ttl">2つ目のリソース B を作る途中で例外</span><span class="tf-tag">今回の問題</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-err"><small>例外</small>new B で例外</li><li class="fl-skip"><small>飛ばす</small>body</li><li class="fl-skip"><small>飛ばす</small>close B</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-catch"><small>catch</small>catch</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A close A catch B finally</code></div>
+    <p class="tf-note">B は<strong>作り終わっていない</strong>ので、閉じる対象に入りません（close B は無い）。本体も実行されません。作り終わっていた A だけを閉じてから catch に入ります。表示は問題のコードのものです。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">4</span><span class="tf-ttl">1つ目のリソース A を作る途中で例外</span></div>
+    <ol class="flow"><li class="fl-err"><small>例外</small>new A で例外</li><li class="fl-skip"><small>飛ばす</small>open B</li><li class="fl-skip"><small>飛ばす</small>body</li><li class="fl-skip"><small>飛ばす</small>close</li><li class="fl-catch"><small>catch</small>catch</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>catch finally</code></div>
+    <p class="tf-note">作り終わったリソースが1つも無いので、<strong>close は1回も呼ばれません</strong>。B は作られることすらありません。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">5</span><span class="tf-ttl">close() の中で例外（本体は正常）</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-open"><small>作る</small>open B</li><li class="fl-body"><small>本体</small>body</li><li class="fl-err"><small>例外</small>close B で例外</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-catch"><small>catch</small>catch</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A open B body close B close A catch finally</code></div>
+    <p class="tf-note">B の close で例外が出ても、<strong>残りの A もちゃんと閉じます</strong>。そのあと、close B の例外が catch に届きます。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">6</span><span class="tf-ttl">本体で例外、さらに close() でも例外</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-open"><small>作る</small>open B</li><li class="fl-err"><small>例外</small>body で例外</li><li class="fl-err2"><small>抑制</small>close B で例外</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-catch"><small>catch</small>catch</li><li class="fl-fin"><small>finally</small>finally</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A open B body close B close A catch finally</code></div>
+    <p class="tf-note">例外が2つ起きます。catch に届くのは<strong>先に起きた本体の例外</strong>で、close の例外は捨てられずに、その例外の中に<strong>抑制された例外</strong>としてしまわれます（<code>e.getSuppressed()</code> で取り出せる）。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">7</span><span class="tf-ttl">catch が無い（try と finally だけ）</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-err"><small>例外</small>body で例外</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-fin"><small>finally</small>finally</li><li class="fl-out"><small>外へ</small>呼び出し元へ例外</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A body close A finally</code></div>
+    <p class="tf-note">受け止める catch が無くても、close と finally は済ませてから、例外がメソッドの外へ出ていきます。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">8</span><span class="tf-ttl">本体で return</span></div>
+    <ol class="flow"><li class="fl-open"><small>作る</small>open A</li><li class="fl-body"><small>本体</small>body で return</li><li class="fl-close"><small>閉じる</small>close A</li><li class="fl-fin"><small>finally</small>finally</li><li class="fl-out"><small>外へ</small>呼び出し元へ値を返す</li></ol>
+    <div class="tf-out"><span>表示</span><code>open A body close A finally</code></div>
+    <p class="tf-note">return しても、値が呼び出し元に届く前に close と finally が動きます。</p>
+  </div>
+  <div class="tf">
+    <div class="tf-h"><span class="tf-no">9</span><span class="tf-ttl">リソースが null</span></div>
+    <ol class="flow"><li class="fl-body"><small>本体</small>body</li><li class="fl-skip"><small>飛ばす</small>close</li><li class="fl-out"><small>外へ</small>次の文へ</li></ol>
+    <div class="tf-out"><span>表示</span><code>body</code></div>
+    <p class="tf-note"><code>try (Res a = null)</code> のように null なら、close は<strong>呼ばれません</strong>。NullPointerException にもなりません。</p>
+  </div>
+
+  <div class="tw"><table>
+    <thead><tr><th>どこで例外？</th><th>本体</th><th>close されるもの</th><th>catch に届く例外</th></tr></thead>
+    <tbody>
+      <tr><td>起きない</td><td>実行</td><td>B → A</td><td>（catch しない）</td></tr>
+      <tr><td>本体</td><td>途中まで</td><td>B → A</td><td>本体の例外</td></tr>
+      <tr><td>B を作る途中</td><td><strong>実行しない</strong></td><td><strong>A だけ</strong></td><td>B のコンストラクタの例外</td></tr>
+      <tr><td>A を作る途中</td><td><strong>実行しない</strong></td><td><strong>なし</strong></td><td>A のコンストラクタの例外</td></tr>
+      <tr><td>close</td><td>実行</td><td>B → A（全部）</td><td>close の例外</td></tr>
+      <tr><td>本体と close の両方</td><td>途中まで</td><td>B → A（全部）</td><td><strong>本体の例外</strong>（close の例外は抑制）</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>リソースの変数は catch・finally から見えない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>スコープは本体 { } の中だけ<span class="tag">NG</span></div><pre><code>try (Res a = new Res("A")) {
+    System.out.print(a);        // OK
+} finally {
+    System.out.print(a);        // error: cannot find symbol
+}</code></pre></div>
+
+  <p><code>( )</code> で宣言した変数が使えるのは本体 <code>{ }</code> の中だけです。catch や finally が動くときにはもう閉じているので、そこで使えないようになっています。</p>
 
   <h3>Java 9 からの拡張</h3>
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>宣言済みの final 変数を書ける<span class="tag">OK</span></div><pre><code>Res r = new Res();
@@ -8010,7 +8158,7 @@ try {
     if (r != null) r.close();         // ③ 自動で足される
 }</code></pre></div>
 
-  <div class="point"><p>つまり <code>try(...)</code> の括弧は<span class="mk">「この変数を宣言して、ブロックを抜けるときに close() を呼んでおいて」</span>という指示です。<br>自分のコードに <code>close()</code> は<strong>一度も登場しません</strong>。呼び出しを書き忘れないよう、コンパイラに生成させるための構文です。</p></div>
+  <div class="point"><p>つまり <code>try(...)</code> の括弧は<span class="mk">「この変数を宣言して、ブロックを抜けるときに close() を呼んでおいて」</span>という指示です。<br>自分のコードに <code>close()</code> は<strong>一度も登場しません</strong>。呼び出しを書き忘れないよう、コンパイラに生成させるための構文です。<br>自分で書いた catch と finally は、<span class="mk">この生成されたコード全体の<strong>外側</strong>に付きます</span>。内側の close が済んでから外側の catch・finally に進むので、「close → catch → finally」の順になります。</p></div>
 
   <h3>close() の中身は自分で書く</h3>
 
