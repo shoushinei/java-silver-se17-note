@@ -1,60 +1,183 @@
 <section id="c1-s06">
-  <div class="sh"><span class="num">06</span><h2>import の規則</h2></div>
+  <div class="sh"><span class="num">06</span><h2>import と import static</h2></div>
 
-  <p><code>import</code> は「このクラス名を短く書かせてほしい」という宣言です。<strong>コードを読み込むわけでも、性能に影響するわけでもありません</strong>。</p>
+  <h3>まず「完全修飾名」── クラスの本当の名前</h3>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>2つの書き方<span class="tag">OK</span></div><pre><code>import java.util.List;      // 単一型インポート
-import java.util.*;         // オンデマンドインポート（そのパッケージの全クラス）</code></pre></div>
+  <p>Java のクラスは、<strong>パッケージ名まで含めた名前</strong>が本当の名前です。これを<strong>完全修飾名</strong>といいます。<code>ArrayList</code> の本当の名前は <code>java.util.ArrayList</code>、<code>Math</code> は <code>java.lang.Math</code> です。</p>
 
-  <h3>import が要らない2つのケース</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>import を1行も書かなくても、完全修飾名なら使える<span class="tag">OK</span></div><pre><code>public class Main {
+    public static void main(String[] args) {
+        java.util.List&lt;String&gt; list = new java.util.ArrayList&lt;&gt;();
+        System.out.println(list);      // []
+    }
+}</code></pre></div>
+
+  <p>毎回これを書くのは長いので、<strong>名前の前の部分を省略させてもらう宣言</strong>が <code>import</code> です。<span class="mk">ほかのファイルを読み込んだり、コードをコピーしたりするわけではありません</span>。import を書いても書かなくても、できあがるプログラムは同じです。</p>
+
+  <h3>import と import static ── 省略できる部分が違う</h3>
+
+  <div class="qn">
+    <div class="qn-row"><span class="qn-lb">import なし</span><code class="qn-name"><span class="qn-p">java.util.</span><span class="qn-c">ArrayList</span></code><span class="qn-d">全部書く</span></div>
+    <div class="qn-row"><span class="qn-lb"><code>import java.util.ArrayList;</code></span><code class="qn-name"><span class="qn-p gone">java.util.</span><span class="qn-c">ArrayList</span></code><span class="qn-d"><strong>パッケージ名</strong>を省略できる</span></div>
+    <div class="qn-sep"></div>
+    <div class="qn-row"><span class="qn-lb">import static なし</span><code class="qn-name"><span class="qn-p gone">java.lang.</span><span class="qn-c">Math.</span><span class="qn-m">max</span>(3, 7)</code><span class="qn-d">java.lang は自動なので、クラス名から書く</span></div>
+    <div class="qn-row"><span class="qn-lb"><code>import static java.lang.Math.max;</code></span><code class="qn-name"><span class="qn-p gone">java.lang.</span><span class="qn-c gone">Math.</span><span class="qn-m">max</span>(3, 7)</code><span class="qn-d"><strong>クラス名まで</strong>省略できる</span></div>
+  </div>
+  <div class="qn-legend"><span class="qn-p">パッケージ名</span><span class="qn-c">クラス名</span><span class="qn-m">static メンバ名</span><span class="qn-p gone">線を引いた部分</span>＝書かなくてよい</div>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th>import</th><th>import static</th></tr></thead>
+    <tbody>
+      <tr><td>省略できるもの</td><td><strong>パッケージ名</strong></td><td>パッケージ名と<strong>クラス名</strong></td></tr>
+      <tr><td>対象</td><td>クラス・インタフェースなどの<strong>型</strong></td><td>クラスの <strong>static フィールド・static メソッド</strong></td></tr>
+      <tr><td>書く形</td><td><code>import パッケージ.クラス;</code><br><code>import パッケージ.*;</code></td><td><code>import static パッケージ.クラス.メンバ;</code><br><code>import static パッケージ.クラス.*;</code></td></tr>
+      <tr><td>どこで止めるか</td><td><strong>クラス名</strong>で止める</td><td><strong>メンバ名</strong>（または <code>*</code>）まで書く</td></tr>
+      <tr><td>使うときの形</td><td><code>List&lt;String&gt; list</code></td><td><code>max(3, 7)</code>　<code>PI</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point"><p>一言でいうと、<span class="mk"><code>import</code> は「クラス名だけで書かせて」、<code>import static</code> は「メンバ名だけで書かせて」</span>という宣言です。import static は、<code>Math.max</code> や <code>Integer.parseInt</code> のように<strong>クラス名.メンバ名</strong>で呼ぶものから、クラス名を取り除きます。</p></div>
+
+  <h3>正しい書き方は4つ</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>読み込むもの</th><th>使い方</th></tr></thead>
+    <tbody>
+      <tr><td><code>import java.util.ArrayList;</code></td><td>クラスを1つ</td><td><code>new ArrayList&lt;&gt;()</code></td></tr>
+      <tr><td><code>import java.util.*;</code></td><td>java.util の<strong>直下</strong>のクラス全部</td><td><code>List</code> <code>ArrayList</code> <code>Map</code> …</td></tr>
+      <tr><td><code>import static java.lang.Math.max;</code></td><td>static メンバを1つ（同じ名前のオーバーロードは全部）</td><td><code>max(3, 7)</code> も <code>max(1.5, 2.5)</code> も</td></tr>
+      <tr><td><code>import static java.lang.Math.*;</code></td><td>Math の static メンバ全部</td><td><code>max(3, 7)</code> <code>PI</code> <code>abs(-1)</code> …</td></tr>
+    </tbody>
+  </table></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>import static でよく使うもの<span class="tag">OK</span></div><pre><code>import static java.lang.Math.*;                // max, min, abs, PI …
+import static java.lang.Integer.parseInt;      // static メソッド
+import static java.lang.Integer.MAX_VALUE;     // static フィールド（定数）
+import static java.lang.System.out;            // out も System の static フィールド
+
+public class Main {
+    public static void main(String[] args) {
+        out.println(max(3, 7) + " " + PI);                 // 7 3.141592653589793
+        out.println(parseInt("12") + " " + MAX_VALUE);     // 12 2147483647
+    }
+}</code></pre></div>
+
+  <h3>間違った書き方 ── 形で見分ける</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>書き方</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>static import java.lang.Math.max;</code></td><td class="im-x">エラー</td><td>語順は <code>import static</code>。逆は書けない</td></tr>
+      <tr><td><code>import static java.lang.Math;</code></td><td class="im-x">エラー</td><td>import static はメンバ名（または <code>*</code>）まで書く。クラスで止めない</td></tr>
+      <tr><td><code>import java.lang.Math.max;</code></td><td class="im-x">エラー</td><td>static を付けないと、最後は<strong>型の名前</strong>でなければならない。max は型ではない</td></tr>
+      <tr><td><code>import java.util;</code></td><td class="im-x">エラー</td><td>パッケージ名だけは書けない。<code>java.util.*</code> と書く</td></tr>
+      <tr><td><code>import static java.lang.Math.max();</code></td><td class="im-x">エラー</td><td>メソッドでも <code>( )</code> は付けない</td></tr>
+      <tr><td><code>import java.util.*.*;</code></td><td class="im-x">エラー</td><td><code>*</code> は最後に1つだけ</td></tr>
+      <tr><td><code>import static java.lang.String.length;</code></td><td class="im-x">エラー</td><td>length は static ではない（インスタンスメソッドは import static できない）</td></tr>
+      <tr><td><code>import java.lang.Math.*;</code></td><td class="im-w">文は OK</td><td>Math の中の<strong>型</strong>を読み込む書き方（Math には無いので何も増えない）。<code>max(3, 7)</code> と書くと、そこでエラー</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="point trap"><p>最後の行が一番の引っかけです。<code>import java.lang.Math.*;</code> 自体はコンパイルできます（<code>import java.util.List.*;</code> なども同じ）。でも static メンバは読み込まれないので、<span class="mk"><code>max</code> や <code>PI</code> を名前だけで使った行でエラー</span>になります。static メンバを名前だけで使いたいなら、必ず <code>import static</code> です。</p></div>
+
+  <h3>import static はクラス名を読み込まない</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>メンバを読み込んでも、クラスそのものは別<span class="tag">要注意</span></div><pre><code>// util/Calc.java
+package util;
+public class Calc {
+    public static int twice(int x) { return x * 2; }
+    public int inst() { return 1; }                  // static でない
+}
+
+// app/Main.java
+package app;
+import static util.Calc.*;
+
+twice(10);            // OK  20
+inst();               // エラー: static でないメソッドは読み込まれない
+Calc c = null;        // エラー: cannot find symbol ── Calc という型は import していない</code></pre></div>
+
+  <p>型として <code>Calc</code> も使いたいなら、<code>import util.Calc;</code> を別に書きます。<code>import</code> と <code>import static</code> は<strong>役割の違う別々の文</strong>です。</p>
+
+  <div class="point"><p>自分のクラスに同じ名前のメソッドがあると、<strong>自分のメソッドが優先</strong>されます。<code>import static java.lang.Math.max;</code> があっても、クラスの中で <code>static int max(int a, int b)</code> を定義していれば、<code>max(3, 7)</code> はそちらを呼びます。</p></div>
+
+  <h3>import が要らないとき</h3>
 
   <div class="tw"><table>
     <thead><tr><th>ケース</th><th>理由</th></tr></thead>
     <tbody>
-      <tr><td><code>java.lang</code> のクラス</td><td>自動でインポートされる。<code>String</code> <code>System</code> <code>Integer</code> <code>Math</code> <code>Object</code> <code>Exception</code> など</td></tr>
-      <tr><td>同じパッケージのクラス</td><td>姓が同じなので名前だけで届く</td></tr>
+      <tr><td><code>java.lang</code> のクラス</td><td><code>import java.lang.*;</code> が自動で書かれているのと同じ。<code>String</code> <code>System</code> <code>Math</code> <code>Integer</code> <code>Object</code> <code>Exception</code> など</td></tr>
+      <tr><td>同じパッケージのクラス</td><td>同じパッケージどうしは、クラス名だけで届く</td></tr>
+      <tr><td>完全修飾名で書いたとき</td><td><code>java.util.List</code> と書けば、import は要らない</td></tr>
     </tbody>
   </table></div>
 
-  <div class="point"><p><code>System.out.println</code> がいきなり書けるのは、<code>java.lang</code> が自動インポートされているからです。逆に <code>java.util.List</code> や <code>java.time.LocalDate</code> は明示しないと使えません。<br><span class="mk">import java.lang.String; と書いてもエラーにはなりません</span>。冗長なだけです。</p></div>
+  <div class="point trap"><p><code>java.lang</code> が自動で読み込まれるのは<strong>クラス名</strong>までです。<span class="mk"><code>Math.max(3, 7)</code> は書けますが、<code>max(3, 7)</code> と書くにはやはり <code>import static</code> が要ります</span>。また、<code>import java.lang.String;</code> のように自分で書いてもエラーにはなりません（無駄なだけ）。同じ import を2回書いてもエラーになりません。</p></div>
 
-  <h3>ワイルドカードはサブパッケージを含まない</h3>
+  <h3><code>*</code> が届く範囲 ── 直下だけ</h3>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>階層は降りてくれない<span class="tag">NG</span></div><pre><code>import java.util.*;
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>サブパッケージは含まない<span class="tag">頻出</span></div><pre><code>import java.util.*;
 
-TimeUnit t;      // コンパイルエラー: cannot find symbol
-                 // TimeUnit は java.util.concurrent にあり、java.util には無い</code></pre></div>
+List&lt;String&gt; a;       // OK  java.util.List
+TimeUnit t;           // エラー: cannot find symbol
+                      // TimeUnit は java.util.concurrent にある。java.util の直下ではない</code></pre></div>
 
-  <p><code>java.util.*</code> が指すのは <strong><code>java.util</code> 直下のクラスだけ</strong>です。<code>java.util.concurrent</code> は名前が似ているだけの別パッケージで、使うには <code>import java.util.concurrent.*;</code> が別途必要になります。パッケージは<span class="mk">入れ子の階層ではなく、ドットを含んだ1つの名前</span>だと考えるのが正確です。</p>
+  <p><code>java.util.concurrent</code> は名前が <code>java.util</code> で始まっているだけの<strong>別のパッケージ</strong>です。パッケージは入れ子のフォルダではなく、<span class="mk">ドットを含んだ1つの名前</span>だと考えると間違えません。使うなら <code>import java.util.concurrent.*;</code> を別に書きます。同じ理由で、<code>import java.*;</code> は「java というパッケージは無い」というエラーになります。</p>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>クラスの内側は指せない<span class="tag">NG</span></div><pre><code>import java.util.List.*;      // メソッドはインポートできない（static import を除く）
-import java.util;             // パッケージ自体はインポートできない</code></pre></div>
+  <h3>名前がぶつかったとき</h3>
 
-  <h3>名前が衝突した場合</h3>
+  <p><code>java.util.Date</code> と <code>java.sql.Date</code> のように、違うパッケージに同じ名前のクラスがあることがあります。</p>
 
-<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>曖昧さはコンパイルエラー<span class="tag">NG</span></div><pre><code>import java.util.*;
-import java.sql.*;
+  <div class="tw"><table>
+    <thead><tr><th>書いた import</th><th>結果</th></tr></thead>
+    <tbody>
+      <tr><td><code>import java.util.*;</code><br><code>import java.sql.*;</code></td><td><strong>import 自体は OK</strong>。<code>Date</code> を使った行でエラー（<code>reference to Date is ambiguous</code>）。使わなければエラーにならない</td></tr>
+      <tr><td><code>import java.util.*;</code><br><code>import java.sql.*;</code><br><code>import java.util.Date;</code></td><td>OK。<code>*</code> より<strong>クラスを名指しした import が優先</strong>され、Date は java.util.Date になる</td></tr>
+      <tr><td><code>import java.util.Date;</code><br><code>import java.sql.Date;</code></td><td><strong>import の行でエラー</strong>（使わなくてもエラー）。名指しどうしはぶつけられない</td></tr>
+      <tr><td><code>import java.util.Date;</code> と、同じファイルに <code>class Date {}</code></td><td>エラー（<code>Date is already defined in this compilation unit</code>）</td></tr>
+    </tbody>
+  </table></div>
 
-Date d;      // コンパイルエラー: reference to Date is ambiguous
-             // both class java.sql.Date and class java.util.Date match</code></pre></div>
+  <p>どちらも使いたいときは、片方（または両方）を<strong>完全修飾名</strong>で書きます。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>解決策は2つ<span class="tag">OK</span></div><pre><code>// ① 片方だけ単一型インポートする ── ワイルドカードより優先される
-import java.util.*;
-import java.sql.*;
-import java.util.Date;              // これで Date は java.util.Date に確定
-
-// ② 完全修飾名で書く ── import 自体が不要
-java.util.Date d1 = new java.util.Date();
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>完全修飾名で書けば import は要らない<span class="tag">OK</span></div><pre><code>java.util.Date d1 = new java.util.Date();
 java.sql.Date  d2 = new java.sql.Date(0L);</code></pre></div>
 
-  <div class="point"><p>優先順位は<span class="mk">単一型インポート ＞ オンデマンドインポート</span>。ただし<strong>単一型インポート同士で同じクラス名が衝突するとエラー</strong>です（<code>import java.util.Date;</code> と <code>import java.sql.Date;</code> の併記は不可）。その場合は完全修飾名しか手がありません。</p></div>
+  <div class="tw"><table>
+    <thead><tr><th>強さ</th><th>名前の見つけ方</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>そのファイルで宣言したクラスと、クラスを名指しした import（<code>import java.util.Date;</code>）</td></tr>
+      <tr><td><strong>2</strong></td><td>同じパッケージのクラス</td></tr>
+      <tr><td><strong>3</strong></td><td><code>*</code> の import（自動の <code>java.lang.*</code> も含む）。ここで2つ見つかると、使った行でエラー</td></tr>
+    </tbody>
+  </table></div>
 
-  <h3>static インポート</h3>
+  <p><code>import static</code> どうしも同じ考え方です。<code>import static java.lang.Integer.*;</code> と <code>import static java.lang.Long.*;</code> を並べると、両方にある <code>MAX_VALUE</code> を使った行でエラーになります。片方を <code>import static java.lang.Long.MAX_VALUE;</code> のように名指しすれば、そちらが優先されます。</p>
 
-<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>クラス名を省略して static メンバを使う<span class="tag">OK</span></div><pre><code>import static java.lang.Math.max;      // メソッド1つ
-import static java.lang.Math.*;        // Math の static メンバ全部
+  <h3>書く場所</h3>
 
-System.out.println(max(3, 7));         // Math. を書かずに呼べる → 7</code></pre></div>
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>順番は package → import → クラス<span class="tag">NG</span></div><pre><code>import java.util.*;     // エラー: package より前には書けない
+package shop;
 
-  <div class="point trap"><p>語順は <code>import static</code> です。<span class="mk">static import と書くとコンパイルエラー</span>。この1点だけを問う問題が出ます。<br>また、<code>import static</code> が指すのは<strong>クラスの static メンバ</strong>であって、パッケージやクラス自体ではありません。</p></div>
+public class Cart { }</code></pre></div>
+
+  <p>1つのファイルの中は、<code>package</code> 文（あれば1つ）→ <code>import</code> 文（いくつでも）→ クラスの宣言、の順です。<code>import</code> と <code>import static</code> どうしの順番は自由です。</p>
+
+  <h3>よく出る罠 ── まとめ</h3>
+
+  <div class="tw"><table>
+    <thead><tr><th>コード</th><th>結果</th><th>理由</th></tr></thead>
+    <tbody>
+      <tr><td><code>static import java.lang.Math.*;</code></td><td class="im-x">エラー</td><td>語順は import static</td></tr>
+      <tr><td><code>import static java.lang.Math;</code></td><td class="im-x">エラー</td><td>メンバ名か * まで書く</td></tr>
+      <tr><td><code>import java.lang.Math.*;</code> のあと <code>max(3, 7)</code></td><td class="im-x">max の行でエラー</td><td>static が無いので static メンバは入らない</td></tr>
+      <tr><td>import static なしで <code>max(3, 7)</code></td><td class="im-x">エラー</td><td>java.lang の自動 import はクラス名まで</td></tr>
+      <tr><td><code>import java.util.*;</code> で <code>TimeUnit</code></td><td class="im-x">エラー</td><td>* はサブパッケージを含まない</td></tr>
+      <tr><td><code>import shop.*;</code> で <code>shop.core.Cart</code> を使う</td><td class="im-x">エラー</td><td>同上。<code>import shop.core.*;</code> か <code>import shop.core.Cart;</code></td></tr>
+      <tr><td><code>java.util.*</code> と <code>java.sql.*</code> で <code>Date</code></td><td class="im-x">使った行でエラー</td><td>あいまい。名指しの import か完全修飾名で解決</td></tr>
+      <tr><td><code>import java.util.Date;</code> と <code>import java.sql.Date;</code></td><td class="im-x">import の行でエラー</td><td>名指しどうしは同じ名前にできない</td></tr>
+      <tr><td><code>import static util.Calc.*;</code> で <code>Calc c;</code></td><td class="im-x">エラー</td><td>import static は型を読み込まない</td></tr>
+      <tr><td><code>import java.lang.String;</code></td><td class="im-o">OK</td><td>不要だが、書いても問題ない</td></tr>
+    </tbody>
+  </table></div>
 </section>

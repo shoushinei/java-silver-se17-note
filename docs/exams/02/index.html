@@ -1546,7 +1546,7 @@ import java.util.ArrayList;</code></pre></div></div></div></li>
 <p><code>List</code> という名前のクラスは、<code>java.util.List</code>（コレクション）と <code>java.awt.List</code>（画面部品）の2つがあります。</p>
 <ul><li>A: <code>*</code> でどちらのパッケージも読み込んでいるので、<code>List</code> と書いた時点で<strong>どちらのことかあいまい</strong>になりエラーです。</li><li>B: <code>import java.util.List;</code> のような<strong>単一型インポートは <code>*</code> より優先</strong>されるので、List は java.util.List に決まります。ArrayList は java.util.* から見つかります。正しい。</li><li>C: 必要な2つを名指ししています。正しい。</li><li>D: 同じ名前 List を、単一型インポートで2つ指定すると、import 文の時点でエラーです。</li><li>E: List は java.awt.List になります。java.awt.List はジェネリクスのクラスではないので <code>List&lt;String&gt;</code> と書けず、ArrayList も代入できません。エラー。</li></ul>
 <p><code>*</code> を2つ並べても、それだけではエラーになりません。<strong>あいまいな名前を実際に使ったときに</strong>エラーになる点がポイントです（A で List を使わなければコンパイルは通ります）。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「importの規則」</a> <span>── オンデマンド（*）で同じ名前が2つ入ると、使った時点であいまいでエラー。単一型インポートが優先される</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── オンデマンド（*）で同じ名前が2つ入ると、使った時点であいまいでエラー。単一型インポートが優先される</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q24" data-no="24" data-answer="D" data-pick="1" data-ch="c3">
@@ -2136,7 +2136,7 @@ public class Main {
 <p>Helper クラスには <code>public</code> が付いていないので、<strong>lib パッケージの中からしか見えません</strong>。</p>
 <ul><li>Api は同じ lib パッケージなので、Helper を使えます（B は誤り）。</li><li>Main は app パッケージなので、Helper という型そのものが見えません。<code>import lib.Helper;</code> の時点で「Helper は public ではないので、パッケージの外からアクセスできない」というコンパイルエラーになります。</li><li>Helper の中で hello() に public を付けても、クラスが見えないので意味がありません。<strong>クラスのアクセスが先に判定され、メンバのアクセスはその後</strong>です。修飾子なしのクラスに public メソッドを書くこと自体はエラーではありません（E は誤り）。</li></ul>
 <p>Main から <code>Helper.hello()</code> の部分を消せば、<code>Api.call()</code> 経由で「hello」と表示できます。外に見せたくないクラスを、public なクラスの窓口越しに使わせる、というよくある形です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s07">第1章 07「アクセス修飾子」</a> <span>── 修飾子の無いクラスは同じパッケージからしか見えない。メンバが public でも、クラスが見えなければ使えない</span></li><li><a href="../../index.html#c1-s06">第1章 06「importの規則」</a> <span>── import できるのは、そのパッケージの外から見える（public な）型だけ</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s07">第1章 07「アクセス修飾子」</a> <span>── 修飾子の無いクラスは同じパッケージからしか見えない。メンバが public でも、クラスが見えなければ使えない</span></li><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── import できるのは、そのパッケージの外から見える（public な）型だけ</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q35" data-no="35" data-answer="B" data-pick="1" data-ch="c5">
@@ -2658,7 +2658,7 @@ public class Main {
 <p class="ans">正解：<b>C</b></p>
 <p><code>max</code> と <code>PI</code> は、どちらも Math クラスの <strong>static メンバ</strong>です。クラス名を付けずに使うには <code>import static</code> が必要です。</p>
 <ul><li>A: <code>import static</code> の後には、クラスではなく<strong>メンバ</strong>（または <code>*</code>）を書きます。クラスで止めるとエラーです。</li><li>B: static の付かない <code>import java.lang.Math.*;</code> は、Math の中の<strong>型</strong>（ネストしたクラス）を読み込む書き方です。文としては正しいですが、max や PI は読み込まれず、使った所でエラーになります。</li><li>C: Math の static メンバをすべて読み込みます。正しい。</li><li>D: max だけを読み込んでいるので、PI が見つからずエラーです。</li><li>E: 語順は <code>import static</code> です。<code>static import</code> とは書けません。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「importの規則」</a> <span>── static メンバを名前だけで使うには import static。* でまとめて、または1つずつ指定する</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── static メンバを名前だけで使うには import static。* でまとめて、または1つずつ指定する</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q46" data-no="46" data-answer="D" data-pick="1" data-ch="c6">

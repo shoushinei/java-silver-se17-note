@@ -44,7 +44,7 @@
         {
           "id": "c1-s06",
           "tn": "06",
-          "label": "importの規則",
+          "label": "import と import static",
           "file": "06-import-rules.html"
         },
         {

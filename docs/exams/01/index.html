@@ -618,7 +618,7 @@ public class Checkout extends Cart {
 <p class="ans">正解：<b>B, D</b></p>
 <p><code>Cart</code> は <code>shop.core</code> パッケージ、<code>Tax</code> は <code>shop.util</code> パッケージのクラスです。それぞれを取り込む B（クラス単位）と D（パッケージ単位の <code>*</code>）が正解です。</p>
 <ul><li>A の <code>import shop.*;</code> は、<code>shop</code> パッケージ直下のクラスだけを対象にします。<strong>サブパッケージの <code>shop.core</code> や <code>shop.util</code> は含まれません。</strong> パッケージ名が階層に見えても、import の上では別のパッケージです。</li><li>C と E の <code>import static</code> は、クラスの <strong>static メンバ</strong>（static メソッドや static フィールド）を取り込む書き方です。クラスそのものを取り込むことはできません。</li><li>F の <code>import shop.core;</code> は、パッケージ名だけを書いていて文法として成り立ちません。パッケージ全体なら <code>import shop.core.*;</code> と書きます。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「importの規則」</a> <span>── import はサブパッケージを含まない。static import は static メンバ用</span></li><li><a href="../../index.html#c1-s05">第1章 05「パッケージ宣言」</a> <span>── パッケージ名とディレクトリの対応</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── import はサブパッケージを含まない。static import は static メンバ用</span></li><li><a href="../../index.html#c1-s05">第1章 05「パッケージ宣言」</a> <span>── パッケージ名とディレクトリの対応</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q3" data-no="3" data-answer="D" data-pick="1" data-ch="c6">
@@ -1969,7 +1969,7 @@ import java.lang.*;</code></pre></div></div></div></li>
 <p>Main が使っているのは、<code>media.Player</code>、<code>media.audio.Mixer</code>、<code>Integer</code> の3つです。</p>
 <ul><li><code>Integer</code> は <code>java.lang</code> パッケージのクラスです。java.lang は<strong>何も書かなくても自動で取り込まれる</strong>ので、import は不要です（書いてもエラーにはなりません）。</li><li><code>media.*</code> で取り込めるのは media パッケージ直下の Player だけです。<strong>サブパッケージの media.audio は含まれません。</strong> Mixer には別の import が必要です。</li></ul>
 <p>A は Mixer が無く、C も Mixer が無く、D は Player が無いのでエラーです。両方を取り込んでいる B が正解です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「importの規則」</a> <span>── import はサブパッケージを含まない。java.lang は自動で取り込まれる</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── import はサブパッケージを含まない。java.lang は自動で取り込まれる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q32" data-no="32" data-answer="D" data-pick="1" data-ch="c2">

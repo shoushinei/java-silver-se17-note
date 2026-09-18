@@ -1,0 +1,28 @@
+/* 完全修飾名のどこを省略できるかを色で分ける図（第1章 06 import）。
+   .qn-p パッケージ名 / .qn-c クラス名 / .qn-m static メンバ名。.gone は書かなくてよい部分 */
+.qn { margin: 14px 0 6px; border: 1px solid var(--rule); border-radius: 8px; background: #fff; padding: 6px 14px; }
+.qn-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15em); grid-template-areas: "lb lb" "nm d"; align-items: center; gap: 4px 14px; padding: 9px 0; }
+.qn-lb { grid-area: lb; }
+.qn-name { grid-area: nm; }
+.qn-d { grid-area: d; }
+.qn-row + .qn-row { border-top: 1px dashed var(--rule); }
+.qn-sep { height: 0; border-top: 2px solid var(--rule); margin: 2px 0; }
+.qn-lb { font-size: 12px; color: var(--sumi-2); font-weight: 700; }
+.qn-lb code { font-size: 11.5px; }
+.qn-name { font-family: var(--mono); font-size: 15px; background: none; border: 0; padding: 0; color: var(--sumi); white-space: nowrap; }
+.qn-d { font-size: 12.5px; color: var(--sumi-2); }
+.qn-p, .qn-c, .qn-m { border-radius: 3px; padding: 1px 2px; }
+.qn-p { color: var(--sumi-2); background: var(--washi-2); }
+.qn-c { color: var(--ok); background: var(--ok-bg); font-weight: 700; }
+.qn-m { color: #1D5FA8; background: #E3EEF9; font-weight: 700; }
+.qn .gone, .qn-legend .gone { opacity: .45; text-decoration: line-through; text-decoration-thickness: 2px; }
+.qn-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 16px; font-size: 12px; color: var(--sumi-3); }
+.qn-legend span { font-size: 11.5px; }
+td.im-x { color: var(--err); font-weight: 700; white-space: nowrap; }
+td.im-w { color: var(--run); font-weight: 700; white-space: nowrap; }
+td.im-o { color: var(--ok); font-weight: 700; white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .qn-row { grid-template-columns: 1fr; grid-template-areas: "lb" "nm" "d"; gap: 3px; }
+  .qn-name { font-size: 14px; }
+}
