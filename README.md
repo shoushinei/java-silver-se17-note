@@ -53,7 +53,8 @@ Oracle 認定 Java Programmer, Silver SE 17（1Z0-825）の試験範囲を、
   すべて／不正解・未回答／正解／見直しマークで絞り込めます。各問で自分の選択・正解・解説を確認でき、
   解説から統合ノートの該当節（「第5章 10「default / static / private」」のように）へ直接飛べます。
 - 提出した回はすべて**受験記録**として残ります（第1回、第2回…）。いつでも「結果を開く」でその回の ○× と解説を見直せ、
-  問題ごとに書いた**振り返りメモ**もその回の記録に保存されます。記録はこのブラウザにだけ保存されます。
+  問題ごとに書いた**振り返りメモ**もその回の記録に保存されます。記録はこのブラウザにだけ保存されます
+  （手元で `backend/` を動かして開いた場合は、サーバーにも保存されます。下の「[受験記録 API](#受験記録-apibackend)」）。
 - 結果の画面は URL（`#r…-q12` など）にも位置が入るので、再読み込みしても同じ問題に戻れます。
 - 合格ラインの目安は 65%（試験ごとに `exam.json` の `passRate` で変えられます）。
 
@@ -277,6 +278,111 @@ Java 17 より後で動きが変わったもの（instance main など）は `@o
 
 数十秒で https://shoushinei.github.io/java-silver-se17-note/ に公開されます。
 以降は `main` に push するたびに更新されます。
+
+## 受験記録 API（backend/）
+
+模擬試験の受験記録を、ブラウザではなくサーバーの DB に残すための Spring Boot アプリです。
+Spring Boot の学習用に作りました。**手元のパソコンで動かして使う**もので、GitHub Pages とは関係しません
+（Pages が公開するのは `docs/` だけです）。
+
+`backend/` からページを開くと、模擬試験のページが次のように動きます。
+
+| 場面 | 動き |
+|---|---|
+| 提出したとき | 全問の正誤と選んだ選択肢を、サーバーの DB に保存する |
+| 振り返りメモを書いたとき | サーバーにも書き込む |
+| 採点結果の概要 | 「**弱点レポートを開く**」で、間違えた問題を論点（ノートの節）ごとに数え、問題ごとの論点と自分のメモを並べたテキストを出す。「コピーする」でそのまま生成AIに貼れる |
+| サーバーが止まっていた回 | 「サーバーに保存する」で、あとから送れる |
+| 受験記録を削除したとき | サーバーの記録も消す |
+
+GitHub Pages で開いたときは、サーバーには問い合わせもせず、今までどおりブラウザの中（localStorage）だけで動きます。
+
+### 必要なもの
+
+| もの | 版 | メモ |
+|---|---|---|
+| JDK | **21 以上** | `JAVA_HOME` をその JDK に向けておく。Maven は入れなくてよい（同梱の `mvnw` を使う） |
+| Git | | リポジトリを clone するため |
+| Node.js | 18 以上 | **ノートや問題を編集したときだけ**。`docs/` はビルド済みでリポジトリに入っているので、動かすだけなら不要 |
+
+Spring Boot 4、H2 Database（ファイル1つで動く DB。インストール不要）、Spring Data JPA を使っています。
+
+### 自宅で動かす（clone から）
+
+```bash
+git clone https://github.com/shoushinei/java-silver-se17-note.git
+cd java-silver-se17-note/backend
+./mvnw spring-boot:run
+```
+
+Windows の PowerShell では `.\mvnw spring-boot:run` です。初回は Maven と依存ライブラリのダウンロードで数分かかります。
+ログに `questions.json を読み込みました（2 回ぶん・120 問）` と `Started BackendApplication` が出たら、ブラウザで開きます。
+
+| アドレス | 中身 |
+|---|---|
+| http://localhost:8080/exams/02/ | 模擬試験（ここから受けると、サーバーに保存される） |
+| http://localhost:8080/ | 統合ノート |
+| http://localhost:8080/h2-console | DB の中身を見る画面（JDBC URL `jdbc:h2:file:./data/exam`、ユーザー `sa`、パスワードは空） |
+
+止めるときは `Ctrl + C` です。起動し直しても、保存した記録は消えません。
+
+- **必ず `backend/` の中で起動します。** 問題の対応表（`../docs/exams/questions.json`）とページ（`../docs/`）を、起動したフォルダからの位置で探すためです。見つからないと、どこを探したかをログに出して起動を止めます。
+- **JDK の版を確かめる**ときは `./mvnw -v` です。`Java version: 21…` 以上なら大丈夫です。
+- **8080 番がほかで使われている**ときは、番号を変えて起動します: `./mvnw spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"`
+  （PowerShell では `-D…` を `"` で囲まないと、`.` のところで分かれてしまいます。jar なら `java -jar … --server.port=8081`）
+- **ブラウザの記録はアドレスごとに別**です。GitHub Pages で受けた回は、`localhost:8080` の画面には出てきません（逆も同じ）。
+
+### jar にして動かす
+
+毎回ビルドせずに起動したいときは、1つのファイル（jar）にまとめます。
+
+```bash
+cd backend
+./mvnw package
+java -jar target/backend-0.0.1-SNAPSHOT.jar
+```
+
+これも `backend/` の中で実行します。`package` のときにテストも走ります（サーバーを止めてから実行してください。起動中だと DB ファイルを取り合ってテストが失敗します）。
+
+### データ
+
+保存先は `backend/data/exam.mv.db` です。**自分の受験記録とメモが入るので、`.gitignore` で GitHub には上げないようにしてあります。**
+clone した直後は空の状態から始まります。
+
+| したいこと | 方法 |
+|---|---|
+| 別のパソコンへ移す・控えを取る | サーバーを止めてから `backend/data/` フォルダをコピーする |
+| まっさらに戻す | サーバーを止めてから `backend/data/` フォルダを消す（次の起動で空の DB ができる） |
+
+この API には**ログインの仕組みがありません**。自分のパソコンの中だけで使い、インターネットに公開するサーバーには置かないでください。
+
+### API
+
+| メソッド | パス | すること |
+|---|---|---|
+| POST | `/api/attempts` | 1回分を全問の結果ごと保存する（得点はサーバーが数える） |
+| GET | `/api/attempts` | 受験記録の一覧（新しい順・概要だけ） |
+| GET | `/api/attempts/{id}` | 1件を、問題ごとの結果とメモつきで |
+| PUT | `/api/attempts/{id}/items/{問題番号}/memo` | 1問のメモを書き換える |
+| DELETE | `/api/attempts/{id}` | 1件消す（問題ごとの記録も一緒に） |
+| GET | `/api/attempts/{id}/report` | 弱点レポート（テキスト） |
+| GET | `/api/exams/{試験ID}/questions/{問題番号}` | 問題の正解と論点 |
+
+`backend/requests.http` に、そのまま送れるリクエストの例があります（VS Code の拡張機能 REST Client で「Send Request」を押すと送れます）。
+
+### 構成
+
+```
+backend/src/main/java/io/github/shoushinei/backend/
+├── BackendApplication.java    起動
+├── PageController.java        /exams/02/ のようなアドレスを index.html に回す（ページを docs/ から配るため）
+├── attempt/                   受験記録（受験1回と、1問ずつの結果・メモ）
+├── question/                  問題番号 → 正解・論点の対応表（docs/exams/questions.json）を起動時に読む
+└── report/                    上の2つを組み合わせて、弱点レポートのテキストを作る
+```
+
+問題の対応表 `docs/exams/questions.json` は、`node build.mjs` が `src/exams/` の問題ファイル（`refs:` に書いた論点）から作ります。
+問題を直したり足したりしたときは、`node build.mjs` のあとでサーバーを起動し直してください（対応表は起動時に1回だけ読みます）。
 
 ## ライセンス
 
