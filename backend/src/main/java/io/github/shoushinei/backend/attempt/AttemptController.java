@@ -3,50 +3,61 @@ package io.github.shoushinei.backend.attempt;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/api/attempts")          // このクラスのメソッドは、すべて /api/attempts から始まる
 public class AttemptController {
 
-    private final AttemptRepository repository;
+    private final AttemptService service;
 
-    // Spring がリポジトリを渡してくれる（コンストラクタ・インジェクション）
-    public AttemptController(AttemptRepository repository) {
-        this.repository = repository;
+    public AttemptController(AttemptService service) {
+        this.service = service;
     }
 
-    // POST /api/attempts ── 1件保存する
+    record MemoRequest(@Size(max = 2000) String memo) { }
+
+    // POST /api/attempts ── 1回分を、60問の結果ごと保存する
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)   // 成功したら 201 Created を返す
-    public AttemptResponse create(@Valid @RequestBody AttemptRequest req) {
-        Attempt saved = repository.save(
-                new Attempt(req.examId(), req.score(), req.total(), req.durationSec()));
-        return AttemptResponse.from(saved);
+    @ResponseStatus(HttpStatus.CREATED)
+    public AttemptDetailResponse create(@Valid @RequestBody AttemptRequest req) {
+        return service.create(req);
     }
 
-    // GET /api/attempts ── 新しい順に全件
+    // GET /api/attempts ── 新しい順に全件（概要だけ）
     @GetMapping
     public List<AttemptResponse> list() {
-        return repository.findAllByOrderByTakenAtDesc().stream()
-                .map(AttemptResponse::from)
-                .toList();
+        return service.list();
     }
 
-    // GET /api/attempts/3 ── 1件。無ければ 404
+    // GET /api/attempts/3 ── 1件を、問題ごとの結果とメモつきで
     @GetMapping("/{id}")
-    public AttemptResponse get(@PathVariable Long id) {
-        return repository.findById(id)
-                .map(AttemptResponse::from)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "attempt " + id + " not found"));
+    public AttemptDetailResponse get(@PathVariable Long id) {
+        return service.get(id);
+    }
+
+    // PUT /api/attempts/3/items/7/memo ── 問7のメモを書き換える
+    @PutMapping("/{id}/items/{questionNo}/memo")
+    public AttemptDetailResponse.Item updateMemo(@PathVariable Long id, @PathVariable int questionNo,
+                                                 @Valid @RequestBody MemoRequest req) {
+        return service.updateMemo(id, questionNo, req.memo());
+    }
+
+    // DELETE /api/attempts/3 ── 1件消す（問題ごとの記録も一緒に）
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

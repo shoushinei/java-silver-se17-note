@@ -1,23 +1,40 @@
-### あいさつ
-GET http://localhost:8080/api/hello
-
-### 保存する
+### 保存する（3問だけで試す）
 POST http://localhost:8080/api/attempts
 Content-Type: application/json
 
-{"examId": "02", "score": 41, "total": 60, "durationSec": 3920}
+{
+  "examId": "02",
+  "durationSec": 3920,
+  "items": [
+    {"questionNo": 1, "correct": true,  "selected": "B"},
+    {"questionNo": 2, "correct": false, "selected": "A,C"},
+    {"questionNo": 3, "correct": false, "selected": ""}
+  ]
+}
 
-### 一覧（新しい順）
+### 一覧（概要だけ）
 GET http://localhost:8080/api/attempts
 
-### 1件
+### 1件（問題ごとの結果とメモつき）
 GET http://localhost:8080/api/attempts/1
 
-### 無い番号 → 404
-GET http://localhost:8080/api/attempts/99
+### 問2 にメモを書く
+PUT http://localhost:8080/api/attempts/1/items/2/memo
+Content-Type: application/json
+
+{"memo": "親のコンストラクタからオーバーライドが呼ばれるのを見落とした"}
+
+### 無い問題のメモ → 404
+PUT http://localhost:8080/api/attempts/1/items/99/memo
+Content-Type: application/json
+
+{"memo": "x"}
 
 ### 入力がおかしい → 400
 POST http://localhost:8080/api/attempts
 Content-Type: application/json
 
-{"examId": "", "score": -1, "total": 0, "durationSec": 10}
+{"examId": "02", "durationSec": 10, "items": [{"questionNo": 0, "correct": true, "selected": null}]}
+
+### 1件消す → 204
+DELETE http://localhost:8080/api/attempts/1
