@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "app.questions-file",
+      "type": "java.lang.String",
+      "description": "問題番号と論点の対応表（docs/exams/questions.json）の場所。起動したフォルダからの相対パスでもよい。"
+    }
+  ]
+}
