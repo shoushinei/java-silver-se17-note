@@ -1,2 +1,23 @@
 ### あいさつ
 GET http://localhost:8080/api/hello
+
+### 保存する
+POST http://localhost:8080/api/attempts
+Content-Type: application/json
+
+{"examId": "02", "score": 41, "total": 60, "durationSec": 3920}
+
+### 一覧（新しい順）
+GET http://localhost:8080/api/attempts
+
+### 1件
+GET http://localhost:8080/api/attempts/1
+
+### 無い番号 → 404
+GET http://localhost:8080/api/attempts/99
+
+### 入力がおかしい → 400
+POST http://localhost:8080/api/attempts
+Content-Type: application/json
+
+{"examId": "", "score": -1, "total": 0, "durationSec": 10}

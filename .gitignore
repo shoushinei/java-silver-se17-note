@@ -3,4 +3,4 @@ node_modules/
 Thumbs.db
 *.log
 ### H2 のデータ（自分の受験記録。公開しない） ###
-data/
+backend/data/
