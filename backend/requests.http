@@ -38,3 +38,34 @@ Content-Type: application/json
 
 ### 1件消す → 204
 DELETE http://localhost:8080/api/attempts/1
+### レポート用：5問だけの受験を保存する
+# @name created
+POST http://localhost:8080/api/attempts
+Content-Type: application/json
+
+{
+  "examId": "02",
+  "durationSec": 3920,
+  "items": [
+    {"questionNo": 5,  "correct": true,  "selected": "A"},
+    {"questionNo": 7,  "correct": false, "selected": "B"},
+    {"questionNo": 12, "correct": false, "selected": "A"},
+    {"questionNo": 31, "correct": false, "selected": "B"},
+    {"questionNo": 57, "correct": false, "selected": ""}
+  ]
+}
+
+### 問7 にメモ
+PUT http://localhost:8080/api/attempts/{{created.response.body.$.summary.id}}/items/7/memo
+Content-Type: application/json
+
+{"memo": "親のコンストラクタからオーバーライドが呼ばれるのを見落とした"}
+
+### 問5 にメモ（正解したけど勘だった）
+PUT http://localhost:8080/api/attempts/{{created.response.body.$.summary.id}}/items/5/memo
+Content-Type: application/json
+
+{"memo": "勘で当たった。短絡評価をもう一度"}
+
+### レポート
+GET http://localhost:8080/api/attempts/{{created.response.body.$.summary.id}}/report
