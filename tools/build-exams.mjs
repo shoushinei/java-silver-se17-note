@@ -9,6 +9,7 @@
  *   01/index.html       テストモード（開始画面と受験記録・受験・採点結果と見直し）
  *   01/review.html      振り返りモード（テストをせずに 1 問ずつ正解・解説を読む）
  *   どちらも _engine/exam.html と exam.js から作る
+ *   questions.json      問題番号 → 正解・論点（ノートの節）の対応表。backend/ が弱点の集計に使う
  *
  * 問題の解説にある「統合ノートの参照」は、ノートの manifest.json で節が
  * 実在するかを確かめ、無ければビルドを止める。
@@ -23,6 +24,8 @@ const EXAMS = path.join(ROOT, "src", "exams");
 const ENGINE = path.join(EXAMS, "_engine");
 const NOTE = path.join(ROOT, "src", "note");
 const NOTE_HREF = "../../index.html";   // docs/exams/01/ から見た統合ノート
+
+const QUESTIONS_JSON_NOTE = "自作模擬試験の問題番号と、正解・統合ノートの論点（節）の対応表。build.mjs が src/exams/ から生成する。refs の先頭がその問題の主な論点";
 
 // ノートと同じ色・フォント・コード表示を使う
 const SHARED_STYLES = ["01-tokens.css", "02-base.css", "07-code.css", "09-table.css", "10-list.css"];
@@ -125,6 +128,7 @@ export async function buildExams(manifest) {
 
   const files = {};
   const cards = [];
+  const catalog = {};
   let questionCount = 0;
 
   for (const id of ids) {
@@ -141,6 +145,15 @@ export async function buildExams(manifest) {
       "<!--{{styles}}-->": css,
       "<!--{{scripts}}-->": highlight + "\n\n" + examJs,
     };
+    catalog[id] = {
+      title: meta.title,
+      questions: questions.map((q, i) => ({
+        no: i + 1,
+        answer: q.answer,
+        refs: q.refs.map((r) => ({ id: r.id, section: sections[r.id].label, point: r.note })),
+      })),
+    };
+
     const usedChapters = {};
     for (const q of questions) usedChapters[sections[q.refs[0].id].chapter] = true;
     const chapterMeta = {};
@@ -180,5 +193,6 @@ export async function buildExams(manifest) {
   }
 
   files["index.html"] = fill(listTpl, { "<!--{{styles}}-->": css, "<!--{{cards}}-->": cards.join("\n") }, "list.html");
+  files["questions.json"] = JSON.stringify({ description: QUESTIONS_JSON_NOTE, exams: catalog }, null, 2) + "\n";
   return { files, summary: `${ids.length} 回 / ${questionCount} 問` };
 }

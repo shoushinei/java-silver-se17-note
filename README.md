@@ -112,6 +112,9 @@ build.mjs                      両方を組み立てて docs/ に書き出す
 docs/                          生成物。GitHub Pages が配信するファイル
 ├── index.html                     統合ノート
 └── exams/                         模擬試験（index.html と 01/index.html・01/review.html）
+    └── questions.json                 問題番号 → 正解・論点（ノートの節）の対応表。backend/ が使う
+
+backend/                       受験記録 API（Spring Boot）。GitHub Pages には関係しない
 ```
 
 ## ビルド
