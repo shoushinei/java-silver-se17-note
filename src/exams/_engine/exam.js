@@ -14,7 +14,12 @@
      history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ
      seq      受験回の通し番号
    制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。
-   ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。 */
+   ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。
+
+   サーバー（backend/ の受験記録 API）
+     backend/ からこのページを開いたとき（http://localhost:8080/exams/02/ など）だけ使う。
+     提出した回をサーバーにも保存し（受験記録の serverId）、振り返りメモも書き込み、弱点レポートを取り出せる。
+     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。 */
 (function () {
   var meta = JSON.parse(document.getElementById("exam-meta").textContent);
   var KEY = "java-silver-exam:" + meta.id + ":";
@@ -53,6 +58,8 @@
   var S = null;          // 受験中の状態 { startedAt, answers: {no: [key...]}, flags: [no...], cur, submitted, pausedAt, pauses }
   var R = null;          // 表示中の受験記録（history の 1 件）
   var timerId = null;
+  var serverOn = false;  // backend/ の API が使えるか（起動時に確かめる）
+  var pending = {};      // サーバーに保存している途中の回（受験記録の at → true）。localStorage には入れない
 
   /* ---------------- 共通 ---------------- */
 
@@ -149,7 +156,8 @@
     } else if (d) {
       var t = h.filter(function (x) { return x.at === +d.dataset.del; })[0];
       if (!t) return;
-      showModal("<h2>第" + t.no + "回の記録を削除しますか？</h2><p>" + fmtDate(t.at) + " の受験（" + t.correct + " / " + t.total + "）の結果と振り返りメモが消えます。元に戻せません。</p>" +
+      showModal("<h2>第" + t.no + "回の記録を削除しますか？</h2><p>" + fmtDate(t.at) + " の受験（" + t.correct + " / " + t.total + "）の結果と振り返りメモが消えます。" +
+                (t.serverId && serverOn ? "サーバーに保存した記録も消えます。" : "") + "元に戻せません。</p>" +
                 '<div class="actions"><button type="button" class="btn" data-close>やめる</button>' +
                 '<button type="button" class="btn danger" data-del-ok="' + t.at + '">削除する</button></div>');
     }
@@ -509,9 +517,16 @@
     if (e.target.closest("#restart-ok")) { hideModal(); drop("session"); S = null; start(true); return; }
     var d = e.target.closest("[data-del-ok]");
     if (d) {
+      var gone = historyList().filter(function (x) { return x.at === +d.dataset.delOk; })[0];
       save("history", historyList().filter(function (x) { return x.at !== +d.dataset.delOk; }));
+      if (gone && gone.serverId && serverOn) api("DELETE", "/attempts/" + gone.serverId).catch(function () { /* サーバーに残っても受験記録の画面には出ない */ });
       hideModal();
       renderHistory();
+      return;
+    }
+    if (e.target.closest("#report-copy")) {
+      var ta = $("report-text");
+      copyText(ta.value, ta, $("report-msg"));
     }
   });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden) hideModal(); });
@@ -543,6 +558,7 @@
     S.submitted = true;
     drop("session");
     openResult(rec, 0);
+    if (serverOn) upload(rec);
     if (timeUp) {
       showModal("<h2>時間切れです</h2><p>制限時間の " + meta.minutes + " 分が経過したため、その時点の回答で採点しました。未回答の問題は不正解として扱っています。</p>" +
                 '<div class="actions"><button type="button" class="btn primary" data-ok>結果を見る</button></div>');
@@ -611,6 +627,7 @@
              '<span class="num">' + c.ok + "/" + c.n + "</span></div>";
     }).join("");
     $("review-wrong").hidden = cnt.ng + cnt.none === 0;
+    renderServer();
 
     go(no || 0);
   }
@@ -636,14 +653,123 @@
       if (!R) return;
       clearTimeout(t);
       msg.textContent = "";
+      var rec = R;             // 書き込みが終わる前に別の回を開いても、書いた回に保存する
       t = setTimeout(function () {
         var v = ta.value.trim();
-        if (v) R.notes[q.no] = ta.value; else delete R.notes[q.no];
-        msg.textContent = updateRecord(R) ? "保存しました" : "保存できませんでした（ブラウザの保存領域がいっぱいか、無効です）";
+        if (v) rec.notes[q.no] = ta.value; else delete rec.notes[q.no];
+        if (!updateRecord(rec)) { msg.textContent = "保存できませんでした（ブラウザの保存領域がいっぱいか、無効です）"; return; }
+        if (!(serverOn && rec.serverId)) { msg.textContent = "保存しました"; return; }
+        msg.textContent = "保存しました（サーバーに送っています…）";
+        api("PUT", "/attempts/" + rec.serverId + "/items/" + q.no + "/memo", { memo: v ? ta.value : "" })
+          .then(function () { msg.textContent = "保存しました（サーバーにも保存）"; })
+          .catch(function () { msg.textContent = "このブラウザには保存しました。サーバーへの保存に失敗しました（2000 文字まで）"; });
       }, 500);
     });
     return box;
   }
+
+  /* ---------------- サーバー（backend/ の受験記録 API） ---------------- */
+
+  function api(method, path, data) {
+    var opt = { method: method, headers: {} };
+    if (data !== undefined) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(data); }
+    return fetch("/api" + path, opt).then(function (res) {
+      if (!res.ok) throw new Error(method + " /api" + path + " → " + res.status);
+      if (res.status === 204) return null;
+      return (res.headers.get("Content-Type") || "").indexOf("json") >= 0 ? res.json() : res.text();
+    });
+  }
+
+  // localhost で開いていて、サーバーがこの試験を知っているときだけ使う。GitHub Pages では問い合わせもしない
+  function probeServer() {
+    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
+    return api("GET", "/exams/" + meta.id + "/questions/1")
+      .then(function () { return true; }, function () { return false; });
+  }
+
+  // 1 回分を、全問の正誤と選んだ選択肢ごとサーバーに保存する。書いてあったメモも一緒に送る
+  function upload(rec) {
+    if (pending[rec.at]) return;
+    pending[rec.at] = true;
+    renderServer();
+    var items = qs.map(function (q) {
+      var sel = (rec.answers[q.no] || []).slice().sort();
+      return { questionNo: q.no, correct: sameSet(sel, q.answer), selected: sel.join(",") };
+    });
+    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round(rec.usedMs / 1000), items: items })
+      .then(function (d) {
+        rec.serverId = d.summary.id;
+        var notes = rec.notes || {};
+        return Promise.all(Object.keys(notes).filter(function (k) { return notes[k].trim(); }).map(function (k) {
+          return api("PUT", "/attempts/" + rec.serverId + "/items/" + k + "/memo", { memo: notes[k] });
+        }));
+      })
+      .then(function () { return false; }, function () { return true; })
+      .then(function (failed) {
+        delete pending[rec.at];
+        updateRecord(rec);
+        if (R === rec) renderServer(failed);
+      });
+  }
+
+  // 採点結果の概要にある「サーバー」の欄
+  function renderServer(failed) {
+    var box = $("srv");
+    if (!box || mode !== "result" || !R) return;
+    box.hidden = !serverOn;
+    if (!serverOn) return;
+    if (pending[R.at]) {
+      box.innerHTML = '<p class="srv-st">サーバーに保存しています…</p>';
+    } else if (R.serverId) {
+      box.innerHTML = '<p class="srv-st ok">サーバーに保存済み（受験記録 #' + R.serverId + '）。振り返りメモもサーバーに書き込まれます。</p>' +
+                      '<button type="button" class="btn primary" id="report-open">弱点レポートを開く</button>' +
+                      '<span class="srv-hint">間違えた問題を論点ごとにまとめ、メモと一緒に生成AIへ貼れる形にします</span>';
+    } else {
+      box.innerHTML = '<p class="srv-st' + (failed ? " ng" : "") + '">' +
+                      (failed ? "サーバーに保存できませんでした。サーバーが動いているか確かめてから、もう一度押してください。"
+                              : "この回はサーバーに保存されていません（サーバーを使う前に受けた回など）。") + "</p>" +
+                      '<button type="button" class="btn" id="srv-upload">サーバーに保存する</button>';
+    }
+  }
+
+  function openReport() {
+    var rec = R;
+    showModal('<h2>弱点レポート</h2><p class="note-s">読み込んでいます…</p>');
+    api("GET", "/attempts/" + rec.serverId + "/report").then(function (text) {
+      if (R !== rec || $("modal").hidden) return;
+      showModal('<h2>弱点レポート</h2>' +
+                '<p class="note-s">そのまま生成AIに貼り付けて使えます。最後の「お願い」は自由に書き換えてください。</p>' +
+                '<textarea id="report-text" class="report" rows="16" readonly></textarea>' +
+                '<div class="actions"><span class="report-msg" id="report-msg" aria-live="polite"></span>' +
+                '<button type="button" class="btn" data-close>閉じる</button>' +
+                '<button type="button" class="btn primary" id="report-copy">コピーする</button></div>');
+      $("report-text").value = text;
+    }, function () {
+      showModal("<h2>弱点レポートを読み込めませんでした</h2><p>サーバーが動いているか確かめてください。サーバーの記録を消した場合は、この回をもう一度保存し直す必要があります。</p>" +
+                '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>');
+    });
+  }
+
+  // 押した直後に選択してコピーする（クリップボード API は、ブラウザや設定によって断られることがある）
+  function copyText(text, ta, msg) {
+    var manual = function () { ta.focus(); ta.select(); msg.textContent = "選択しました。Ctrl+C でコピーしてください"; };
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    if (ok) { msg.textContent = "コピーしました"; return; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function () { msg.textContent = "コピーしました"; }, manual);
+    } else {
+      manual();
+    }
+  }
+
+  if ($("srv")) $("srv").addEventListener("click", function (e) {
+    if (!R) return;
+    if (e.target.closest("#report-open")) openReport();
+    if (e.target.closest("#srv-upload")) upload(R);
+  });
 
   /* ---------------- 振り返りのページ ---------------- */
 
@@ -702,6 +828,12 @@
     start(true);
   });
   $("to-intro").addEventListener("click", toIntro);
+
+  probeServer().then(function (ok) {
+    serverOn = ok;
+    if ($("srv-note")) $("srv-note").hidden = !ok;
+    renderServer();
+  });
 
   // #r<記録>-q<問> で開かれたら、その回の結果を開く（再読み込みしても見直しの位置に戻れる）
   var hm = /^#r(\d+)(?:-q(\d+))?$/.exec(location.hash);

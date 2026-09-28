@@ -304,6 +304,17 @@ body.hide-answers .q:not(.revealed) .reveal { display: inline-flex; }
 .crumbs { font-size: 13px; margin-top: 20px; }
 .crumbs a { color: var(--sumi-2); }
 
+/* ---------------- サーバー（backend/ から開いたときだけ） ---------------- */
+.srv-note { font-size: 13px; color: var(--ok); background: var(--ok-bg); border: 1px solid var(--ok); border-radius: 8px; padding: 10px 14px; margin: 16px 0 0; }
+.srv { margin-top: 22px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.srv-st { margin: 0; flex: 1 1 100%; font-size: 13.5px; color: var(--sumi-2); }
+.srv-st.ok { color: var(--ok); }
+.srv-st.ng { color: var(--err); }
+.srv-hint { font-size: 12px; color: var(--sumi-3); }
+.dialog:has(textarea.report) { max-width: 760px; }
+textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--washi-2); color: var(--sumi); resize: vertical; }
+.report-msg { margin-right: auto; font-size: 13px; color: var(--ok); }
+
 /* ---------------- スマホ ---------------- */
 @media (max-width: 700px) {
   .wrap { padding: 0 12px 120px; }

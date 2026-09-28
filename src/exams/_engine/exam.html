@@ -48,6 +48,8 @@
       <div class="fact"><b>{{passPercent}}%</b><span>合格ライン（目安）</span></div>
     </div>
 
+    <p class="srv-note" id="srv-note" hidden>サーバー（backend/）につながっています。提出した回と振り返りメモはサーバーにも保存され、採点結果から弱点レポートを取り出せます。</p>
+
     <div class="resume" id="resume" hidden>
       <p><b id="resume-title"></b><span id="resume-text"></span></p>
       <button type="button" class="btn primary" id="resume-btn">続きから再開</button>
@@ -102,6 +104,8 @@
           <button type="button" class="btn" id="review-wrong">間違えた問題だけ見直す</button>
           <button type="button" class="btn ghost" id="again">もう一度受ける</button>
         </div>
+        <!-- backend/ から開いたときだけ出る。サーバーへの保存と弱点レポート -->
+        <div class="srv" id="srv" hidden></div>
       </section>
 
       <!-- 振り返りページの操作 -->
