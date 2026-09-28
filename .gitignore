@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+### H2 のデータ（自分の受験記録。公開しない） ###
+data/
