@@ -2943,7 +2943,7 @@ public class Main {
 <p>1. try の中で「T 」を表示し、IllegalStateException を投げます。run には catch が無いので、この例外は呼び出し元へ伝わろうとします。2. その前に、<strong>finally が必ず実行されます</strong>。「F 」を表示し、<code>Integer.parseInt(&quot;x&quot;)</code> で NumberFormatException が発生します。3. finally の中で新しい例外が発生すると、<strong>元の IllegalStateException は捨てられ</strong>、NumberFormatException のほうが main へ伝わります。4. main の catch は上から順に調べます。NumberFormatException は IllegalStateException の子ではないので、1つ目は素通りします。2つ目の IllegalArgumentException は NumberFormatException の<strong>親</strong>なので、ここで捕まえて「IAE」。</p>
 <p>よって「T F IAE」です。</p>
 <ul><li>A: 元の IllegalStateException は、finally で発生した例外に置き換えられて消えます。</li><li>B: finally は、例外が呼び出し元へ伝わる前に必ず実行されます。</li><li>C: 1つの例外を捕まえるのは、一致した最初の catch だけです。</li><li>D: NumberFormatException は、main の <code>catch (IllegalArgumentException e)</code> で捕まえられます。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s03">第6章 03「try-catch-finally」</a> <span>── finally は例外が出ていても必ず実行される。finally の中で新しい例外が出ると、元の例外は消えて新しい例外が呼び出し元へ伝わる</span></li><li><a href="../../index.html#c6-s02">第6章 02「覚える例外名」</a> <span>── NumberFormatException は IllegalArgumentException の子。IllegalStateException とは親子関係が無い</span></li></ul></div>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s06">第6章 06「finallyとreturn」</a> <span>── finally は例外が出ていても必ず実行される。finally の中で新しい例外が出ると、元の例外は消えて新しい例外が呼び出し元へ伝わる</span></li><li><a href="../../index.html#c6-s02">第6章 02「覚える例外名」</a> <span>── NumberFormatException は IllegalArgumentException の子。IllegalStateException とは親子関係が無い</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q47" data-no="47" data-answer="B" data-pick="1" data-ch="c4">

@@ -1,7 +1,7 @@
 <section id="c6-s06">
   <div class="sh"><span class="num">06</span><h2>finally と return ── この章の山場</h2></div>
 
-  <p>黒本の章末で最も差がつくのがここです。ルールを3段階に分けます。</p>
+  <p>黒本の章末で最も差がつくのがここです。原則と4つの罠に分けて見ていきます。</p>
 
   <h3>原則 ── finally は必ず実行される</h3>
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>return があっても finally は動く<span class="tag">出力あり</span></div><pre><code>int m() {
@@ -47,6 +47,25 @@
 // 例外はスローされず、2 が返る</code></pre></div>
 
   <div class="point trap"><p>選択肢に「実行時に例外がスローされる」があると、つい選びたくなります。<span class="mk">finally に return があるなら例外は外に出ません。</span>実務では絶対に書いてはいけないコードですが、試験には出ます。</p></div>
+
+  <h3>罠4 ── finally で例外が出ると、元の例外は消える</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>呼び出し元に届くのは finally の例外<span class="tag">要注意</span></div><pre><code>static void m() {
+    try {
+        throw new IllegalStateException();   // ① 元の例外
+    } finally {
+        Integer.parseInt("x");               // ② NumberFormatException
+    }
+}
+
+try {
+    m();
+} catch (IllegalStateException e) {
+    System.out.println("ISE");
+} catch (NumberFormatException e) {
+    System.out.println("NFE");               // ← こちらが動く。① は消えている
+}</code></pre></div>
+
+  <div class="point trap"><p>罠3 の return と同じく、<span class="mk">finally の中で起きたことが最後の結果</span>になります。finally で例外が発生すると、try や catch で発生していた例外は捨てられ、新しい例外だけが呼び出し元へ伝わります。<br>try-with-resources で close が例外を出した場合は扱いが違い、本体の例外が残って、close の例外は「抑制された例外」としてしまわれます（<a href="#c6-s09">節09</a>）。</p></div>
 
   <h3>finally が実行されない唯一のケース</h3>
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>System.exit で JVM ごと終了<span class="tag">例外的</span></div><pre><code>try {

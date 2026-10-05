@@ -15,6 +15,32 @@
 
   <div class="point"><p>覚え方は<span class="mk">「クラス → パッケージ → 継承 → 全世界」の4段階</span>です。上から順に1段ずつ壁が広がっていきます。表を丸暗記するのではなく、<code>private</code> が最も狭く <code>public</code> が最も広い、その途中に「パッケージまで」と「パッケージ＋継承先まで」の2段があると理解してください。</p></div>
 
+  <h3>private は「クラス単位」── インスタンス単位ではない</h3>
+
+  <p>表の「同じクラス」は、<strong>同じクラスのコードの中</strong>という意味です。「自分のインスタンスの中だけ」ではありません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じクラスなら、別のインスタンスの private も使える<span class="tag">要注意</span></div><pre><code>public class Point {
+    private int x;
+    Point(int x) { this.x = x; }
+
+    int distance(Point other) {
+        return Math.abs(x - other.x);   // OK ← 引数で受け取った別のインスタンスの x
+    }
+    void copyFrom(Point other) {
+        x = other.x;                    // OK
+        other.x = 0;                    // OK ← 書き換えもできる
+    }
+}</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別のクラスからは使えない<span class="tag">NG</span></div><pre><code>public class Main {
+    public static void main(String[] args) {
+        Point p = new Point(3);
+        System.out.println(p.x);        // コンパイルエラー: x has private access in Point
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>判定の基準は<span class="mk">「そのコードがどのクラスの中に書いてあるか」</span>です。「自分のインスタンスなら OK、別のインスタンスは NG」は誤りです。equals で <code>other.x</code> を比べたり、コピー用のメソッドで新しいインスタンスの private フィールドに代入したりできるのは、このためです。<br>下の protected の「参照の型で決まる」話とは別の規則なので、混同しないでください。</p></div>
+
   <h3>修飾子なし＝パッケージプライベート</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>パッケージの外からは見えない<span class="tag">NG</span></div><pre><code>// a/Base.java

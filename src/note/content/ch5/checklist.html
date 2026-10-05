@@ -3,7 +3,7 @@
   <p>第4章と並ぶ最大の範囲です。タップで消し込めます。</p>
 
   <div class="bar"><i id="c5-barfill"></i></div>
-  <div class="barlab" id="c5-barlab">0 / 26</div>
+  <div class="barlab" id="c5-barlab">0 / 29</div>
 
   <ul class="ck" id="c5-cklist">
     <li><span class="box">✓</span><span class="cktx">クラスは単一継承。インタフェースは複数実装・多重継承ともに可</span></li>
@@ -33,6 +33,8 @@
     <li><span class="box">✓</span><span class="cktx">default の衝突は A.super.m() で解決。クラスは常に default に勝つ</span></li>
     <li><span class="box">✓</span><span class="cktx">sealed の実装側は final / sealed / non-sealed の3択が必須</span></li>
     <li><span class="box">✓</span><span class="cktx">Number の子は数値ラッパー6つだけ。Integer と Long は兄弟でキャストも不可。int[] は Object[] ではない</span></li>
+    <li><span class="box">✓</span><span class="cktx">default と抽象メソッドが別々のインタフェースからぶつかったら、クラスでオーバーライドする</span></li>
+    <li><span class="box">✓</span><span class="cktx">親クラスから受け継いだ public メソッドもインタフェースの実装になる。public でなければエラー</span></li>
   </ul>
   <button class="reset" id="c5-ckreset" type="button">チェックをすべて外す</button>
 </section>

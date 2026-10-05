@@ -1,9 +1,9 @@
 <section id="c2-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
-  <p>試験前日に、この20項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+  <p>試験前日に、この21項目を声に出して言えるか確認してください。タップで消し込めます。</p>
 
   <div class="bar"><i id="c2-barfill"></i></div>
-  <div class="barlab" id="c2-barlab">0 / 20</div>
+  <div class="barlab" id="c2-barlab">0 / 21</div>
 
   <ul class="ck" id="c2-cklist">
     <li><span class="box">✓</span><span class="cktx">既定の型は int と double。外すには接尾辞 L / f が必要</span></li>
@@ -26,6 +26,7 @@
     <li><span class="box">✓</span><span class="cktx">add は 0〜size、set は 0〜size-1。add は割り込み、set は上書き</span></li>
     <li><span class="box">✓</span><span class="cktx">拡張for文で remove すると例外か取りこぼし。最後から2番目だけ静かに終わる</span></li>
     <li><span class="box">✓</span><span class="cktx">List.of は不変、Arrays.asList は set のみ可、ArrayList(3) の 3 は容量</span></li>
+    <li><span class="box">✓</span><span class="cktx">StringBuilder の toString は呼ぶたびに新しい String を作る。== では別物</span></li>
   </ul>
   <button class="reset" id="c2-ckreset" type="button">チェックをすべて外す</button>
 

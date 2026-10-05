@@ -29,12 +29,23 @@ class B extends A { B(){} }         // 暗黙の super() が呼べない
 
   <div class="point trap"><p>エラーは<strong>子クラスの側</strong>に出ます。親のコードは何も間違っていません。<br>解決は <code>B(){ super(0); }</code> と<span class="mk">明示的に引数を渡す</span>か、親に <code>A(){}</code> を足すか。第4章 節04の「1つでも定義するとデフォルトは生成されない」がここに波及します。</p></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親の引数なしコンストラクタが private<span class="tag">要注意</span></div><pre><code>class A {
+    private A() { }                 // 引数なしはあるが private
+    A(int x) { this(); }            // 同じクラスの中からなら呼べる
+}
+class B extends A {
+    B() { }                         // 暗黙の super() が private の A() を呼べない
+}
+// コンパイルエラー: A() has private access in A</code></pre></div>
+
+  <div class="point"><p>暗黙の super() が呼ぶのは<strong>引数なしのコンストラクタ</strong>で、それが<span class="mk">子から見えること（private でないこと）</span>まで必要です。<code>B() { super(1); }</code> のように、見えるコンストラクタを明示すれば解決します。<br>private のコンストラクタしか持たないクラスは、外のクラスから継承できません（インスタンスを1つに限るシングルトンなどで使う形です）。</p></div>
+
   <div class="tw"><table>
     <thead><tr><th>規則</th><th>内容</th></tr></thead>
     <tbody>
       <tr><td><code>super()</code> の位置</td><td><strong>第1文のみ</strong></td></tr>
       <tr><td><code>this()</code> との併用</td><td><strong>不可</strong>。どちらも第1文を要求する</td></tr>
-      <tr><td><code>this()</code> を書いた場合</td><td><code>super()</code> は挿入されない（合流先が呼ぶ）</td></tr>
+      <tr><td><code>this()</code> を書いた場合</td><td><code>super()</code> は挿入されない（合流先が呼ぶ）。初期化ブロックも合流先で1回だけ動く（<a href="#c4-s08">第4章 08 罠③</a>）</td></tr>
     </tbody>
   </table></div>
 </section>

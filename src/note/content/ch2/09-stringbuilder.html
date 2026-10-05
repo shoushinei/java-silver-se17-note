@@ -50,7 +50,7 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
       <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>0〜<code>length()</code>-1。<strong>capacity ではなく length が基準</strong>で、範囲外は StringIndexOutOfBoundsException</td></tr>
       <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
       <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
-      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>
+      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換。<strong>呼ぶたびに新しい String</strong>を作る</td></tr>
       <tr class="g"><td colspan="3">E. 注意点</td></tr>
       <tr><td><a href="#sb-equals"><code>equals()</code></a></td><td>boolean</td><td><strong>参照比較</strong>のまま（オーバーライドされていない）</td></tr>
       <tr><td><a href="#sb-chain"><code>メソッドチェーン</code></a></td><td>—</td><td>自分自身を返すのでつなげられる</td></tr>
@@ -190,6 +190,18 @@ a == b;                               // false
 a.toString().equals(b.toString());    // true  ← String に変換すれば比較できる</code></pre></div>
 
   <p><code>String</code> は <code>equals()</code> をオーバーライドして中身を比較しますが、<span class="mk">StringBuilder はしていません</span>。別インスタンスなら必ず false です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toString は呼ぶたびに新しい String を作る<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("ja");
+String s1 = sb.toString();
+String s2 = sb.toString();
+
+s1 == s2;              // false ← 中身が同じでも別のインスタンス
+s1.equals(s2);         // true
+s1 == "ja";            // false ← 定数プールのリテラルとも別物
+s1.intern() == "ja";   // true  ← intern() でプールの文字列がもらえる
+sb.equals("ja");       // false ← StringBuilder と String は比べても常に false</code></pre></div>
+
+  <div class="point"><p><code>toString()</code> の戻り値は、実行時に作られる<span class="mk">新しい String のインスタンス</span>です。<code>new String(...)</code> と同じく、== で比べると定数プールのリテラルとも、もう一度呼んだ結果とも一致しません（<a href="#c2-s07">07 String の不変性</a>の new String と同じ考え方です）。</p></div>
 
   <h3>メソッドチェーン</h3>
 

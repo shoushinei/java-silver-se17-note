@@ -12,12 +12,22 @@
       <tr><td>戻り値の型だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
       <tr><td>引数名だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
       <tr><td>アクセス修飾子だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td><code>static</code> かどうかだけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td>可変長引数（<code>int...</code>）か配列（<code>int[]</code>）かだけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
     </tbody>
   </table></div>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値型は区別に使われない<span class="tag">頻出</span></div><pre><code>void m(int x) { }
 int  m(int x) { return 0; }
 // エラー: method m(int) is already defined in class</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>可変長引数と配列は同じ引数リスト<span class="tag">要注意</span></div><pre><code>class Calc {
+    int sum(int[] values)  { return 0; }
+    int sum(int... values) { return 1; }
+}
+// error: cannot declare both sum(int...) and sum(int[]) in Calc</code></pre></div>
+
+  <div class="point"><p>可変長引数 <code>int...</code> は、メソッドの中では <code>int[]</code> 型の引数として扱われます（<a href="#c4-s03">03</a>）。<span class="mk">区別に使われる引数リストも <code>int[]</code> と同じ</span>なので、両方は宣言できません。一方、<code>Integer[]</code> や <code>int[][]</code> は <code>int[]</code> とは別の型なので、オーバーロードとして並べられます。</p></div>
 
   <h3>どれが呼ばれるか ── 優先順位</h3>
 

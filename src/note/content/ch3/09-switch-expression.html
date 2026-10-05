@@ -12,7 +12,7 @@
 }
 // x が 2 なら "B" だけ。下へ流れない</code></pre></div>
 
-  <p><span class="mk">アロー構文では break を書きません。書くとコンパイルエラーになります。</span>一致した1つだけが実行されます。</p>
+  <p><span class="mk">アロー構文では break を書きません。</span>一致した1つだけが実行されます。<code>case 1 -&gt; System.out.println("A"); break;</code> のようにアローの後ろへ続けて書くと、コンパイルエラーになります（switch 文で右側を <code>{ }</code> のブロックにしたときは、その中に書くこともできますが、必要ありません）。</p>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複数のラベルをまとめられる<span class="tag">OK</span></div><pre><code>switch (x) {
     case 1, 2, 3 -&gt; System.out.println("小");
@@ -85,7 +85,7 @@ String s = switch (color) {
     case BLUE  -&gt; "青";
 };                    // OK。全定数を網羅しているので default は省略できる</code></pre></div>
 
-  <div class="point"><p>ただし<strong>値を返さない</strong>switch 式（文として使う場合）は、網羅性を要求されません。<span class="mk">「値を返すかどうか」が default 必須かを分けます。</span></p></div>
+  <div class="point"><p>ただし、アロー構文を使っていても<strong>値を返さない switch 文</strong>なら、網羅性は要求されません（default を省略できます）。<span class="mk">default が必須かどうかを分けるのは、アローかコロンかではなく、値を返す switch 式かどうかです。</span></p></div>
 
   <h3>コロン構文とアロー構文は混在できない</h3>
 
@@ -102,18 +102,44 @@ String s = switch (color) {
     default: yield 0;
 };</code></pre></div>
 
+  <h3>コロン構文の switch 式はフォールスルーする</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>yield に来るまで下へ流れる<span class="tag">最重要</span></div><pre><code>int n = 2;
+int r = switch (n) {
+    case 1:
+        System.out.print("one ");
+    case 2:
+        System.out.print("two ");      // ← n が 2 なのでここから入る
+    case 3:
+        yield 30;                       // ← 流れてきて、ここで値を返して抜ける
+    default:
+        yield 0;
+};
+System.out.println(r);
+// 出力: two 30</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">フォールスルーするかどうかは「文か式か」ではなく、「コロンかアローか」で決まります。</span>コロン構文の case は、switch 式の中でも次の case へ流れ込み、<code>yield</code> に来たところで値を返して抜けます。「switch 式はフォールスルーしない」と覚えていると外します。<br>流れた先の最後まで <code>yield</code> が無いと <code>switch expression completes without providing a value</code> というコンパイルエラーです。また、switch 式からは <code>break</code> で抜けられません（<code>attempt to break out of a switch expression</code>）。</p></div>
+
   <h3>まとめ表</h3>
 
+  <p>switch の規則は、<strong>ラベルの書き方（コロンかアローか）で決まるもの</strong>と、<strong>文か式か（値を返すかどうか）で決まるもの</strong>の2種類に分かれます。混ぜて覚えないのがコツです。</p>
+
   <div class="tw"><table>
-    <thead><tr><th></th><th>switch 文（コロン）</th><th>switch 式（アロー）</th></tr></thead>
+    <thead><tr><th>ラベルの書き方で決まる</th><th>コロン（<code>case 1:</code>）</th><th>アロー（<code>case 1 -&gt;</code>）</th></tr></thead>
     <tbody>
-      <tr><td>フォールスルー</td><td><strong>する</strong></td><td><strong>しない</strong></td></tr>
-      <tr><td>break</td><td>必要</td><td><strong>書けない</strong></td></tr>
-      <tr><td>値を返す</td><td>不可</td><td>可能</td></tr>
-      <tr><td>複数ラベル</td><td><code>case 1: case 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
-      <tr><td>ブロックから値を返す</td><td>そもそも値を返さない（<code>yield</code> は書けない）</td><td><code>yield</code></td></tr>
-      <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
-      <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
+      <tr><td>フォールスルー</td><td><strong>する</strong>（switch 文でも switch 式でも）</td><td><strong>しない</strong></td></tr>
+      <tr><td>複数ラベル</td><td><code>case 1: case 2:</code> または <code>case 1, 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
+      <tr><td>混在</td><td colspan="2">1つの switch の中では<strong>どちらかに統一する</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>文か式かで決まる</th><th>switch 文</th><th>switch 式</th></tr></thead>
+    <tbody>
+      <tr><td>値を返す</td><td>不可</td><td><strong>可能</strong></td></tr>
+      <tr><td>抜け方</td><td><code>break</code>（アローなら不要）</td><td><code>yield</code>（アローの右が式なら、その値がそのまま返る）。<strong><code>break</code> は書けない</strong></td></tr>
+      <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>必要</strong>（式を含む文の終わり）</td></tr>
+      <tr><td>default</td><td>省略可</td><td><strong>必須</strong>（enum の定数を全部書いた場合を除く）</td></tr>
       <tr><td>null を渡すと</td><td colspan="2"><strong>どちらも NullPointerException</strong>。仕組みは <a href="#sw-null">08 の「switch に null を渡すと落ちる」</a></td></tr>
     </tbody>
   </table></div>

@@ -40,7 +40,7 @@ new Sample();
 // B      ← 初期化ブロックが先
 // A      ← コンストラクタ本体は最後</code></pre></div>
 
-  <div class="point trap"><p><span class="mk">コンストラクタ本体は常に最後</span>です。ソース上の並び順が効くのは<strong>初期化子どうしの間だけ</strong>（インスタンス変数の初期化と初期化ブロックの相対順）で、コンストラクタとの前後関係には影響しません。<br>コンパイラは初期化ブロックの中身を<strong>各コンストラクタの先頭にコピーする</strong>、と考えると腑に落ちます。だから位置は無関係で、コンストラクタが複数あればそのすべてで実行されます。</p></div>
+  <div class="point trap"><p><span class="mk">コンストラクタ本体は常に最後</span>です。ソース上の並び順が効くのは<strong>初期化子どうしの間だけ</strong>（インスタンス変数の初期化と初期化ブロックの相対順）で、コンストラクタとの前後関係には影響しません。<br>コンパイラは初期化ブロックの中身を<strong>各コンストラクタの先頭（super() の直後）にコピーする</strong>、と考えると腑に落ちます。だから位置は無関係で、どのコンストラクタで new しても実行されます。ただし <code>this(...)</code> で始まるコンストラクタにはコピーされません（下の罠③）。</p></div>
 
   <h3>罠② new しなければ走らない</h3>
 
@@ -65,4 +65,23 @@ System.out.println(Sample.num);       // 100</code></pre></div>
   <p>インスタンス初期化ブロックの中から <code>static</code> 変数を書き換えること自体は<strong>合法</strong>です。ただし <code>new</code> されるまでは反映されません。「静的な変数を触っているから静的に動く」と考えると間違えます。<strong>ブロックの種類が実行タイミングを決める</strong>ので、中身が何を触っているかは無関係です。</p>
 
   <div class="point trap"><p>この2問は組で出ます。判定手順は次の2段階です。<br>① <span class="mk">new があるか</span> ── 無ければインスタンス側は一切動かない<br>② <span class="mk">初期化ブロック → コンストラクタ本体</span> ── 位置に関係なくこの順<br>選択肢に「コンパイルエラー」が並びますが、どちらも文法上は正しいコードです。</p></div>
+
+  <h3>罠③ this(...) で始まるコンストラクタでは動かない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化ブロックは1回の new で1回だけ<span class="tag">要注意</span></div><pre><code>class Box {
+    { System.out.print("I "); }       // インスタンス初期化ブロック
+    Box() {
+        this(10);                     // 別のコンストラクタへ
+        System.out.print("A");
+    }
+    Box(int size) {
+        System.out.print("B" + size + " ");
+    }
+}
+
+new Box();
+
+// 出力: I B10 A    ← I は1回だけ。Box(int) の中で、その本体より先に動く</code></pre></div>
+
+  <div class="point trap"><p>初期化ブロックとインスタンス変数の初期化がコピーされるのは、<span class="mk">super(...)（書かなければ暗黙の super()）を呼ぶコンストラクタだけ</span>です。<code>this(...)</code> で始まるコンストラクタにはコピーされません。もしコピーされたら、1回の new で同じ初期化が2回動いてしまうからです。<br>流れは「Box() → this(10) で Box(int) へ → 暗黙の super() → 初期化ブロック → Box(int) の本体 → Box() の残り」です。継承と組み合わせた順番は<a href="#c5-s02">第5章 02</a>で確認できます。</p></div>
 </section>

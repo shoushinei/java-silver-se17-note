@@ -49,4 +49,33 @@ System.out.println(i++ + ++i);   // 4
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>リテラルには使えない<span class="tag">NG</span></div><pre><code>System.out.println(5++);     // コンパイルエラー: 変数でないと増やせない
 final int x = 1;
 x++;                          // コンパイルエラー: final は変更不可</code></pre></div>
+
+  <hr class="sep">
+
+  <h3>評価はいつも左から ── 代入の左辺・演算子・引数</h3>
+
+  <p>Java は式を<strong>左から順に</strong>評価します。優先順位は「どれとどれが結びつくか」を決めるだけで、評価する順番は変えません。次の3つの場面で効いてきます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>① 代入の左辺の添字が先に決まる<span class="tag">要注意</span></div><pre><code>int[] a = {1, 2, 3};
+int i = 0;
+a[i] = ++i + a[i];       // 左辺の a[i] は、i が 0 の時点で a[0] に決まる
+
+// ① 左辺: 代入先は a[0]
+// ② 右辺: ++i → 1（i は 1 に）、a[i] → a[1] = 2、1 + 2 = 3
+// a は {3, 2, 3}、i は 1</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>② 左のオペランドで例外が出たら、右は評価されない<span class="tag">実行時</span></div><pre><code>static int count() { System.out.print("C"); return 1; }
+
+int[] a = {1, 2, 3};
+int r = a[5] / count();   // a[5] で ArrayIndexOutOfBoundsException
+                          // 右の count() は呼ばれず、"C" は表示されない</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>③ 引数とオペランドは、優先順位に関係なく左から<span class="tag">要注意</span></div><pre><code>static int show(int n) { System.out.print(n + " "); return n; }
+
+System.out.println(show(1) + show(2) * show(3));
+// 出力: 1 2 3 7
+// * が先に結びつく（2 * 3）が、show は 1 → 2 → 3 の順に呼ばれる
+// 引数の値がすべてそろってから println が表示する</code></pre></div>
+
+  <div class="point trap"><p>③のように、<span class="mk">引数を作る途中で表示されたものは、外側の println の出力より先に</span>画面に出ます。「計算の順番」と「表示される順番」を分けて追うのがコツです。</p></div>
 </section>

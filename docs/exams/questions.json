@@ -3031,8 +3031,8 @@
           ],
           "refs": [
             {
-              "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "id": "c6-s06",
+              "section": "第6章 06「finallyとreturn」",
               "point": "finally は例外が出ていても必ず実行される。finally の中で新しい例外が出ると、元の例外は消えて新しい例外が呼び出し元へ伝わる"
             },
             {

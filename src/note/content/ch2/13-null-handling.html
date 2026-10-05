@@ -15,7 +15,9 @@ System.out.println(s);       // "null" と表示される
 System.out.println("a" + s); // "anull"
 String.valueOf(s);           // "null" ← static メソッド
 "abc".equals(s);             // false  ← 呼ぶ側が null でない
-Arrays.toString((int[]) null); // "null" ← static メソッド（null を直接書くと曖昧でコンパイルエラー）</code></pre></div>
+Arrays.toString((int[]) null); // "null" ← static メソッド（null を直接書くと曖昧でコンパイルエラー）
+new StringBuilder().append(s); // "null" を追加（append(null) と直接書くと曖昧でコンパイルエラー）
+s += "!";                    // s は "null!" ← s = s + "!" と同じ。null の変数にも += でつなげる</code></pre></div>
 
   <h3>例外になる操作</h3>
 

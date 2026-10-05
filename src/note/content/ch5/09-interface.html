@@ -30,6 +30,22 @@ class C implements I {
 
   <div class="point trap"><p>インタフェースのメソッドは<span class="mk">暗黙に public</span>なので、実装側も必ず <code>public</code> を書きます。節03の「アクセスを狭められない」がここに効いています。<br>これは非常によく出る引っかけです。</p></div>
 
+  <h3>親クラスから受け継いだメソッドでも実装になる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>自分で書かなくても、受け継いだ public メソッドが実装になる<span class="tag">要注意</span></div><pre><code>interface Runner { void run(); }
+class Base { public void run() { System.out.println("base"); } }
+class Worker extends Base implements Runner { }   // OK。run() を書いていない
+
+Runner r = new Worker();
+r.run();        // "base"</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>受け継いだメソッドが public でないとエラー<span class="tag">頻出</span></div><pre><code>class Base { void run() { } }                      // 修飾子なし
+class Worker extends Base implements Runner { }
+// error: run() in Base cannot implement run() in Runner
+//        attempting to assign weaker access privileges; was public</code></pre></div>
+
+  <div class="point trap"><p>インタフェースの抽象メソッドは、<span class="mk">実装クラスが親クラスから受け継いだメソッドで満たしてもかまいません</span>。そのときも「アクセスを狭められない」規則は同じで、受け継いだメソッドが public でなければエラーになります。エラーになるのは Base ではなく <strong>Worker</strong> です（Base 自身は Runner を実装していないので問題ありません）。<br>default メソッドとぶつかったときの決まりは<a href="#c5-s10">節10「クラスが常に勝つ」</a>を参照。</p></div>
+
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>定数への再代入<span class="tag">NG</span></div><pre><code>interface I { int X = 1; }
 I.X = 2;      // error: cannot assign a value to static final variable X</code></pre></div>
 
@@ -94,5 +110,5 @@ class C implements A, B { ... }    // 同じくコンパイルエラー</code></
 
   <div class="point"><p>List でもあり Set でもあるものを返すメソッドは書けないので、<span class="mk">受け継いだ時点で</span>エラーになります。実装クラスだけでなく、<code>extends A, B</code> と書いた<strong>インタフェース自身</strong>がエラーになるのがポイントです。<br>戻り値の親子関係は<a href="#c5-s03">節03 共変戻り値</a>、List・Set・Collection の関係は<a href="#c2-s14">第2章 14</a>で確認できます。基本データ型には親子関係が無いので、<code>int</code> と <code>long</code> も両立しません。</p></div>
 
-  <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
+  <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。コード例と、2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
 </section>

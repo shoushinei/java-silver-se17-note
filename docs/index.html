@@ -1485,6 +1485,32 @@ public class Cart { }</code></pre></div>
 
   <div class="point"><p>覚え方は<span class="mk">「クラス → パッケージ → 継承 → 全世界」の4段階</span>です。上から順に1段ずつ壁が広がっていきます。表を丸暗記するのではなく、<code>private</code> が最も狭く <code>public</code> が最も広い、その途中に「パッケージまで」と「パッケージ＋継承先まで」の2段があると理解してください。</p></div>
 
+  <h3>private は「クラス単位」── インスタンス単位ではない</h3>
+
+  <p>表の「同じクラス」は、<strong>同じクラスのコードの中</strong>という意味です。「自分のインスタンスの中だけ」ではありません。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同じクラスなら、別のインスタンスの private も使える<span class="tag">要注意</span></div><pre><code>public class Point {
+    private int x;
+    Point(int x) { this.x = x; }
+
+    int distance(Point other) {
+        return Math.abs(x - other.x);   // OK ← 引数で受け取った別のインスタンスの x
+    }
+    void copyFrom(Point other) {
+        x = other.x;                    // OK
+        other.x = 0;                    // OK ← 書き換えもできる
+    }
+}</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別のクラスからは使えない<span class="tag">NG</span></div><pre><code>public class Main {
+    public static void main(String[] args) {
+        Point p = new Point(3);
+        System.out.println(p.x);        // コンパイルエラー: x has private access in Point
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>判定の基準は<span class="mk">「そのコードがどのクラスの中に書いてあるか」</span>です。「自分のインスタンスなら OK、別のインスタンスは NG」は誤りです。equals で <code>other.x</code> を比べたり、コピー用のメソッドで新しいインスタンスの private フィールドに代入したりできるのは、このためです。<br>下の protected の「参照の型で決まる」話とは別の規則なので、混同しないでください。</p></div>
+
   <h3>修飾子なし＝パッケージプライベート</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>パッケージの外からは見えない<span class="tag">NG</span></div><pre><code>// a/Base.java
@@ -1789,7 +1815,7 @@ Caused by: java.lang.NoClassDefFoundError: build/app/Main (wrong name: app/Main)
   <p>この章は暗記で確実に取れます。タップで消し込めます。</p>
 
   <div class="bar"><i id="c1-barfill"></i></div>
-  <div class="barlab" id="c1-barlab">0 / 19</div>
+  <div class="barlab" id="c1-barlab">0 / 20</div>
 
   <ul class="ck" id="c1-cklist">
     <li><span class="box">✓</span><span class="cktx">main は public static void、引数は String[]。修飾子の順序と引数名は自由</span></li>
@@ -1811,6 +1837,7 @@ Caused by: java.lang.NoClassDefFoundError: build/app/Main (wrong name: app/Main)
     <li><span class="box">✓</span><span class="cktx">javac はファイルを扱いバイトコードを吐く。java はクラス名を受け取り JVM を起動する</span></li>
     <li><span class="box">✓</span><span class="cktx">ソースが提示された「実行して〜と表示」問題では、java クラス名だけでは足りない</span></li>
     <li><span class="box">✓</span><span class="cktx">引数の区切りは引用の外の空白だけ。" はスイッチ、\" は文字</span></li>
+    <li><span class="box">✓</span><span class="cktx">private はクラス単位。同じクラスのコードなら、別のインスタンスの private も使える</span></li>
   </ul>
   <button class="reset" id="c1-ckreset" type="button">チェックをすべて外す</button>
 </section>
@@ -2791,7 +2818,7 @@ System.out.println(s);    // "Hello" ← こちらは変わらない</code></pre
       <tr><td><a href="#sb-query"><code>charAt(int)</code></a></td><td>char</td><td>0〜<code>length()</code>-1。<strong>capacity ではなく length が基準</strong>で、範囲外は StringIndexOutOfBoundsException</td></tr>
       <tr><td><a href="#sb-query"><code>indexOf</code></a><a href="#sb-query"><code>lastIndexOf</code></a></td><td>int</td><td>なければ -1</td></tr>
       <tr><td><a href="#sb-query"><code>substring(...)</code></a></td><td><strong>String</strong></td><td>戻り値は String。<strong>元は変わらない</strong></td></tr>
-      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換</td></tr>
+      <tr><td><a href="#sb-query"><code>toString()</code></a></td><td>String</td><td>String に変換。<strong>呼ぶたびに新しい String</strong>を作る</td></tr>
       <tr class="g"><td colspan="3">E. 注意点</td></tr>
       <tr><td><a href="#sb-equals"><code>equals()</code></a></td><td>boolean</td><td><strong>参照比較</strong>のまま（オーバーライドされていない）</td></tr>
       <tr><td><a href="#sb-chain"><code>メソッドチェーン</code></a></td><td>—</td><td>自分自身を返すのでつなげられる</td></tr>
@@ -2931,6 +2958,18 @@ a == b;                               // false
 a.toString().equals(b.toString());    // true  ← String に変換すれば比較できる</code></pre></div>
 
   <p><code>String</code> は <code>equals()</code> をオーバーライドして中身を比較しますが、<span class="mk">StringBuilder はしていません</span>。別インスタンスなら必ず false です。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>toString は呼ぶたびに新しい String を作る<span class="tag">要注意</span></div><pre><code>StringBuilder sb = new StringBuilder("ja");
+String s1 = sb.toString();
+String s2 = sb.toString();
+
+s1 == s2;              // false ← 中身が同じでも別のインスタンス
+s1.equals(s2);         // true
+s1 == "ja";            // false ← 定数プールのリテラルとも別物
+s1.intern() == "ja";   // true  ← intern() でプールの文字列がもらえる
+sb.equals("ja");       // false ← StringBuilder と String は比べても常に false</code></pre></div>
+
+  <div class="point"><p><code>toString()</code> の戻り値は、実行時に作られる<span class="mk">新しい String のインスタンス</span>です。<code>new String(...)</code> と同じく、== で比べると定数プールのリテラルとも、もう一度呼んだ結果とも一致しません（<a href="#c2-s07">07 String の不変性</a>の new String と同じ考え方です）。</p></div>
 
   <h3>メソッドチェーン</h3>
 
@@ -3795,7 +3834,9 @@ System.out.println(s);       // "null" と表示される
 System.out.println("a" + s); // "anull"
 String.valueOf(s);           // "null" ← static メソッド
 "abc".equals(s);             // false  ← 呼ぶ側が null でない
-Arrays.toString((int[]) null); // "null" ← static メソッド（null を直接書くと曖昧でコンパイルエラー）</code></pre></div>
+Arrays.toString((int[]) null); // "null" ← static メソッド（null を直接書くと曖昧でコンパイルエラー）
+new StringBuilder().append(s); // "null" を追加（append(null) と直接書くと曖昧でコンパイルエラー）
+s += "!";                    // s は "null!" ← s = s + "!" と同じ。null の変数にも += でつなげる</code></pre></div>
 
   <h3>例外になる操作</h3>
 
@@ -4135,10 +4176,10 @@ void read2() throws IOException {          // throws で宣言すれば OK（imp
 <!-- ch2/checklist.html · 直前チェック -->
 <section id="c2-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
-  <p>試験前日に、この20項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+  <p>試験前日に、この21項目を声に出して言えるか確認してください。タップで消し込めます。</p>
 
   <div class="bar"><i id="c2-barfill"></i></div>
-  <div class="barlab" id="c2-barlab">0 / 20</div>
+  <div class="barlab" id="c2-barlab">0 / 21</div>
 
   <ul class="ck" id="c2-cklist">
     <li><span class="box">✓</span><span class="cktx">既定の型は int と double。外すには接尾辞 L / f が必要</span></li>
@@ -4161,6 +4202,7 @@ void read2() throws IOException {          // throws で宣言すれば OK（imp
     <li><span class="box">✓</span><span class="cktx">add は 0〜size、set は 0〜size-1。add は割り込み、set は上書き</span></li>
     <li><span class="box">✓</span><span class="cktx">拡張for文で remove すると例外か取りこぼし。最後から2番目だけ静かに終わる</span></li>
     <li><span class="box">✓</span><span class="cktx">List.of は不変、Arrays.asList は set のみ可、ArrayList(3) の 3 は容量</span></li>
+    <li><span class="box">✓</span><span class="cktx">StringBuilder の toString は呼ぶたびに新しい String を作る。== では別物</span></li>
   </ul>
   <button class="reset" id="c2-ckreset" type="button">チェックをすべて外す</button>
 
@@ -4255,6 +4297,35 @@ System.out.println(i++ + ++i);   // 4
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>リテラルには使えない<span class="tag">NG</span></div><pre><code>System.out.println(5++);     // コンパイルエラー: 変数でないと増やせない
 final int x = 1;
 x++;                          // コンパイルエラー: final は変更不可</code></pre></div>
+
+  <hr class="sep">
+
+  <h3>評価はいつも左から ── 代入の左辺・演算子・引数</h3>
+
+  <p>Java は式を<strong>左から順に</strong>評価します。優先順位は「どれとどれが結びつくか」を決めるだけで、評価する順番は変えません。次の3つの場面で効いてきます。</p>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>① 代入の左辺の添字が先に決まる<span class="tag">要注意</span></div><pre><code>int[] a = {1, 2, 3};
+int i = 0;
+a[i] = ++i + a[i];       // 左辺の a[i] は、i が 0 の時点で a[0] に決まる
+
+// ① 左辺: 代入先は a[0]
+// ② 右辺: ++i → 1（i は 1 に）、a[i] → a[1] = 2、1 + 2 = 3
+// a は {3, 2, 3}、i は 1</code></pre></div>
+
+<div class="code" data-v="run"><div class="cap"><span class="dot run"></span>② 左のオペランドで例外が出たら、右は評価されない<span class="tag">実行時</span></div><pre><code>static int count() { System.out.print("C"); return 1; }
+
+int[] a = {1, 2, 3};
+int r = a[5] / count();   // a[5] で ArrayIndexOutOfBoundsException
+                          // 右の count() は呼ばれず、"C" は表示されない</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>③ 引数とオペランドは、優先順位に関係なく左から<span class="tag">要注意</span></div><pre><code>static int show(int n) { System.out.print(n + " "); return n; }
+
+System.out.println(show(1) + show(2) * show(3));
+// 出力: 1 2 3 7
+// * が先に結びつく（2 * 3）が、show は 1 → 2 → 3 の順に呼ばれる
+// 引数の値がすべてそろってから println が表示する</code></pre></div>
+
+  <div class="point trap"><p>③のように、<span class="mk">引数を作る途中で表示されたものは、外側の println の出力より先に</span>画面に出ます。「計算の順番」と「表示される順番」を分けて追うのがコツです。</p></div>
 </section>
 
 <!-- ch3/03-assignment-compound.html · 代入と複合代入 -->
@@ -4589,7 +4660,7 @@ switch (s == null ? "" : s) {      // null なら "" に置き換えてから渡
 }
 // x が 2 なら "B" だけ。下へ流れない</code></pre></div>
 
-  <p><span class="mk">アロー構文では break を書きません。書くとコンパイルエラーになります。</span>一致した1つだけが実行されます。</p>
+  <p><span class="mk">アロー構文では break を書きません。</span>一致した1つだけが実行されます。<code>case 1 -&gt; System.out.println("A"); break;</code> のようにアローの後ろへ続けて書くと、コンパイルエラーになります（switch 文で右側を <code>{ }</code> のブロックにしたときは、その中に書くこともできますが、必要ありません）。</p>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複数のラベルをまとめられる<span class="tag">OK</span></div><pre><code>switch (x) {
     case 1, 2, 3 -&gt; System.out.println("小");
@@ -4662,7 +4733,7 @@ String s = switch (color) {
     case BLUE  -&gt; "青";
 };                    // OK。全定数を網羅しているので default は省略できる</code></pre></div>
 
-  <div class="point"><p>ただし<strong>値を返さない</strong>switch 式（文として使う場合）は、網羅性を要求されません。<span class="mk">「値を返すかどうか」が default 必須かを分けます。</span></p></div>
+  <div class="point"><p>ただし、アロー構文を使っていても<strong>値を返さない switch 文</strong>なら、網羅性は要求されません（default を省略できます）。<span class="mk">default が必須かどうかを分けるのは、アローかコロンかではなく、値を返す switch 式かどうかです。</span></p></div>
 
   <h3>コロン構文とアロー構文は混在できない</h3>
 
@@ -4679,18 +4750,44 @@ String s = switch (color) {
     default: yield 0;
 };</code></pre></div>
 
+  <h3>コロン構文の switch 式はフォールスルーする</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>yield に来るまで下へ流れる<span class="tag">最重要</span></div><pre><code>int n = 2;
+int r = switch (n) {
+    case 1:
+        System.out.print("one ");
+    case 2:
+        System.out.print("two ");      // ← n が 2 なのでここから入る
+    case 3:
+        yield 30;                       // ← 流れてきて、ここで値を返して抜ける
+    default:
+        yield 0;
+};
+System.out.println(r);
+// 出力: two 30</code></pre></div>
+
+  <div class="point trap"><p><span class="mk">フォールスルーするかどうかは「文か式か」ではなく、「コロンかアローか」で決まります。</span>コロン構文の case は、switch 式の中でも次の case へ流れ込み、<code>yield</code> に来たところで値を返して抜けます。「switch 式はフォールスルーしない」と覚えていると外します。<br>流れた先の最後まで <code>yield</code> が無いと <code>switch expression completes without providing a value</code> というコンパイルエラーです。また、switch 式からは <code>break</code> で抜けられません（<code>attempt to break out of a switch expression</code>）。</p></div>
+
   <h3>まとめ表</h3>
 
+  <p>switch の規則は、<strong>ラベルの書き方（コロンかアローか）で決まるもの</strong>と、<strong>文か式か（値を返すかどうか）で決まるもの</strong>の2種類に分かれます。混ぜて覚えないのがコツです。</p>
+
   <div class="tw"><table>
-    <thead><tr><th></th><th>switch 文（コロン）</th><th>switch 式（アロー）</th></tr></thead>
+    <thead><tr><th>ラベルの書き方で決まる</th><th>コロン（<code>case 1:</code>）</th><th>アロー（<code>case 1 -&gt;</code>）</th></tr></thead>
     <tbody>
-      <tr><td>フォールスルー</td><td><strong>する</strong></td><td><strong>しない</strong></td></tr>
-      <tr><td>break</td><td>必要</td><td><strong>書けない</strong></td></tr>
-      <tr><td>値を返す</td><td>不可</td><td>可能</td></tr>
-      <tr><td>複数ラベル</td><td><code>case 1: case 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
-      <tr><td>ブロックから値を返す</td><td>そもそも値を返さない（<code>yield</code> は書けない）</td><td><code>yield</code></td></tr>
-      <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>値を返すなら必要</strong></td></tr>
-      <tr><td>default</td><td>省略可</td><td><strong>値を返すなら必須</strong>（enum全網羅時を除く）</td></tr>
+      <tr><td>フォールスルー</td><td><strong>する</strong>（switch 文でも switch 式でも）</td><td><strong>しない</strong></td></tr>
+      <tr><td>複数ラベル</td><td><code>case 1: case 2:</code> または <code>case 1, 2:</code></td><td><code>case 1, 2 -&gt;</code></td></tr>
+      <tr><td>混在</td><td colspan="2">1つの switch の中では<strong>どちらかに統一する</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>文か式かで決まる</th><th>switch 文</th><th>switch 式</th></tr></thead>
+    <tbody>
+      <tr><td>値を返す</td><td>不可</td><td><strong>可能</strong></td></tr>
+      <tr><td>抜け方</td><td><code>break</code>（アローなら不要）</td><td><code>yield</code>（アローの右が式なら、その値がそのまま返る）。<strong><code>break</code> は書けない</strong></td></tr>
+      <tr><td>末尾のセミコロン</td><td>不要</td><td><strong>必要</strong>（式を含む文の終わり）</td></tr>
+      <tr><td>default</td><td>省略可</td><td><strong>必須</strong>（enum の定数を全部書いた場合を除く）</td></tr>
       <tr><td>null を渡すと</td><td colspan="2"><strong>どちらも NullPointerException</strong>。仕組みは <a href="#sw-null">08 の「switch に null を渡すと落ちる」</a></td></tr>
     </tbody>
   </table></div>
@@ -4871,6 +4968,31 @@ while (false) { }              // コンパイルエラー: 本体に到達で�
 if (false) { System.out.println(); }   // OK ← if だけは例外</code></pre></div>
 
   <div class="point trap"><p>break・continue・return・throw の<strong>直後</strong>の文は、絶対に実行されないのでコンパイルエラーです。<code>if (i == 1) continue;</code> のように条件付きなら、後ろの文に届く経路があるので問題ありません。<br>条件が定数の false の <code>while</code> や <code>for</code> もエラーですが、<span class="mk"><code>if (false)</code> だけは許されます</span>（デバッグ用に処理を一時的に止める書き方を認めるため）。</p></div>
+
+  <h3>判定に使うのは「定数式」だけ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>値がコンパイル時に決まる条件<span class="tag">要注意</span></div><pre><code>while (1 &gt; 0) {                 // 1 &gt; 0 は定数式 → while (true) と同じ扱い
+    System.out.println("x");
+}
+System.out.println("end");      // コンパイルエラー: unreachable statement
+
+final boolean STOP = false;
+while (STOP) { }                // コンパイルエラー: 定数の false なので本体に到達できない
+
+for (int i = 0; false; i++) { } // コンパイルエラー: for の条件が定数の false</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変数を含む条件は「回るかもしれない」扱い<span class="tag">OK</span></div><pre><code>boolean flag = false;
+while (flag) { }                // OK ← final でない変数は定数式ではない
+
+int n = 0;
+while (n &lt; 0) { n++; }          // OK ← 実際には1回も回らないが、コンパイラは値を追わない
+
+do {
+    System.out.println("x");
+} while (false);                // OK ← do-while の本体は必ず1回実行される
+System.out.println("end");      // OK ← ループは終わるので届く</code></pre></div>
+
+  <div class="point"><p><span class="mk">定数式</span>とは、リテラルと、定数で初期化した <code>final</code> 変数だけを演算子で組み合わせた式のことです（<code>1 &gt; 0</code>、<code>"a" + "b"</code>、上の <code>STOP</code> など）。コンパイラは<strong>定数式の値だけ</strong>を使って到達できるかを判定し、ふつうの変数の値は追いません。<br>選択肢に <code>while (1 &gt; 0)</code> や final 変数の条件が出てきたら、<code>while (true)</code>・<code>while (false)</code> と読み替えてください。</p></div>
 
   <h3>continue と for の更新部</h3>
 
@@ -5139,10 +5261,10 @@ status &amp; FLAG_B          // 2    → B は立っている
 <!-- ch3/checklist.html · 直前チェック -->
 <section id="c3-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
-  <p>試験前日に、この14項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+  <p>試験前日に、この17項目を声に出して言えるか確認してください。タップで消し込めます。</p>
 
   <div class="bar"><i id="c3-barfill"></i></div>
-  <div class="barlab" id="c3-barlab">0 / 16</div>
+  <div class="barlab" id="c3-barlab">0 / 17</div>
 
   <ul class="ck" id="c3-cklist">
     <li><span class="box">✓</span><span class="cktx">後置は「返してから増やす」。<code>i = i++</code> は増えない</span></li>
@@ -5155,12 +5277,13 @@ status &amp; FLAG_B          // 2    → B は立っている
     <li><span class="box">✓</span><span class="cktx">if / while の直後のセミコロン1個で意味が変わる</span></li>
     <li><span class="box">✓</span><span class="cktx">switch に long・float・double・boolean は使えない</span></li>
     <li><span class="box">✓</span><span class="cktx">case ラベルは定数のみ。default はどこでもよくフォールスルーする</span></li>
-    <li><span class="box">✓</span><span class="cktx">アロー構文はフォールスルーしない。break は書けない</span></li>
+    <li><span class="box">✓</span><span class="cktx">アロー構文はフォールスルーしない。コロン構文は switch 式の中でもフォールスルーする</span></li>
     <li><span class="box">✓</span><span class="cktx">switch 式はブロックから yield で返す。末尾にセミコロンが必要</span></li>
     <li><span class="box">✓</span><span class="cktx">値を返す switch 式は default 必須（enum 全網羅時を除く）</span></li>
     <li><span class="box">✓</span><span class="cktx">while の continue は無限ループの原因。ラベルで多重ループを抜ける</span></li>
     <li><span class="box">✓</span><span class="cktx">0b=2進数、0x=16進数、先頭の0だけ=8進数。012 は 10</span></li>
     <li><span class="box">✓</span><span class="cktx">&& と || は boolean 専用。& | ^ は整数にも使える</span></li>
+    <li><span class="box">✓</span><span class="cktx">到達不能は定数式だけで判定する。<code>while (1 &gt; 0)</code> の後ろはエラー、final でない変数の条件なら OK</span></li>
   </ul>
   <button class="reset" id="c3-ckreset" type="button">チェックをすべて外す</button>
 
@@ -5411,12 +5534,22 @@ void m() { this(); }          // エラー: コンストラクタ以外からは
       <tr><td>戻り値の型だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
       <tr><td>引数名だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
       <tr><td>アクセス修飾子だけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td><code>static</code> かどうかだけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
+      <tr><td>可変長引数（<code>int...</code>）か配列（<code>int[]</code>）かだけ</td><td><strong>×</strong> コンパイルエラー</td></tr>
     </tbody>
   </table></div>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値型は区別に使われない<span class="tag">頻出</span></div><pre><code>void m(int x) { }
 int  m(int x) { return 0; }
 // エラー: method m(int) is already defined in class</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>可変長引数と配列は同じ引数リスト<span class="tag">要注意</span></div><pre><code>class Calc {
+    int sum(int[] values)  { return 0; }
+    int sum(int... values) { return 1; }
+}
+// error: cannot declare both sum(int...) and sum(int[]) in Calc</code></pre></div>
+
+  <div class="point"><p>可変長引数 <code>int...</code> は、メソッドの中では <code>int[]</code> 型の引数として扱われます（<a href="#c4-s03">03</a>）。<span class="mk">区別に使われる引数リストも <code>int[]</code> と同じ</span>なので、両方は宣言できません。一方、<code>Integer[]</code> や <code>int[][]</code> は <code>int[]</code> とは別の型なので、オーバーロードとして並べられます。</p></div>
 
   <h3>どれが呼ばれるか ── 優先順位</h3>
 
@@ -5595,7 +5728,7 @@ new Sample();
 // B      ← 初期化ブロックが先
 // A      ← コンストラクタ本体は最後</code></pre></div>
 
-  <div class="point trap"><p><span class="mk">コンストラクタ本体は常に最後</span>です。ソース上の並び順が効くのは<strong>初期化子どうしの間だけ</strong>（インスタンス変数の初期化と初期化ブロックの相対順）で、コンストラクタとの前後関係には影響しません。<br>コンパイラは初期化ブロックの中身を<strong>各コンストラクタの先頭にコピーする</strong>、と考えると腑に落ちます。だから位置は無関係で、コンストラクタが複数あればそのすべてで実行されます。</p></div>
+  <div class="point trap"><p><span class="mk">コンストラクタ本体は常に最後</span>です。ソース上の並び順が効くのは<strong>初期化子どうしの間だけ</strong>（インスタンス変数の初期化と初期化ブロックの相対順）で、コンストラクタとの前後関係には影響しません。<br>コンパイラは初期化ブロックの中身を<strong>各コンストラクタの先頭（super() の直後）にコピーする</strong>、と考えると腑に落ちます。だから位置は無関係で、どのコンストラクタで new しても実行されます。ただし <code>this(...)</code> で始まるコンストラクタにはコピーされません（下の罠③）。</p></div>
 
   <h3>罠② new しなければ走らない</h3>
 
@@ -5620,6 +5753,25 @@ System.out.println(Sample.num);       // 100</code></pre></div>
   <p>インスタンス初期化ブロックの中から <code>static</code> 変数を書き換えること自体は<strong>合法</strong>です。ただし <code>new</code> されるまでは反映されません。「静的な変数を触っているから静的に動く」と考えると間違えます。<strong>ブロックの種類が実行タイミングを決める</strong>ので、中身が何を触っているかは無関係です。</p>
 
   <div class="point trap"><p>この2問は組で出ます。判定手順は次の2段階です。<br>① <span class="mk">new があるか</span> ── 無ければインスタンス側は一切動かない<br>② <span class="mk">初期化ブロック → コンストラクタ本体</span> ── 位置に関係なくこの順<br>選択肢に「コンパイルエラー」が並びますが、どちらも文法上は正しいコードです。</p></div>
+
+  <h3>罠③ this(...) で始まるコンストラクタでは動かない</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化ブロックは1回の new で1回だけ<span class="tag">要注意</span></div><pre><code>class Box {
+    { System.out.print("I "); }       // インスタンス初期化ブロック
+    Box() {
+        this(10);                     // 別のコンストラクタへ
+        System.out.print("A");
+    }
+    Box(int size) {
+        System.out.print("B" + size + " ");
+    }
+}
+
+new Box();
+
+// 出力: I B10 A    ← I は1回だけ。Box(int) の中で、その本体より先に動く</code></pre></div>
+
+  <div class="point trap"><p>初期化ブロックとインスタンス変数の初期化がコピーされるのは、<span class="mk">super(...)（書かなければ暗黙の super()）を呼ぶコンストラクタだけ</span>です。<code>this(...)</code> で始まるコンストラクタにはコピーされません。もしコピーされたら、1回の new で同じ初期化が2回動いてしまうからです。<br>流れは「Box() → this(10) で Box(int) へ → 暗黙の super() → 初期化ブロック → Box(int) の本体 → Box() の残り」です。継承と組み合わせた順番は<a href="#c5-s02">第5章 02</a>で確認できます。</p></div>
 </section>
 
 <!-- ch4/09-instanceof-pattern.html · instanceof ★新 -->
@@ -6256,7 +6408,7 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
   <p>この章は配点が最も大きい範囲です。タップで消し込めます。</p>
 
   <div class="bar"><i id="c4-barfill"></i></div>
-  <div class="barlab" id="c4-barlab">0 / 27</div>
+  <div class="barlab" id="c4-barlab">0 / 29</div>
 
   <ul class="ck" id="c4-cklist">
     <li><span class="box">✓</span><span class="cktx">変数が持つのは実体ではなく参照。代入は矢印のコピー</span></li>
@@ -6286,6 +6438,8 @@ new A(new int[]{1,2}).equals(new A(new int[]{1,2}));   // false !
     <li><span class="box">✓</span><span class="cktx">アクセサと同名の default メソッドは戻り値型が合わないとエラー</span></li>
     <li><span class="box">✓</span><span class="cktx">禁止はインスタンスフィールドの追加と継承だけ。メソッドと実装は自由</span></li>
     <li><span class="box">✓</span><span class="cktx">コンポーネントが配列だと equals は参照比較になる</span></li>
+    <li><span class="box">✓</span><span class="cktx">初期化ブロックは this(...) で始まるコンストラクタでは動かない。1回の new で1回だけ</span></li>
+    <li><span class="box">✓</span><span class="cktx"><code>int...</code> と <code>int[]</code> は同じ引数リスト。両方は宣言できない</span></li>
   </ul>
   <button class="reset" id="c4-ckreset" type="button">チェックをすべて外す</button>
 </section>
@@ -6353,12 +6507,23 @@ class B extends A { B(){} }         // 暗黙の super() が呼べない
 
   <div class="point trap"><p>エラーは<strong>子クラスの側</strong>に出ます。親のコードは何も間違っていません。<br>解決は <code>B(){ super(0); }</code> と<span class="mk">明示的に引数を渡す</span>か、親に <code>A(){}</code> を足すか。第4章 節04の「1つでも定義するとデフォルトは生成されない」がここに波及します。</p></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>親の引数なしコンストラクタが private<span class="tag">要注意</span></div><pre><code>class A {
+    private A() { }                 // 引数なしはあるが private
+    A(int x) { this(); }            // 同じクラスの中からなら呼べる
+}
+class B extends A {
+    B() { }                         // 暗黙の super() が private の A() を呼べない
+}
+// コンパイルエラー: A() has private access in A</code></pre></div>
+
+  <div class="point"><p>暗黙の super() が呼ぶのは<strong>引数なしのコンストラクタ</strong>で、それが<span class="mk">子から見えること（private でないこと）</span>まで必要です。<code>B() { super(1); }</code> のように、見えるコンストラクタを明示すれば解決します。<br>private のコンストラクタしか持たないクラスは、外のクラスから継承できません（インスタンスを1つに限るシングルトンなどで使う形です）。</p></div>
+
   <div class="tw"><table>
     <thead><tr><th>規則</th><th>内容</th></tr></thead>
     <tbody>
       <tr><td><code>super()</code> の位置</td><td><strong>第1文のみ</strong></td></tr>
       <tr><td><code>this()</code> との併用</td><td><strong>不可</strong>。どちらも第1文を要求する</td></tr>
-      <tr><td><code>this()</code> を書いた場合</td><td><code>super()</code> は挿入されない（合流先が呼ぶ）</td></tr>
+      <tr><td><code>this()</code> を書いた場合</td><td><code>super()</code> は挿入されない（合流先が呼ぶ）。初期化ブロックも合流先で1回だけ動く（<a href="#c4-s08">第4章 08 罠③</a>）</td></tr>
     </tbody>
   </table></div>
 </section>
@@ -6831,6 +6996,22 @@ class C implements I {
 
   <div class="point trap"><p>インタフェースのメソッドは<span class="mk">暗黙に public</span>なので、実装側も必ず <code>public</code> を書きます。節03の「アクセスを狭められない」がここに効いています。<br>これは非常によく出る引っかけです。</p></div>
 
+  <h3>親クラスから受け継いだメソッドでも実装になる</h3>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>自分で書かなくても、受け継いだ public メソッドが実装になる<span class="tag">要注意</span></div><pre><code>interface Runner { void run(); }
+class Base { public void run() { System.out.println("base"); } }
+class Worker extends Base implements Runner { }   // OK。run() を書いていない
+
+Runner r = new Worker();
+r.run();        // "base"</code></pre></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>受け継いだメソッドが public でないとエラー<span class="tag">頻出</span></div><pre><code>class Base { void run() { } }                      // 修飾子なし
+class Worker extends Base implements Runner { }
+// error: run() in Base cannot implement run() in Runner
+//        attempting to assign weaker access privileges; was public</code></pre></div>
+
+  <div class="point trap"><p>インタフェースの抽象メソッドは、<span class="mk">実装クラスが親クラスから受け継いだメソッドで満たしてもかまいません</span>。そのときも「アクセスを狭められない」規則は同じで、受け継いだメソッドが public でなければエラーになります。エラーになるのは Base ではなく <strong>Worker</strong> です（Base 自身は Runner を実装していないので問題ありません）。<br>default メソッドとぶつかったときの決まりは<a href="#c5-s10">節10「クラスが常に勝つ」</a>を参照。</p></div>
+
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>定数への再代入<span class="tag">NG</span></div><pre><code>interface I { int X = 1; }
 I.X = 2;      // error: cannot assign a value to static final variable X</code></pre></div>
 
@@ -6895,7 +7076,7 @@ class C implements A, B { ... }    // 同じくコンパイルエラー</code></
 
   <div class="point"><p>List でもあり Set でもあるものを返すメソッドは書けないので、<span class="mk">受け継いだ時点で</span>エラーになります。実装クラスだけでなく、<code>extends A, B</code> と書いた<strong>インタフェース自身</strong>がエラーになるのがポイントです。<br>戻り値の親子関係は<a href="#c5-s03">節03 共変戻り値</a>、List・Set・Collection の関係は<a href="#c2-s14">第2章 14</a>で確認できます。基本データ型には親子関係が無いので、<code>int</code> と <code>long</code> も両立しません。</p></div>
 
-  <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
+  <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。コード例と、2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
 </section>
 
 <!-- ch5/10-interface-methods.html · default / static / private -->
@@ -6938,6 +7119,19 @@ class C implements A, B { }
 }</code></pre></div>
 
   <div class="point"><p>Java は多重継承の曖昧さを<span class="mk">コンパイラに解決させず、書き手に選ばせます</span>。<code>A.super.m()</code> という構文は、この場面でしか使いません。</p></div>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>default と抽象メソッドがぶつかる<span class="tag">要注意</span></div><pre><code>interface A { default void m(){ System.out.println("A"); } }
+interface B { void m(); }                 // 本体の無い抽象メソッド
+class C implements A, B { }
+// error: C is not abstract and does not override abstract method m() in B</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>解決はやはりオーバーライド<span class="tag">OK</span></div><pre><code>class C implements A, B {
+    public void m(){
+        A.super.m();       // A の処理を使いたければ名指しで呼ぶ
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>片方が default でも、<span class="mk">別のインタフェースの抽象メソッドの実装としては使われません</span>。「default があるから実装済み」と考えず、クラスで書き直します。<br>一方、<strong>親クラスから受け継いだ public メソッド</strong>なら、そのまま実装として使われます（下の「クラスが常に勝つ」と<a href="#c5-s09">節09</a>）。</p></div>
 
   <h3>クラスが常に勝つ</h3>
 
@@ -7989,7 +8183,7 @@ long[]   f = new int[1];         // × int → long は① の変換であって
   <p>第4章と並ぶ最大の範囲です。タップで消し込めます。</p>
 
   <div class="bar"><i id="c5-barfill"></i></div>
-  <div class="barlab" id="c5-barlab">0 / 26</div>
+  <div class="barlab" id="c5-barlab">0 / 29</div>
 
   <ul class="ck" id="c5-cklist">
     <li><span class="box">✓</span><span class="cktx">クラスは単一継承。インタフェースは複数実装・多重継承ともに可</span></li>
@@ -8019,6 +8213,8 @@ long[]   f = new int[1];         // × int → long は① の変換であって
     <li><span class="box">✓</span><span class="cktx">default の衝突は A.super.m() で解決。クラスは常に default に勝つ</span></li>
     <li><span class="box">✓</span><span class="cktx">sealed の実装側は final / sealed / non-sealed の3択が必須</span></li>
     <li><span class="box">✓</span><span class="cktx">Number の子は数値ラッパー6つだけ。Integer と Long は兄弟でキャストも不可。int[] は Object[] ではない</span></li>
+    <li><span class="box">✓</span><span class="cktx">default と抽象メソッドが別々のインタフェースからぶつかったら、クラスでオーバーライドする</span></li>
+    <li><span class="box">✓</span><span class="cktx">親クラスから受け継いだ public メソッドもインタフェースの実装になる。public でなければエラー</span></li>
   </ul>
   <button class="reset" id="c5-ckreset" type="button">チェックをすべて外す</button>
 </section>
@@ -8313,7 +8509,7 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
 <section id="c6-s06">
   <div class="sh"><span class="num">06</span><h2>finally と return ── この章の山場</h2></div>
 
-  <p>黒本の章末で最も差がつくのがここです。ルールを3段階に分けます。</p>
+  <p>黒本の章末で最も差がつくのがここです。原則と4つの罠に分けて見ていきます。</p>
 
   <h3>原則 ── finally は必ず実行される</h3>
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>return があっても finally は動く<span class="tag">出力あり</span></div><pre><code>int m() {
@@ -8359,6 +8555,25 @@ catch (FileNotFoundException | IOException e) { }    // エラー</code></pre></
 // 例外はスローされず、2 が返る</code></pre></div>
 
   <div class="point trap"><p>選択肢に「実行時に例外がスローされる」があると、つい選びたくなります。<span class="mk">finally に return があるなら例外は外に出ません。</span>実務では絶対に書いてはいけないコードですが、試験には出ます。</p></div>
+
+  <h3>罠4 ── finally で例外が出ると、元の例外は消える</h3>
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>呼び出し元に届くのは finally の例外<span class="tag">要注意</span></div><pre><code>static void m() {
+    try {
+        throw new IllegalStateException();   // ① 元の例外
+    } finally {
+        Integer.parseInt("x");               // ② NumberFormatException
+    }
+}
+
+try {
+    m();
+} catch (IllegalStateException e) {
+    System.out.println("ISE");
+} catch (NumberFormatException e) {
+    System.out.println("NFE");               // ← こちらが動く。① は消えている
+}</code></pre></div>
+
+  <div class="point trap"><p>罠3 の return と同じく、<span class="mk">finally の中で起きたことが最後の結果</span>になります。finally で例外が発生すると、try や catch で発生していた例外は捨てられ、新しい例外だけが呼び出し元へ伝わります。<br>try-with-resources で close が例外を出した場合は扱いが違い、本体の例外が残って、close の例外は「抑制された例外」としてしまわれます（<a href="#c6-s09">節09</a>）。</p></div>
 
   <h3>finally が実行されない唯一のケース</h3>
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>System.exit で JVM ごと終了<span class="tag">例外的</span></div><pre><code>try {
@@ -8758,10 +8973,10 @@ try (r) { }
 <!-- ch6/checklist.html · 直前チェック -->
 <section id="c6-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
-  <p>試験前日に、この13項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+  <p>試験前日に、この15項目を声に出して言えるか確認してください。タップで消し込めます。</p>
 
   <div class="bar"><i id="c6-barfill"></i></div>
-  <div class="barlab" id="c6-barlab">0 / 13</div>
+  <div class="barlab" id="c6-barlab">0 / 15</div>
 
   <ul class="ck" id="c6-cklist">
     <li data-i="0"><span class="box">✓</span><span class="cktx">検査例外の定義 ── Exception の子孫かつ RuntimeException の子孫でない</span></li>
@@ -8778,6 +8993,7 @@ try (r) { }
     <li><span class="box">✓</span><span class="cktx">括弧の中は変数宣言。close() の呼び出しはコンパイラが生成する</span></li>
     <li><span class="box">✓</span><span class="cktx">Java 9 の try(r) 形式は final か実質 final でなければ不可</span></li>
     <li><span class="box">✓</span><span class="cktx">親子の組: NumberFormat ⊂ IllegalArgument、ArrayIndex/StringIndex ⊂ IndexOutOfBounds、FileNotFound ⊂ IOException。IOException は RuntimeException の子ではない</span></li>
+    <li><span class="box">✓</span><span class="cktx">finally で例外が出ると、try・catch の例外は消えて新しい例外が伝わる</span></li>
 </ul>
   <button class="reset" id="c6-ckreset" type="button">チェックをすべて外す</button>
 
@@ -8934,8 +9150,9 @@ NoteApp.chapters = NoteApp.chapters || [];
       if (!json) return false;
       try {
         var v = JSON.parse(json);
-        if (Array.isArray(v) && v.length === state.length) {
-          state = v;
+        // 項目は末尾に足していくので、保存したときより項目が増えていても前から順に引き継ぐ
+        if (Array.isArray(v) && v.length <= state.length) {
+          state = state.map(function (_, i) { return v[i] === true; });
           paint();
           return true;
         }

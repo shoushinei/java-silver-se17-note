@@ -38,6 +38,19 @@ class C implements A, B { }
 
   <div class="point"><p>Java は多重継承の曖昧さを<span class="mk">コンパイラに解決させず、書き手に選ばせます</span>。<code>A.super.m()</code> という構文は、この場面でしか使いません。</p></div>
 
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>default と抽象メソッドがぶつかる<span class="tag">要注意</span></div><pre><code>interface A { default void m(){ System.out.println("A"); } }
+interface B { void m(); }                 // 本体の無い抽象メソッド
+class C implements A, B { }
+// error: C is not abstract and does not override abstract method m() in B</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>解決はやはりオーバーライド<span class="tag">OK</span></div><pre><code>class C implements A, B {
+    public void m(){
+        A.super.m();       // A の処理を使いたければ名指しで呼ぶ
+    }
+}</code></pre></div>
+
+  <div class="point trap"><p>片方が default でも、<span class="mk">別のインタフェースの抽象メソッドの実装としては使われません</span>。「default があるから実装済み」と考えず、クラスで書き直します。<br>一方、<strong>親クラスから受け継いだ public メソッド</strong>なら、そのまま実装として使われます（下の「クラスが常に勝つ」と<a href="#c5-s09">節09</a>）。</p></div>
+
   <h3>クラスが常に勝つ</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>エラーにはならない<span class="tag">要注意</span></div><pre><code>class Par { public void m(){ System.out.println("クラスが勝つ"); } }

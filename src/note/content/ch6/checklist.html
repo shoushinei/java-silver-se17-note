@@ -1,9 +1,9 @@
 <section id="c6-check">
   <div class="sh"><span class="num">▸</span><h2>直前チェックリスト</h2></div>
-  <p>試験前日に、この13項目を声に出して言えるか確認してください。タップで消し込めます。</p>
+  <p>試験前日に、この15項目を声に出して言えるか確認してください。タップで消し込めます。</p>
 
   <div class="bar"><i id="c6-barfill"></i></div>
-  <div class="barlab" id="c6-barlab">0 / 13</div>
+  <div class="barlab" id="c6-barlab">0 / 15</div>
 
   <ul class="ck" id="c6-cklist">
     <li data-i="0"><span class="box">✓</span><span class="cktx">検査例外の定義 ── Exception の子孫かつ RuntimeException の子孫でない</span></li>
@@ -20,6 +20,7 @@
     <li><span class="box">✓</span><span class="cktx">括弧の中は変数宣言。close() の呼び出しはコンパイラが生成する</span></li>
     <li><span class="box">✓</span><span class="cktx">Java 9 の try(r) 形式は final か実質 final でなければ不可</span></li>
     <li><span class="box">✓</span><span class="cktx">親子の組: NumberFormat ⊂ IllegalArgument、ArrayIndex/StringIndex ⊂ IndexOutOfBounds、FileNotFound ⊂ IOException。IOException は RuntimeException の子ではない</span></li>
+    <li><span class="box">✓</span><span class="cktx">finally で例外が出ると、try・catch の例外は消えて新しい例外が伝わる</span></li>
 </ul>
   <button class="reset" id="c6-ckreset" type="button">チェックをすべて外す</button>
 

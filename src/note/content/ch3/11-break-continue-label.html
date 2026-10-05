@@ -47,6 +47,31 @@ if (false) { System.out.println(); }   // OK ← if だけは例外</code></pre>
 
   <div class="point trap"><p>break・continue・return・throw の<strong>直後</strong>の文は、絶対に実行されないのでコンパイルエラーです。<code>if (i == 1) continue;</code> のように条件付きなら、後ろの文に届く経路があるので問題ありません。<br>条件が定数の false の <code>while</code> や <code>for</code> もエラーですが、<span class="mk"><code>if (false)</code> だけは許されます</span>（デバッグ用に処理を一時的に止める書き方を認めるため）。</p></div>
 
+  <h3>判定に使うのは「定数式」だけ</h3>
+
+<div class="code" data-v="err"><div class="cap"><span class="dot err"></span>値がコンパイル時に決まる条件<span class="tag">要注意</span></div><pre><code>while (1 &gt; 0) {                 // 1 &gt; 0 は定数式 → while (true) と同じ扱い
+    System.out.println("x");
+}
+System.out.println("end");      // コンパイルエラー: unreachable statement
+
+final boolean STOP = false;
+while (STOP) { }                // コンパイルエラー: 定数の false なので本体に到達できない
+
+for (int i = 0; false; i++) { } // コンパイルエラー: for の条件が定数の false</code></pre></div>
+
+<div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>変数を含む条件は「回るかもしれない」扱い<span class="tag">OK</span></div><pre><code>boolean flag = false;
+while (flag) { }                // OK ← final でない変数は定数式ではない
+
+int n = 0;
+while (n &lt; 0) { n++; }          // OK ← 実際には1回も回らないが、コンパイラは値を追わない
+
+do {
+    System.out.println("x");
+} while (false);                // OK ← do-while の本体は必ず1回実行される
+System.out.println("end");      // OK ← ループは終わるので届く</code></pre></div>
+
+  <div class="point"><p><span class="mk">定数式</span>とは、リテラルと、定数で初期化した <code>final</code> 変数だけを演算子で組み合わせた式のことです（<code>1 &gt; 0</code>、<code>"a" + "b"</code>、上の <code>STOP</code> など）。コンパイラは<strong>定数式の値だけ</strong>を使って到達できるかを判定し、ふつうの変数の値は追いません。<br>選択肢に <code>while (1 &gt; 0)</code> や final 変数の条件が出てきたら、<code>while (true)</code>・<code>while (false)</code> と読み替えてください。</p></div>
+
   <h3>continue と for の更新部</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>更新部は実行される<span class="tag">要注意</span></div><pre><code>for (int i = 0; i &lt; 3; i++) {

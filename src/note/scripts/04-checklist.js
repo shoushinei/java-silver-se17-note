@@ -52,8 +52,9 @@
       if (!json) return false;
       try {
         var v = JSON.parse(json);
-        if (Array.isArray(v) && v.length === state.length) {
-          state = v;
+        // 項目は末尾に足していくので、保存したときより項目が増えていても前から順に引き継ぐ
+        if (Array.isArray(v) && v.length <= state.length) {
+          state = state.map(function (_, i) { return v[i] === true; });
           paint();
           return true;
         }
