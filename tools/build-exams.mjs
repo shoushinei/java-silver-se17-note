@@ -122,6 +122,8 @@ export async function buildExams(manifest) {
   const css = await styles();
   const highlight = (await readFile(path.join(NOTE, "scripts", "01-highlight.js"), "utf8")).trim();
   const examJs = (await readFile(path.join(ENGINE, "exam.js"), "utf8")).trim();
+  // 受験記録の書き出し・読み込み。一覧のページと試験のページで共通
+  const recordsJs = (await readFile(path.join(ENGINE, "records.js"), "utf8")).trim();
   const examTpl = await readFile(path.join(ENGINE, "exam.html"), "utf8");
   const listTpl = await readFile(path.join(ENGINE, "list.html"), "utf8");
   const chapters = chapterNames(manifest);
@@ -143,7 +145,7 @@ export async function buildExams(manifest) {
       "{{passPercent}}": String(Math.round(meta.passRate * 100)),
       "{{noteHref}}": NOTE_HREF,
       "<!--{{styles}}-->": css,
-      "<!--{{scripts}}-->": highlight + "\n\n" + examJs,
+      "<!--{{scripts}}-->": highlight + "\n\n" + recordsJs + "\n\n" + examJs,
     };
     catalog[id] = {
       title: meta.title,
@@ -192,7 +194,9 @@ export async function buildExams(manifest) {
       </div>`);
   }
 
-  files["index.html"] = fill(listTpl, { "<!--{{styles}}-->": css, "<!--{{cards}}-->": cards.join("\n") }, "list.html");
+  files["index.html"] = fill(listTpl, {
+    "<!--{{styles}}-->": css, "<!--{{cards}}-->": cards.join("\n"), "<!--{{records}}-->": recordsJs,
+  }, "list.html");
   files["questions.json"] = JSON.stringify({ description: QUESTIONS_JSON_NOTE, exams: catalog }, null, 2) + "\n";
   return { files, summary: `${ids.length} 回 / ${questionCount} 問` };
 }

@@ -387,6 +387,27 @@ body.hide-answers .q:not(.revealed) .reveal { display: inline-flex; }
 .srv-st.ng { color: var(--err); }
 .srv-hint { font-size: 12px; color: var(--sumi-3); }
 .dialog:has(textarea.report) { max-width: 760px; }
+
+/* ---------------- 受験記録の書き出し・読み込み・手入力 ---------------- */
+.hist-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
+.hist-tools .btn { min-height: 38px; font-size: 13.5px; }
+label.btn { cursor: pointer; }
+.tag-src { font-size: 11px; font-weight: 700; color: var(--sumi-2); background: var(--washi-2); border: 1px solid var(--rule); border-radius: 99px; padding: 0 7px; margin-left: 4px; }
+.imp-list { margin: 0 0 12px; padding-left: 1.2em; font-size: 14px; }
+.imp-list li { margin: 4px 0; }
+.dialog:has(.mf-grid) { max-width: 640px; }
+.mf-form { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13.5px; margin: 6px 0 12px; }
+.mf-form input[type="datetime-local"], .mf-form input[type="number"] { font: inherit; padding: 5px 8px; border: 1px solid var(--rule); border-radius: 6px; background: #fff; }
+.mf-form input[type="number"] { width: 6.5em; }
+.mf-form .chk { display: inline-flex; align-items: center; gap: 6px; }
+.mf-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.mf-tools .btn { min-height: 34px; padding: 0 12px; font-size: 13px; }
+.mf-seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 99px; overflow: hidden; }
+.mf-seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12.5px; cursor: pointer; min-height: 34px; }
+.mf-seg button[aria-pressed="true"] { background: var(--sumi); color: var(--washi); }
+.mf-grid { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); }
+.mf-grid .cell { height: 48px; flex-direction: column; gap: 1px; line-height: 1.1; font-size: 12px; }
+.mf-count { font-size: 13.5px; font-weight: 700; margin: 10px 0 4px; }
 textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--washi-2); color: var(--sumi); resize: vertical; }
 .report-msg { margin-right: auto; font-size: 13px; color: var(--ok); }
 
@@ -477,6 +498,13 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
     <h2 class="sub-h">受験記録</h2>
     <p class="note-s">提出した回の得点・選んだ答え・見直しマーク・振り返りメモが保存されます。「結果を開く」で、その回の ○× と解説をいつでも見直せます。</p>
     <div id="history"></div>
+    <div class="hist-tools">
+      <button type="button" class="btn" id="rec-export">記録を書き出す</button>
+      <label class="btn" for="rec-file">記録を読み込む</label>
+      <input type="file" id="rec-file" accept=".json,application/json" hidden>
+      <button type="button" class="btn" id="manual-open">結果を手で入力する</button>
+    </div>
+    <p class="note-s">記録はこのブラウザにだけ保存されます。別のパソコンの記録は、そちらで「記録を書き出す」で作った JSON ファイルを、ここで「記録を読み込む」と今の記録に追加できます（今ある記録は消えません）。紙やスクリーンショットの ○× しか残っていない回は「結果を手で入力する」で記録にできます。</p>
 
     <h2 class="sub-h">ルール</h2>
     <ul class="rules">
@@ -486,7 +514,7 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
       <li>気になる問題には「見直し」のマークを付けておけます。問題一覧から、マークした問題や未回答の問題だけに絞れます。</li>
       <li>「2つ選択」などの問題は、正解をすべて選んだときだけ正解です。</li>
       <li>キーボード: ← → で前後の問題、A〜H で選択、M で見直しマーク。</li>
-      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは共有されません）。</li>
+      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは自動では共有されません。受験記録の「記録を書き出す」「記録を読み込む」で移せます）。</li>
     </ul>
   </section>
 
@@ -3661,6 +3689,185 @@ public class Main {
   });
 })();
 
+/* 受験記録の書き出し・読み込み（JSON ファイル）。試験のページと一覧のページで共通。
+
+   受験記録はブラウザ（localStorage）にだけ保存されるので、別のパソコンやブラウザの記録は見えない。
+   書き出したファイルを別の端末で読み込むと、その端末の記録に「足す」ことができる。
+
+   ファイルの形
+     { "format": "java-silver-exam-records", "version": 1, "exportedAt": "2026-10-07T12:00:00.000Z",
+       "exams": { "03": { "title": "自作模擬試験 3", "records": [ 受験記録, ... ] } } }
+   受験記録の形は exam.js の history と同じ。ただし serverId（その端末の backend の番号）は書き出さない。
+   手で入力した回は marks（{ "問番号": "ok" | "ng" | "none" }）で ○× を持ち、answers は空。
+
+   読み込みは足すだけで、今ある記録は消さない。日時・得点・回答が同じ回は登録済みとして飛ばす。
+   足したあとは、受けた日時の古い順に通し番号（第N回）を振り直す。 */
+var ExamRecords = (function () {
+  var PREFIX = "java-silver-exam:";
+  var FORMAT = "java-silver-exam-records";
+  var MAX = 100;
+
+  function read(id, k) {
+    try { return JSON.parse(localStorage.getItem(PREFIX + id + ":" + k)); } catch (e) { return null; }
+  }
+  function write(id, k, v) {
+    try { localStorage.setItem(PREFIX + id + ":" + k, JSON.stringify(v)); return true; } catch (e) { return false; }
+  }
+  function isInt(v) { return typeof v === "number" && isFinite(v) && Math.floor(v) === v; }
+
+  // 受けた日時の古い順に 第1回, 第2回 … を振り直し、新しい順に並べて返す。別の端末の回を足すと日時が前後するため
+  function renumber(list) {
+    list.sort(function (a, b) { return a.at - b.at; }).forEach(function (r, i) { r.no = i + 1; });
+    return list.reverse();
+  }
+
+  // ファイルから来た 1 回分を、決まった形の値だけに整える。形が合わなければ null
+  function clean(r) {
+    if (!r || typeof r !== "object") return null;
+    if (!isInt(r.total) || r.total < 1 || r.total > 500) return null;
+    if (!isInt(r.correct) || r.correct < 0 || r.correct > r.total) return null;
+    if (typeof r.at !== "number" || !isFinite(r.at) || r.at <= 0) return null;
+    var out = {
+      at: r.at,
+      usedMs: typeof r.usedMs === "number" && isFinite(r.usedMs) && r.usedMs >= 0 ? r.usedMs : null,
+      correct: r.correct,
+      total: r.total,
+      rate: r.correct / r.total,
+      passed: r.passed === true,
+      answers: {},
+      flags: [],
+      timeUp: r.timeUp === true,
+      pauses: isInt(r.pauses) && r.pauses >= 0 ? r.pauses : 0,
+      notes: {},
+    };
+    var key = function (k) { return /^\d+$/.test(k) && +k >= 1 && +k <= r.total; };
+    if (r.answers && typeof r.answers === "object") Object.keys(r.answers).forEach(function (k) {
+      var a = r.answers[k];
+      if (key(k) && Array.isArray(a)) out.answers[k] = a.filter(function (x) { return /^[A-H]$/.test(x); });
+    });
+    if (Array.isArray(r.flags)) out.flags = r.flags.filter(function (n) { return isInt(n) && n >= 1 && n <= r.total; });
+    if (r.notes && typeof r.notes === "object") Object.keys(r.notes).forEach(function (k) {
+      if (key(k) && typeof r.notes[k] === "string" && r.notes[k].trim()) out.notes[k] = r.notes[k].slice(0, 5000);
+    });
+    if (r.marks && typeof r.marks === "object") {
+      out.marks = {};
+      Object.keys(r.marks).forEach(function (k) {
+        if (key(k) && /^(ok|ng|none)$/.test(r.marks[k])) out.marks[k] = r.marks[k];
+      });
+    }
+    if (r.origin === "manual" || r.origin === "import") out.origin = r.origin;
+    return out;
+  }
+
+  // 同じ回かどうかの見分け方（日時・得点・回答がすべて同じ）
+  function sig(r) {
+    return [r.at, r.correct, r.total, JSON.stringify(r.marks || r.answers || {})].join("|");
+  }
+
+  // exams: [{ id, title }]。記録が 1 回も無い試験はファイルに入れない
+  function pack(exams) {
+    var out = { format: FORMAT, version: 1, exportedAt: new Date().toISOString(), exams: {} };
+    exams.forEach(function (e) {
+      var h = read(e.id, "history") || [];
+      if (!h.length) return;
+      out.exams[e.id] = {
+        title: e.title,
+        records: h.map(function (r) {
+          var c = {};
+          Object.keys(r).forEach(function (k) { if (k !== "serverId") c[k] = r[k]; });
+          return c;
+        }),
+      };
+    });
+    return out;
+  }
+  function count(file) {
+    return Object.keys(file.exams).reduce(function (n, id) { return n + file.exams[id].records.length; }, 0);
+  }
+
+  function fileName(label) {
+    var d = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return "java-silver-records-" + label + "-" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes()) + ".json";
+  }
+  function download(obj, name) {
+    var blob = new Blob([JSON.stringify(obj, null, 2) + "\n"], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function parse(text) {
+    var obj;
+    try { obj = JSON.parse(text); } catch (e) { throw new Error("JSON として読めないファイルです。"); }
+    if (!obj || obj.format !== FORMAT || !obj.exams || typeof obj.exams !== "object") {
+      throw new Error("このノートの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
+    }
+    return obj;
+  }
+
+  // 読み込んだファイルの記録を、このブラウザの記録に足す。試験ごとの結果を返す
+  function merge(obj) {
+    return Object.keys(obj.exams).filter(function (id) { return /^[\w-]+$/.test(id); }).sort().map(function (id) {
+      var src = obj.exams[id] || {};
+      var list = read(id, "history") || [];
+      var have = {};
+      list.forEach(function (r) { have[sig(r)] = true; });
+      var res = { id: id, title: typeof src.title === "string" ? src.title : "試験 " + id, added: 0, skipped: 0, invalid: 0 };
+      var incoming = (Array.isArray(src.records) ? src.records : []).map(function (r) {
+        var c = clean(r);
+        if (!c) res.invalid++;
+        return c;
+      }).filter(Boolean).sort(function (a, b) { return a.at - b.at; });
+      var ats = {};
+      list.forEach(function (r) { ats[r.at] = true; });
+      incoming.forEach(function (r) {
+        var s = sig(r);
+        if (have[s]) { res.skipped++; return; }
+        have[s] = true;
+        while (ats[r.at]) r.at++;          // 記録は日時で見分けるので、同じ日時の別の回は 1 ミリ秒ずらす
+        ats[r.at] = true;
+        if (!r.origin) r.origin = "import";
+        list.push(r);
+        res.added++;
+      });
+      if (res.added) {
+        list = renumber(list).slice(0, MAX);
+        if (!write(id, "history", list) || !write(id, "seq", list.length ? list[0].no : 0)) res.failed = true;
+      }
+      return res;
+    });
+  }
+
+  // 読み込み結果を、画面に出す文にする
+  function summary(results) {
+    if (!results.length) return "<p>このファイルには受験記録が入っていませんでした。</p>";
+    return "<ul class=\"imp-list\">" + results.map(function (r) {
+      var parts = ["<b>" + r.added + " 回分を追加</b>"];
+      if (r.skipped) parts.push(r.skipped + " 回分は登録済みのため飛ばしました");
+      if (r.invalid) parts.push(r.invalid + " 回分は形が合わず読めませんでした");
+      if (r.failed) parts.push("ブラウザに保存できませんでした");
+      return "<li>" + r.title.replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }) + "：" + parts.join("、") + "</li>";
+    }).join("") + "</ul>";
+  }
+
+  // <input type="file"> で選んだファイルを読み込む
+  function importFile(file, done) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      try { done(null, merge(parse(String(fr.result)))); } catch (e) { done(e); }
+    };
+    fr.onerror = function () { done(new Error("ファイルを読めませんでした。")); };
+    fr.readAsText(file);
+  }
+
+  return { renumber: renumber, pack: pack, count: count, fileName: fileName, download: download, parse: parse, merge: merge, summary: summary, importFile: importFile };
+})();
+
 /* 模擬試験ページの動き。テストのページ（index.html）と振り返りのページ（review.html）で共通。
    問題の HTML はビルド時にすべてページへ書き出してあり、ここでは
    1 問ずつの表示・問題一覧・回答の記録・時間の管理・採点・受験記録を扱う。
@@ -3674,7 +3881,9 @@ public class Main {
    保存（localStorage。キーは java-silver-exam:<試験ID>:...）
      session  受験中の状態。再読み込みしても続きから再開できる。
               「中断」を押すと pausedAt が入り、時計を止めたまま保存される
-     history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ
+     history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ。
+              手で入力した回（origin: "manual"）は選んだ答えの代わりに marks（問番号 → "ok" | "ng" | "none"）を持つ。
+              別の端末から読み込んだ回は origin: "import"。書き出し・読み込みは records.js
      seq      受験回の通し番号
    制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。
    ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。
@@ -3759,6 +3968,7 @@ public class Main {
   }
   function isFlagged(no) { return flags().indexOf(no) >= 0; }
   function status(q) {           // 採点結果での状態
+    if (mode === "result" && R && R.marks) return R.marks[q.no] || "none";   // 手で入力した回
     var sel = picked(q.no);
     return sel.length === 0 ? "none" : sameSet(sel, q.answer) ? "ok" : "ng";
   }
@@ -3783,6 +3993,8 @@ public class Main {
     return save("history", h);
   }
 
+  function usedText(r) { return r.usedMs == null ? "—" : fmt(r.usedMs); }
+  var ORIGIN = { manual: "手入力", import: "読み込み" };
   function noteOf(r) {          // 所要時間に添える但し書き
     var a = [];
     if (r.timeUp) a.push("時間切れ");
@@ -3798,10 +4010,11 @@ public class Main {
     var best = h.reduce(function (m, x) { return x.correct > m.correct ? x : m; }, h[0]);
     var rows = h.map(function (r) {
       var memo = r.notes ? Object.keys(r.notes).filter(function (k) { return r.notes[k]; }).length : 0;
-      return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) + "</td>" +
+      return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) +
+             (ORIGIN[r.origin] ? ' <span class="tag-src">' + ORIGIN[r.origin] + "</span>" : "") + "</td>" +
              "<td><b>" + r.correct + "</b> / " + r.total + "（" + Math.round(r.rate * 100) + "%）" + (r === best && h.length > 1 ? ' <span class="tag-best">最高</span>' : "") + "</td>" +
              '<td class="' + (r.passed ? "pass" : "fail") + '">' + (r.passed ? "合格" : "不合格") + "</td>" +
-             "<td>" + fmt(r.usedMs) + noteOf(r) + "</td>" +
+             "<td>" + usedText(r) + noteOf(r) + "</td>" +
              "<td>" + (memo ? "メモ " + memo + " 件" : "") + "</td>" +
              '<td class="ops"><button type="button" class="btn" data-open="' + r.at + '">結果を開く</button>' +
              '<button type="button" class="btn ghost del" data-del="' + r.at + '" aria-label="第' + r.no + '回の記録を削除">削除</button></td></tr>';
@@ -4172,6 +4385,7 @@ public class Main {
   }
   function hideModal() { $("modal").hidden = true; }
   $("modal").addEventListener("click", function (e) {
+    if (e.target === this && $("mf-grid")) return;   // 手入力の途中で外側を押しても、入力を消さない
     if (e.target === this || e.target.closest("[data-close]") || e.target.closest("[data-ok]")) { hideModal(); return; }
     var j = e.target.closest("[data-jump]");
     if (j) { hideModal(); go(+j.dataset.jump); return; }
@@ -4192,7 +4406,7 @@ public class Main {
       copyText(ta.value, ta, $("report-msg"));
     }
   });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden) hideModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden && !$("mf-grid")) hideModal(); });
 
   function submit(timeUp) {
     if (!S || S.submitted) return;
@@ -4266,9 +4480,10 @@ public class Main {
     $("r-score").innerHTML = r.correct + "<small> / " + r.total + "</small>";
     $("r-judge").textContent = r.passed ? "合格ライン到達" : "合格ラインに届かず";
     $("r-judge").className = "judge " + (r.passed ? "pass" : "fail");
-    $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験<br>" +
+    $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験" +
+      (r.origin === "manual" ? "（○× を手で入力した記録。選んだ選択肢は記録されていません）" : r.origin === "import" ? "（ほかの端末から読み込んだ記録）" : "") + "<br>" +
       "正答率 <b>" + Math.round(r.rate * 100) + "%</b>（合格ライン " + Math.round(meta.passRate * 100) + "%）<br>" +
-      "所要時間 " + fmt(r.usedMs) + " / " + meta.minutes + ":00" + (r.timeUp ? "（時間切れで提出）" : "") +
+      "所要時間 " + (r.usedMs == null ? "記録なし" : fmt(r.usedMs) + " / " + meta.minutes + ":00") + (r.timeUp ? "（時間切れで提出）" : "") +
       (r.pauses ? "　中断 " + r.pauses + " 回（止めていた時間は含みません）" : "");
     $("r-tally").innerHTML =
       '<button type="button" data-tally="ok" class="t-ok"><b>○ ' + cnt.ok + "</b>正解</button>" +
@@ -4357,9 +4572,10 @@ public class Main {
     renderServer();
     var items = qs.map(function (q) {
       var sel = (rec.answers[q.no] || []).slice().sort();
-      return { questionNo: q.no, correct: sameSet(sel, q.answer), selected: sel.join(",") };
+      var ok = rec.marks ? rec.marks[q.no] === "ok" : sameSet(sel, q.answer);   // 手で入力した回は ○× をそのまま送る
+      return { questionNo: q.no, correct: ok, selected: sel.join(",") };
     });
-    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round(rec.usedMs / 1000), items: items })
+    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round((rec.usedMs || 0) / 1000), items: items })
       .then(function (d) {
         rec.serverId = d.summary.id;
         var notes = rec.notes || {};
@@ -4491,6 +4707,126 @@ public class Main {
     start(true);
   });
   $("to-intro").addEventListener("click", toIntro);
+
+  /* ---------------- 受験記録の書き出し・読み込み・手入力 ---------------- */
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
+  var OK_BTN = '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>';
+
+  $("rec-export").addEventListener("click", function () {
+    var file = ExamRecords.pack([{ id: meta.id, title: meta.title }]);
+    if (!ExamRecords.count(file)) {
+      showModal("<h2>書き出す記録がありません</h2><p>この試験の受験記録は、このブラウザにまだありません。</p>" + OK_BTN);
+      return;
+    }
+    ExamRecords.download(file, ExamRecords.fileName(meta.id));
+  });
+  $("rec-file").addEventListener("change", function () {
+    var f = this.files[0];
+    this.value = "";           // 同じファイルをもう一度選んでも反応するように
+    if (!f) return;
+    ExamRecords.importFile(f, function (err, results) {
+      renderHistory();
+      if (err) { showModal("<h2>読み込めませんでした</h2><p>" + esc(err.message) + "</p>" + OK_BTN); return; }
+      showModal("<h2>受験記録を読み込みました</h2>" + ExamRecords.summary(results) +
+                "<p class=\"note-s\">今ある記録はそのまま残っています。ほかの試験の記録が入っていた場合は、それぞれの試験の受験記録に追加しました。</p>" + OK_BTN);
+    });
+  });
+
+  // 紙やスクリーンショットの ○× から受験記録を作る。最初は全問 ○ にしておき、× と未回答の問題だけ押せばよい
+  var MF = null;               // 手入力中の状態 { marks: { 問番号: "ok" | "ng" | "none" }, flags: { 問番号: true }, flagMode }
+  var MF_NEXT = { ok: "ng", ng: "none", none: "ok" };
+  var MF_SYM = { ok: "○", ng: "×", none: "−" };
+  var MF_WORD = { ok: "正解", ng: "不正解", none: "未回答" };
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function localInput(t) {
+    var d = new Date(t);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + "T" + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  }
+  function openManual() {
+    MF = { marks: {}, flags: {}, flagMode: false };
+    qs.forEach(function (q) { MF.marks[q.no] = "ok"; });
+    showModal('<h2>結果を手で入力する</h2>' +
+      '<p class="note-s">スクリーンショットや紙に残った ○× から、受験記録を作ります。最初は全問 ○ になっています。番号を押すたびに ○ → × → 未回答 と変わります。</p>' +
+      '<div class="mf-form">' +
+        '<label>受けた日時 <input type="datetime-local" id="mf-at" value="' + localInput(Date.now()) + '"></label>' +
+        '<label>かかった時間 <input type="number" id="mf-min" min="0" max="999" inputmode="numeric" placeholder="空欄でも可"> 分</label>' +
+        '<label class="chk"><input type="checkbox" id="mf-timeup"> 時間切れだった</label>' +
+      "</div>" +
+      '<div class="mf-tools">' +
+        '<span class="mf-seg" role="group" aria-label="番号を押したときに変えるもの">' +
+          '<button type="button" data-mfmode="mark" aria-pressed="true">○ × を変える</button>' +
+          '<button type="button" data-mfmode="flag" aria-pressed="false">見直しマークを付ける</button>' +
+        "</span>" +
+        '<button type="button" class="btn ghost" data-mfall="ok">すべて ○</button>' +
+        '<button type="button" class="btn ghost" data-mfall="ng">すべて ×</button>' +
+      "</div>" +
+      '<div class="grid mf-grid" id="mf-grid"></div>' +
+      '<p class="mf-count" id="mf-count" aria-live="polite"></p>' +
+      '<p class="note-s">振り返りメモは、保存したあとに開く採点結果の画面で、1問ずつ書けます。</p>' +
+      '<div class="actions"><button type="button" class="btn" data-close>やめる</button>' +
+      '<button type="button" class="btn primary" id="mf-save">保存して振り返りへ</button></div>');
+    paintManual();
+  }
+  function paintManual() {
+    $("mf-grid").innerHTML = qs.map(function (q) {
+      var st = MF.marks[q.no], fl = MF.flags[q.no];
+      return '<button type="button" class="cell ' + st + (fl ? " flagged" : "") + '" data-mf="' + q.no + '" aria-label="問' + q.no + " " + MF_WORD[st] + (fl ? " 見直しマーク" : "") + '">' +
+             q.no + '<span class="mk" aria-hidden="true">' + MF_SYM[st] + "</span></button>";
+    }).join("");
+    var c = { ok: 0, ng: 0, none: 0 };
+    qs.forEach(function (q) { c[MF.marks[q.no]]++; });
+    $("mf-count").textContent = "○ " + c.ok + "　× " + c.ng + "　未回答 " + c.none + "　見直しマーク " + Object.keys(MF.flags).length +
+      "　→ " + c.ok + " / " + N + "（" + Math.round(c.ok / N * 100) + "%）";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mfmode]"), function (b) {
+      b.setAttribute("aria-pressed", String((b.dataset.mfmode === "flag") === MF.flagMode));
+    });
+  }
+  function saveManual() {
+    var at = new Date($("mf-at").value).getTime();
+    if (!isFinite(at)) at = Date.now();
+    var min = $("mf-min").value.trim();
+    var usedMs = min === "" || !(+min >= 0) ? null : Math.round(+min * 60000);
+    var h = historyList();
+    while (h.some(function (x) { return x.at === at; })) at++;   // 記録は日時で見分けるので、同じ日時にしない
+    var right = qs.filter(function (q) { return MF.marks[q.no] === "ok"; }).length;
+    var marks = {};
+    qs.forEach(function (q) { marks[q.no] = MF.marks[q.no]; });
+    var rec = {
+      no: 0, at: at, usedMs: usedMs, correct: right, total: N, rate: right / N, passed: right / N >= meta.passRate,
+      answers: {}, flags: Object.keys(MF.flags).map(Number).sort(function (a, b) { return a - b; }),
+      timeUp: $("mf-timeup").checked, pauses: 0, notes: {}, marks: marks, origin: "manual",
+    };
+    h.push(rec);
+    h = ExamRecords.renumber(h).slice(0, MAX_HISTORY);   // 過去の日時で入れても、第N回が日時の順になるように
+    if (!save("history", h)) {
+      showModal("<h2>保存できませんでした</h2><p>ブラウザの保存領域がいっぱいか、保存が無効になっています。</p>" + OK_BTN);
+      return;
+    }
+    save("seq", h[0].no);
+    MF = null;
+    hideModal();
+    openResult(rec, 0);
+  }
+  $("manual-open").addEventListener("click", openManual);
+  $("modal").addEventListener("click", function (e) {
+    if (!MF || !$("mf-grid")) return;
+    var c = e.target.closest("[data-mf]");
+    if (c) {
+      var no = +c.dataset.mf;
+      if (MF.flagMode) { if (MF.flags[no]) delete MF.flags[no]; else MF.flags[no] = true; }
+      else MF.marks[no] = MF_NEXT[MF.marks[no]];
+      paintManual();
+      var again = $("mf-grid").querySelector('[data-mf="' + no + '"]');
+      if (again) again.focus();
+      return;
+    }
+    var m = e.target.closest("[data-mfmode]");
+    if (m) { MF.flagMode = m.dataset.mfmode === "flag"; paintManual(); return; }
+    var a = e.target.closest("[data-mfall]");
+    if (a) { qs.forEach(function (q) { MF.marks[q.no] = a.dataset.mfall; }); paintManual(); return; }
+    if (e.target.closest("#mf-save")) saveManual();
+  });
 
   probeServer().then(function (ok) {
     serverOn = ok;

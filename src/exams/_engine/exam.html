@@ -71,6 +71,13 @@
     <h2 class="sub-h">受験記録</h2>
     <p class="note-s">提出した回の得点・選んだ答え・見直しマーク・振り返りメモが保存されます。「結果を開く」で、その回の ○× と解説をいつでも見直せます。</p>
     <div id="history"></div>
+    <div class="hist-tools">
+      <button type="button" class="btn" id="rec-export">記録を書き出す</button>
+      <label class="btn" for="rec-file">記録を読み込む</label>
+      <input type="file" id="rec-file" accept=".json,application/json" hidden>
+      <button type="button" class="btn" id="manual-open">結果を手で入力する</button>
+    </div>
+    <p class="note-s">記録はこのブラウザにだけ保存されます。別のパソコンの記録は、そちらで「記録を書き出す」で作った JSON ファイルを、ここで「記録を読み込む」と今の記録に追加できます（今ある記録は消えません）。紙やスクリーンショットの ○× しか残っていない回は「結果を手で入力する」で記録にできます。</p>
 
     <h2 class="sub-h">ルール</h2>
     <ul class="rules">
@@ -80,7 +87,7 @@
       <li>気になる問題には「見直し」のマークを付けておけます。問題一覧から、マークした問題や未回答の問題だけに絞れます。</li>
       <li>「2つ選択」などの問題は、正解をすべて選んだときだけ正解です。</li>
       <li>キーボード: ← → で前後の問題、A〜H で選択、M で見直しマーク。</li>
-      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは共有されません）。</li>
+      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは自動では共有されません。受験記録の「記録を書き出す」「記録を読み込む」で移せます）。</li>
     </ul>
   </section>
 

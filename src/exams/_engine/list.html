@@ -28,20 +28,55 @@
     <div class="xlist">
 <!--{{cards}}-->
     </div>
+
+    <h2 class="sub-h">受験記録を別の端末へ移す</h2>
+    <p class="note-s">受験記録はブラウザにだけ保存されます。別のパソコンで受けた記録は、そちらでこのページの「すべての記録を書き出す」を押して JSON ファイルを作り、こちらで「記録を読み込む」を押すと、今の記録に追加できます（今ある記録は消えません。同じ回は二重に入りません）。</p>
+    <div class="hist-tools">
+      <button type="button" class="btn" id="rec-export-all">すべての記録を書き出す</button>
+      <label class="btn" for="rec-file-all">記録を読み込む</label>
+      <input type="file" id="rec-file-all" accept=".json,application/json" hidden>
+    </div>
+    <p class="note-s" id="rec-msg" aria-live="polite"></p>
     <p class="crumbs"><a href="../">← 統合ノート（テキスト）に戻る</a></p>
   </section>
 </div>
 
 <script>
-/* 各試験の最新の受験結果を、このブラウザの保存内容から表示する */
+<!--{{records}}-->
+</script>
+<script>
+/* 各試験の最新の受験結果を、このブラウザの保存内容から表示する。受験記録の書き出し・読み込みもここで扱う */
 (function () {
-  Array.prototype.forEach.call(document.querySelectorAll("[data-exam]"), function (el) {
+  var cards = Array.prototype.slice.call(document.querySelectorAll("[data-exam]"));
+  function paint() { cards.forEach(function (el) {
     var h = null;
     try { h = JSON.parse(localStorage.getItem("java-silver-exam:" + el.dataset.exam + ":history")); } catch (e) { /* 読めなければ何も出さない */ }
     if (!h || !h.length) return;
     var best = h.reduce(function (m, x) { return x.correct > m.correct ? x : m; }, h[0]);
     el.textContent = "前回 " + h[0].correct + " / " + h[0].total + "（" + Math.round(h[0].rate * 100) + "%）・最高 " +
       best.correct + " / " + best.total + "・受験 " + h.length + " 回";
+  }); }
+  paint();
+
+  var msg = document.getElementById("rec-msg");
+  document.getElementById("rec-export-all").addEventListener("click", function () {
+    var file = ExamRecords.pack(cards.map(function (el) {
+      return { id: el.dataset.exam, title: el.closest(".xcard").querySelector("h2").textContent };
+    }));
+    var n = ExamRecords.count(file);
+    if (!n) { msg.textContent = "このブラウザには、まだ受験記録がありません。"; return; }
+    ExamRecords.download(file, ExamRecords.fileName("all"));
+    msg.textContent = n + " 回分の記録を書き出しました。";
+  });
+  document.getElementById("rec-file-all").addEventListener("change", function () {
+    var f = this.files[0];
+    this.value = "";
+    if (!f) return;
+    ExamRecords.importFile(f, function (err, results) {
+      if (err) { msg.textContent = err.message; return; }
+      msg.innerHTML = "読み込みました。" + ExamRecords.summary(results);
+      paint();
+    });
   });
 })();
 </script>

@@ -11,7 +11,9 @@
    保存（localStorage。キーは java-silver-exam:<試験ID>:...）
      session  受験中の状態。再読み込みしても続きから再開できる。
               「中断」を押すと pausedAt が入り、時計を止めたまま保存される
-     history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ
+     history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ。
+              手で入力した回（origin: "manual"）は選んだ答えの代わりに marks（問番号 → "ok" | "ng" | "none"）を持つ。
+              別の端末から読み込んだ回は origin: "import"。書き出し・読み込みは records.js
      seq      受験回の通し番号
    制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。
    ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。
@@ -96,6 +98,7 @@
   }
   function isFlagged(no) { return flags().indexOf(no) >= 0; }
   function status(q) {           // 採点結果での状態
+    if (mode === "result" && R && R.marks) return R.marks[q.no] || "none";   // 手で入力した回
     var sel = picked(q.no);
     return sel.length === 0 ? "none" : sameSet(sel, q.answer) ? "ok" : "ng";
   }
@@ -120,6 +123,8 @@
     return save("history", h);
   }
 
+  function usedText(r) { return r.usedMs == null ? "—" : fmt(r.usedMs); }
+  var ORIGIN = { manual: "手入力", import: "読み込み" };
   function noteOf(r) {          // 所要時間に添える但し書き
     var a = [];
     if (r.timeUp) a.push("時間切れ");
@@ -135,10 +140,11 @@
     var best = h.reduce(function (m, x) { return x.correct > m.correct ? x : m; }, h[0]);
     var rows = h.map(function (r) {
       var memo = r.notes ? Object.keys(r.notes).filter(function (k) { return r.notes[k]; }).length : 0;
-      return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) + "</td>" +
+      return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) +
+             (ORIGIN[r.origin] ? ' <span class="tag-src">' + ORIGIN[r.origin] + "</span>" : "") + "</td>" +
              "<td><b>" + r.correct + "</b> / " + r.total + "（" + Math.round(r.rate * 100) + "%）" + (r === best && h.length > 1 ? ' <span class="tag-best">最高</span>' : "") + "</td>" +
              '<td class="' + (r.passed ? "pass" : "fail") + '">' + (r.passed ? "合格" : "不合格") + "</td>" +
-             "<td>" + fmt(r.usedMs) + noteOf(r) + "</td>" +
+             "<td>" + usedText(r) + noteOf(r) + "</td>" +
              "<td>" + (memo ? "メモ " + memo + " 件" : "") + "</td>" +
              '<td class="ops"><button type="button" class="btn" data-open="' + r.at + '">結果を開く</button>' +
              '<button type="button" class="btn ghost del" data-del="' + r.at + '" aria-label="第' + r.no + '回の記録を削除">削除</button></td></tr>';
@@ -509,6 +515,7 @@
   }
   function hideModal() { $("modal").hidden = true; }
   $("modal").addEventListener("click", function (e) {
+    if (e.target === this && $("mf-grid")) return;   // 手入力の途中で外側を押しても、入力を消さない
     if (e.target === this || e.target.closest("[data-close]") || e.target.closest("[data-ok]")) { hideModal(); return; }
     var j = e.target.closest("[data-jump]");
     if (j) { hideModal(); go(+j.dataset.jump); return; }
@@ -529,7 +536,7 @@
       copyText(ta.value, ta, $("report-msg"));
     }
   });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden) hideModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden && !$("mf-grid")) hideModal(); });
 
   function submit(timeUp) {
     if (!S || S.submitted) return;
@@ -603,9 +610,10 @@
     $("r-score").innerHTML = r.correct + "<small> / " + r.total + "</small>";
     $("r-judge").textContent = r.passed ? "合格ライン到達" : "合格ラインに届かず";
     $("r-judge").className = "judge " + (r.passed ? "pass" : "fail");
-    $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験<br>" +
+    $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験" +
+      (r.origin === "manual" ? "（○× を手で入力した記録。選んだ選択肢は記録されていません）" : r.origin === "import" ? "（ほかの端末から読み込んだ記録）" : "") + "<br>" +
       "正答率 <b>" + Math.round(r.rate * 100) + "%</b>（合格ライン " + Math.round(meta.passRate * 100) + "%）<br>" +
-      "所要時間 " + fmt(r.usedMs) + " / " + meta.minutes + ":00" + (r.timeUp ? "（時間切れで提出）" : "") +
+      "所要時間 " + (r.usedMs == null ? "記録なし" : fmt(r.usedMs) + " / " + meta.minutes + ":00") + (r.timeUp ? "（時間切れで提出）" : "") +
       (r.pauses ? "　中断 " + r.pauses + " 回（止めていた時間は含みません）" : "");
     $("r-tally").innerHTML =
       '<button type="button" data-tally="ok" class="t-ok"><b>○ ' + cnt.ok + "</b>正解</button>" +
@@ -694,9 +702,10 @@
     renderServer();
     var items = qs.map(function (q) {
       var sel = (rec.answers[q.no] || []).slice().sort();
-      return { questionNo: q.no, correct: sameSet(sel, q.answer), selected: sel.join(",") };
+      var ok = rec.marks ? rec.marks[q.no] === "ok" : sameSet(sel, q.answer);   // 手で入力した回は ○× をそのまま送る
+      return { questionNo: q.no, correct: ok, selected: sel.join(",") };
     });
-    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round(rec.usedMs / 1000), items: items })
+    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round((rec.usedMs || 0) / 1000), items: items })
       .then(function (d) {
         rec.serverId = d.summary.id;
         var notes = rec.notes || {};
@@ -828,6 +837,126 @@
     start(true);
   });
   $("to-intro").addEventListener("click", toIntro);
+
+  /* ---------------- 受験記録の書き出し・読み込み・手入力 ---------------- */
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
+  var OK_BTN = '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>';
+
+  $("rec-export").addEventListener("click", function () {
+    var file = ExamRecords.pack([{ id: meta.id, title: meta.title }]);
+    if (!ExamRecords.count(file)) {
+      showModal("<h2>書き出す記録がありません</h2><p>この試験の受験記録は、このブラウザにまだありません。</p>" + OK_BTN);
+      return;
+    }
+    ExamRecords.download(file, ExamRecords.fileName(meta.id));
+  });
+  $("rec-file").addEventListener("change", function () {
+    var f = this.files[0];
+    this.value = "";           // 同じファイルをもう一度選んでも反応するように
+    if (!f) return;
+    ExamRecords.importFile(f, function (err, results) {
+      renderHistory();
+      if (err) { showModal("<h2>読み込めませんでした</h2><p>" + esc(err.message) + "</p>" + OK_BTN); return; }
+      showModal("<h2>受験記録を読み込みました</h2>" + ExamRecords.summary(results) +
+                "<p class=\"note-s\">今ある記録はそのまま残っています。ほかの試験の記録が入っていた場合は、それぞれの試験の受験記録に追加しました。</p>" + OK_BTN);
+    });
+  });
+
+  // 紙やスクリーンショットの ○× から受験記録を作る。最初は全問 ○ にしておき、× と未回答の問題だけ押せばよい
+  var MF = null;               // 手入力中の状態 { marks: { 問番号: "ok" | "ng" | "none" }, flags: { 問番号: true }, flagMode }
+  var MF_NEXT = { ok: "ng", ng: "none", none: "ok" };
+  var MF_SYM = { ok: "○", ng: "×", none: "−" };
+  var MF_WORD = { ok: "正解", ng: "不正解", none: "未回答" };
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function localInput(t) {
+    var d = new Date(t);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + "T" + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  }
+  function openManual() {
+    MF = { marks: {}, flags: {}, flagMode: false };
+    qs.forEach(function (q) { MF.marks[q.no] = "ok"; });
+    showModal('<h2>結果を手で入力する</h2>' +
+      '<p class="note-s">スクリーンショットや紙に残った ○× から、受験記録を作ります。最初は全問 ○ になっています。番号を押すたびに ○ → × → 未回答 と変わります。</p>' +
+      '<div class="mf-form">' +
+        '<label>受けた日時 <input type="datetime-local" id="mf-at" value="' + localInput(Date.now()) + '"></label>' +
+        '<label>かかった時間 <input type="number" id="mf-min" min="0" max="999" inputmode="numeric" placeholder="空欄でも可"> 分</label>' +
+        '<label class="chk"><input type="checkbox" id="mf-timeup"> 時間切れだった</label>' +
+      "</div>" +
+      '<div class="mf-tools">' +
+        '<span class="mf-seg" role="group" aria-label="番号を押したときに変えるもの">' +
+          '<button type="button" data-mfmode="mark" aria-pressed="true">○ × を変える</button>' +
+          '<button type="button" data-mfmode="flag" aria-pressed="false">見直しマークを付ける</button>' +
+        "</span>" +
+        '<button type="button" class="btn ghost" data-mfall="ok">すべて ○</button>' +
+        '<button type="button" class="btn ghost" data-mfall="ng">すべて ×</button>' +
+      "</div>" +
+      '<div class="grid mf-grid" id="mf-grid"></div>' +
+      '<p class="mf-count" id="mf-count" aria-live="polite"></p>' +
+      '<p class="note-s">振り返りメモは、保存したあとに開く採点結果の画面で、1問ずつ書けます。</p>' +
+      '<div class="actions"><button type="button" class="btn" data-close>やめる</button>' +
+      '<button type="button" class="btn primary" id="mf-save">保存して振り返りへ</button></div>');
+    paintManual();
+  }
+  function paintManual() {
+    $("mf-grid").innerHTML = qs.map(function (q) {
+      var st = MF.marks[q.no], fl = MF.flags[q.no];
+      return '<button type="button" class="cell ' + st + (fl ? " flagged" : "") + '" data-mf="' + q.no + '" aria-label="問' + q.no + " " + MF_WORD[st] + (fl ? " 見直しマーク" : "") + '">' +
+             q.no + '<span class="mk" aria-hidden="true">' + MF_SYM[st] + "</span></button>";
+    }).join("");
+    var c = { ok: 0, ng: 0, none: 0 };
+    qs.forEach(function (q) { c[MF.marks[q.no]]++; });
+    $("mf-count").textContent = "○ " + c.ok + "　× " + c.ng + "　未回答 " + c.none + "　見直しマーク " + Object.keys(MF.flags).length +
+      "　→ " + c.ok + " / " + N + "（" + Math.round(c.ok / N * 100) + "%）";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mfmode]"), function (b) {
+      b.setAttribute("aria-pressed", String((b.dataset.mfmode === "flag") === MF.flagMode));
+    });
+  }
+  function saveManual() {
+    var at = new Date($("mf-at").value).getTime();
+    if (!isFinite(at)) at = Date.now();
+    var min = $("mf-min").value.trim();
+    var usedMs = min === "" || !(+min >= 0) ? null : Math.round(+min * 60000);
+    var h = historyList();
+    while (h.some(function (x) { return x.at === at; })) at++;   // 記録は日時で見分けるので、同じ日時にしない
+    var right = qs.filter(function (q) { return MF.marks[q.no] === "ok"; }).length;
+    var marks = {};
+    qs.forEach(function (q) { marks[q.no] = MF.marks[q.no]; });
+    var rec = {
+      no: 0, at: at, usedMs: usedMs, correct: right, total: N, rate: right / N, passed: right / N >= meta.passRate,
+      answers: {}, flags: Object.keys(MF.flags).map(Number).sort(function (a, b) { return a - b; }),
+      timeUp: $("mf-timeup").checked, pauses: 0, notes: {}, marks: marks, origin: "manual",
+    };
+    h.push(rec);
+    h = ExamRecords.renumber(h).slice(0, MAX_HISTORY);   // 過去の日時で入れても、第N回が日時の順になるように
+    if (!save("history", h)) {
+      showModal("<h2>保存できませんでした</h2><p>ブラウザの保存領域がいっぱいか、保存が無効になっています。</p>" + OK_BTN);
+      return;
+    }
+    save("seq", h[0].no);
+    MF = null;
+    hideModal();
+    openResult(rec, 0);
+  }
+  $("manual-open").addEventListener("click", openManual);
+  $("modal").addEventListener("click", function (e) {
+    if (!MF || !$("mf-grid")) return;
+    var c = e.target.closest("[data-mf]");
+    if (c) {
+      var no = +c.dataset.mf;
+      if (MF.flagMode) { if (MF.flags[no]) delete MF.flags[no]; else MF.flags[no] = true; }
+      else MF.marks[no] = MF_NEXT[MF.marks[no]];
+      paintManual();
+      var again = $("mf-grid").querySelector('[data-mf="' + no + '"]');
+      if (again) again.focus();
+      return;
+    }
+    var m = e.target.closest("[data-mfmode]");
+    if (m) { MF.flagMode = m.dataset.mfmode === "flag"; paintManual(); return; }
+    var a = e.target.closest("[data-mfall]");
+    if (a) { qs.forEach(function (q) { MF.marks[q.no] = a.dataset.mfall; }); paintManual(); return; }
+    if (e.target.closest("#mf-save")) saveManual();
+  });
 
   probeServer().then(function (ok) {
     serverOn = ok;
