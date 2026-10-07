@@ -1,0 +1,3726 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>自作模擬試験 4 ── Java Silver SE 17 模擬試験</title>
+<meta name="description" content="自作模擬試験 3 が黒本より難しすぎた反省から、黒本（Java Silver SE 17 問題集）の模擬試験①・②と同じ難しさにそろえたオリジナル問題です。1問に1つの論点、選択肢は短く、黒本とノートの範囲だけで解けるように作っています。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>document.documentElement.className = "js";</script>
+<style>
+/* ---- note/styles/01-tokens.css ---- */
+:root{
+  --sumi:#1A1C23;
+  --sumi-2:#3D414F;
+  --sumi-3:#6E7382;
+  --washi:#FCFBF8;
+  --washi-2:#F3F1EA;
+  --rule:#E2DED2;
+  --marker:#FFE873;
+  --marker-2:#FFD5E6;
+  --ok:#0F7B5A;
+  --ok-bg:#EAF6F1;
+  --err:#C4304A;
+  --err-bg:#FCEDEF;
+  --run:#A96A00;
+  --run-bg:#FCF3E3;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Shippori Mincho B1",serif;
+  --body:"Noto Sans JP",system-ui,sans-serif;
+}
+
+/* ---- note/styles/02-base.css ---- */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--washi);color:var(--sumi);font-family:var(--body);font-size:16px;line-height:1.9;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+
+/* ---- note/styles/07-code.css ---- */
+.code{border:1px solid var(--rule);border-left:4px solid var(--sumi-3);border-radius:7px;background:#fff;margin:0 0 16px;overflow:hidden}
+.code[data-v=ok]{border-left-color:var(--ok)}
+.code[data-v=err]{border-left-color:var(--err)}
+.code[data-v=run]{border-left-color:var(--run)}
+.cap{display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--rule);font-size:11.5px;font-weight:700;letter-spacing:.04em;background:var(--washi-2)}
+.code[data-v=ok] .cap{background:var(--ok-bg);color:var(--ok)}
+.code[data-v=err] .cap{background:var(--err-bg);color:var(--err)}
+.code[data-v=run] .cap{background:var(--run-bg);color:var(--run)}
+.cap .tag{font-family:var(--mono);font-size:10px;border:1px solid currentColor;border-radius:3px;padding:0 5px;opacity:.75}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.75;-webkit-overflow-scrolling:touch}
+pre code{font-family:inherit}
+/* JetBrains Mono の合字（<= を ≤、== を つながった記号にする）は、Java の記号を正確に読む妨げになるので切る */
+pre,code{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.k{color:#8B2E8B;font-weight:700}
+.s{color:var(--ok)}
+.c{color:var(--sumi-3);font-style:italic}
+.n{color:#1D5FA8}
+
+/* ---- note/styles/09-table.css ---- */
+.tw{overflow-x:auto;margin:0 0 20px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:420px;font-size:14px;background:#fff}
+th,td{border:1px solid var(--rule);padding:9px 12px;text-align:left;vertical-align:top;line-height:1.65}
+th{background:var(--sumi);color:var(--washi);font-weight:700;font-size:13px;letter-spacing:.03em}
+tbody tr:nth-child(even){background:var(--washi)}
+td code{white-space:nowrap}
+/* 例外メッセージのような長いコードを置くセル。td code の nowrap を解除する */
+td.wrap code{white-space:normal;overflow-wrap:anywhere}
+
+/* ---- note/styles/10-list.css ---- */
+ul,ol{margin:0 0 15px;padding-left:1.35em}
+li{margin-bottom:7px}
+.tight li{margin-bottom:3px}
+
+/* ---- exams/_engine/exam.css ---- */
+/* 模擬試験ページの見た目。色とフォントは統合ノートの 01-tokens.css を共有する。
+   body のクラスで画面を切り替える（exam.js の先頭を参照）:
+     mode-intro / mode-test / mode-result（at-summary）/ mode-review
+   受験・採点結果・振り返りは、どれも「1 問ずつ表示＋問題一覧」の同じ形。 */
+
+body { background: var(--washi); }
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 120px; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; }
+
+/* ---------------- 画面ごとの出し分け ---------------- */
+body:not(.mode-test) .only-test,
+body:not(.mode-result) .only-result,
+body:not(.mode-intro) .only-intro,
+body:not(.mode-review) .only-review { display: none !important; }
+body.mode-test .only-intro-review,
+body.mode-result .only-intro-review { display: none !important; }
+body.mode-intro .viewer,
+body.mode-intro .navopen { display: none !important; }
+/* 1 問ずつ表示する。JavaScript が動かないときは全問を並べたまま読める */
+.js .q:not(.is-cur),
+.js body.at-summary .q { display: none; }
+body.mode-result:not(.at-summary) #summary,
+body.at-summary .pager { display: none !important; }
+
+/* ---------------- 上部バー ---------------- */
+.xbar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  min-height: 56px; padding: 6px 16px;
+  background: rgba(252, 251, 248, .95); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.xbar .ttl { font-family: var(--disp); font-weight: 800; font-size: 15px; letter-spacing: .02em; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.xbar .ttl a { color: inherit; text-decoration: none; }
+.xbar .ttl small { font-family: var(--body); font-weight: 500; color: var(--sumi-3); font-size: 12px; margin-left: 8px; }
+.timer {
+  font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: .04em;
+  padding: 4px 10px; border-radius: 6px; background: var(--washi-2); flex: none;
+}
+.timer.warn { background: var(--run-bg); color: var(--run); }
+.timer.danger { background: var(--err-bg); color: var(--err); }
+.count { font-family: var(--mono); font-size: 12.5px; color: var(--sumi-2); flex: none; }
+.hscore { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--sumi-2); flex: none; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--rule);
+  background: #fff; cursor: pointer; font-size: 14px; font-weight: 700; text-decoration: none; color: var(--sumi);
+  flex: none;
+}
+.btn:hover { border-color: var(--sumi-3); }
+.btn.primary { background: var(--sumi); color: var(--washi); border-color: var(--sumi); }
+.btn.primary:hover { background: var(--sumi-2); }
+.btn.danger { background: var(--err); color: #fff; border-color: var(--err); }
+.btn.ghost { background: transparent; }
+.btn[disabled] { opacity: .4; cursor: default; }
+.sub-h { font-size: 16px; margin: 30px 0 8px; }
+.sub-h small { font-size: 12px; font-weight: 500; color: var(--sumi-3); margin-left: 6px; }
+.note-s { font-size: 13px; color: var(--sumi-3); margin: 0 0 10px; }
+.empty { color: var(--sumi-3); font-size: 13.5px; padding: 12px 0; margin: 0; }
+
+/* ---------------- 開始前 ---------------- */
+.intro { padding-top: 48px; }
+.intro .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .18em; color: var(--sumi-3); margin-bottom: 14px; }
+.intro h1 { font-family: var(--disp); font-weight: 800; font-size: clamp(28px, 5vw, 40px); line-height: 1.3; margin: 0 0 12px; }
+.intro .lead { color: var(--sumi-2); max-width: 60ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
+.fact { border: 1px solid var(--rule); background: #fff; border-radius: 8px; padding: 10px 14px; min-width: 120px; }
+.fact b { display: block; font-family: var(--mono); font-size: 20px; }
+.fact span { font-size: 12px; color: var(--sumi-3); }
+.modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 26px 0; }
+.mode-card { border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.mode-card h2 { font-size: 16px; margin: 0; }
+.mode-card p { font-size: 13.5px; color: var(--sumi-2); margin: 0; flex: 1; }
+.rules { font-size: 13.5px; color: var(--sumi-2); padding-left: 1.2em; }
+.rules li { margin-bottom: 4px; }
+.history { width: 100%; font-size: 13.5px; }
+.history td, .history th { padding: 7px 10px; white-space: nowrap; vertical-align: middle; }
+.history td.n { font-weight: 700; }
+.history .ops { display: flex; gap: 6px; }
+.history .ops .btn { min-height: 34px; padding: 0 12px; font-size: 13px; }
+.history .del { color: var(--sumi-3); font-weight: 500; }
+.history .del:hover { color: var(--err); border-color: var(--err); }
+.tag-best { font-size: 11px; font-weight: 700; color: var(--ok); background: var(--ok-bg); border-radius: 99px; padding: 1px 7px; margin-left: 4px; }
+.pass { color: var(--ok); font-weight: 700; }
+.fail { color: var(--err); font-weight: 700; }
+.resume { border: 1px solid var(--run); background: var(--run-bg); border-radius: 10px; padding: 14px 16px; margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.resume p { margin: 0; flex: 1 1 240px; font-size: 14px; }
+.resume b { display: block; font-size: 14.5px; margin-bottom: 2px; }
+/* 中断中は、時計が止まっていることが分かるように色を落ち着かせる */
+.resume.paused { border-color: var(--sumi-3); background: var(--washi-2); }
+
+/* ---------------- 1 問ずつの表示と、横の問題一覧 ---------------- */
+.viewer { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 18px; }
+@media (min-width: 960px) {
+  body:not(.mode-intro) .wrap { max-width: 1200px; }
+  .viewer { grid-template-columns: minmax(0, 1fr) 272px; }
+  .navside { position: sticky; top: 72px; align-self: start; max-height: calc(100vh - 88px); overflow-y: auto; }
+  .navopen, .navclose { display: none !important; }
+}
+/* 狭い画面では問題一覧を下から出すシートにする。
+   背後の本文を止めるのに body を position:fixed にしない（長い本文で重くなるため）。 */
+@media (max-width: 959px) {
+  .navside {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    max-height: 72vh; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateY(101%); visibility: hidden;
+    transition: transform .24s cubic-bezier(.22, .9, .3, 1), visibility .24s;
+  }
+  .navside.open { transform: none; visibility: visible; }
+  .navside .navpanel { border-radius: 14px 14px 0 0; border-bottom: none; padding-bottom: 24px; box-shadow: 0 -8px 30px rgba(26, 28, 35, .15); }
+}
+.scrim { position: fixed; inset: 0; z-index: 50; background: rgba(26, 28, 35, .4); touch-action: none; }
+.navclose { margin-left: auto; border: none; background: none; font-size: 22px; line-height: 1; cursor: pointer; width: 36px; height: 36px; }
+
+.navpanel { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 14px; }
+.navpanel h2 { font-size: 13px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+.tosum {
+  width: 100%; min-height: 38px; margin-bottom: 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--washi);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.tosum[aria-current="true"] { background: var(--sumi); color: var(--washi); border-color: var(--sumi); }
+.navfilter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.navfilter button { border: 1px solid var(--rule); background: #fff; border-radius: 99px; padding: 4px 11px; font-size: 12px; cursor: pointer; min-height: 32px; }
+.navfilter button[aria-pressed="true"] { background: var(--sumi); color: var(--washi); border-color: var(--sumi); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; }
+.grid .empty { grid-column: 1 / -1; }
+.cell {
+  position: relative; height: 40px; border-radius: 7px; border: 1px solid var(--rule); background: #fff;
+  font-family: var(--mono); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.cell:hover { border-color: var(--sumi-3); }
+.cell.done { background: var(--washi-2); border-color: var(--sumi-3); font-weight: 700; }
+.cell.partial { background: var(--run-bg); }
+.cell.cur { outline: 2.5px solid var(--sumi); outline-offset: 1px; }
+.cell.flagged::after { content: ""; position: absolute; top: 3px; left: 3px; width: 7px; height: 9px; background: var(--run); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%); }
+/* 採点結果: ○ × − */
+.cell.ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); font-weight: 700; }
+.cell.ng { background: var(--err-bg); border-color: var(--err); color: var(--err); font-weight: 700; }
+.cell.none { background: var(--washi-2); border-style: dashed; border-color: var(--sumi-3); color: var(--sumi-3); }
+body.mode-result .cell { height: 46px; flex-direction: column; gap: 1px; line-height: 1.1; font-size: 12px; }
+.cell .mk { font-family: var(--body); font-size: 13px; line-height: 1; font-weight: 700; }
+.legend2 { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11.5px; color: var(--sumi-3); margin-top: 10px; }
+.legend2 i {
+  display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-size: 9px; font-weight: 700;
+  width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--rule); vertical-align: -2px; margin-right: 4px;
+}
+.legend2 .l-done { background: var(--washi-2); border-color: var(--sumi-3); }
+.legend2 .l-part { background: var(--run-bg); }
+.legend2 .l-flag { background: var(--run); border-color: var(--run); }
+.legend2 .l-ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+.legend2 .l-ng { background: var(--err-bg); border-color: var(--err); color: var(--err); }
+.legend2 .l-none { background: var(--washi-2); border: 1px dashed var(--sumi-3); color: var(--sumi-3); }
+
+.pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; }
+.pager .btn { min-width: 120px; }
+.pager .pos { font-family: var(--mono); font-size: 12.5px; color: var(--sumi-3); text-align: center; }
+
+/* ---------------- 問題 ---------------- */
+.q { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px 20px; margin-bottom: 18px; scroll-margin-top: 72px; }
+.qhead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.qno { font-family: var(--mono); font-weight: 700; font-size: 14px; }
+.pick { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--washi-2); color: var(--sumi-2); }
+.pick.multi { background: var(--marker); color: var(--sumi); }
+.qch { font-size: 11.5px; color: var(--sumi-3); }
+.verdict { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 99px; }
+.verdict:empty { display: none; }
+.verdict.ok { background: var(--ok-bg); color: var(--ok); }
+.verdict.ng { background: var(--err-bg); color: var(--err); }
+.verdict.none { background: var(--washi-2); color: var(--sumi-3); }
+.flag {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--rule); background: #fff; border-radius: 99px; padding: 5px 12px; font-size: 12.5px; cursor: pointer; min-height: 34px;
+}
+.flag::before { content: ""; width: 10px; height: 12px; background: var(--rule); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%); }
+.flag[aria-pressed="true"] { border-color: var(--run); background: var(--run-bg); color: var(--run); font-weight: 700; }
+.flag[aria-pressed="true"]::before { background: var(--run); }
+body:not(.mode-test) .flag { display: none; }
+.flagmark { font-size: 12px; color: var(--run); font-weight: 700; }
+.stem p { margin: 0 0 12px; }
+.stem .code, .explain .code { margin-bottom: 12px; }
+
+/* コードの行番号 */
+.cbody { display: flex; }
+.cbody pre { flex: 1; min-width: 0; }
+.cbody pre.gut {
+  flex: none; color: var(--sumi-3); text-align: right; user-select: none;
+  padding-right: 10px; padding-left: 12px; border-right: 1px solid var(--rule); background: var(--washi);
+}
+.code.console pre { background: #1f2129; color: #e9e6dd; }
+.code.console .cap { background: #2a2d37; color: #bbb; }
+
+/* 選択肢 */
+.choices { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.choice {
+  display: flex; gap: 12px; align-items: flex-start;
+  border: 1.5px solid var(--rule); border-radius: 10px; padding: 11px 14px; background: #fff; min-height: 48px;
+}
+.choice .key {
+  flex: none; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 700; font-size: 13px; border: 1.5px solid var(--sumi-3); color: var(--sumi-2);
+}
+.choice .ct { flex: 1; min-width: 0; padding-top: 2px; }
+.choice .ct p { margin: 0; }
+.choice .ct .code { margin: 4px 0 0; }
+body.mode-test .choice { cursor: pointer; transition: border-color .12s, background .12s; }
+body.mode-test .choice:hover { border-color: var(--sumi-3); }
+.choice.is-sel { border-color: var(--sumi); background: var(--washi-2); }
+.choice.is-sel .key { background: var(--sumi); border-color: var(--sumi); color: var(--washi); }
+.pickhint { font-size: 12.5px; color: var(--err); margin: 8px 0 0; min-height: 1em; }
+body:not(.mode-test) .pickhint { display: none; }
+
+/* 採点後・振り返り: 正解と自分の選択 */
+body.mode-result .choice.is-answer,
+body.mode-review .choice.is-answer { border-color: var(--ok); background: var(--ok-bg); }
+body.mode-result .choice.is-answer .key,
+body.mode-review .choice.is-answer .key { background: var(--ok); border-color: var(--ok); color: #fff; }
+body.mode-result .choice.is-picked:not(.is-answer) { border-color: var(--err); background: var(--err-bg); }
+body.mode-result .choice.is-picked:not(.is-answer) .key { background: var(--err); border-color: var(--err); color: #fff; }
+.choice .you { font-size: 11px; font-weight: 700; color: var(--sumi-3); margin-left: 6px; }
+
+/* 解説 */
+.explain { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--rule); font-size: 14.5px; }
+body.mode-test .explain, body.mode-test .qch, body.mode-test .verdict { display: none; }
+.explain .ans { font-weight: 700; margin: 0 0 10px; }
+.explain .ans b { font-family: var(--mono); color: var(--ok); font-size: 16px; }
+.explain p { margin: 0 0 10px; }
+.explain ul { margin: 0 0 10px; }
+.refs { background: var(--washi); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px; margin-top: 12px; }
+.refs-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--sumi-3); margin: 0 0 6px !important; }
+.refs ul { list-style: none; padding: 0; margin: 0; }
+.refs li { margin: 0 0 6px; font-size: 13.5px; line-height: 1.6; }
+.refs a { font-weight: 700; }
+.refs span { color: var(--sumi-2); }
+
+/* 振り返りメモ（採点結果のときだけ） */
+.memo { margin-top: 14px; }
+body:not(.mode-result) .memo { display: none; }
+.memo label { display: block; font-size: 12.5px; font-weight: 700; color: var(--sumi-2); margin-bottom: 5px; }
+.memo label small { font-weight: 500; color: var(--sumi-3); margin-left: 6px; }
+.memo textarea {
+  display: block; width: 100%; box-sizing: border-box; min-height: 72px; resize: vertical;
+  border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; background: var(--washi);
+  font: inherit; font-size: 14px; line-height: 1.6;
+}
+.memo textarea:focus { outline: 2px solid var(--sumi-3); outline-offset: 1px; background: #fff; }
+.memo .saved { display: block; font-size: 11.5px; color: var(--ok); min-height: 1.2em; margin-top: 3px; }
+
+/* ---------------- 確認ダイアログ ---------------- */
+.modal { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(26, 28, 35, .45); }
+.dialog { background: #fff; border-radius: 14px; max-width: 520px; width: 100%; padding: 22px 22px 18px; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); max-height: 88vh; overflow-y: auto; }
+.dialog h2 { font-size: 18px; margin: 0 0 10px; }
+.dialog p { font-size: 14px; margin: 0 0 10px; }
+.dialog .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.dialog .chips button { font-family: var(--mono); font-size: 12.5px; border: 1px solid var(--rule); background: var(--washi); border-radius: 6px; padding: 4px 9px; cursor: pointer; min-height: 32px; }
+.dialog .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.warnbox { background: var(--err-bg); color: var(--err); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; font-weight: 700; margin-bottom: 12px; }
+
+/* ---------------- 採点結果の概要 ---------------- */
+.result { margin-bottom: 18px; }
+.score { display: grid; grid-template-columns: auto 1fr; gap: 18px 24px; align-items: center; background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 22px; }
+.score .big { font-family: var(--mono); font-weight: 700; font-size: 44px; line-height: 1; }
+.score .big small { font-size: 18px; color: var(--sumi-3); }
+.score .judge { font-size: 22px; font-weight: 800; }
+.score .meta { font-size: 13.5px; color: var(--sumi-2); line-height: 1.7; }
+.tally { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
+.tally button {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+  border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: 10px 14px; cursor: pointer; font-size: 12.5px; color: var(--sumi-2);
+}
+.tally button:hover { border-color: var(--sumi-3); }
+.tally b { font-family: var(--mono); font-size: 20px; }
+.tally .t-ok b { color: var(--ok); }
+.tally .t-ng b { color: var(--err); }
+.tally .t-flag b { color: var(--run); }
+.bars { margin: 10px 0 0; display: grid; gap: 10px; }
+.bar2 { display: grid; grid-template-columns: minmax(0, 14em) 1fr 4.5em; gap: 10px; align-items: center; font-size: 13px; }
+.bar2 a { color: var(--sumi); text-decoration: none; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar2 .track { height: 10px; background: var(--washi-2); border-radius: 99px; overflow: hidden; }
+.bar2 .fill { height: 100%; background: var(--ok); border-radius: 99px; }
+.bar2 .fill.low { background: var(--err); }
+.bar2 .num { font-family: var(--mono); text-align: right; }
+.actions-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+/* ---------------- 振り返りページ ---------------- */
+.rv-tools { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+.rv-tools button { border: 1px solid var(--rule); background: #fff; border-radius: 99px; padding: 5px 14px; font-size: 13px; cursor: pointer; min-height: 36px; }
+.rv-tools button[aria-pressed="true"] { background: var(--sumi); color: var(--washi); border-color: var(--sumi); }
+.rv-tools span { font-size: 12.5px; color: var(--sumi-3); }
+/* 「正解と解説を隠す」中は、問題ごとの「答えを見る」を押した問題だけ元の表示に戻す */
+body.hide-answers .q:not(.revealed) .explain { display: none; }
+body.hide-answers .q:not(.revealed) .choice.is-answer { border-color: var(--rule); background: #fff; }
+body.hide-answers .q:not(.revealed) .choice.is-answer .key { background: transparent; border-color: var(--sumi-3); color: var(--sumi-2); }
+.reveal { display: none; margin-top: 12px; }
+body.hide-answers .q:not(.revealed) .reveal { display: inline-flex; }
+
+/* ---------------- 試験一覧 ---------------- */
+.xlist { display: grid; gap: 14px; margin-top: 24px; }
+.xcard { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px; }
+.xcard h2 { font-size: 18px; margin: 0 0 6px; }
+.xcard p { margin: 0 0 12px; color: var(--sumi-2); font-size: 14px; }
+.xcard .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.xcard .last { font-size: 13px; color: var(--sumi-2); margin-top: 10px; }
+.crumbs { font-size: 13px; margin-top: 20px; }
+.crumbs a { color: var(--sumi-2); }
+
+/* ---------------- サーバー（backend/ から開いたときだけ） ---------------- */
+.srv-note { font-size: 13px; color: var(--ok); background: var(--ok-bg); border: 1px solid var(--ok); border-radius: 8px; padding: 10px 14px; margin: 16px 0 0; }
+.srv { margin-top: 22px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.srv-st { margin: 0; flex: 1 1 100%; font-size: 13.5px; color: var(--sumi-2); }
+.srv-st.ok { color: var(--ok); }
+.srv-st.ng { color: var(--err); }
+.srv-hint { font-size: 12px; color: var(--sumi-3); }
+.dialog:has(textarea.report) { max-width: 760px; }
+textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--washi-2); color: var(--sumi); resize: vertical; }
+.report-msg { margin-right: auto; font-size: 13px; color: var(--ok); }
+
+/* ---------------- スマホ ---------------- */
+@media (max-width: 700px) {
+  .wrap { padding: 0 12px 120px; }
+  .xbar { padding: 6px 10px; gap: 8px; }
+  .xbar .ttl small { display: none; }
+  .timer { font-size: 16px; padding: 4px 8px; }
+  .count, .hscore { display: none; }
+  .btn { padding: 0 12px; }
+  .q { padding: 14px 12px 16px; border-radius: 10px; }
+  .choice { padding: 10px 11px; gap: 10px; }
+  pre { font-size: 12px; }
+  .cbody pre.gut { padding-left: 8px; padding-right: 7px; }
+  .score { grid-template-columns: 1fr; gap: 10px; }
+  .bar2 { grid-template-columns: minmax(0, 8em) 1fr 4em; font-size: 12px; }
+  .pager .btn { min-width: 0; flex: 1; }
+  .pager .pos { flex: none; max-width: 30%; font-size: 11px; }
+  .stem p code, .explain p code, .choice code, .explain li code { white-space: normal; overflow-wrap: anywhere; }
+  /* 受験記録は表をやめて 1 回ずつのカードにする */
+  #history .tw { overflow: visible; border: none; }
+  .history, .history tbody, .history td { display: block; }
+  .history { min-width: 0; background: none; }
+  .history thead { display: none; }
+  .history tbody tr, .history tbody tr:nth-child(even) { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; padding: 10px 12px; margin-bottom: 10px; }
+  .history td { padding: 0; border: none; background: none; }
+  .history td:empty { display: none; }
+  .history td.ops { width: 100%; margin-top: 8px; }
+  .history td.ops .btn:first-child { flex: 1; }
+}
+</style>
+</head>
+<!-- 1 つのテンプレートで 2 ページを作る。
+     page-test    01/index.html   開始前 → 受験 → 採点結果と振り返り（mode-intro / mode-test / mode-result）
+     page-review  01/review.html  テストをせずに問題と解説を読む（mode-review）
+     どの画面でも「1 問ずつ表示＋横に問題番号の一覧」という同じ形で見る。 -->
+<body class="page-test mode-intro">
+
+<header class="xbar">
+  <div class="ttl"><a href="../">自作模擬試験 4</a><small class="only-review">振り返り</small></div>
+  <span class="count only-test" id="count"></span>
+  <span class="count only-test" id="flagcount"></span>
+  <span class="timer only-test" id="timer" aria-live="off">90:00</span>
+  <span class="hscore only-result" id="hscore"></span>
+  <button type="button" class="btn navopen" id="navopen">問題一覧</button>
+  <button type="button" class="btn ghost only-test" id="pause">中断</button>
+  <button type="button" class="btn primary only-test" id="submit">提出</button>
+  <button type="button" class="btn ghost only-result" id="to-intro">記録一覧へ</button>
+  <a class="btn ghost only-intro" href="review.html">振り返り</a>
+  <a class="btn primary only-review" href="./">テストを受ける</a>
+  <a class="btn ghost only-intro-review" href="../../index.html">統合ノート</a>
+</header>
+
+<div class="wrap">
+
+  <!-- 開始前 -->
+  <section class="intro only-intro">
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 自作模擬試験</div>
+    <h1>自作模擬試験 4</h1>
+    <p class="lead">自作模擬試験 3 が黒本より難しすぎた反省から、黒本（Java Silver SE 17 問題集）の模擬試験①・②と同じ難しさにそろえたオリジナル問題です。1問に1つの論点、選択肢は短く、黒本とノートの範囲だけで解けるように作っています。</p>
+    <div class="facts">
+      <div class="fact"><b>60</b><span>問</span></div>
+      <div class="fact"><b>90</b><span>分</span></div>
+      <div class="fact"><b>65%</b><span>合格ライン（目安）</span></div>
+    </div>
+
+    <p class="srv-note" id="srv-note" hidden>サーバー（backend/）につながっています。提出した回と振り返りメモはサーバーにも保存され、採点結果から弱点レポートを取り出せます。</p>
+
+    <div class="resume" id="resume" hidden>
+      <p><b id="resume-title"></b><span id="resume-text"></span></p>
+      <button type="button" class="btn primary" id="resume-btn">続きから再開</button>
+    </div>
+
+    <div class="modes">
+      <div class="mode-card">
+        <h2>テストモード</h2>
+        <p>90 分の時間制限つきで本番と同じように解きます。用事ができたら「中断」で時計を止めて、あとから続きを受けられます。提出すると採点し、全問の ○× と正解・解説を見直せます。結果は受験記録として保存されます。</p>
+        <button type="button" class="btn primary" id="start">テストを始める</button>
+      </div>
+      <div class="mode-card">
+        <h2>振り返りモード</h2>
+        <p>テストをせずに、問題・正解・解説をそのまま読めるページです。何度でも読み返せます。</p>
+        <a class="btn" href="review.html">問題と解説を読む</a>
+      </div>
+    </div>
+
+    <h2 class="sub-h">受験記録</h2>
+    <p class="note-s">提出した回の得点・選んだ答え・見直しマーク・振り返りメモが保存されます。「結果を開く」で、その回の ○× と解説をいつでも見直せます。</p>
+    <div id="history"></div>
+
+    <h2 class="sub-h">ルール</h2>
+    <ul class="rules">
+      <li>時間はテスト開始の時刻から数えます。「中断」を押さずにページを閉じた場合も時間は進み、90 分になると自動で提出されます。</li>
+      <li><b>中断</b>を押すと時計が止まり、問題は表示されなくなります。回答・見直しマーク・残り時間はこのブラウザに保存され、次に開いたときに「続きから再開」で戻れます。</li>
+      <li>全問を解いていなくても、いつでも提出できます。未回答の問題は不正解になります。</li>
+      <li>気になる問題には「見直し」のマークを付けておけます。問題一覧から、マークした問題や未回答の問題だけに絞れます。</li>
+      <li>「2つ選択」などの問題は、正解をすべて選んだときだけ正解です。</li>
+      <li>キーボード: ← → で前後の問題、A〜H で選択、M で見直しマーク。</li>
+      <li>回答と記録はこのブラウザにだけ保存されます（別の端末やブラウザとは共有されません）。</li>
+    </ul>
+  </section>
+
+  <div class="viewer">
+    <div class="vmain">
+
+      <!-- 採点結果の概要。問題一覧の「結果」を押すと、いつでもここに戻れる -->
+      <section class="result only-result" id="summary">
+        <div class="score">
+          <div class="big" id="r-score"></div>
+          <div>
+            <div class="judge" id="r-judge"></div>
+            <div class="meta" id="r-meta"></div>
+          </div>
+        </div>
+        <div class="tally" id="r-tally"></div>
+        <h2 class="sub-h">章ごとの正答率 <small>章名を押すと統合ノートのその章へ</small></h2>
+        <div class="bars" id="r-bars"></div>
+        <div class="actions-row">
+          <button type="button" class="btn primary" id="review-start">問1から見直す</button>
+          <button type="button" class="btn" id="review-wrong">間違えた問題だけ見直す</button>
+          <button type="button" class="btn ghost" id="again">もう一度受ける</button>
+        </div>
+        <!-- backend/ から開いたときだけ出る。サーバーへの保存と弱点レポート -->
+        <div class="srv" id="srv" hidden></div>
+      </section>
+
+      <!-- 振り返りページの操作 -->
+      <div class="rv-tools only-review">
+        <button type="button" id="hide-toggle" aria-pressed="false">正解と解説を隠す</button>
+        <span>隠すと、問題ごとの「答えを見る」で1問ずつ確かめられます。</span>
+      </div>
+
+      <main id="qlist">
+<article class="q" id="q1" data-no="1" data-answer="B" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 1</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre><pre><code>class Parent {
+    Parent() {
+        System.out.print(&quot;P&quot;);
+    }
+    Parent(String s) {
+        System.out.print(s);
+    }
+}
+class Child extends Parent {
+    Child() {
+        super(&quot;X&quot;);
+        System.out.print(&quot;C&quot;);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        new Child();
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「PC」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「XC」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「PXC」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「CX」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p>Child() の先頭に <code>super(&quot;X&quot;);</code> が書かれているので、引数が String の <code>Parent(String s)</code> が呼ばれて「X」、そのあと Child() の残りで「C」と表示されます。</p>
+<p>super(...) を自分で書いたコンストラクタには、暗黙の <code>super();</code> は入りません。そのため引数なしの Parent() は呼ばれず、「P」は表示されません（A・C は誤り）。親のコンストラクタは子より先に動くので、D の順にもなりません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s02">第5章 02「コンストラクタと super()」</a> <span>── 子のコンストラクタで super(...) を書くと、引数の合う親のコンストラクタが呼ばれる。書いたときは暗黙の super() は入らない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q2" data-no="2" data-answer="C" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 2</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        String s = &quot;java&quot;;
+        s.toUpperCase();
+        s.concat(&quot;!&quot;);
+        System.out.println(s + s.length());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「JAVA!5」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「JAVA4」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「java4」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「java!5」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>String は<strong>不変</strong>です。<code>toUpperCase()</code> も <code>concat(&quot;!&quot;)</code> も、変換した<strong>新しい文字列を返すだけ</strong>で、s そのものは変わりません。戻り値をどこにも代入していないので、s は &quot;java&quot; のままです。</p>
+<p>最後の行は &quot;java&quot; と長さ 4 をつないで「java4」です。s を変えたいときは <code>s = s.toUpperCase();</code> のように代入します。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s07">第2章 07「Stringの不変性」</a> <span>── String は不変。toUpperCase や concat は新しい文字列を返すだけで、戻り値を代入しなければ元の文字列は変わらない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q3" data-no="3" data-answer="A" data-pick="1" data-ch="c1">
+<div class="qhead"><span class="qno">問 3</span><span class="pick">1つ選択</span><span class="qch">第1章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムを、あとに示すコマンドで実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i &lt; args.length; i++) {
+            System.out.print(args[i]);
+        }
+    }
+}</code></pre></div></div>
+<div class="code console"><div class="cbody"><pre><code>&gt; javac Main.java
+&gt; java Main x y z</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「yz」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「xyz」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「xy」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「Mainxy」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p><code>java Main x y z</code> の args は {&quot;x&quot;, &quot;y&quot;, &quot;z&quot;} です。クラス名の Main は args に入りません（D は誤り）。</p>
+<p>for 文は i = 1 から始まるので、args[1] の &quot;y&quot; と args[2] の &quot;z&quot; を表示し、i が args.length（3）になったところで終わります。よって「yz」です。添字は 0 から始まるので、args[0] の &quot;x&quot; は表示されません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s02">第1章 02「コマンドライン引数」</a> <span>── コマンドライン引数は、クラス名の後ろに書いたものが args[0] から順に入る。クラス名は args に入らない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q4" data-no="4" data-answer="B" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 4</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int n = 2;
+        String s = &quot;&quot;;
+        switch (n) {
+            case 1:
+                s += &quot;A&quot;;
+            case 2:
+                s += &quot;B&quot;;
+            case 3:
+                s += &quot;C&quot;;
+                break;
+            default:
+                s += &quot;D&quot;;
+        }
+        System.out.println(s);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「B」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「BC」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「BCD」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「ABC」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p>n は 2 なので <code>case 2:</code> から実行が始まります。</p>
+<p>1. <code>case 2:</code> で「B」を足す。break が無いので、下の case 3 へ流れる（フォールスルー）2. <code>case 3:</code> で「C」を足し、<code>break;</code> で switch を抜ける</p>
+<p>よって「BC」です。break で抜けているので、default の「D」は足されません（C は誤り）。一致した case より上の <code>case 1:</code> は実行されません（D は誤り）。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s08">第3章 08「switch文」</a> <span>── switch 文は一致した case から下へ流れ（フォールスルー）、break で抜ける</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q5" data-no="5" data-answer="A,D" data-pick="2" data-ch="c5">
+<div class="qhead"><span class="qno">問 5</span><span class="pick multi">2つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のクラスがあります。</p>
+<div class="code"><div class="cap">Child.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6</pre><pre><code>class Parent {
+    protected void run() { }
+}
+public class Child extends Parent {
+    // insert code here
+}</code></pre></div></div>
+<p><code>// insert code here</code> の位置に記述したとき、コンパイルが成功するコードを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>public void run() { }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>void run() { }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>private void run() { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>protected void run() { }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>public int run() { return 0; }</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>public static void run() { }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, D</b></p>
+<p>親の <code>run()</code> は protected です。オーバーライドするときは、アクセス修飾子を<strong>同じか、より広く</strong>しなければなりません。広さの順は public ＞ protected ＞ 修飾子なし ＞ private です。</p>
+<ul><li>A: protected → public と広げているので OK。</li><li>B: 修飾子なしは protected より狭いのでエラー。</li><li>C: private はもっと狭いのでエラー。</li><li>D: 同じ protected なので OK。</li><li>E: 引数が同じで戻り値の型だけが違う（void と int）ので、オーバーライドとしてもオーバーロードとしても成り立たずエラー。</li><li>F: 親のインスタンスメソッドを、static メソッドで隠すことはできません。エラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドでは、アクセス修飾子を親より狭くできない（広げるのはよい）。戻り値の型も合わせる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q6" data-no="6" data-answer="D" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 6</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre><pre><code>class Item {
+    static String last;
+    String name;
+    Item(String name) {
+        this.name = name;
+        last = name;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Item a = new Item(&quot;pen&quot;);
+        Item b = new Item(&quot;cup&quot;);
+        System.out.println(a.name + &quot; &quot; + a.last + &quot; &quot; + b.last);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「pen pen cup」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「pen pen pen」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「cup cup cup」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「pen cup cup」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<ul><li><code>name</code> はインスタンスごとのフィールドなので、a.name は &quot;pen&quot; のままです。</li><li><code>last</code> は static フィールドで、クラスに1つしかありません。a を作ったときに &quot;pen&quot; が入り、b を作ったときに同じ last が &quot;cup&quot; で上書きされます。a.last も b.last も、同じ1つの last を読むので &quot;cup&quot; です。</li></ul>
+<p>よって「pen cup cup」です。インスタンスを通して static フィールドを読むのは勧められない書き方ですが、エラーにはなりません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s07">第4章 07「static」</a> <span>── static フィールドはクラスに1つだけで全インスタンスが共有する。どのインスタンスから代入しても同じ1つが書き換わる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q7" data-no="7" data-answer="A" data-pick="1" data-ch="c6">
+<div class="qhead"><span class="qno">問 7</span><span class="pick">1つ選択</span><span class="qch">第6章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        try {
+            System.out.print(&quot;A&quot;);
+            int x = 1 / 0;
+            System.out.print(&quot;B&quot;);
+        } catch (ArithmeticException e) {
+            System.out.print(&quot;C&quot;);
+        } finally {
+            System.out.print(&quot;D&quot;);
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「ACD」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「ABCD」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「AD」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「ACBD」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">「A」と表示されたあと、例外で終了する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>1. 「A」を表示2. <code>1 / 0</code> で ArithmeticException が発生。try の残り（「B」の表示）は<strong>飛ばされる</strong>3. <code>catch (ArithmeticException e)</code> が捕まえて「C」4. 最後に finally で「D」</p>
+<p>よって「ACD」です。例外は catch で処理されたので、プログラムは例外で終了しません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s03">第6章 03「try-catch-finally」</a> <span>── try で例外が起きると残りは飛ばして catch へ進む。finally は例外があってもなくても最後に実行される</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q8" data-no="8" data-answer="B,D" data-pick="2" data-ch="c2">
+<div class="qhead"><span class="qno">問 8</span><span class="pick multi">2つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>メソッドの中に記述したとき、コンパイルが成功するコードを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>int i = 10L;</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>long l = 10;</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>float f = 1.5;</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>double d = 3;</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>byte b = 200;</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>int x = 3.0;</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B, D</b></p>
+<ul><li>A: <code>10L</code> は long 型です。long から int へは縮小になるのでエラー。</li><li>B: int の 10 を long に入れるのは拡大変換なので OK。</li><li>C: <code>1.5</code> は double 型のリテラルです。double から float へは縮小になるのでエラー（<code>1.5f</code> なら OK）。</li><li>D: int の 3 を double に入れるのは拡大変換なので OK（3.0 になる）。</li><li>E: byte に入るのは -128〜127 です。定数でも範囲外の 200 は入らずエラー。</li><li>F: <code>3.0</code> は double 型です。小数点以下が 0 でも、double から int へは縮小なのでエラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── 小さい型から大きい型への代入は自動で変換される（拡大変換）。大きい型から小さい型へはキャストが必要。整数の定数は範囲内なら byte などにも入る</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q9" data-no="9" data-answer="C" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 9</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre><pre><code>class Vehicle {
+    void move() {
+        System.out.print(&quot;move&quot;);
+    }
+}
+class Car extends Vehicle {
+    void honk() {
+        System.out.print(&quot;honk&quot;);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Vehicle v = new Car();
+        v.move();
+        ((Car) v).honk();
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「move」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「honk」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「movehonk」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>変数 v の型は Vehicle なので、<code>v.honk()</code> と書くとコンパイルエラーです（呼べるメソッドは変数の型で決まる）。</p>
+<p>しかしこのプログラムは <code>((Car) v).honk()</code> と、<strong>v を Car 型にキャストしてから</strong>呼んでいます。キャストした結果は Car 型なので honk() を呼べます。v の実体は Car なので、実行時の例外も起きません。よって「movehonk」です。</p>
+<p><code>(Car) v.honk()</code> と括弧を付けずに書くと、<code>v.honk()</code> を先に評価しようとしてコンパイルエラーになります。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 親の型の変数を子の型にキャストすれば、子だけのメソッドを呼べる。キャストは . より結合が弱いので、括弧で囲んでから呼ぶ</span></li><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── 呼び出せるメソッドは、変数の型（宣言型）で決まる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q10" data-no="10" data-answer="D" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 10</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int a = 3;
+        int b = a++ + 2;
+        int c = ++a * 2;
+        System.out.println(a + &quot; &quot; + b + &quot; &quot; + c);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「5 6 10」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「4 5 8」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「5 5 8」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「5 5 10」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p>1. <code>b = a++ + 2</code>: a++ は今の値 3 を使ってから a を 4 にする。b は 3 + 2 = 52. <code>c = ++a * 2</code>: ++a は a を 5 にしてから 5 を使う。c は 5 × 2 = 10</p>
+<p>最後の a は 5 なので「5 5 10」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s02">第3章 02「算術と++／--」</a> <span>── a++ は今の値を使ってから増やし、++a は増やしてから使う</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q11" data-no="11" data-answer="B" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 11</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        Object[] items = {&quot;apple&quot;, 10, &quot;kiwi&quot;};
+        for (Object o : items) {
+            if (o instanceof String s &amp;&amp; s.length() &gt; 4) {
+                System.out.print(s.toUpperCase());
+            }
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「APPLEKIWI」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「APPLE」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">何も表示されない</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p><code>o instanceof String s</code> は、o が String のときだけ true になり、そのとき s に String として入ります。<code>&amp;&amp;</code> の右側は左が true のときだけ評価されるので、そこで s を使えます（D は誤り）。</p>
+<div class="tw"><table><thead><tr><th>要素</th><th>String か</th><th>長さ &gt; 4</th><th>表示</th></tr></thead><tbody><tr><td>&quot;apple&quot;</td><td>はい</td><td>5 なので true</td><td>APPLE</td></tr><tr><td>10</td><td>いいえ</td><td>評価しない</td><td>なし</td></tr><tr><td>&quot;kiwi&quot;</td><td>はい</td><td>4 なので false</td><td>なし</td></tr></tbody></table></div>
+<p>よって「APPLE」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s09">第4章 09「instanceof ★新」</a> <span>── instanceof のパターン変数は、型が合ったときだけ使える。&amp;&amp; の右側でも使える</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q12" data-no="12" data-answer="B,C" data-pick="2" data-ch="c5">
+<div class="qhead"><span class="qno">問 12</span><span class="pick multi">2つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のコードが Vehicle.java に書かれています。</p>
+<div class="code"><div class="cap">Vehicle.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5</pre><pre><code>public sealed interface Vehicle permits Car, Bike {
+}
+
+final class Car implements Vehicle {
+}</code></pre></div></div>
+<p>Vehicle.java の末尾に追加する Bike の宣言として、コンパイルが成功するものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>class Bike implements Vehicle { }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>non-sealed class Bike implements Vehicle { }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>final class Bike implements Vehicle { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>abstract class Bike implements Vehicle { }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>final class Bike extends Vehicle { }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B, C</b></p>
+<p>sealed インタフェースを実装するクラスも、sealed クラスの子と同じく <strong>final・sealed・non-sealed のどれか1つ</strong>を付けなければなりません。</p>
+<ul><li>A: 何も付いていないのでエラー。</li><li>B: non-sealed（ここから先は自由に継承できる）で OK。</li><li>C: final で OK。</li><li>D: abstract は3つのどれでもないのでエラー。</li><li>E: クラスがインタフェースを受け継ぐときは <code>implements</code> です。<code>extends</code> は書けないのでエラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s11">第5章 11「sealed ★新」</a> <span>── sealed インタフェースを実装するクラスにも final・sealed・non-sealed のどれかが必要。インタフェースは extends ではなく implements する</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q13" data-no="13" data-answer="A" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 13</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        String a = &quot;hi&quot;;
+        String b = &quot;hi&quot;;
+        String c = new String(&quot;hi&quot;);
+        System.out.println((a == b) + &quot; &quot; + (a == c) + &quot; &quot; + a.equals(c));
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「true false true」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「true true true」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「false false true」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「true false false」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<ul><li><code>a == b</code>: 同じ内容のリテラルは、定数プールにある<strong>同じインスタンス</strong>を指すので true。</li><li><code>a == c</code>: <code>new String(&quot;hi&quot;)</code> は新しいインスタンスを作るので、a とは別物。false。</li><li><code>a.equals(c)</code>: String の equals は中身を比べるので true。</li></ul>
+<p>よって「true false true」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s07">第2章 07「Stringの不変性」</a> <span>── 同じ内容のリテラルは定数プールの同じインスタンスを指す。new String は毎回新しいインスタンスを作る</span></li><li><a href="../../index.html#c3-s04">第3章 04「比較と等価性」</a> <span>── == は同じインスタンスかどうか、equals は中身が同じかどうかを比べる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q14" data-no="14" data-answer="C" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 14</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre><pre><code>class Animal {
+    String type = &quot;A&quot;;
+    String getType() {
+        return type;
+    }
+}
+class Dog extends Animal {
+    String type = &quot;D&quot;;
+    String getType() {
+        return type;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Dog();
+        System.out.println(a.type + a.getType());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「AA」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「DD」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「AD」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「DA」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<ul><li><code>a.type</code>: <strong>フィールド</strong>はオーバーライドされません。どちらの type を使うかは変数の型（Animal）で決まるので「A」。</li><li><code>a.getType()</code>: <strong>メソッド</strong>はオーバーライドされます。実体の Dog の getType() が呼ばれ、その中の type は Dog のフィールドなので「D」。</li></ul>
+<p>よって「AD」です。「フィールドは変数の型、メソッドは実体の型」と覚えておきましょう。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── フィールドは変数の型で決まり（隠蔽）、インスタンスメソッドは実体の型で決まる（オーバーライド）</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q15" data-no="15" data-answer="C,D,E" data-pick="3" data-ch="c1">
+<div class="qhead"><span class="qno">問 15</span><span class="pick multi">3つ選択</span><span class="qch">第1章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次の2つのファイルがあります。</p>
+<div class="code"><div class="cap">p1/Item.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>package p1;
+
+public class Item {
+    public int a = 1;
+    protected int b = 2;
+    int c = 3;
+    private int d = 4;
+}</code></pre></div></div>
+<div class="code"><div class="cap">p2/Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>package p2;
+
+import p1.Item;
+
+public class Main {
+    public static void main(String[] args) {
+        Item item = new Item();
+        System.out.println(item.a);
+        System.out.println(item.b);
+        System.out.println(item.c);
+        System.out.println(item.d);
+    }
+}</code></pre></div></div>
+<p>Main.java でコンパイルエラーになる行を選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">7 行目</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">8 行目</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">9 行目</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">10 行目</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">11 行目</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C, D, E</b></p>
+<p>Main は Item と<strong>別のパッケージ</strong>にあり、Item を継承してもいません。この位置から使えるのは public のメンバだけです。</p>
+<div class="tw"><table><thead><tr><th>行</th><th>フィールド</th><th>修飾子</th><th>判定</th></tr></thead><tbody><tr><td>8</td><td>a</td><td>public</td><td>OK</td></tr><tr><td>9</td><td>b</td><td>protected</td><td>エラー（同じパッケージか、サブクラスの中からしか使えない）</td></tr><tr><td>10</td><td>c</td><td>修飾子なし</td><td>エラー（同じパッケージからしか使えない）</td></tr><tr><td>11</td><td>d</td><td>private</td><td>エラー（Item の中からしか使えない）</td></tr></tbody></table></div>
+<p>7 行目の <code>new Item()</code> は、public クラスのデフォルトコンストラクタ（public）を呼ぶので問題ありません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s07">第1章 07「アクセス修飾子」</a> <span>── 別パッケージの、サブクラスでないクラスから使えるのは public だけ。protected・修飾子なし・private は使えない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q16" data-no="16" data-answer="D" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 16</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre><pre><code>public class Main {
+    static void m(int x)    { System.out.print(&quot;I&quot;); }
+    static void m(double x) { System.out.print(&quot;D&quot;); }
+    static void m(Object x) { System.out.print(&quot;O&quot;); }
+
+    public static void main(String[] args) {
+        m(5);
+        m(5.0f);
+        m(&quot;x&quot;);
+        m('a');
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「IDOO」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「IOOI」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「IDOD」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「IDOI」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<div class="tw"><table><thead><tr><th>呼び出し</th><th>引数の型</th><th>選ばれるメソッド</th><th>表示</th></tr></thead><tbody><tr><td><code>m(5)</code></td><td>int</td><td><code>m(int)</code> に完全一致</td><td>I</td></tr><tr><td><code>m(5.0f)</code></td><td>float</td><td>float → double の拡大変換で <code>m(double)</code></td><td>D</td></tr><tr><td><code>m(&quot;x&quot;)</code></td><td>String</td><td>String は Object の子なので <code>m(Object)</code></td><td>O</td></tr><tr><td><code>m('a')</code></td><td>char</td><td>char → int の拡大変換で <code>m(int)</code>。ボクシング（Character → Object）より拡大変換が先</td><td>I</td></tr></tbody></table></div>
+<p>よって「IDOI」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは、完全一致 → 拡大変換 → ボクシング の順に、呼び出せる候補を探す</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q17" data-no="17" data-answer="A" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 17</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        List&lt;String&gt; list = new ArrayList&lt;&gt;();
+        list.add(&quot;A&quot;);
+        list.add(&quot;B&quot;);
+        list.add(1, &quot;C&quot;);
+        list.remove(&quot;A&quot;);
+        System.out.println(list + &quot; &quot; + list.size());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「[C, B] 2」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「[B, C] 2」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「[A, C] 2」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「[C, B] 3」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<div class="tw"><table><thead><tr><th>行</th><th>処理</th><th>リスト</th></tr></thead><tbody><tr><td>7・8</td><td>&quot;A&quot;、&quot;B&quot; を末尾に追加</td><td>[A, B]</td></tr><tr><td>9</td><td><code>add(1, &quot;C&quot;)</code>: 位置 1 に割り込ませる</td><td>[A, C, B]</td></tr><tr><td>10</td><td><code>remove(&quot;A&quot;)</code>: 値が &quot;A&quot; の要素を削除</td><td>[C, B]</td></tr></tbody></table></div>
+<p>要素は2つなので「[C, B] 2」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s12">第2章 12「ArrayList」</a> <span>── add(位置, 値) はその位置に割り込ませる。remove(Object) は値で探して削除する。size() は要素の数</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q18" data-no="18" data-answer="B" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 18</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre><pre><code>interface Greeter {
+    default String greet() {
+        return &quot;Hello&quot;;
+    }
+}
+class En implements Greeter {
+}
+class Jp implements Greeter {
+    public String greet() {
+        return &quot;Konnichiwa&quot;;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Greeter a = new En();
+        Greeter b = new Jp();
+        System.out.println(a.greet() + &quot; &quot; + b.greet());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「Hello Hello」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「Hello Konnichiwa」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「Konnichiwa Konnichiwa」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<ul><li>En は greet() を書いていないので、Greeter の default メソッドを受け継ぎ「Hello」。</li><li>Jp は greet() をオーバーライドしているので、Jp のメソッドが使われ「Konnichiwa」。</li></ul>
+<p>default メソッドは本体を持っているので、En のように何も書かなくてもコンパイルできます。よって「Hello Konnichiwa」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s10">第5章 10「default / static / private」</a> <span>── 実装クラスは default メソッドを受け継ぐ。オーバーライドすれば、そのクラスのメソッドが使われる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q19" data-no="19" data-answer="C" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 19</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        for (int i = 0; i &lt; 6; i++) {
+            if (i == 2) {
+                continue;
+            }
+            if (i == 4) {
+                break;
+            }
+            System.out.print(i);
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「0134」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「01」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「013」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「01345」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<ul><li>i = 0, 1: そのまま表示</li><li>i = 2: <code>continue</code> で表示を飛ばし、次の周（i = 3）へ</li><li>i = 3: 表示</li><li>i = 4: <code>break</code> でループを抜ける。4 は表示されない</li></ul>
+<p>よって「013」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s11">第3章 11「break / continue / ラベル」</a> <span>── continue はその周の残りを飛ばして次の周へ、break はループを抜ける</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q20" data-no="20" data-answer="A,D,E" data-pick="3" data-ch="c6">
+<div class="qhead"><span class="qno">問 20</span><span class="pick multi">3つ選択</span><span class="qch">第6章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のうち、RuntimeException のサブクラス（非検査例外）を選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">NullPointerException</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">IOException</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">Exception</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">ClassCastException</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">ArithmeticException</div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct">FileNotFoundException</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, D, E</b></p>
+<div class="tw"><table><thead><tr><th>例外</th><th>親</th><th>種類</th></tr></thead><tbody><tr><td>NullPointerException</td><td>RuntimeException</td><td>非検査例外</td></tr><tr><td>ClassCastException</td><td>RuntimeException</td><td>非検査例外</td></tr><tr><td>ArithmeticException</td><td>RuntimeException</td><td>非検査例外</td></tr><tr><td>IOException</td><td>Exception</td><td>検査例外</td></tr><tr><td>FileNotFoundException</td><td>IOException</td><td>検査例外</td></tr><tr><td>Exception</td><td>Throwable</td><td>検査例外（RuntimeException の親）</td></tr></tbody></table></div>
+<p>Exception は RuntimeException の<strong>親</strong>であって、子ではありません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s01">第6章 01「階層と3分類」</a> <span>── RuntimeException の子孫は非検査例外。IOException・FileNotFoundException・Exception は検査例外</span></li><li><a href="../../index.html#c6-s02">第6章 02「覚える例外名」</a> <span>── NullPointerException・ClassCastException・ArithmeticException は RuntimeException の子</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q21" data-no="21" data-answer="B,D,F" data-pick="3" data-ch="c5">
+<div class="qhead"><span class="qno">問 21</span><span class="pick multi">3つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次の抽象クラスの <code>// insert code here</code> に挿入したとき、コンパイルが成功するコードを選びなさい。</p>
+<div class="code"><div class="cap">Shape.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3</pre><pre><code>public abstract class Shape {
+    // insert code here
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>void move();</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>abstract double area();</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>abstract void draw() { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>void show() { }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>private abstract void hide();</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>static Shape create() { return null; }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B, D, F</b></p>
+<ul><li>A: abstract が付いていないメソッドには本体 <code>{ }</code> が必要です。エラー。</li><li>B: 抽象メソッド（abstract 付き・本体なし）。OK。</li><li>C: 抽象メソッドに本体は書けません（空の <code>{ }</code> でも不可）。エラー。</li><li>D: 本体のある具象メソッド。抽象クラスにも書けます。OK。</li><li>E: private メソッドはサブクラスでオーバーライドできないので、abstract と組み合わせられません。エラー。</li><li>F: static メソッドも書けます。OK。</li></ul>
+<p>「本体なしなら abstract が必要、abstract なら本体なし」の組み合わせを確かめるのが基本です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── 抽象クラスには、抽象メソッド（本体なし）も具象メソッド（本体あり）も static メソッドも書ける。abstract と private は組み合わせられない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q22" data-no="22" data-answer="C" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 22</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre><pre><code>class Tank {
+    private int fuel;
+
+    Tank(int fuel) {
+        fuel = fuel * 2;
+    }
+
+    int range() {
+        int km = 0;
+        for (int i = 1; i &lt;= 3; i++) {
+            km += fuel + i;
+        }
+        return km;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(new Tank(5).range());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「36」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「30」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「6」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「0」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>コンストラクタの <code>fuel = fuel * 2;</code> は、左も右も<strong>引数</strong>の fuel です。引数が 10 になるだけで、フィールドの fuel は既定値の 0 のままです。</p>
+<p>range() の中の fuel はフィールド（0）なので、km は (0 + 1) + (0 + 2) + (0 + 3) = 6 です。</p>
+<p>A の「36」は、フィールドが 10 になったと考えた場合（11 + 12 + 13）の値です。フィールドに入れるには <code>this.fuel = fuel * 2;</code> と書きます。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s05">第4章 05「this と this()」</a> <span>── フィールドと同じ名前の引数があると、this を付けない名前は引数を指す。フィールドに入れるには this.名前 が必要</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q23" data-no="23" data-answer="B" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 23</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        String s = &quot;abcde&quot;;
+        System.out.println(s.substring(1, 3) + s.indexOf('d') + s.charAt(4));
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「bcd3e」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「bc3e」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「bc4e」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「abc3e」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p>&quot;abcde&quot; の位置は a=0, b=1, c=2, d=3, e=4 です。</p>
+<ul><li><code>substring(1, 3)</code>: 位置 1 から、位置 3 の<strong>手前</strong>まで → &quot;bc&quot;</li><li><code>indexOf('d')</code>: 'd' の位置 → 3</li><li><code>charAt(4)</code>: 位置 4 の文字 → 'e'</li></ul>
+<p>つなげて「bc3e」です。A は substring の終了位置を含めた誤り、C は位置を 1 から数えた誤りです。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s08">第2章 08「Stringのメソッド」</a> <span>── substring(開始, 終了) は終了の位置を含まない。indexOf は最初に見つかった位置、charAt はその位置の文字。位置は 0 から数える</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q24" data-no="24" data-answer="D" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 24</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のクラスの <code>// insert code here</code> に挿入したとき、コンパイルエラーになるものを選びなさい。</p>
+<div class="code"><div class="cap">B.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>class A {
+    void show(int x) {
+        System.out.println(&quot;A&quot;);
+    }
+}
+public class B extends A {
+    // insert code here
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>@Override void show(int y) { }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>void show(long x) { }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>@Override public void show(int x) { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>@Override void show(long x) { }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p><code>@Override</code> は「このメソッドは親のメソッドをオーバーライドしています」という印です。オーバーライドになっていないと、コンパイルエラーになります。</p>
+<ul><li>A: 引数の型が親と同じ int なので、オーバーライドです。引数の名前（x と y）は関係ありません。OK。</li><li>B: 引数の型が long で親と違うので、オーバーロード（新しい別のメソッド）です。@Override が無いので問題ありません。OK。</li><li>C: 引数が同じ int で、アクセスを広げている（修飾子なし → public）だけなので、オーバーライドです。OK。</li><li>D: 引数が long なのでオーバーライドではありません。それなのに @Override を付けているのでエラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s04">第5章 04「オーバーロードとの区別」</a> <span>── 引数の型が同じならオーバーライド、違えばオーバーロード。@Override を付けたのにオーバーライドになっていないとコンパイルエラー</span></li><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドでは引数の名前は関係なく、アクセス修飾子は広げてもよい</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q25" data-no="25" data-answer="B" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 25</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int x = 0;
+        if (x &gt; 0 &amp;&amp; ++x &gt; 0) { }
+        if (x == 0 || ++x &gt; 0) { }
+        if (x == 0 | ++x &gt; 0) { }
+        System.out.println(x);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「0」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「1」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「2」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「3」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<ul><li>4 行目（<code>&amp;&amp;</code>）: 左の <code>x &gt; 0</code> が false なので、右の <code>++x</code> は評価されない。x は 0</li><li>5 行目（<code>||</code>）: 左の <code>x == 0</code> が true なので、右の <code>++x</code> は評価されない。x は 0</li><li>6 行目（<code>|</code>）: <code>|</code> は短絡しないので、左が true でも右の <code>++x</code> が<strong>評価される</strong>。x は 1</li></ul>
+<p>よって「1」です。記号が2つ（<code>&amp;&amp;</code>・<code>||</code>）なら短絡、1つ（<code>&amp;</code>・<code>|</code>）なら両方を評価します。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s05">第3章 05「論理演算子と短絡」</a> <span>── &amp;&amp; は左が false、|| は左が true なら右を評価しない。&amp; と | は両方を必ず評価する</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q26" data-no="26" data-answer="A,C" data-pick="2" data-ch="c4">
+<div class="qhead"><span class="qno">問 26</span><span class="pick multi">2つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のクラスの <code>// insert code here</code> に挿入したとき、コンパイルが成功するコードを選びなさい。</p>
+<div class="code"><div class="cap">Calc.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4</pre><pre><code>public class Calc {
+    void calc(int a, double b) { }
+    // insert code here
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>void calc(double a, int b) { }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>int calc(int x, double y) { return 0; }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>void calc(int a) { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>private void calc(int a, double b) { }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>void calc(int b, double a) { }</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>static void calc(int a, double b) { }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, C</b></p>
+<p>同じ名前のメソッドを並べられるのは、<strong>引数の型・数・並び</strong>のどれかが違うときだけです。</p>
+<ul><li>A: (double, int) は (int, double) と並びが違うので OK。</li><li>B: 引数は (int, double) で同じ。戻り値の型と引数名が違うだけなのでエラー。</li><li>C: 引数の数が違うので OK。</li><li>D: アクセス修飾子が違うだけなのでエラー。</li><li>E: 引数名を入れ替えただけで、型の並びは (int, double) のまま。エラー。</li><li>F: static かどうかは区別に使われません。引数が同じなのでエラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは引数の型・数・並びで区別する。戻り値の型・引数名・アクセス修飾子だけの違いは区別にならない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q27" data-no="27" data-answer="B,E" data-pick="2" data-ch="c5">
+<div class="qhead"><span class="qno">問 27</span><span class="pick multi">2つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のインタフェースがあります。</p>
+<div class="code"><div class="cap">Printer.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3</pre><pre><code>public interface Printer {
+    void print(String s);
+}</code></pre></div></div>
+<p>Printer を実装したクラスの宣言として、コンパイルが成功するものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>class MyPrinter implements Printer { void print(String s) { } }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>class MyPrinter implements Printer { public void print(String s) { } }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>class MyPrinter implements Printer { public void print(Object s) { } }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>class MyPrinter implements Printer { public String print(String s) { return s; } }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>abstract class MyPrinter implements Printer { }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B, E</b></p>
+<ul><li>A: インタフェースのメソッドは暗黙に public です。修飾子なしは public より狭いのでエラー。</li><li>B: public で、引数も戻り値も同じなので OK。</li><li>C: 引数が Object なので別のメソッド（オーバーロード）です。print(String) を実装していないのでエラー。</li><li>D: 引数が同じで戻り値の型だけが違う（void と String）のでエラー。</li><li>E: 抽象クラスは、インタフェースのメソッドを実装しないままでかまいません。OK。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s09">第5章 09「インタフェース」</a> <span>── インタフェースのメソッドは暗黙に public abstract。実装クラスは public で、引数と戻り値をそろえてオーバーライドする。抽象クラスなら実装しなくてよい</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q28" data-no="28" data-answer="C" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 28</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int[][] a = {{1, 2}, {3, 4, 5}};
+        System.out.println(a[1].length + a[0][1]);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「4」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「6」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「5」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「32」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に ArrayIndexOutOfBoundsException がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<ul><li><code>a[1]</code> は2行目の配列 {3, 4, 5} なので、<code>a[1].length</code> は 3。</li><li><code>a[0][1]</code> は1行目 {1, 2} の位置 1 なので 2。</li></ul>
+<p>どちらも int なので足し算になり、3 + 2 = 5 です。文字列が入っていないので「32」のような連結にはなりません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s11">第2章 11「配列」</a> <span>── 2次元配列の a[i] は i 行目の配列。a[i].length はその行の要素数で、行ごとに違ってよい</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q29" data-no="29" data-answer="A,C" data-pick="2" data-ch="c1">
+<div class="qhead"><span class="qno">問 29</span><span class="pick multi">2つ選択</span><span class="qch">第1章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>import 文を書かずに、クラス名だけで使えるクラスを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>String</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>ArrayList</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>Math</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>Scanner</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>List</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, C</b></p>
+<p><strong>java.lang パッケージ</strong>のクラスは、import を書かなくても自動で使えます。String と Math は java.lang のクラスです（Integer・System・Object なども同じ）。</p>
+<p>ArrayList・Scanner・List は <strong>java.util パッケージ</strong>のクラスなので、<code>import java.util.ArrayList;</code> や <code>import java.util.*;</code> が必要です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s06">第1章 06「import と import static」</a> <span>── java.lang パッケージ（String・Math・Integer・System など）は自動で import される。java.util などは import が必要</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q30" data-no="30" data-answer="A" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 30</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のクラスの <code>// insert code here</code> に挿入したとき、コンパイルが成功するコードを選びなさい。</p>
+<div class="code"><div class="cap">Child.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>class Parent {
+    Object get() {
+        return null;
+    }
+}
+public class Child extends Parent {
+    // insert code here
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>String get() { return &quot;&quot;; }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>int get() { return 0; }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>void get() { }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>private Object get() { return null; }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>オーバーライドするメソッドの戻り値は、親と<strong>同じ型か、そのサブクラス</strong>にできます（共変戻り値）。</p>
+<ul><li>A: String は Object の子なので OK。</li><li>B: int は基本データ型で、Object の子ではありません。エラー。</li><li>C: void は Object の子ではありません。エラー。</li><li>D: 修飾子なし → private とアクセスを狭めているのでエラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドの戻り値は、親と同じ型かそのサブクラス（共変戻り値）。基本データ型は Object の子ではない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q31" data-no="31" data-answer="E" data-pick="1" data-ch="c6">
+<div class="qhead"><span class="qno">問 31</span><span class="pick">1つ選択</span><span class="qch">第6章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre><pre><code>class Res implements AutoCloseable {
+    public void close() {
+        System.out.print(&quot;C&quot;);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        try (Res r = new Res()) {
+            System.out.print(&quot;T&quot;);
+            throw new RuntimeException();
+        } catch (RuntimeException e) {
+            System.out.print(&quot;E&quot;);
+        } finally {
+            System.out.print(&quot;F&quot;);
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「TECF」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「TEFC」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「TEF」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「CTEF」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">「TCEF」と表示される</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>E</b></p>
+<p>1. try の本体で「T」を表示し、例外を投げる2. try ブロックを抜けるときに、リソース r が<strong>自動で close</strong> される。「C」3. そのあと catch で「E」4. 最後に finally で「F」</p>
+<p>よって「TCEF」です。try-with-resources では、<strong>close が catch と finally より先</strong>です（A・B は誤り）。close を書き忘れても、自動で呼ばれます（C は誤り）。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s09">第6章 09「try-with-resources」</a> <span>── try-with-resources のリソースは、try ブロックを抜けるときに自動で close される。close は catch・finally より先</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q32" data-no="32" data-answer="D" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 32</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre><pre><code>class A {
+    static {
+        System.out.print(&quot;S&quot;);
+    }
+    {
+        System.out.print(&quot;I&quot;);
+    }
+    A() {
+        System.out.print(&quot;C&quot;);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        new A();
+        new A();
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「SICSIC」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「ISCIC」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「SCIIC」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「SICIC」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<ul><li><code>static { }</code>（static 初期化ブロック）は、クラス A を最初に使うときに<strong>1回だけ</strong>動きます。「S」</li><li><code>{ }</code>（インスタンス初期化ブロック）は <strong>new のたび</strong>に、コンストラクタの本体より先に動きます。「I」</li><li>そのあとコンストラクタの本体。「C」</li></ul>
+<p>1回目の new で「SIC」、2回目は static が動かないので「IC」。合わせて「SICIC」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s08">第4章 08「初期化の順序」</a> <span>── static 初期化ブロックはクラスを最初に使うときに1回だけ。インスタンス初期化ブロックは new のたびに、コンストラクタの本体より先に動く</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q33" data-no="33" data-answer="A,C,F" data-pick="3" data-ch="c2">
+<div class="qhead"><span class="qno">問 33</span><span class="pick multi">3つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>メソッドの中に記述したとき、コンパイルが成功する宣言を選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>char c1 = 'a';</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>char c2 = &quot;a&quot;;</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>char c3 = 65;</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>char c4 = 'ab';</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>char c5 = -1;</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>char c6 = 'あ';</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, C, F</b></p>
+<ul><li>A: シングルクォートで囲んだ1文字なので OK。</li><li>B: ダブルクォートで囲むと String になり、char には入りません。エラー。</li><li>C: int の定数 65 は char の範囲（0〜65535）に入るので OK。文字コード 65 の 'A' になります。</li><li>D: シングルクォートの中に書けるのは1文字だけです。エラー。</li><li>E: char は負の数を持てません。範囲外なのでエラー。</li><li>F: 日本語の文字も1文字なら char に入ります。OK。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s02">第2章 02「リテラルの書き方」</a> <span>── char のリテラルは ' ' で囲んだ1文字。&quot;a&quot; は String。int の定数は 0〜65535 の範囲なら char に代入できる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q34" data-no="34" data-answer="A" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 34</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre><pre><code>class Animal { }
+class Dog extends Animal { }
+class Cat extends Animal { }
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Cat();
+        Dog d = (Dog) a;
+        System.out.println(&quot;OK&quot;);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">実行時に ClassCastException がスローされる</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「OK」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">実行時に NullPointerException がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>Animal 型の変数 a を Dog にキャストしています。Animal は Dog の親なので、<strong>コンパイルは通ります</strong>（a の中身が Dog の可能性があるため）。</p>
+<p>しかし実行時に中身を確かめると Cat なので、Dog として扱えず <strong>ClassCastException</strong> がスローされます。「OK」は表示されません。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 親の型から子の型へのキャストはコンパイルできるが、実体がその子でなければ実行時に ClassCastException</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q35" data-no="35" data-answer="B" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 35</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int i = 10;
+        do {
+            i -= 3;
+        } while (i &gt; 5);
+        System.out.println(i);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「7」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「4」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「1」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">ループが終了せず、何も表示されない</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<div class="tw"><table><thead><tr><th>回</th><th>本体のあとの i</th><th>条件 <code>i &gt; 5</code></th></tr></thead><tbody><tr><td>1</td><td>10 − 3 = 7</td><td>true（続ける）</td></tr><tr><td>2</td><td>7 − 3 = 4</td><td>false（抜ける）</td></tr></tbody></table></div>
+<p>ループを抜けたときの i は 4 です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s10">第3章 10「繰り返しと2次元配列」</a> <span>── do-while は本体を先に実行してから条件を調べる。条件が false になったところで抜ける</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q36" data-no="36" data-answer="D" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 36</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre><pre><code>public class Main {
+    static void change(int x, int[] arr) {
+        x = 10;
+        arr[0] = 10;
+    }
+    public static void main(String[] args) {
+        int x = 1;
+        int[] arr = {1};
+        change(x, arr);
+        System.out.println(x + &quot; &quot; + arr[0]);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「1 1」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「10 10」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「10 1」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「1 10」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p>Java の引数は、すべて<strong>値のコピー</strong>が渡されます。</p>
+<ul><li><code>int x</code>: 数値 1 のコピーが渡されます。change の中で x を 10 にしても、main の x は 1 のまま。</li><li><code>int[] arr</code>: 配列への参照（どの配列かという情報）のコピーが渡されます。main と change の arr は<strong>同じ配列</strong>を指しているので、<code>arr[0] = 10</code> は main からも見えます。</li></ul>
+<p>よって「1 10」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s03">第4章 03「メソッドと引数」</a> <span>── 引数は値のコピーが渡される。基本データ型を変えても呼び出し元は変わらないが、配列の中身を変えると呼び出し元の配列も変わる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q37" data-no="37" data-answer="B,D" data-pick="2" data-ch="c5">
+<div class="qhead"><span class="qno">問 37</span><span class="pick multi">2つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のコードを確認してください。</p>
+<div class="code"><div class="cap">Sample.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>interface A {
+    default void hello() {
+        System.out.println(&quot;A&quot;);
+    }
+}
+interface B {
+    default void hello() {
+        System.out.println(&quot;B&quot;);
+    }
+}
+public class Sample implements A, B {
+    // some code
+}</code></pre></div></div>
+<p>Sample クラスについての説明として、正しいものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">hello をオーバーライドしなければ、先に書いた A の hello が使われる</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">hello をオーバーライドしなければ、コンパイルエラーになる</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">オーバーライドした hello の中で <code>super.hello();</code> と書くと、A の hello を呼べる</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">オーバーライドした hello の中で <code>A.super.hello();</code> と書くと、A の hello を呼べる</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">同じ default メソッドを持つ A と B を、同時に implements することはできない</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B, D</b></p>
+<p>A と B から同じ hello() を受け継ぐと、どちらを使うか決まらないので、<strong>Sample で hello() をオーバーライドしなければコンパイルエラー</strong>です（B が正しい、A は誤り）。implements すること自体はできます（E は誤り）。</p>
+<p>オーバーライドした中でインタフェースの default を呼ぶには、<code>インタフェース名.super.メソッド()</code> と書きます（D が正しい）。クラスの中の <code>super.hello()</code> は親クラス（ここでは Object）を指すので、A の hello は呼べません（C は誤り）。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s10">第5章 10「default / static / private」</a> <span>── 同じ default メソッドを2つのインタフェースから受け継いだら、オーバーライドしなければならない。インタフェース名.super.メソッド() で片方を呼べる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q38" data-no="38" data-answer="D" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 38</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイルしたとき、コンパイルエラーになる行を選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre><pre><code>import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        var count = 0;
+        var name = &quot;Java&quot;;
+        var list = new ArrayList&lt;String&gt;();
+        count = &quot;10&quot;;
+        list.add(name);
+        System.out.println(list + &quot; &quot; + count);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">5 行目</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">6 行目</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">7 行目</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">8 行目</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーは発生しない</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p>var で宣言した変数は、初期化の右辺から型が決まり、そのあと変わりません。</p>
+<ul><li>5 行目: count は int に決まる</li><li>6 行目: name は String に決まる</li><li>7 行目: list は <code>ArrayList&lt;String&gt;</code> に決まる</li><li>8 行目: int の count に String の &quot;10&quot; は入らないので<strong>エラー</strong></li></ul>
+<p>var は「何でも入る型」ではなく、「型を書く手間を省くだけ」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s06">第2章 06「var（型推論）」</a> <span>── var で宣言した変数の型は、初期化の右辺で決まって変わらない。あとから別の型の値は入れられない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q39" data-no="39" data-answer="A" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 39</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre><pre><code>class Animal {
+    String sound() { return &quot;A&quot;; }
+}
+class Dog extends Animal {
+    String sound() { return &quot;W&quot;; }
+}
+class Cat extends Animal {
+    String sound() { return &quot;N&quot;; }
+}
+public class Main {
+    public static void main(String[] args) {
+        Animal[] list = { new Dog(), new Cat(), new Animal() };
+        for (Animal a : list) {
+            System.out.print(a.sound());
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「WNA」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「AAA」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「WN」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>配列の型は Animal ですが、どのメソッドが動くかは<strong>実体のクラス</strong>で決まります（ポリモーフィズム）。</p>
+<ul><li>Dog のインスタンス → Dog の sound() で「W」</li><li>Cat のインスタンス → Cat の sound() で「N」</li><li>Animal のインスタンス → Animal の sound() で「A」</li></ul>
+<p>よって「WNA」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 親の型の配列に子のインスタンスを入れても、呼ばれるのは実体のクラスでオーバーライドしたメソッド</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q40" data-no="40" data-answer="C" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 40</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre><pre><code>class Point {
+    int x, y;
+    Point() {
+        this(5);
+    }
+    Point(int x) {
+        this(x, x * 2);
+    }
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Point p = new Point();
+        System.out.println(p.x + &quot;,&quot; + p.y);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「0,0」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「5,0」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「5,10」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「10,5」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p><code>new Point()</code> から、this(...) で引数の合うコンストラクタへ順につながります。</p>
+<p>1. <code>Point()</code> → <code>this(5)</code> で <code>Point(int x)</code> へ（x は 5）2. <code>Point(int x)</code> → <code>this(x, x * 2)</code> で <code>Point(int x, int y)</code> へ（5 と 10）3. <code>Point(int x, int y)</code> で、フィールドの x に 5、y に 10 を入れる</p>
+<p>よって「5,10」です。this(...) は各コンストラクタの先頭に書いているので、正しい書き方です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s05">第4章 05「this と this()」</a> <span>── this(...) で同じクラスの別のコンストラクタを呼べる。引数の合うコンストラクタへ順につながっていく</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q41" data-no="41" data-answer="B" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 41</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムを実行して「147」と表示させたい。<code>// insert code here</code> の位置に記述するコードとして、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int[][] m = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+        for (int i = 0; i &lt; m.length; i++) {
+            // insert code here
+        }
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>System.out.print(m[0][i]);</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>System.out.print(m[i][0]);</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>System.out.print(m[i][i]);</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>System.out.print(m[i][2]);</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p>m[i][j] の i は行、j は列です。1, 4, 7 は各行の<strong>最初の列</strong>（列 0）なので、行 i を変えながら <code>m[i][0]</code> を読みます。</p>
+<ul><li>A: 行 0 の列 i → 「123」</li><li>C: 対角線 → 「159」</li><li>D: 各行の最後の列 → 「369」</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s10">第3章 10「繰り返しと2次元配列」</a> <span>── 2次元配列 m[i][j] の i は行、j は列。行を変えながら同じ列を読むと、縦に並んだ要素が取り出せる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q42" data-no="42" data-answer="C" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 42</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>class Base {
+    public String toString() {
+        return &quot;Base&quot;;
+    }
+}
+class Sub extends Base {
+}
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(new Sub());
+        System.out.println(&quot;[&quot; + new Sub() + &quot;]&quot;);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「Sub」「[Sub]」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「Sub@1b6d3586」のような文字列が2行表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「Base」「[Base]」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>println にオブジェクトを渡したときも、文字列と + でつないだときも、そのオブジェクトの <strong>toString()</strong> が呼ばれます。</p>
+<p>Sub は toString を書いていませんが、親の Base でオーバーライドした toString を受け継いでいます。そのため、どちらも &quot;Base&quot; が使われ、「Base」「[Base]」と表示されます。</p>
+<p>B の「クラス名@…」の形は、どのクラスも toString をオーバーライドしていない（Object の toString が使われる）場合です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s13">第5章 13「toString / equals / hashCode」</a> <span>── println や文字列の連結では toString() が呼ばれる。子が toString をオーバーライドしていなければ、親でオーバーライドしたものが使われる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q43" data-no="43" data-answer="A,C" data-pick="2" data-ch="c2">
+<div class="qhead"><span class="qno">問 43</span><span class="pick multi">2つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>メソッドの中に記述したとき、コンパイルが成功する配列の宣言を選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>int[] a = new int[3];</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>int[] b = new int[];</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>int c[] = {1, 2, 3};</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>int[3] d;</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>int[] e = new int[2]{1, 2};</code></div></li>
+<li class="choice" data-key="F"><span class="key">F</span><div class="ct"><code>int g[3] = {1, 2, 3};</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, C</b></p>
+<ul><li>A: 要素数 3 の配列を作る基本の形。OK。</li><li>B: new で作るときは要素数が必要です。エラー。</li><li>C: [] は変数名の後ろに書いてもよく、初期化子 <code>{ }</code> で作れます。OK。</li><li>D: 宣言の [] の中に要素数は書けません。エラー。</li><li>E: 初期化子を使うときは要素数を書きません（<code>new int[]{1, 2}</code> なら OK）。エラー。</li><li>F: 変数名の後ろの [] にも、要素数は書けません。エラー。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s11">第2章 11「配列」</a> <span>── 配列は new 型[要素数] で作るか、{ } の初期化子で作る。宣言の [] に要素数は書けず、初期化子を使うときは要素数を書かない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q44" data-no="44" data-answer="D" data-pick="1" data-ch="c6">
+<div class="qhead"><span class="qno">問 44</span><span class="pick">1つ選択</span><span class="qch">第6章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre><pre><code>public class Main {
+    static int count() {
+        int n = 10;
+        try {
+            n++;
+            return n;
+        } finally {
+            n = 0;
+            System.out.print(&quot;F&quot;);
+        }
+    }
+    public static void main(String[] args) {
+        System.out.println(count());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「F0」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「11F」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「F10」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「F11」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p>1. try の中で n は 11 になり、<code>return n;</code> の時点で返す値 11 が決まる2. メソッドを抜ける前に finally が実行される。n を 0 にして「F」を表示3. 決まっていた 11 が返り、main で「11」を表示</p>
+<p>よって「F11」です。finally で n を変えても、すでに決まった戻り値は変わりません（A は誤り）。「F」は count() の中で、main の println より先に表示されます（B は誤り）。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s06">第6章 06「finallyとreturn」</a> <span>── return があっても finally は実行される。return する値は finally より前に決まっているので、finally で変数を変えても戻り値は変わらない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q45" data-no="45" data-answer="C" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 45</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイルしたとき、コンパイルエラーになる行を選びなさい。</p>
+<div class="code"><div class="cap">Sub.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre><pre><code>class Base {
+    final int MAX = 10;
+    final void show() { }
+}
+public class Sub extends Base {
+    void show() { }
+    void test() {
+        System.out.println(MAX);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">2 行目</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">3 行目</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">6 行目</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">8 行目</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーは発生しない</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<ul><li>2 行目: final のフィールドを宣言と同時に初期化しています。OK。</li><li>3 行目: final メソッドの宣言そのものは問題ありません。OK。</li><li>6 行目: 親の final メソッド show() をオーバーライドしようとしているので<strong>エラー</strong>。</li><li>8 行目: final 変数を読むだけなので OK（変えようとするとエラー）。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s08">第5章 08「final」</a> <span>── final メソッドはオーバーライドできない。final 変数は読むことはできるが、再代入できない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q46" data-no="46" data-answer="C,E" data-pick="2" data-ch="c4">
+<div class="qhead"><span class="qno">問 46</span><span class="pick multi">2つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のメソッドの定義のうち、コンパイルが成功するものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>int f() { return; }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>void g() { return 1; }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>void v() { return; }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>int h(boolean b) { if (b) return 1; }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>int k() { return 'a'; }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C, E</b></p>
+<ul><li>A: 戻り値の型が int なのに、値を返していません。エラー。</li><li>B: void のメソッドは値を返せません。エラー。</li><li>C: void のメソッドで、値なしの <code>return;</code> は書けます（そこでメソッドを抜ける）。OK。</li><li>D: b が false のときに return が無いので、「missing return statement」のエラー。</li><li>E: char の 'a' は int に拡大変換できる（97 になる）ので OK。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s03">第4章 03「メソッドと引数」</a> <span>── 戻り値が void なら return に値を書けない。戻り値の型があれば、どの経路でも値を return する。値は戻り値の型に代入できる型にする</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q47" data-no="47" data-answer="A" data-pick="1" data-ch="c1">
+<div class="qhead"><span class="qno">問 47</span><span class="pick">1つ選択</span><span class="qch">第1章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムがあり、カレントディレクトリに Hello.class はありません。</p>
+<div class="code"><div class="cap">Hello.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5</pre><pre><code>public class Hello {
+    public static void main(String[] args) {
+        System.out.println(args.length + &quot;:&quot; + args[0]);
+    }
+}</code></pre></div></div>
+<p>次のコマンドを実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code console"><div class="cbody"><pre><code>&gt; java Hello.java Java SE</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「2:Java」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「3:Hello.java」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「1:Java SE」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「2:Hello.java」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルしていないため、実行できない</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p><code>java Hello.java</code> のように .java のファイル名を渡すと、コンパイルせずにそのまま実行できます（<strong>ソースファイルモード</strong>）。.class を作っていなくても動くので、E は誤りです。</p>
+<p>ファイル名 Hello.java は args に入らず、その後ろの <code>Java</code> と <code>SE</code> が args[0]・args[1] になります。args.length は 2、args[0] は &quot;Java&quot; なので「2:Java」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s03">第1章 03「コンパイルと実行」</a> <span>── java ファイル名.java と書くと、コンパイルせずにそのまま実行できる（ソースファイルモード）。ファイル名の後ろに書いたものがコマンドライン引数になる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q48" data-no="48" data-answer="B" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 48</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre><pre><code>class Box {
+    int size;
+    Box(int size) {
+        this.size = size;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Box a = new Box(1);
+        Box b = new Box(1);
+        String s = new String(&quot;x&quot;);
+        String t = new String(&quot;x&quot;);
+        System.out.println(a.equals(b) + &quot; &quot; + s.equals(t));
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「true true」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「false true」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「false false」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「true false」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<ul><li><code>a.equals(b)</code>: Box は equals をオーバーライドしていないので、Object の equals が使われます。これは == と同じく「同じインスタンスか」を比べるので、別々に new した a と b は false。</li><li><code>s.equals(t)</code>: String は equals を「中身が同じか」を比べるようにオーバーライドしているので true。</li></ul>
+<p>よって「false true」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s13">第5章 13「toString / equals / hashCode」</a> <span>── equals をオーバーライドしていないクラスは、Object の equals（同じインスタンスかどうか）を使う。String は中身を比べるようにオーバーライドしている</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q49" data-no="49" data-answer="D" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 49</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>メソッドの中に記述したとき、コンパイルエラーになるものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>Integer a = 5;</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>Object b = 5;</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>long c = Integer.valueOf(5);</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>Long d = 5;</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<ul><li>A: int → Integer のボクシング。OK。</li><li>B: int → Integer に包んでから、親の Object として扱う。OK。</li><li>C: Integer → int にほどいてから、long に広げる。OK。</li><li>D: int を Long にするには「long に広げてから包む」の2段階が必要で、これはできません。エラー。<code>Long d = 5L;</code> なら OK です。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── ボクシングは int ⇄ Integer のような対応する型の間だけ。int を long に広げてから Long に包むことはできない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q50" data-no="50" data-answer="A" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 50</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre><pre><code>abstract class Shape {
+    abstract double area();
+}
+class Square extends Shape {
+    double side = 2;
+    double size() {
+        return side * side;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Shape s = new Square();
+        System.out.println(s.area());
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「4.0」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「0.0」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>Square は抽象クラス Shape を継承していますが、抽象メソッド <code>area()</code> をオーバーライドしていません（<code>size()</code> は名前が違う別のメソッドです）。abstract の付いていないクラスは、受け継いだ抽象メソッドをすべて実装しなければならないので、Square でコンパイルエラーになります。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── 抽象クラスを継承した具象クラスは、すべての抽象メソッドをオーバーライドしなければならない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q51" data-no="51" data-answer="C" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 51</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        int count = 0;
+        outer:
+        for (int i = 0; i &lt; 3; i++) {
+            for (int j = 0; j &lt; 3; j++) {
+                if (j == 1) {
+                    continue outer;
+                }
+                count++;
+            }
+        }
+        System.out.println(count);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「6」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「9」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「3」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「1」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>内側のループは j = 0 のときに count++ し、j = 1 になると <code>continue outer;</code> で<strong>外側のループの次の周</strong>へ進みます。内側の j = 2 は実行されません。</p>
+<p>外側は i = 0, 1, 2 の3周あり、1周につき count++ は1回だけなので、count は 3 です。</p>
+<p>A の「6」は、<code>continue outer</code> を内側のループの continue（j = 1 だけ飛ばす）と考えた場合の値です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s11">第3章 11「break / continue / ラベル」</a> <span>── continue ラベル名 は、内側のループを打ち切って外側のループの次の周へ進む</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q52" data-no="52" data-answer="B" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 52</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>record Point(int x, int y) {
+}
+public class Main {
+    public static void main(String[] args) {
+        Point p = new Point(1, 2);
+        System.out.println(p.x() + p.y() + &quot; &quot; + p);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「12 Point[x=1, y=2]」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「3 Point[x=1, y=2]」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「3 Point@1b6d3586」のような形で表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<ul><li>record には、コンポーネントと同じ名前のアクセサ <code>x()</code>・<code>y()</code> が自動で作られます（getX() ではありません）。</li><li><code>p.x() + p.y()</code> は int 同士なので先に足し算され 3。そのあと &quot; &quot; と p をつなぎます。</li><li>record の toString は自動で作られ、<code>Point[x=1, y=2]</code> の形になります（C は普通のクラスの場合）。</li></ul>
+<p>よって「3 Point[x=1, y=2]」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s10">第4章 10「record ★新」</a> <span>── record にはコンポーネントと同じ名前のアクセサ（x() など）と、「型名[名前=値, …]」の形の toString が自動で作られる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q53" data-no="53" data-answer="D,E" data-pick="2" data-ch="c5">
+<div class="qhead"><span class="qno">問 53</span><span class="pick multi">2つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次の2つのファイルがあります。</p>
+<div class="code"><div class="cap">p1/A.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7</pre><pre><code>package p1;
+
+public class A {
+    public int a = 1;
+    protected int b = 2;
+    int c = 3;
+}</code></pre></div></div>
+<div class="code"><div class="cap">p2/B.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9</pre><pre><code>package p2;
+
+import p1.A;
+
+public class B extends A {
+    void test() {
+        // insert code here
+    }
+}</code></pre></div></div>
+<p><code>// insert code here</code> の位置に記述したとき、コンパイルが成功するコードを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>System.out.println(c);</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>System.out.println(new A().b);</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>System.out.println(new A().c);</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>System.out.println(b);</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>System.out.println(a);</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D, E</b></p>
+<p>B は A のサブクラスですが、別のパッケージにあります。</p>
+<ul><li>A・C: c は修飾子なし（同じパッケージからだけ）なので、別パッケージの B からは使えません。エラー。</li><li>B: protected の b でも、<code>new A()</code> で作った A 型のインスタンスを通すと、別パッケージからは使えません。エラー。</li><li>D: 継承した自分の b として使うのは OK。</li><li>E: public の a はどこからでも使えます。OK。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s12">第5章 12「アクセス修飾子と継承」</a> <span>── 別パッケージのサブクラスは、継承した protected のメンバを自分のものとして使える。修飾子なしのメンバは使えない。親の型のインスタンスを new して protected を使うことはできない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q54" data-no="54" data-answer="A" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 54</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder(&quot;abc&quot;);
+        sb.append(&quot;d&quot;);
+        String s = sb.toString();
+        sb.deleteCharAt(0);
+        System.out.println(s + &quot; &quot; + sb);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「abcd bcd」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「bcd bcd」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「abc bc」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「abcd abcd」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">コンパイルエラーが発生する</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<p>1. <code>append(&quot;d&quot;)</code> で sb は &quot;abcd&quot; になる（StringBuilder は代入しなくても自分が変わる）2. <code>toString()</code> で、その時点の中身 &quot;abcd&quot; を String として取り出し、s に入れる3. <code>deleteCharAt(0)</code> で sb は &quot;bcd&quot; になる。s は別の String なので &quot;abcd&quot; のまま</p>
+<p>よって「abcd bcd」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s09">第2章 09「StringBuilder」</a> <span>── StringBuilder は自分自身を書き換える。toString() で取り出した String は別物なので、そのあと StringBuilder を変えても影響しない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q55" data-no="55" data-answer="E" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 55</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre><pre><code>class Base {
+    void show() {
+        System.out.print(&quot;B&quot;);
+    }
+}
+class Sub extends Base {
+    void show() {
+        System.out.print(&quot;S&quot;);
+        super.show();
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Base b = new Sub();
+        b.show();
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「BS」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「B」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「S」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">「SS」と表示される</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">「SB」と表示される</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>E</b></p>
+<p>変数の型は Base ですが、実体は Sub なので、オーバーライドした Sub の show() が動きます。</p>
+<p>1. Sub の show() で「S」2. <code>super.show()</code> で親の Base の show() を呼び「B」</p>
+<p>よって「SB」です。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドしたメソッドの中で super.メソッド() と書くと、親のメソッドを呼べる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q56" data-no="56" data-answer="A,E" data-pick="2" data-ch="c6">
+<div class="qhead"><span class="qno">問 56</span><span class="pick multi">2つ選択</span><span class="qch">第6章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のメソッドの定義のうち、コンパイルが成功するものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct"><code>void m() throws Exception { throw new Exception(); }</code></div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct"><code>void m() { throw new Exception(); }</code></div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct"><code>void m() throws RuntimeException { throw new Exception(); }</code></div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct"><code>void m() { try { throw new Exception(); } finally { } }</code></div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct"><code>void m() { throw new RuntimeException(); }</code></div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A, E</b></p>
+<p>Exception は<strong>検査例外</strong>です。投げるメソッドは、catch で捕まえるか、throws に書いて呼び出し元に任せなければなりません。</p>
+<ul><li>A: throws Exception と書いているので OK。</li><li>B: catch も throws も無いのでエラー。</li><li>C: throws に書いた RuntimeException は Exception の子なので、Exception を任せたことになりません。エラー。</li><li>D: finally は例外を捕まえないので、Exception は外へ出ていきます。エラー。</li><li>E: RuntimeException は<strong>非検査例外</strong>なので、throws を書かなくても投げられます。OK。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s07">第6章 07「throw / throws」</a> <span>── 検査例外（Exception など）を throw するメソッドは、catch するか throws に書く。非検査例外（RuntimeException など）は不要</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q57" data-no="57" data-answer="C" data-pick="1" data-ch="c4">
+<div class="qhead"><span class="qno">問 57</span><span class="pick">1つ選択</span><span class="qch">第4章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre><pre><code>public class Main {
+    int value = 5;
+
+    void print() {
+        System.out.println(value);
+    }
+
+    public static void main(String[] args) {
+        Main m = new Main();
+        m.print();
+        print();
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「5」が1回表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「5」が2回表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>C</b></p>
+<p>main は static メソッドなので、「どのインスタンスの」という情報（this）がありません。</p>
+<ul><li><code>m.print();</code>: インスタンス m を通して呼んでいるので OK。</li><li><code>print();</code>: インスタンスを指定せずにインスタンスメソッドを呼んでいるので、<strong>コンパイルエラー</strong>です。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s07">第4章 07「static」</a> <span>── static メソッドの中からは、インスタンスのフィールドやメソッドを名前だけでは使えない。インスタンスを作って、それを通して使う</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q58" data-no="58" data-answer="D" data-pick="1" data-ch="c2">
+<div class="qhead"><span class="qno">問 58</span><span class="pick">1つ選択</span><span class="qch">第2章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        for (int i = 0; i &lt; 3; i++) {
+            int sum = i * 2;
+        }
+        System.out.println(sum);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「4」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「6」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「0」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>D</b></p>
+<p>sum は for 文のブロック <code>{ }</code> の中で宣言したローカル変数なので、使えるのはブロックの中だけです。ブロックの外の 6 行目では sum が見つからず、コンパイルエラーになります。</p>
+<p>ループの外で使いたいときは、for 文より前に <code>int sum = 0;</code> と宣言しておきます。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s05">第2章 05「宣言・初期化・スコープ」</a> <span>── ブロック（{ }）の中で宣言した変数は、そのブロックの中でしか使えない</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q59" data-no="59" data-answer="B" data-pick="1" data-ch="c3">
+<div class="qhead"><span class="qno">問 59</span><span class="pick">1つ選択</span><span class="qch">第3章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>次のプログラムをコンパイル、実行したときの結果として、正しいものを選びなさい。</p>
+<div class="code"><div class="cap">Main.java</div><div class="cbody"><pre class="gut" aria-hidden="true">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre><pre><code>public class Main {
+    public static void main(String[] args) {
+        String[] days = {&quot;SAT&quot;, &quot;MON&quot;, &quot;TUE&quot;};
+        int total = 0;
+        for (String d : days) {
+            total += switch (d) {
+                case &quot;SAT&quot;, &quot;SUN&quot; -&gt; 0;
+                case &quot;MON&quot; -&gt; 1;
+                default -&gt; 2;
+            };
+        }
+        System.out.println(total);
+    }
+}</code></pre></div></div></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">「1」と表示される</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">「3」と表示される</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">「5」と表示される</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">コンパイルエラーが発生する</div></li>
+<li class="choice" data-key="E"><span class="key">E</span><div class="ct">実行時に例外がスローされる</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>B</b></p>
+<p>アロー形式の switch 式は、一致した case の値を1つだけ返し、下へ流れません。</p>
+<ul><li>&quot;SAT&quot; → <code>case &quot;SAT&quot;, &quot;SUN&quot;</code> に一致して 0</li><li>&quot;MON&quot; → 1</li><li>&quot;TUE&quot; → どれにも一致しないので default の 2</li></ul>
+<p>合計 0 + 1 + 2 = 3 です。switch 式は値を返す式なので、<code>total +=</code> の右辺に書けます。</p>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s09">第3章 09「switch式 ★新」</a> <span>── アロー（-&gt;）の switch 式は一致した case の値を返し、下へ流れない。1つの case に複数の値をカンマで並べられる</span></li></ul></div>
+</div>
+</article>
+<article class="q" id="q60" data-no="60" data-answer="A" data-pick="1" data-ch="c5">
+<div class="qhead"><span class="qno">問 60</span><span class="pick">1つ選択</span><span class="qch">第5章</span><span class="verdict"></span><span class="flagmark" hidden>見直しマーク</span><button type="button" class="flag" aria-pressed="false">見直し</button></div>
+<div class="stem"><p>シールクラス（sealed クラス）についての説明として、正しいものを選びなさい。</p></div>
+<ol class="choices">
+<li class="choice" data-key="A"><span class="key">A</span><div class="ct">permits に書いたサブクラスには、final・sealed・non-sealed のどれかを付けなければならない</div></li>
+<li class="choice" data-key="B"><span class="key">B</span><div class="ct">permits に書いていないクラスでも、同じパッケージにあれば継承できる</div></li>
+<li class="choice" data-key="C"><span class="key">C</span><div class="ct">non-sealed を付けたクラスは、ほかのクラスから継承できない</div></li>
+<li class="choice" data-key="D"><span class="key">D</span><div class="ct">sealed クラスには abstract を付けられない</div></li>
+</ol>
+<p class="pickhint" aria-live="polite"></p>
+
+<div class="explain">
+<p class="ans">正解：<b>A</b></p>
+<ul><li>A: 正しい。sealed クラスの子は、final（これ以上継承させない）・sealed（さらに限定する）・non-sealed（制限を外す）のどれかを宣言します。</li><li>B: 誤り。継承できるのは permits に書いたクラスだけです。同じパッケージでも、書いていなければエラーです。</li><li>C: 誤り。non-sealed は「ここから先は自由に継承してよい」という意味です。</li><li>D: 誤り。<code>abstract sealed class</code> のように組み合わせられます。</li></ul>
+<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s11">第5章 11「sealed ★新」</a> <span>── sealed クラスは permits に書いたクラスだけに継承を許す。許可されたサブクラスには final・sealed・non-sealed のどれかを付ける</span></li></ul></div>
+</div>
+</article>
+      </main>
+
+      <div class="pager">
+        <button type="button" class="btn" id="prev">← 前へ</button>
+        <span class="pos" id="pos"></span>
+        <button type="button" class="btn primary" id="next">次へ →</button>
+      </div>
+    </div>
+
+    <aside class="navside" id="navside" aria-label="問題一覧">
+      <div class="navpanel">
+        <h2><span id="navtitle">問題一覧</span> <button type="button" class="navclose" id="navclose" aria-label="閉じる">×</button></h2>
+        <button type="button" class="tosum only-result" id="tosum">結果の概要</button>
+        <div class="navfilter" id="navfilter"></div>
+        <div class="grid" id="grid"></div>
+        <div class="legend2" id="legend"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="modal" id="modal" hidden><div class="dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
+
+<script type="application/json" id="exam-meta">{"id":"04","title":"自作模擬試験 4","minutes":90,"passRate":0.65,"total":60,"chapters":{"c1":"第1章 概要とプログラム作成","c2":"第2章 基本データ型と文字列","c3":"第3章 演算子と制御構造","c4":"第4章 クラスとインスタンス","c5":"第5章 継承とインタフェース","c6":"第6章 例外処理"},"noteHref":"../../index.html"}</script>
+<script>
+/* コードブロックの簡易シンタックスハイライト。
+   pre code の textContent を読み、キーワード／文字列／行コメント／数値だけを
+   span で包む。外部ライブラリを持ち込まないための最小実装。*/
+(function () {
+  var KW = "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while|var|record|sealed|permits|yield|true|false|null";
+  var RE = new RegExp("(\\/\\/[^\\n]*)|(\"(?:[^\"\\\\]|\\\\.)*\")|\\b(" + KW + ")\\b|\\b(\\d+)\\b","g");
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  document.querySelectorAll("pre code").forEach(function(el){
+    var src = el.textContent, out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while((m = RE.exec(src)) !== null){
+      out += esc(src.slice(last, m.index));
+      if(m[1]) out += '<span class="c">' + esc(m[1]) + '</span>';
+      else if(m[2]) out += '<span class="s">' + esc(m[2]) + '</span>';
+      else if(m[3]) out += '<span class="k">' + esc(m[3]) + '</span>';
+      else out += '<span class="n">' + esc(m[4]) + '</span>';
+      last = m.index + m[0].length;
+    }
+    out += esc(src.slice(last));
+    el.innerHTML = out;
+  });
+})();
+
+/* 模擬試験ページの動き。テストのページ（index.html）と振り返りのページ（review.html）で共通。
+   問題の HTML はビルド時にすべてページへ書き出してあり、ここでは
+   1 問ずつの表示・問題一覧・回答の記録・時間の管理・採点・受験記録を扱う。
+
+   画面（body のクラス）
+     mode-intro   開始前の説明と受験記録（テストのページだけ）
+     mode-test    受験中
+     mode-result  採点結果。「結果の概要」（at-summary）と、1 問ずつの見直しを行き来する
+     mode-review  振り返りのページ
+
+   保存（localStorage。キーは java-silver-exam:<試験ID>:...）
+     session  受験中の状態。再読み込みしても続きから再開できる。
+              「中断」を押すと pausedAt が入り、時計を止めたまま保存される
+     history  受験記録（新しい順、最大 100 回）。得点・選んだ答え・見直しマーク・振り返りメモ
+     seq      受験回の通し番号
+   制限時間は開始時刻から計算するので、タブを閉じても時間は進む（本番と同じ）。
+   ただし「中断」を押したときだけは時計を止め、再開のときに startedAt を止めていた分だけ後ろへずらす。
+
+   サーバー（backend/ の受験記録 API）
+     backend/ からこのページを開いたとき（http://localhost:8080/exams/02/ など）だけ使う。
+     提出した回をサーバーにも保存し（受験記録の serverId）、振り返りメモも書き込み、弱点レポートを取り出せる。
+     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。 */
+(function () {
+  var meta = JSON.parse(document.getElementById("exam-meta").textContent);
+  var KEY = "java-silver-exam:" + meta.id + ":";
+  var LIMIT_MS = meta.minutes * 60 * 1000;
+  var MAX_HISTORY = 100;
+
+  function load(k) {
+    try { return JSON.parse(localStorage.getItem(KEY + k)); } catch (e) { return null; }
+  }
+  function save(k, v) {
+    try { localStorage.setItem(KEY + k, JSON.stringify(v)); return true; } catch (e) { return false; /* 保存できなくても受験は続けられる */ }
+  }
+  function drop(k) {
+    try { localStorage.removeItem(KEY + k); } catch (e) { /* 同上 */ }
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var body = document.body;
+  var qs = Array.prototype.map.call(document.querySelectorAll("#qlist .q"), function (el) {
+    return {
+      el: el,
+      no: +el.dataset.no,
+      answer: el.dataset.answer.split(","),
+      pick: +el.dataset.pick,
+      ch: el.dataset.ch,
+      choices: Array.prototype.slice.call(el.querySelectorAll(".choice")),
+      flagBtn: el.querySelector(".flag"),
+      hint: el.querySelector(".pickhint"),
+      memo: null,
+    };
+  });
+  var N = qs.length;
+  var mode = "";
+  var cur = 1;           // 表示中の問題番号。採点結果では 0 が「結果の概要」
+  var filter = "all";    // 問題一覧の絞り込み
+  var S = null;          // 受験中の状態 { startedAt, answers: {no: [key...]}, flags: [no...], cur, submitted, pausedAt, pauses }
+  var R = null;          // 表示中の受験記録（history の 1 件）
+  var timerId = null;
+  var serverOn = false;  // backend/ の API が使えるか（起動時に確かめる）
+  var pending = {};      // サーバーに保存している途中の回（受験記録の at → true）。localStorage には入れない
+
+  /* ---------------- 共通 ---------------- */
+
+  function setMode(m) {
+    mode = m;
+    body.className = body.className.replace(/\bmode-\w+|\bat-summary\b/g, "").replace(/\s+/g, " ").trim() + " mode-" + m;
+    window.scrollTo(0, 0);
+  }
+  function fmt(ms) {
+    var s = Math.max(0, Math.ceil(ms / 1000));
+    var m = Math.floor(s / 60);
+    return (m < 10 ? "0" : "") + m + ":" + (s % 60 < 10 ? "0" : "") + (s % 60);
+  }
+  function fmtDate(t) {
+    var d = new Date(t);
+    return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() + " " +
+           d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+  }
+  function sameSet(a, b) {
+    return a.length === b.length && a.every(function (x) { return b.indexOf(x) >= 0; });
+  }
+  function setHash(h) {
+    try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) { /* file:// などで失敗しても表示には影響しない */ }
+  }
+
+  // 受験中は S、採点結果では R を見る
+  function picked(no) {
+    var src = mode === "result" ? R : S;
+    return (src && src.answers[no]) || [];
+  }
+  function flags() {
+    var src = mode === "result" ? R : S;
+    return (src && src.flags) || [];
+  }
+  function isFlagged(no) { return flags().indexOf(no) >= 0; }
+  function status(q) {           // 採点結果での状態
+    var sel = picked(q.no);
+    return sel.length === 0 ? "none" : sameSet(sel, q.answer) ? "ok" : "ng";
+  }
+
+  /* ---------------- 受験記録 ---------------- */
+
+  function historyList() {
+    var h = load("history") || [];
+    // 通し番号が無い古い記録には、古い順に番号を振っておく
+    if (h.some(function (x) { return !x.no; })) {
+      var asc = h.slice().sort(function (a, b) { return a.at - b.at; });
+      var seq = 0;
+      asc.forEach(function (x) { seq = x.no ? Math.max(seq, x.no) : seq + 1; if (!x.no) x.no = seq; });
+      save("history", h);
+      if ((load("seq") || 0) < seq) save("seq", seq);
+    }
+    return h;
+  }
+  function updateRecord(rec) {
+    var h = historyList();
+    for (var i = 0; i < h.length; i++) if (h[i].at === rec.at) { h[i] = rec; break; }
+    return save("history", h);
+  }
+
+  function noteOf(r) {          // 所要時間に添える但し書き
+    var a = [];
+    if (r.timeUp) a.push("時間切れ");
+    if (r.pauses) a.push("中断 " + r.pauses + " 回");
+    return a.length ? "（" + a.join("・") + "）" : "";
+  }
+
+  function renderHistory() {
+    var h = historyList();
+    var box = $("history");
+    if (!box) return;
+    if (!h.length) { box.innerHTML = '<p class="empty">まだ受験記録はありません。</p>'; return; }
+    var best = h.reduce(function (m, x) { return x.correct > m.correct ? x : m; }, h[0]);
+    var rows = h.map(function (r) {
+      var memo = r.notes ? Object.keys(r.notes).filter(function (k) { return r.notes[k]; }).length : 0;
+      return '<tr' + (r === best ? ' class="best"' : "") + '><td class="n">第' + r.no + "回</td><td>" + fmtDate(r.at) + "</td>" +
+             "<td><b>" + r.correct + "</b> / " + r.total + "（" + Math.round(r.rate * 100) + "%）" + (r === best && h.length > 1 ? ' <span class="tag-best">最高</span>' : "") + "</td>" +
+             '<td class="' + (r.passed ? "pass" : "fail") + '">' + (r.passed ? "合格" : "不合格") + "</td>" +
+             "<td>" + fmt(r.usedMs) + noteOf(r) + "</td>" +
+             "<td>" + (memo ? "メモ " + memo + " 件" : "") + "</td>" +
+             '<td class="ops"><button type="button" class="btn" data-open="' + r.at + '">結果を開く</button>' +
+             '<button type="button" class="btn ghost del" data-del="' + r.at + '" aria-label="第' + r.no + '回の記録を削除">削除</button></td></tr>';
+    }).join("");
+    box.innerHTML = '<div class="tw"><table class="history"><thead><tr><th>回</th><th>日時</th><th>得点</th><th>判定</th><th>所要時間</th><th>メモ</th><th></th></tr></thead><tbody>' + rows + "</tbody></table></div>";
+  }
+
+  if ($("history")) $("history").addEventListener("click", function (e) {
+    var o = e.target.closest("[data-open]");
+    var d = e.target.closest("[data-del]");
+    var h = historyList();
+    if (o) {
+      var r = h.filter(function (x) { return x.at === +o.dataset.open; })[0];
+      if (r) openResult(r, 0);
+    } else if (d) {
+      var t = h.filter(function (x) { return x.at === +d.dataset.del; })[0];
+      if (!t) return;
+      showModal("<h2>第" + t.no + "回の記録を削除しますか？</h2><p>" + fmtDate(t.at) + " の受験（" + t.correct + " / " + t.total + "）の結果と振り返りメモが消えます。" +
+                (t.serverId && serverOn ? "サーバーに保存した記録も消えます。" : "") + "元に戻せません。</p>" +
+                '<div class="actions"><button type="button" class="btn" data-close>やめる</button>' +
+                '<button type="button" class="btn danger" data-del-ok="' + t.at + '">削除する</button></div>');
+    }
+  });
+
+  /* ---------------- 開始前の画面 ---------------- */
+
+  function renderIntro() {
+    var sess = load("session");
+    var resume = $("resume");
+    if (sess && !sess.submitted) {
+      // 中断中は、押した時点の残り時間で止まっている
+      var left = sess.startedAt + LIMIT_MS - (sess.pausedAt || Date.now());
+      var done = Object.keys(sess.answers).filter(function (k) { return sess.answers[k].length; }).length;
+      var state = "回答済み " + done + " / " + N + " 問、残り " + fmt(left);
+      resume.hidden = false;
+      resume.classList.toggle("paused", !!sess.pausedAt);
+      $("resume-title").textContent = sess.pausedAt ? "中断中です" : left > 0 ? "受験の途中です" : "制限時間を過ぎています";
+      $("resume-text").textContent = sess.pausedAt
+        ? "（" + state + "）。時計は止まっています。再開すると、この残り時間から続きます。"
+        : left > 0
+          ? "（" + state + "）。中断していないので時計は進んでいます。"
+          : "。続きを開くと、その時点の回答で採点します。";
+    } else {
+      resume.hidden = true;
+    }
+    renderHistory();
+  }
+  function toIntro() {
+    S = null; R = null;
+    clearInterval(timerId);
+    setHash("");
+    renderIntro();
+    setMode("intro");
+  }
+
+  /* ---------------- 1 問ずつの表示と問題一覧 ---------------- */
+
+  function passes(q) {
+    if (filter === "all") return true;
+    if (mode === "test") {
+      if (filter === "todo") return picked(q.no).length < q.pick;
+      if (filter === "flag") return isFlagged(q.no);
+    } else if (mode === "result") {
+      if (filter === "wrong") return status(q) !== "ok";
+      if (filter === "ok") return status(q) === "ok";
+      if (filter === "flag") return isFlagged(q.no);
+    } else if (mode === "review") {
+      return q.ch === filter;
+    }
+    return true;
+  }
+  function order() {
+    var list = qs.filter(passes).map(function (q) { return q.no; });
+    return list.length ? list : qs.map(function (q) { return q.no; });
+  }
+  function nextOf(no) { var l = order(); for (var i = 0; i < l.length; i++) if (l[i] > no) return l[i]; return 0; }
+  function prevOf(no) { var l = order(); for (var i = l.length - 1; i >= 0; i--) if (l[i] < no) return l[i]; return 0; }
+
+  function go(no) {
+    if (mode === "result" && no === 0) {
+      cur = 0;
+      body.classList.add("at-summary");
+    } else {
+      cur = Math.max(1, Math.min(N, no));
+      body.classList.remove("at-summary");
+    }
+    qs.forEach(function (q) { q.el.classList.toggle("is-cur", q.no === cur); });
+    if (mode === "test") { S.cur = cur; save("session", S); }
+    if (mode === "result") setHash("r" + R.at + (cur ? "-q" + cur : ""));
+    if (mode === "review") setHash(cur > 1 ? "q" + cur : "");
+    paintPager();
+    paintGrid();
+    closeNav();
+    window.scrollTo(0, 0);
+  }
+
+  function paintPager() {
+    var p = prevOf(cur), n = nextOf(cur);
+    $("prev").disabled = mode === "result" ? cur === 0 : !p;
+    if (mode === "test" && !n) $("next").textContent = "提出へ";
+    else $("next").textContent = "次へ →";
+    $("next").disabled = mode !== "test" && !n;
+    var inFilter = filter !== "all" && qs.filter(passes).length;
+    var l = order();
+    $("pos").textContent = cur ? (inFilter ? "絞り込み中 " + (l.indexOf(cur) + 1 || "-") + " / " + l.length + "　" : "") + "問 " + cur + " / " + N : "";
+  }
+  $("prev").addEventListener("click", function () {
+    var p = prevOf(cur);
+    if (p) go(p); else if (mode === "result") go(0);
+  });
+  $("next").addEventListener("click", function () {
+    var n = nextOf(cur);
+    if (n) go(n); else if (mode === "test") openSubmit();
+  });
+
+  var FILTERS = {
+    test: [["all", "すべて"], ["todo", "未回答"], ["flag", "見直しマーク"]],
+    result: [["all", "すべて"], ["wrong", "不正解・未回答"], ["ok", "正解"], ["flag", "見直しマーク"]],
+  };
+  var LEGENDS = {
+    test: '<span><i class="l-done"></i>回答済み</span><span><i class="l-part"></i>選ぶ数が不足</span><span><i class="l-flag"></i>見直し</span>',
+    result: '<span><i class="l-ok">○</i>正解</span><span><i class="l-ng">×</i>不正解</span><span><i class="l-none">−</i>未回答</span><span><i class="l-flag"></i>見直し</span>',
+    review: "",
+  };
+  function paintFilters() {
+    var list = FILTERS[mode] || [["all", "すべて"]].concat(Object.keys(meta.chapters).map(function (k) { return [k, "第" + k.slice(1) + "章"]; }));
+    $("navfilter").innerHTML = list.map(function (f) {
+      return '<button type="button" data-filter="' + f[0] + '" aria-pressed="' + (f[0] === filter) + '">' + f[1] + "</button>";
+    }).join("");
+    $("legend").innerHTML = LEGENDS[mode] || "";
+    $("legend").hidden = !LEGENDS[mode];
+  }
+  function setFilter(f) {
+    filter = f;
+    Array.prototype.forEach.call($("navfilter").querySelectorAll("[data-filter]"), function (x) { x.setAttribute("aria-pressed", String(x.dataset.filter === f)); });
+    paintGrid();
+    paintPager();
+  }
+
+  function paintGrid() {
+    var html = qs.map(function (q) {
+      if (!passes(q)) return "";
+      var cls = "cell", mk = "", label = "問" + q.no;
+      if (mode === "test") {
+        var n = picked(q.no).length;
+        cls += n === 0 ? "" : n < q.pick ? " partial" : " done";
+        label += n ? " 回答済み" : " 未回答";
+      } else if (mode === "result") {
+        var st = status(q);
+        cls += " " + st;
+        mk = '<span class="mk" aria-hidden="true">' + { ok: "○", ng: "×", none: "−" }[st] + "</span>";
+        label += { ok: " 正解", ng: " 不正解", none: " 未回答" }[st];
+      }
+      if (isFlagged(q.no)) { cls += " flagged"; label += " 見直しマーク"; }
+      if (q.no === cur) cls += " cur";
+      return '<button type="button" class="' + cls + '" data-go="' + q.no + '" aria-label="' + label + '"' + (q.no === cur ? ' aria-current="true"' : "") + ">" + q.no + mk + "</button>";
+    }).join("");
+    $("grid").innerHTML = html || '<p class="empty">該当する問題はありません。</p>';
+    if (mode === "test") {
+      var answered = qs.filter(function (q) { return picked(q.no).length; }).length;
+      $("count").textContent = "回答 " + answered + " / " + N;
+      $("flagcount").textContent = S.flags.length ? "マーク " + S.flags.length : "";
+    }
+    $("tosum").setAttribute("aria-current", String(mode === "result" && cur === 0));
+  }
+  $("grid").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-go]");
+    if (b) go(+b.dataset.go);
+  });
+  $("navfilter").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-filter]");
+    if (!b) return;
+    setFilter(b.dataset.filter);
+    // 見ている問題が絞り込みから外れたら、絞り込みの先頭へ
+    var q = qs[cur - 1];
+    if (cur && q && !passes(q) && qs.some(passes)) go(order()[0]);
+  });
+  $("tosum").addEventListener("click", function () { go(0); });
+
+  // 狭い画面では下から出すシート
+  function openNav() { $("navside").classList.add("open"); $("scrim").hidden = false; }
+  function closeNav() { $("navside").classList.remove("open"); $("scrim").hidden = true; }
+  $("navopen").addEventListener("click", openNav);
+  $("navclose").addEventListener("click", closeNav);
+  $("scrim").addEventListener("click", closeNav);
+
+  document.addEventListener("keydown", function (e) {
+    if (mode === "intro" || !$("modal").hidden) return;
+    if (e.target.closest && e.target.closest("input, textarea")) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === "ArrowLeft") { $("prev").click(); e.preventDefault(); }
+    else if (e.key === "ArrowRight") { if (mode !== "test" || nextOf(cur)) $("next").click(); e.preventDefault(); }
+    else if (mode === "test") {
+      var q = qs[cur - 1];
+      if (/^[a-hA-H]$/.test(e.key)) {
+        var key = e.key.toUpperCase();
+        if (q.choices.some(function (c) { return c.dataset.key === key; })) choose(q, key);
+      } else if (e.key === "m" || e.key === "M") { toggleFlag(q); }
+    }
+  });
+
+  /* ---------------- 受験 ---------------- */
+
+  function clearMarks() {
+    qs.forEach(function (q) {
+      q.choices.forEach(function (c) {
+        c.classList.remove("is-answer", "is-picked", "is-sel");
+        var you = c.querySelector(".you");
+        if (you) you.remove();
+      });
+      var v = q.el.querySelector(".verdict");
+      if (v) { v.className = "verdict"; v.textContent = ""; }
+      var fm = q.el.querySelector(".flagmark");
+      if (fm) fm.hidden = true;
+    });
+  }
+
+  function start(fresh) {
+    if (fresh || !S) {
+      S = { startedAt: Date.now(), answers: {}, flags: [], cur: 1, submitted: false, pausedAt: 0, pauses: 0 };
+      save("session", S);
+    }
+    R = null;
+    clearMarks();
+    setMode("test");
+    setHash("");
+    filter = "all";
+    paintFilters();
+    qs.forEach(function (q) {
+      q.choices.forEach(function (c) { c.setAttribute("tabindex", "0"); });
+      paintChoices(q);
+      paintFlag(q);
+    });
+    go(S.cur || 1);
+    tick();
+    clearInterval(timerId);
+    timerId = setInterval(tick, 1000);
+  }
+
+  function tick() {
+    if (!S || mode !== "test") return;
+    var left = S.startedAt + LIMIT_MS - Date.now();
+    var t = $("timer");
+    t.textContent = fmt(left);
+    t.classList.toggle("warn", left <= 10 * 60 * 1000 && left > 3 * 60 * 1000);
+    t.classList.toggle("danger", left <= 3 * 60 * 1000);
+    if (left <= 0) submit(true);
+  }
+  // 別のタブから戻ったときもすぐに時計を合わせる
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) tick(); });
+
+  function paintChoices(q) {
+    var sel = picked(q.no);
+    q.choices.forEach(function (c) {
+      var on = sel.indexOf(c.dataset.key) >= 0;
+      c.classList.toggle("is-sel", on);
+      c.setAttribute("aria-checked", String(on));
+    });
+    if (q.hint) q.hint.textContent = "";
+  }
+  function paintFlag(q) { if (q.flagBtn) q.flagBtn.setAttribute("aria-pressed", String(isFlagged(q.no))); }
+
+  function choose(q, key) {
+    var sel = picked(q.no).slice();
+    var i = sel.indexOf(key);
+    if (q.pick === 1) {
+      sel = i >= 0 ? [] : [key];
+    } else if (i >= 0) {
+      sel.splice(i, 1);
+    } else if (sel.length >= q.pick) {
+      q.hint.textContent = q.pick + " つまで選べます。先にどれかの選択を外してください。";
+      return;
+    } else {
+      sel.push(key);
+    }
+    S.answers[q.no] = sel.sort();
+    save("session", S);
+    paintChoices(q);
+    paintGrid();
+  }
+
+  function toggleFlag(q) {
+    var i = S.flags.indexOf(q.no);
+    if (i >= 0) S.flags.splice(i, 1); else S.flags.push(q.no);
+    save("session", S);
+    paintFlag(q);
+    paintGrid();
+  }
+
+  qs.forEach(function (q) {
+    q.choices.forEach(function (c) {
+      c.setAttribute("role", q.pick === 1 ? "radio" : "checkbox");
+      c.addEventListener("click", function (e) {
+        if (mode !== "test") return;
+        if (e.target.closest("a")) return;
+        choose(q, c.dataset.key);
+      });
+      c.addEventListener("keydown", function (e) {
+        if (mode === "test" && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); choose(q, c.dataset.key); }
+      });
+    });
+    if (q.flagBtn) q.flagBtn.addEventListener("click", function () { if (mode === "test") toggleFlag(q); });
+  });
+
+  /* ---------------- 中断 ---------------- */
+
+  // 時計を止めて開始前の画面へ戻る。問題は表示されなくなるが、回答と残り時間は残る
+  function pause() {
+    if (mode !== "test" || !S) return;
+    clearInterval(timerId);
+    S.cur = cur;
+    S.pausedAt = Date.now();
+    S.pauses = (S.pauses || 0) + 1;
+    var ok = save("session", S);
+    toIntro();
+    if (!ok) {
+      showModal("<h2>保存できませんでした</h2><p>このブラウザの保存領域が使えないため、中断した状態を残せません。" +
+                "このまま再開すると、回答が失われている可能性があります。</p>" +
+                '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>');
+    }
+  }
+  $("pause").addEventListener("click", function () {
+    if (mode !== "test" || !S) return;
+    var left = S.startedAt + LIMIT_MS - Date.now();
+    showModal("<h2>テストを中断しますか？</h2>" +
+              "<p>残り時間 <b>" + fmt(left) + "</b> のまま時計が止まり、問題は表示されなくなります。" +
+              "回答・見直しマークはこのブラウザに保存され、「続きから再開」でここから続けられます。</p>" +
+              '<div class="actions"><button type="button" class="btn" data-close>テストに戻る</button>' +
+              '<button type="button" class="btn primary" id="pause-ok">中断する</button></div>');
+  });
+
+  /* ---------------- 提出 ---------------- */
+
+  function chipList(nos) {
+    return nos.map(function (n) { return '<button type="button" data-jump="' + n + '">問' + n + "</button>"; }).join("");
+  }
+  function openSubmit() {
+    if (mode !== "test" || !S) return;
+    var none = [], short = [];
+    qs.forEach(function (q) {
+      var n = picked(q.no).length;
+      if (n === 0) none.push(q.no); else if (n < q.pick) short.push(q.no);
+    });
+    var html = "<h2>解答を提出しますか？</h2>";
+    if (none.length || short.length) {
+      html += '<div class="warnbox">まだ ' + (none.length + short.length) + " 問が解答し終わっていません。提出すると、これらは不正解として採点されます。</div>";
+      if (none.length) html += "<p>未回答（" + none.length + " 問）</p><div class=\"chips\">" + chipList(none) + "</div>";
+      if (short.length) html += "<p>選ぶ数が足りない（" + short.length + " 問）</p><div class=\"chips\">" + chipList(short) + "</div>";
+    } else {
+      html += "<p>すべての問題に回答しています。</p>";
+    }
+    if (S.flags.length) {
+      html += "<p>見直しマークを付けた問題（" + S.flags.length + " 問）</p><div class=\"chips\">" + chipList(S.flags.slice().sort(function (a, b) { return a - b; })) + "</div>";
+    }
+    html += "<p>残り時間 <b>" + fmt(S.startedAt + LIMIT_MS - Date.now()) + "</b></p>";
+    html += '<div class="actions"><button type="button" class="btn" data-close>問題に戻る</button>' +
+            '<button type="button" class="btn ' + (none.length || short.length ? "danger" : "primary") + '" data-submit>' +
+            (none.length || short.length ? "このまま提出する" : "提出する") + "</button></div>";
+    showModal(html);
+  }
+  $("submit").addEventListener("click", openSubmit);
+
+  function showModal(html) {
+    $("dialog").innerHTML = html;
+    $("modal").hidden = false;
+    var b = $("dialog").querySelector("[data-close], [data-ok]");
+    if (b) b.focus();
+  }
+  function hideModal() { $("modal").hidden = true; }
+  $("modal").addEventListener("click", function (e) {
+    if (e.target === this || e.target.closest("[data-close]") || e.target.closest("[data-ok]")) { hideModal(); return; }
+    var j = e.target.closest("[data-jump]");
+    if (j) { hideModal(); go(+j.dataset.jump); return; }
+    if (e.target.closest("[data-submit]")) { hideModal(); submit(false); return; }
+    if (e.target.closest("#pause-ok")) { hideModal(); pause(); return; }
+    if (e.target.closest("#restart-ok")) { hideModal(); drop("session"); S = null; start(true); return; }
+    var d = e.target.closest("[data-del-ok]");
+    if (d) {
+      var gone = historyList().filter(function (x) { return x.at === +d.dataset.delOk; })[0];
+      save("history", historyList().filter(function (x) { return x.at !== +d.dataset.delOk; }));
+      if (gone && gone.serverId && serverOn) api("DELETE", "/attempts/" + gone.serverId).catch(function () { /* サーバーに残っても受験記録の画面には出ない */ });
+      hideModal();
+      renderHistory();
+      return;
+    }
+    if (e.target.closest("#report-copy")) {
+      var ta = $("report-text");
+      copyText(ta.value, ta, $("report-msg"));
+    }
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden) hideModal(); });
+
+  function submit(timeUp) {
+    if (!S || S.submitted) return;
+    clearInterval(timerId);
+    var endedAt = Math.min(Date.now(), S.startedAt + LIMIT_MS);
+    var right = qs.filter(function (q) { return sameSet(picked(q.no), q.answer); }).length;
+    var seq = Math.max(load("seq") || 0, historyList().reduce(function (m, x) { return Math.max(m, x.no || 0); }, 0)) + 1;
+    var rec = {
+      no: seq,
+      at: endedAt,
+      usedMs: endedAt - S.startedAt,
+      correct: right,
+      total: N,
+      rate: right / N,
+      passed: right / N >= meta.passRate,
+      answers: S.answers,
+      flags: S.flags,
+      timeUp: !!timeUp,
+      pauses: S.pauses || 0,
+      notes: {},
+    };
+    var hist = historyList();
+    hist.unshift(rec);
+    save("history", hist.slice(0, MAX_HISTORY));
+    save("seq", seq);
+    S.submitted = true;
+    drop("session");
+    openResult(rec, 0);
+    if (serverOn) upload(rec);
+    if (timeUp) {
+      showModal("<h2>時間切れです</h2><p>制限時間の " + meta.minutes + " 分が経過したため、その時点の回答で採点しました。未回答の問題は不正解として扱っています。</p>" +
+                '<div class="actions"><button type="button" class="btn primary" data-ok>結果を見る</button></div>');
+    }
+  }
+
+  /* ---------------- 採点結果と見直し ---------------- */
+
+  function openResult(r, no) {
+    R = r;
+    S = null;
+    clearInterval(timerId);
+    r.notes = r.notes || {};
+    setMode("result");
+    filter = "all";
+    paintFilters();
+
+    qs.forEach(function (q) {
+      var sel = r.answers[q.no] || [];
+      var st = status(q);
+      q.choices.forEach(function (c) {
+        var k = c.dataset.key;
+        c.classList.remove("is-sel");
+        c.classList.toggle("is-answer", q.answer.indexOf(k) >= 0);
+        c.classList.toggle("is-picked", sel.indexOf(k) >= 0);
+        c.removeAttribute("tabindex");
+        var you = c.querySelector(".you");
+        if (sel.indexOf(k) >= 0 && !you) { you = document.createElement("span"); you.className = "you"; you.textContent = "あなたの選択"; c.querySelector(".ct").appendChild(you); }
+        if (sel.indexOf(k) < 0 && you) you.remove();
+      });
+      var v = q.el.querySelector(".verdict");
+      v.className = "verdict " + st;
+      v.textContent = { ok: "○ 正解", ng: "× 不正解", none: "未回答" }[st];
+      q.el.querySelector(".flagmark").hidden = !isFlagged(q.no);
+      if (!q.memo) q.memo = makeMemo(q);
+      q.memo.querySelector("textarea").value = r.notes[q.no] || "";
+      q.memo.querySelector(".saved").textContent = "";
+    });
+
+    var cnt = { ok: 0, ng: 0, none: 0 };
+    qs.forEach(function (q) { cnt[status(q)]++; });
+    $("r-score").innerHTML = r.correct + "<small> / " + r.total + "</small>";
+    $("r-judge").textContent = r.passed ? "合格ライン到達" : "合格ラインに届かず";
+    $("r-judge").className = "judge " + (r.passed ? "pass" : "fail");
+    $("r-meta").innerHTML = "第" + r.no + "回 ・ " + fmtDate(r.at) + " に受験<br>" +
+      "正答率 <b>" + Math.round(r.rate * 100) + "%</b>（合格ライン " + Math.round(meta.passRate * 100) + "%）<br>" +
+      "所要時間 " + fmt(r.usedMs) + " / " + meta.minutes + ":00" + (r.timeUp ? "（時間切れで提出）" : "") +
+      (r.pauses ? "　中断 " + r.pauses + " 回（止めていた時間は含みません）" : "");
+    $("r-tally").innerHTML =
+      '<button type="button" data-tally="ok" class="t-ok"><b>○ ' + cnt.ok + "</b>正解</button>" +
+      '<button type="button" data-tally="wrong" class="t-ng"><b>× ' + (cnt.ng + cnt.none) + "</b>不正解・未回答" + (cnt.none ? "（未回答 " + cnt.none + "）" : "") + "</button>" +
+      '<button type="button" data-tally="flag" class="t-flag"><b>' + (r.flags || []).length + "</b>見直しマーク</button>";
+    $("hscore").textContent = "第" + r.no + "回 " + r.correct + " / " + r.total;
+
+    // 章ごとの正答率（どの章を読み直せばよいか）
+    var byCh = {};
+    qs.forEach(function (q) {
+      var c = byCh[q.ch] || (byCh[q.ch] = { ok: 0, n: 0 });
+      c.n++;
+      if (status(q) === "ok") c.ok++;
+    });
+    $("r-bars").innerHTML = Object.keys(meta.chapters).filter(function (k) { return byCh[k]; }).map(function (k) {
+      var c = byCh[k], p = Math.round(c.ok / c.n * 100);
+      return '<div class="bar2"><a href="' + meta.noteHref + "#ch" + k.slice(1) + '">' + meta.chapters[k] + "</a>" +
+             '<div class="track"><div class="fill' + (p < meta.passRate * 100 ? " low" : "") + '" style="width:' + p + '%"></div></div>' +
+             '<span class="num">' + c.ok + "/" + c.n + "</span></div>";
+    }).join("");
+    $("review-wrong").hidden = cnt.ng + cnt.none === 0;
+    renderServer();
+
+    go(no || 0);
+  }
+
+  $("r-tally").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-tally]");
+    if (!b) return;
+    setFilter(b.dataset.tally);
+    if (qs.some(passes)) go(order()[0]);
+  });
+  $("review-start").addEventListener("click", function () { setFilter("all"); go(1); });
+  $("review-wrong").addEventListener("click", function () { setFilter("wrong"); go(order()[0]); });
+
+  // 振り返りメモ。その回の受験記録に保存する
+  function makeMemo(q) {
+    var box = document.createElement("div");
+    box.className = "memo";
+    box.innerHTML = '<label for="memo' + q.no + '">振り返りメモ <small>この回の受験記録に保存されます</small></label>' +
+                    '<textarea id="memo' + q.no + '" rows="3" placeholder="なぜ間違えたか、次に気をつけることなど"></textarea><span class="saved" aria-live="polite"></span>';
+    q.el.appendChild(box);
+    var ta = box.querySelector("textarea"), msg = box.querySelector(".saved"), t = null;
+    ta.addEventListener("input", function () {
+      if (!R) return;
+      clearTimeout(t);
+      msg.textContent = "";
+      var rec = R;             // 書き込みが終わる前に別の回を開いても、書いた回に保存する
+      t = setTimeout(function () {
+        var v = ta.value.trim();
+        if (v) rec.notes[q.no] = ta.value; else delete rec.notes[q.no];
+        if (!updateRecord(rec)) { msg.textContent = "保存できませんでした（ブラウザの保存領域がいっぱいか、無効です）"; return; }
+        if (!(serverOn && rec.serverId)) { msg.textContent = "保存しました"; return; }
+        msg.textContent = "保存しました（サーバーに送っています…）";
+        api("PUT", "/attempts/" + rec.serverId + "/items/" + q.no + "/memo", { memo: v ? ta.value : "" })
+          .then(function () { msg.textContent = "保存しました（サーバーにも保存）"; })
+          .catch(function () { msg.textContent = "このブラウザには保存しました。サーバーへの保存に失敗しました（2000 文字まで）"; });
+      }, 500);
+    });
+    return box;
+  }
+
+  /* ---------------- サーバー（backend/ の受験記録 API） ---------------- */
+
+  function api(method, path, data) {
+    var opt = { method: method, headers: {} };
+    if (data !== undefined) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(data); }
+    return fetch("/api" + path, opt).then(function (res) {
+      if (!res.ok) throw new Error(method + " /api" + path + " → " + res.status);
+      if (res.status === 204) return null;
+      return (res.headers.get("Content-Type") || "").indexOf("json") >= 0 ? res.json() : res.text();
+    });
+  }
+
+  // localhost で開いていて、サーバーがこの試験を知っているときだけ使う。GitHub Pages では問い合わせもしない
+  function probeServer() {
+    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
+    return api("GET", "/exams/" + meta.id + "/questions/1")
+      .then(function () { return true; }, function () { return false; });
+  }
+
+  // 1 回分を、全問の正誤と選んだ選択肢ごとサーバーに保存する。書いてあったメモも一緒に送る
+  function upload(rec) {
+    if (pending[rec.at]) return;
+    pending[rec.at] = true;
+    renderServer();
+    var items = qs.map(function (q) {
+      var sel = (rec.answers[q.no] || []).slice().sort();
+      return { questionNo: q.no, correct: sameSet(sel, q.answer), selected: sel.join(",") };
+    });
+    return api("POST", "/attempts", { examId: meta.id, durationSec: Math.round(rec.usedMs / 1000), items: items })
+      .then(function (d) {
+        rec.serverId = d.summary.id;
+        var notes = rec.notes || {};
+        return Promise.all(Object.keys(notes).filter(function (k) { return notes[k].trim(); }).map(function (k) {
+          return api("PUT", "/attempts/" + rec.serverId + "/items/" + k + "/memo", { memo: notes[k] });
+        }));
+      })
+      .then(function () { return false; }, function () { return true; })
+      .then(function (failed) {
+        delete pending[rec.at];
+        updateRecord(rec);
+        if (R === rec) renderServer(failed);
+      });
+  }
+
+  // 採点結果の概要にある「サーバー」の欄
+  function renderServer(failed) {
+    var box = $("srv");
+    if (!box || mode !== "result" || !R) return;
+    box.hidden = !serverOn;
+    if (!serverOn) return;
+    if (pending[R.at]) {
+      box.innerHTML = '<p class="srv-st">サーバーに保存しています…</p>';
+    } else if (R.serverId) {
+      box.innerHTML = '<p class="srv-st ok">サーバーに保存済み（受験記録 #' + R.serverId + '）。振り返りメモもサーバーに書き込まれます。</p>' +
+                      '<button type="button" class="btn primary" id="report-open">弱点レポートを開く</button>' +
+                      '<span class="srv-hint">間違えた問題を論点ごとにまとめ、メモと一緒に生成AIへ貼れる形にします</span>';
+    } else {
+      box.innerHTML = '<p class="srv-st' + (failed ? " ng" : "") + '">' +
+                      (failed ? "サーバーに保存できませんでした。サーバーが動いているか確かめてから、もう一度押してください。"
+                              : "この回はサーバーに保存されていません（サーバーを使う前に受けた回など）。") + "</p>" +
+                      '<button type="button" class="btn" id="srv-upload">サーバーに保存する</button>';
+    }
+  }
+
+  function openReport() {
+    var rec = R;
+    showModal('<h2>弱点レポート</h2><p class="note-s">読み込んでいます…</p>');
+    api("GET", "/attempts/" + rec.serverId + "/report").then(function (text) {
+      if (R !== rec || $("modal").hidden) return;
+      showModal('<h2>弱点レポート</h2>' +
+                '<p class="note-s">そのまま生成AIに貼り付けて使えます。最後の「お願い」は自由に書き換えてください。</p>' +
+                '<textarea id="report-text" class="report" rows="16" readonly></textarea>' +
+                '<div class="actions"><span class="report-msg" id="report-msg" aria-live="polite"></span>' +
+                '<button type="button" class="btn" data-close>閉じる</button>' +
+                '<button type="button" class="btn primary" id="report-copy">コピーする</button></div>');
+      $("report-text").value = text;
+    }, function () {
+      showModal("<h2>弱点レポートを読み込めませんでした</h2><p>サーバーが動いているか確かめてください。サーバーの記録を消した場合は、この回をもう一度保存し直す必要があります。</p>" +
+                '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>');
+    });
+  }
+
+  // 押した直後に選択してコピーする（クリップボード API は、ブラウザや設定によって断られることがある）
+  function copyText(text, ta, msg) {
+    var manual = function () { ta.focus(); ta.select(); msg.textContent = "選択しました。Ctrl+C でコピーしてください"; };
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    if (ok) { msg.textContent = "コピーしました"; return; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function () { msg.textContent = "コピーしました"; }, manual);
+    } else {
+      manual();
+    }
+  }
+
+  if ($("srv")) $("srv").addEventListener("click", function (e) {
+    if (!R) return;
+    if (e.target.closest("#report-open")) openReport();
+    if (e.target.closest("#srv-upload")) upload(R);
+  });
+
+  /* ---------------- 振り返りのページ ---------------- */
+
+  function startReview() {
+    setMode("review");
+    filter = "all";
+    paintFilters();
+    var m = /^#q(\d+)$/.exec(location.hash);
+    go(m ? +m[1] : 1);
+  }
+  if ($("hide-toggle")) $("hide-toggle").addEventListener("click", function () {
+    var b = this, on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(on));
+    b.textContent = on ? "正解と解説を表示する" : "正解と解説を隠す";
+    body.classList.toggle("hide-answers", on);
+    qs.forEach(function (q) { q.el.classList.remove("revealed"); });
+  });
+  $("qlist").addEventListener("click", function (e) {
+    var b = e.target.closest(".reveal");
+    if (b) b.closest(".q").classList.add("revealed");
+  });
+
+  /* ---------------- ボタンと起動 ---------------- */
+
+  if (body.classList.contains("page-review")) {
+    startReview();
+    return;
+  }
+
+  $("start").addEventListener("click", function () {
+    var sess = load("session");
+    if (sess && !sess.submitted) {
+      showModal("<h2>最初から受け直しますか？</h2><p>途中の回答は消えます。</p>" +
+                '<div class="actions"><button type="button" class="btn" data-close>やめる</button>' +
+                '<button type="button" class="btn danger" id="restart-ok">最初から始める</button></div>');
+      return;
+    }
+    S = null;
+    start(true);
+  });
+  $("resume-btn").addEventListener("click", function () {
+    S = load("session");
+    if (!S) return;
+    if (S.pausedAt) {          // 止めていた分だけ開始時刻を後ろへずらす
+      S.startedAt += Math.max(0, Date.now() - S.pausedAt);
+      S.pausedAt = 0;
+      save("session", S);
+    }
+    if (S.startedAt + LIMIT_MS <= Date.now()) { submit(true); return; }
+    start(false);
+  });
+  $("again").addEventListener("click", function () {
+    var sess = load("session");
+    if (sess && !sess.submitted) { toIntro(); return; }
+    S = null;
+    start(true);
+  });
+  $("to-intro").addEventListener("click", toIntro);
+
+  probeServer().then(function (ok) {
+    serverOn = ok;
+    if ($("srv-note")) $("srv-note").hidden = !ok;
+    renderServer();
+  });
+
+  // #r<記録>-q<問> で開かれたら、その回の結果を開く（再読み込みしても見直しの位置に戻れる）
+  var hm = /^#r(\d+)(?:-q(\d+))?$/.exec(location.hash);
+  var rec = hm && historyList().filter(function (x) { return x.at === +hm[1]; })[0];
+  if (rec) openResult(rec, hm[2] ? +hm[2] : 0);
+  else toIntro();
+})();
+</script>
+</body>
+</html>
