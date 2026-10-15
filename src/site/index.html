@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java Silver SE 17 試験対策ノート ── 1Z0-825 対策の教材と模擬試験</title>
+<meta name="description" content="Java Silver SE 17（1Z0-825）の資格取得を目的とした学習サイト。試験範囲を全6章・{{points}}論点にまとめた教材と、本番と同じ形式の模擬試験（{{examCount}}回・{{questions}}問）。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>
+/* 以前は教材がこのアドレスにあった。教材の節へのリンク（#c2-s03 など）で来たら、教材の同じ場所へ送る */
+(function () {
+  var h = location.hash;
+  if (/^#(c\d|ch\d|p\d|idx)/.test(h)) location.replace("note/" + h);
+})();
+</script>
+<style>
+<!--{{styles}}-->
+</style>
+</head>
+<body class="site">
+
+<!--{{header}}-->
+
+<main class="pt">
+  <section class="pt-hero">
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 1Z0-825</div>
+    <h1>Java Silver SE 17<br>試験対策ノート</h1>
+    <p class="pt-sub">1Z0-825 対策の教材と模擬試験</p>
+    <p class="pt-lead">Oracle 認定 Java Programmer, Silver SE 17 の合格を目指すための学習サイトです。試験範囲をまとめた<b>教材</b>で論点を学び、本番と同じ形式の<b>模擬試験</b>で確かめ、間違えた論点を教材で読み直す、の繰り返しで仕上げます。</p>
+  </section>
+
+  <div class="pt-cards">
+    <article class="pt-card" id="card-note">
+      <div class="pt-k">教材で学ぶ</div>
+      <p class="pt-d">試験範囲を全 {{chapters}} 章・{{sections}} 節・{{points}} 論点にまとめた教材です。論点には <b>2-3-4</b> のような番号が付いていて、目次・検索・索引から引けます。</p>
+      <div class="pt-now" id="note-now"><span class="pt-lbl">続きから</span><span class="pt-v">まだ読んだ記録はありません。第1章から始めましょう。</span></div>
+      <div class="pt-row">
+        <a class="btn primary" id="note-go" href="note/">教材を開く</a>
+        <a class="btn" href="note/#idx">索引から探す</a>
+      </div>
+    </article>
+
+    <article class="pt-card" id="card-exam">
+      <div class="pt-k">模擬試験を解く</div>
+      <p class="pt-d">本番と同じ 90 分・60 問の模擬試験が {{examCount}} 回分（{{questions}} 問）あります。提出すると採点され、解説から教材の該当する論点へ戻れます。</p>
+      <div class="pt-now" id="exam-now"><span class="pt-lbl">前回の結果</span><span class="pt-v">まだ受験した記録はありません。</span></div>
+      <ul class="pt-exams" id="exam-list">
+<!--{{examRows}}-->
+      </ul>
+      <div class="pt-row">
+        <a class="btn primary" href="exams/">模擬試験の一覧へ</a>
+      </div>
+    </article>
+  </div>
+
+  <section class="pt-flow" id="pt-flow">
+    <h2>おすすめの進め方</h2>
+    <ol>
+      <li><b>教材を読む</b><span>章ごとに読み、コード例が「通る・コンパイルエラー・実行時に例外」のどれになるかを自分で判定しながら進めます。</span></li>
+      <li><b>模擬試験を解く</b><span>90 分の時間制限つきで解きます。迷った問題には見直しマークを付けておきます。</span></li>
+      <li><b>振り返る</b><span>間違えた問題の解説から、教材の論点（2-3-4 など）へ飛んで読み直します。気づいたことは振り返りメモに残せます。</span></li>
+    </ol>
+  </section>
+
+  <nav class="pt-links" aria-label="このサイトについて">
+    <a class="pt-link" href="guide/"><b>はじめての方へ</b><span>このサイトの使い方を、実際の画面で説明します</span></a>
+    <a class="pt-link" href="about/"><b>このサイトについて</b><span>注意事項・著作権・記録の保存先</span></a>
+    <a class="pt-link" href="https://github.com/shoushinei/java-silver-se17-note"><b>GitHub</b><span>ソースコード・誤りの報告（Issues）</span></a>
+  </nav>
+</main>
+
+<!--{{footer}}-->
+
+<script type="application/json" id="site-meta">{{meta}}</script>
+<script>
+/* 「続きから」と「前回の結果」。どちらもこのブラウザに保存された内容から出す（サーバーには何も送らない）。
+   使い方のページ（guide/）の中で ?guide を付けて開いたときは、見本の値を出す */
+(function () {
+  var meta = JSON.parse(document.getElementById("site-meta").textContent);
+  var guide = /[?&]guide\b/.test(location.search);
+  function get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+  function ago(t) {
+    var d = Math.floor((Date.now() - t) / 86400000);
+    return d <= 0 ? "今日" : d === 1 ? "昨日" : d + " 日前";
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
+
+  var last = guide ? { id: "p2-3-4", no: "2-3-4", label: "キャスト不要で縮小できる3場面", at: Date.now() - 86400000 } : get("java-silver-note:last");
+  if (last && last.id) {
+    document.querySelector("#note-now .pt-v").innerHTML =
+      '<a href="note/#' + esc(last.id) + '"><b class="pt-no">' + esc(last.no) + "</b> " + esc(last.label) + "</a><small>（" + ago(last.at) + "）</small>";
+    var go = document.getElementById("note-go");
+    go.href = "note/#" + last.id;
+    go.textContent = "続きから読む";
+  }
+
+  var latest = null;
+  meta.exams.forEach(function (x) {
+    var h = guide ? (x.id === meta.exams[meta.exams.length - 1].id ? [{ at: Date.now() - 2 * 86400000, correct: 41, total: 60, rate: 41 / 60, passed: true }] : []) : get("java-silver-exam:" + x.id + ":history");
+    var row = document.querySelector('[data-exam="' + x.id + '"] .pt-x-s');
+    if (!h || !h.length) return;
+    var best = h.reduce(function (m, r) { return r.correct > m.correct ? r : m; }, h[0]);
+    row.textContent = "受験 " + h.length + " 回・最高 " + Math.round(best.rate * 100) + "%";
+    h.forEach(function (r) { if (!latest || r.at > latest.r.at) latest = { x: x, r: r }; });
+  });
+  if (latest) {
+    var r = latest.r;
+    document.querySelector("#exam-now .pt-v").innerHTML =
+      '<a href="exams/' + latest.x.id + "/#r" + r.at + '">' + esc(latest.x.title) + "　<b>" + r.correct + " / " + r.total + "</b>（" + Math.round(r.rate * 100) + "%）</a>" +
+      '<span class="pt-j ' + (r.passed ? "pass" : "fail") + '">' + (r.passed ? "合格" : "不合格") + "</span><small>（" + ago(r.at) + "）</small>";
+  }
+})();
+</script>
+</body>
+</html>

@@ -60,7 +60,7 @@ switch (x) {
 
   <div class="point trap"><p><span class="mk">default はどこに書いてもよく、そこからもフォールスルーします。</span>「default は最後に書かなければいけない」という選択肢は誤りです。</p></div>
 
-  <h3>switch に null を渡すと落ちる ── println との違い</h3>
+  <h3 data-toc="switch に null を渡すと">switch に null を渡すと落ちる ── println との違い</h3>
 
 <div class="code" data-v="run" id="sw-null"><div class="cap"><span class="dot run"></span>同じ null でも結果が違う<span class="tag">最重要</span></div><pre><code>String s = null;
 System.out.println(s);       // null  ← 落ちない
@@ -99,7 +99,7 @@ invokevirtual  String.hashCode   // ① まず s.hashCode() を呼ぶ ← s が 
 lookupswitch                     // ② その int で分岐先を探す
 invokevirtual  String.equals     // ③ ハッシュ値が同じ別の文字列もあり得るので、equals で確かめる</code></pre></div>
 
-  <div class="point"><p>例外のメッセージには、<strong>switch が何を呼ぼうとして落ちたか</strong>がそのまま書かれています。第2章 13 の「null にドットを付けたら NullPointerException」の特殊な形で、<span class="mk">switch は見えないドットを付けている</span>と覚えてください。アンボクシング（<code>int j = i;</code>）と同じ種類の落ち方です。<br>なお、「switch に null が来たら NullPointerException」は<strong>言語仕様で決まっている動作</strong>で、<code>hashCode()</code> などはそれを実現する手段です。case が1つも無い <code>switch (s) { }</code> でも、コンパイラが null チェック（<code>Objects.requireNonNull</code>）を差し込むので、やはり落ちます。</p></div>
+  <div class="point"><p>例外のメッセージには、<strong>switch が何を呼ぼうとして落ちたか</strong>がそのまま書かれています。2-13 の「null にドットを付けたら NullPointerException」の特殊な形で、<span class="mk">switch は見えないドットを付けている</span>と覚えてください。アンボクシング（<code>int j = i;</code>）と同じ種類の落ち方です。<br>なお、「switch に null が来たら NullPointerException」は<strong>言語仕様で決まっている動作</strong>で、<code>hashCode()</code> などはそれを実現する手段です。case が1つも無い <code>switch (s) { }</code> でも、コンパイラが null チェック（<code>Objects.requireNonNull</code>）を差し込むので、やはり落ちます。</p></div>
 
   <div class="point trap"><p><span class="mk">default は null を受け止めません。</span>default は「どの case にも一致しなかったとき」の行き先ですが、一致するかを調べる前の <code>hashCode()</code> の時点で落ちるので、default までたどり着きません。「default があるので default が実行される」という選択肢は誤りです。<br>switch 式（次の 09）でも同じです。また SE 17 では <code>case null</code> と書くことができず、<strong>コンパイルエラー</strong>になります。</p></div>
 
@@ -114,5 +114,5 @@ switch (s == null ? "" : s) {      // null なら "" に置き換えてから渡
     default:  ...                  // null はここに来る
 }</code></pre></div>
 
-  <div class="point link"><p>println が null で落ちない仕組みは<a href="#c5-s13">第5章 13</a>、ドットの無い NullPointerException の一覧は<a href="#c2-s13">第2章 13</a>にあります。<br>参考までに、Java 21 以降は <code>case null -&gt;</code> が書けるようになりました。ただし SE 17 の試験では書けない（コンパイルエラー）が正解です。</p></div>
+  <div class="point link"><p>println が null で落ちない仕組みは<a href="#c5-s13">5-13</a>、ドットの無い NullPointerException の一覧は<a href="#c2-s13">2-13</a>にあります。<br>参考までに、Java 21 以降は <code>case null -&gt;</code> が書けるようになりました。ただし SE 17 の試験では書けない（コンパイルエラー）が正解です。</p></div>
 </section>

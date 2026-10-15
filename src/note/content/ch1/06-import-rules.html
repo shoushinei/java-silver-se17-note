@@ -1,7 +1,7 @@
 <section id="c1-s06">
   <div class="sh"><span class="num">06</span><h2>import と import static</h2></div>
 
-  <h3>まず「完全修飾名」── クラスの本当の名前</h3>
+  <h3 data-toc="完全修飾名">まず「完全修飾名」── クラスの本当の名前</h3>
 
   <p>Java のクラスは、<strong>パッケージ名まで含めた名前</strong>が本当の名前です。これを<strong>完全修飾名</strong>といいます。<code>ArrayList</code> の本当の名前は <code>java.util.ArrayList</code>、<code>Math</code> は <code>java.lang.Math</code> です。</p>
 
@@ -14,7 +14,7 @@
 
   <p>毎回これを書くのは長いので、<strong>名前の前の部分を省略させてもらう宣言</strong>が <code>import</code> です。<span class="mk">ほかのファイルを読み込んだり、コードをコピーしたりするわけではありません</span>。import を書いても書かなくても、できあがるプログラムは同じです。</p>
 
-  <h3>import と import static ── 省略できる部分が違う</h3>
+  <h3 data-toc="import と import static の違い">import と import static ── 省略できる部分が違う</h3>
 
   <div class="qn">
     <div class="qn-row"><span class="qn-lb">import なし</span><code class="qn-name"><span class="qn-p">java.util.</span><span class="qn-c">ArrayList</span></code><span class="qn-d">全部書く</span></div>
@@ -62,7 +62,7 @@ public class Main {
     }
 }</code></pre></div>
 
-  <h3>間違った書き方 ── 形で見分ける</h3>
+  <h3 data-toc="間違った書き方">間違った書き方 ── 形で見分ける</h3>
 
   <div class="tw"><table>
     <thead><tr><th>書き方</th><th>結果</th><th>理由</th></tr></thead>
@@ -114,7 +114,7 @@ Calc c = null;        // エラー: cannot find symbol ── Calc という型�
 
   <div class="point trap"><p><code>java.lang</code> が自動で読み込まれるのは<strong>クラス名</strong>までです。<span class="mk"><code>Math.max(3, 7)</code> は書けますが、<code>max(3, 7)</code> と書くにはやはり <code>import static</code> が要ります</span>。また、<code>import java.lang.String;</code> のように自分で書いてもエラーにはなりません（無駄なだけ）。同じ import を2回書いてもエラーになりません。</p></div>
 
-  <h3><code>*</code> が届く範囲 ── 直下だけ</h3>
+  <h3 data-toc="* が届く範囲（直下だけ）"><code>*</code> が届く範囲 ── 直下だけ</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>サブパッケージは含まない<span class="tag">頻出</span></div><pre><code>import java.util.*;
 
@@ -163,7 +163,7 @@ public class Cart { }</code></pre></div>
 
   <p>1つのファイルの中は、<code>package</code> 文（あれば1つ）→ <code>import</code> 文（いくつでも）→ クラスの宣言、の順です。<code>import</code> と <code>import static</code> どうしの順番は自由です。</p>
 
-  <h3>よく出る罠 ── まとめ</h3>
+  <h3 data-toc="よく出る罠のまとめ">よく出る罠 ── まとめ</h3>
 
   <div class="tw"><table>
     <thead><tr><th>コード</th><th>結果</th><th>理由</th></tr></thead>

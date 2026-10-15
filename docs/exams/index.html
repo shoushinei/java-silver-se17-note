@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>自作模擬試験 ── Java Silver SE 17</title>
-<meta name="description" content="Java Silver SE 17 の自作模擬試験の一覧。時間制限つきのテストと、問題・解説を読む振り返りページがあります。">
+<title>模擬試験 ── Java Silver SE 17 試験対策ノート</title>
+<meta name="description" content="Java Silver SE 17（1Z0-825）の模擬試験の一覧。時間制限つきのテストと、問題・解説を読む振り返りページがあります。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +72,7 @@ li{margin-bottom:7px}
 .tight li{margin-bottom:3px}
 
 /* ---- exams/_engine/exam.css ---- */
-/* 模擬試験ページの見た目。色とフォントは統合ノートの 01-tokens.css を共有する。
+/* 模擬試験ページの見た目。色とフォントは教材の 01-tokens.css を共有する。
    body のクラスで画面を切り替える（exam.js の先頭を参照）:
      mode-intro / mode-test / mode-result（at-summary）/ mode-review
    受験・採点結果・振り返りは、どれも「1 問ずつ表示＋問題一覧」の同じ形。 */
@@ -443,15 +443,16 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
 <body class="mode-list">
 
 <header class="xbar">
-  <div class="ttl">自作模擬試験<small>Java Silver SE 17</small></div>
-  <a class="btn ghost" href="../">統合ノート</a>
+  <div class="ttl"><a href="../">Java Silver SE 17 試験対策ノート</a><small>模擬試験</small></div>
+  <a class="btn ghost" href="../guide/">使い方</a>
+  <a class="btn ghost" href="../note/">教材</a>
 </header>
 
 <div class="wrap">
   <section class="intro">
-    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 自作模擬試験</div>
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 1Z0-825 模擬試験</div>
     <h1>模擬試験</h1>
-    <p class="lead">統合ノートで学んだ論点を、本番に近い形式で確かめるための模擬試験です。どの試験も「時間制限つきのテスト」と「問題と解説を読む振り返り」の2通りで使えます。</p>
+    <p class="lead">教材で学んだ論点を、本番と同じ形式（90 分・60 問・選択式）で確かめるための模擬試験です。問題はすべてオリジナルです。どの試験も「時間制限つきのテスト」と「問題と解説を読む振り返り」の2通りで使えます。</p>
     <div class="xlist">
       <div class="xcard">
         <h2>自作模擬試験 1</h2>
@@ -483,7 +484,7 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
       </div>
       <div class="xcard">
         <h2>自作模擬試験 5</h2>
-        <p>試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本とノートの範囲だけです。</p>
+        <p>試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本と教材の範囲だけです。</p>
         <p>60 問 ・ 90 分 ・ 合格ライン 65%（目安）</p>
         <div class="row"><a class="btn primary" href="05/">テストを受ける</a><a class="btn" href="05/review.html">問題と解説を読む</a></div>
         <p class="last" data-exam="05"></p>
@@ -498,7 +499,7 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
       <input type="file" id="rec-file-all" accept=".json,application/json" hidden>
     </div>
     <p class="note-s" id="rec-msg" aria-live="polite"></p>
-    <p class="crumbs"><a href="../">← 統合ノート（テキスト）に戻る</a></p>
+    <p class="crumbs"><a href="../">← トップへ戻る</a> ・ <a href="../note/">教材</a> ・ <a href="../about/">このサイトについて</a></p>
   </section>
 </div>
 
@@ -619,7 +620,7 @@ var ExamRecords = (function () {
     var obj;
     try { obj = JSON.parse(text); } catch (e) { throw new Error("JSON として読めないファイルです。"); }
     if (!obj || obj.format !== FORMAT || !obj.exams || typeof obj.exams !== "object") {
-      throw new Error("このノートの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
+      throw new Error("このサイトの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
     }
     return obj;
   }

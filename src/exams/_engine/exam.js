@@ -21,20 +21,29 @@
    サーバー（backend/ の受験記録 API）
      backend/ からこのページを開いたとき（http://localhost:8080/exams/02/ など）だけ使う。
      提出した回をサーバーにも保存し（受験記録の serverId）、振り返りメモも書き込み、弱点レポートを取り出せる。
-     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。 */
+     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。
+
+   使い方の見本（?guide を付けて開いたとき。../guide/ のページが中に表示する）
+     localStorage には一切書かず、ページを開いているあいだだけのメモリに保存する。
+     受験記録には見本の 2 回分を入れておく。本物の受験記録は読みも書きもしない。 */
 (function () {
   var meta = JSON.parse(document.getElementById("exam-meta").textContent);
   var KEY = "java-silver-exam:" + meta.id + ":";
   var LIMIT_MS = meta.minutes * 60 * 1000;
   var MAX_HISTORY = 100;
+  var GUIDE = /[?&]guide\b/.test(location.search);
+  var MEM = GUIDE ? {} : null;   // 使い方の見本のときの保存先
 
   function load(k) {
+    if (MEM) return MEM[k] === undefined ? null : JSON.parse(MEM[k]);
     try { return JSON.parse(localStorage.getItem(KEY + k)); } catch (e) { return null; }
   }
   function save(k, v) {
+    if (MEM) { MEM[k] = JSON.stringify(v); return true; }
     try { localStorage.setItem(KEY + k, JSON.stringify(v)); return true; } catch (e) { return false; /* 保存できなくても受験は続けられる */ }
   }
   function drop(k) {
+    if (MEM) { delete MEM[k]; return; }
     try { localStorage.removeItem(KEY + k); } catch (e) { /* 同上 */ }
   }
 
@@ -54,6 +63,26 @@
     };
   });
   var N = qs.length;
+
+  // 使い方の見本に入れておく受験記録。何問かに 1 問を間違えた回と、時間切れの回
+  function sampleRecord(no, daysAgo, wrongEvery, usedMin, timeUp) {
+    var answers = {}, right = 0;
+    qs.forEach(function (q) {
+      if (timeUp && q.no > N - 8) return;             // 時間切れで最後の数問は未回答
+      if (q.no % wrongEvery === 0) {
+        var other = q.choices.map(function (c) { return c.dataset.key; })
+          .filter(function (k) { return q.answer.indexOf(k) < 0; })[0];
+        answers[q.no] = q.answer.slice(1).concat(other).sort();
+      } else { answers[q.no] = q.answer.slice(); right++; }
+    });
+    return { no: no, at: Date.now() - daysAgo * 86400000, usedMs: usedMin * 60000, correct: right, total: N, rate: right / N,
+             passed: right / N >= meta.passRate, answers: answers, flags: [4, 17, 38], timeUp: !!timeUp, pauses: 0,
+             notes: { 3: "（見本のメモ）B と C で迷った。教材の論点をもう一度読む" }, origin: "sample" };
+  }
+  if (GUIDE) {
+    MEM.history = JSON.stringify([sampleRecord(2, 2, 3, 82, false), sampleRecord(1, 9, 2, 90, true)]);
+    MEM.seq = "2";
+  }
   var mode = "";
   var cur = 1;           // 表示中の問題番号。採点結果では 0 が「結果の概要」
   var filter = "all";    // 問題一覧の絞り込み
@@ -124,7 +153,7 @@
   }
 
   function usedText(r) { return r.usedMs == null ? "—" : fmt(r.usedMs); }
-  var ORIGIN = { manual: "手入力", import: "読み込み" };
+  var ORIGIN = { manual: "手入力", import: "読み込み", sample: "見本" };
   function noteOf(r) {          // 所要時間に添える但し書き
     var a = [];
     if (r.timeUp) a.push("時間切れ");
@@ -690,7 +719,7 @@
 
   // localhost で開いていて、サーバーがこの試験を知っているときだけ使う。GitHub Pages では問い合わせもしない
   function probeServer() {
-    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
+    if (GUIDE || !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
     return api("GET", "/exams/" + meta.id + "/questions/1")
       .then(function () { return true; }, function () { return false; });
   }
@@ -843,7 +872,9 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   var OK_BTN = '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>';
 
+  var GUIDE_ONLY = "<h2>使い方の見本です</h2><p>この画面は使い方の説明用で、記録は保存されません。記録の書き出し・読み込みは、模擬試験のページで行ってください。</p>";
   $("rec-export").addEventListener("click", function () {
+    if (GUIDE) { showModal(GUIDE_ONLY + OK_BTN); return; }
     var file = ExamRecords.pack([{ id: meta.id, title: meta.title }]);
     if (!ExamRecords.count(file)) {
       showModal("<h2>書き出す記録がありません</h2><p>この試験の受験記録は、このブラウザにまだありません。</p>" + OK_BTN);
@@ -852,6 +883,7 @@
     ExamRecords.download(file, ExamRecords.fileName(meta.id));
   });
   $("rec-file").addEventListener("change", function () {
+    if (GUIDE) { this.value = ""; showModal(GUIDE_ONLY + OK_BTN); return; }
     var f = this.files[0];
     this.value = "";           // 同じファイルをもう一度選んでも反応するように
     if (!f) return;

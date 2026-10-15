@@ -1,4 +1,4 @@
-/* 模擬試験ページの見た目。色とフォントは統合ノートの 01-tokens.css を共有する。
+/* 模擬試験ページの見た目。色とフォントは教材の 01-tokens.css を共有する。
    body のクラスで画面を切り替える（exam.js の先頭を参照）:
      mode-intro / mode-test / mode-result（at-summary）/ mode-review
    受験・採点結果・振り返りは、どれも「1 問ずつ表示＋問題一覧」の同じ形。 */

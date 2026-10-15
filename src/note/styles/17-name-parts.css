@@ -1,4 +1,4 @@
-/* 完全修飾名のどこを省略できるかを色で分ける図（第1章 06 import）。
+/* 完全修飾名のどこを省略できるかを色で分ける図（1-6 import）。
    .qn-p パッケージ名 / .qn-c クラス名 / .qn-m static メンバ名。.gone は書かなくてよい部分 */
 .qn { margin: 14px 0 6px; border: 1px solid var(--rule); border-radius: 8px; background: #fff; padding: 6px 14px; }
 .qn-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15em); grid-template-areas: "lb lb" "nm d"; align-items: center; gap: 4px 14px; padding: 9px 0; }

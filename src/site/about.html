@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>このサイトについて ── Java Silver SE 17 試験対策ノート</title>
+<meta name="description" content="Java Silver SE 17 試験対策ノートの注意事項・著作権・記録の保存先について。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+<!--{{styles}}-->
+</style>
+</head>
+<body class="site">
+
+<!--{{header}}-->
+
+<main class="doc">
+  <div class="eyebrow">ABOUT</div>
+  <h1>このサイトについて</h1>
+
+  <h2>目的</h2>
+  <p>Java Silver SE 17 試験対策ノートは、Oracle 認定資格 <b>Java Programmer, Silver SE 17（試験番号 1Z0-825）</b>の合格を目的とした学習サイトです。次の2つでできています。</p>
+  <ul>
+    <li><a href="../note/">教材</a> ── 試験範囲を全 {{chapters}} 章・{{sections}} 節・{{points}} 論点にまとめたもの。論点番号（2-3-4 など）・検索・索引で引けます。</li>
+    <li><a href="../exams/">模擬試験</a> ── 本番と同じ 90 分・60 問の形式で {{examCount}} 回分（{{questions}} 問）。解説から教材の論点へ戻れます。</li>
+  </ul>
+  <p>使い方は <a href="../guide/">はじめての方へ</a> で、実際の画面を動かしながら説明しています。</p>
+
+  <h2>注意事項</h2>
+  <ul>
+    <li>このサイトは<b>非公式</b>の学習サイトで、Oracle 社とは関係ありません。Oracle と Java は、Oracle Corporation およびその関連会社の登録商標です。</li>
+    <li>試験範囲は Oracle 公式の試験内容チェックリスト（1Z0-825-JPN）に沿っていますが、内容の正確さや、試験に合格できることは保証しません。試験の範囲・形式・合格ラインは変わることがあるので、受験の前に Oracle の公式サイトで最新の情報を確かめてください。</li>
+    <li>模擬試験の合格ライン（65%）や「黒本より易しめ」などの難しさは、作者が決めた目安です。</li>
+  </ul>
+
+  <h2>問題と文章について</h2>
+  <ul>
+    <li>教材の文章・図、模擬試験の問題と解説は、すべてこのサイトのために書いたオリジナルです。市販の問題集の問題は載せていません。</li>
+    <li>模擬試験の説明にある「黒本」は、市販の問題集の通称です。難しさや論点の配分の目安として比べているだけで、その書籍の出版社・著者とは関係ありません。</li>
+    <li>模擬試験の問題のコードは、すべて JDK 17 で実際にコンパイル・実行して、解説どおりの結果になることを確かめています。</li>
+  </ul>
+
+  <h2>記録の保存先</h2>
+  <ul>
+    <li>模擬試験の受験記録・振り返りメモ・見直しマーク、教材の「続きから」の位置は、<b>お使いのブラウザの中（localStorage）だけ</b>に保存されます。サーバーには送りません。アクセス解析も入れていません。</li>
+    <li>そのため、別のパソコンやブラウザとは自動では共有されません。模擬試験の「記録を書き出す」「記録を読み込む」（JSON ファイル）で移せます。</li>
+    <li>記録を消したいときは、模擬試験のページの「削除」か、ブラウザの設定でこのサイトのデータを削除してください。</li>
+    <li>文字の表示に Google Fonts を使っているため、ページを開くとフォントのファイルを Google のサーバーから読み込みます。</li>
+  </ul>
+
+  <h2>誤りを見つけたら</h2>
+  <p>内容の誤りや分かりにくいところは、<a href="https://github.com/shoushinei/java-silver-se17-note/issues">GitHub の Issues</a> で教えてください。教材なら論点番号（2-3-4 など）、模擬試験なら「試験 5 の問 12」のように場所を書いてもらえると助かります。</p>
+
+  <h2>ソースコード</h2>
+  <p>このサイトのソースコードは <a href="https://github.com/shoushinei/java-silver-se17-note">GitHub（shoushinei/java-silver-se17-note）</a> にあります。手元のパソコンで受験記録 API（Spring Boot と H2 データベース）を動かすと、受験記録をデータベースにも保存し、間違えた論点をまとめた「弱点レポート」を取り出せます。手順はリポジトリの README にあります。</p>
+</main>
+
+<!--{{footer}}-->
+</body>
+</html>

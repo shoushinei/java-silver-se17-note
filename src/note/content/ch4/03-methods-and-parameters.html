@@ -51,7 +51,7 @@ void m(int x, String... s) { }      // OK</code></pre></div>
     </tbody>
   </table></div>
 
-  <p>戻り値は「戻り値型の変数に代入できるか」で判定します（<a href="#c2-s03">第2章 03 型変換</a>と同じ規則）。</p>
+  <p>戻り値は「戻り値型の変数に代入できるか」で判定します（<a href="#c2-s03">2-3 型変換</a>と同じ規則）。</p>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値の型変換<span class="tag">要注意</span></div><pre><code>long   a() { return 10; }      // OK。int → long は拡大変換
 double b() { return 10; }      // OK。10.0 が返る

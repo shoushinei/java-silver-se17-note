@@ -114,7 +114,7 @@ var ExamRecords = (function () {
     var obj;
     try { obj = JSON.parse(text); } catch (e) { throw new Error("JSON として読めないファイルです。"); }
     if (!obj || obj.format !== FORMAT || !obj.exams || typeof obj.exams !== "object") {
-      throw new Error("このノートの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
+      throw new Error("このサイトの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
     }
     return obj;
   }

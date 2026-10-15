@@ -3,6 +3,9 @@ section{padding-top:60px}
 .sh .num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--err);letter-spacing:.06em;flex:none;padding-top:4px}
 .sh h2{font-family:var(--disp);font-weight:800;font-size:clamp(21px,3.3vw,28px);line-height:1.4;margin:0;letter-spacing:.01em}
 h3{font-family:var(--body);font-weight:700;font-size:16.5px;margin:36px 0 12px;letter-spacing:.01em}
-h3::before{content:"";display:inline-block;width:4px;height:15px;background:var(--sumi);margin-right:9px;vertical-align:-2px;border-radius:1px}
+/* 論点番号（2-3-4）。build-note.mjs が h3 の先頭に入れる */
+h3 .pn{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--err);letter-spacing:.04em;margin-right:10px;padding:1px 7px;border:1px solid var(--rule);border-radius:4px;background:#fff;vertical-align:2px}
+h3:target,section:target>.sh{animation:pt-flash 2.2s ease-out}
+@keyframes pt-flash{0%,30%{background:var(--marker)}100%{background:transparent}}
 p{margin:0 0 15px}
 code:not(pre code){font-family:var(--mono);font-size:.86em;background:var(--washi-2);border:1px solid var(--rule);border-radius:4px;padding:1.5px 5px;white-space:nowrap}

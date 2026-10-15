@@ -1,4 +1,4 @@
-/* 実行の順番を左から右へ並べる図（第6章 09 try-with-resources）。
+/* 実行の順番を左から右へ並べる図（6-9 try-with-resources）。
    1 つの箱が 1 つの出来事。上の小さな文字が種類で、色でも区別する。 */
 .flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:stretch;gap:8px 20px}
 .flow li{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:40px;padding:3px 10px 4px;border:1.5px solid var(--sumi-3);border-radius:6px;background:#fff;font-family:var(--mono);font-size:13px;font-weight:700;line-height:1.35;color:var(--sumi);white-space:nowrap}

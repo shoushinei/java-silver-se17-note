@@ -3,7 +3,7 @@
 
   <div class="point new"><p>Java 14 で正式導入された構文で、<strong>SE 11 Silver には存在しませんでした</strong>。11 の教材では一切カバーされていないので、この節が第3章で最も重要です。</p></div>
 
-  <h3>アロー構文 ── フォールスルーしない</h3>
+  <h3 data-toc="アロー構文">アロー構文 ── フォールスルーしない</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>break が不要になる<span class="tag">形</span></div><pre><code>switch (x) {
     case 1 -&gt; System.out.println("A");
@@ -20,7 +20,7 @@
     default      -&gt; System.out.println("その他");
 }</code></pre></div>
 
-  <h3>値を返す ── ここが「式」たるゆえん</h3>
+  <h3 data-toc="値を返す">値を返す ── ここが「式」たるゆえん</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>代入できる<span class="tag">最重要</span></div><pre><code>String result = switch (x) {
     case 1, 2 -&gt; "小";
@@ -30,7 +30,7 @@
 
   <div class="point trap"><p>switch <strong>式</strong>は値を作る「式」なので、<span class="mk">閉じ波括弧の後にセミコロンが必要</span>です。switch <strong>文</strong>には要りません。選択肢でここを削られると見落とします。</p></div>
 
-  <h3>yield ── ブロックから値を返す</h3>
+  <h3 data-toc="yield">yield ── ブロックから値を返す</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>複数行書くときは { } と yield<span class="tag">最重要</span></div><pre><code>int result = switch (x) {
     case 1 -&gt; 10;                 // 1行なら式をそのまま書く
@@ -67,7 +67,7 @@
     default -&gt; 0;
 };</code></pre></div>
 
-  <h3>網羅性 ── すべての場合をカバーする必要がある</h3>
+  <h3 data-toc="網羅性">網羅性 ── すべての場合をカバーする必要がある</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>default がないとエラー<span class="tag">最重要</span></div><pre><code>int x = 5;
 String s = switch (x) {

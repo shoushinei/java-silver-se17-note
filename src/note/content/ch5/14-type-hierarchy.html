@@ -6,17 +6,17 @@
   <div class="tw"><table>
     <thead><tr><th></th><th>どの型どうしか</th><th>関係の決まり方</th><th>詳しく</th></tr></thead>
     <tbody>
-      <tr><td><strong>①</strong></td><td>基本データ型どうし</td><td>親子関係は<strong>無い</strong>。あるのは<strong>変換の向き</strong>だけ（<code>int</code>→<code>long</code> は自動、逆はキャスト）</td><td><a href="#c2-s03">第2章 03</a></td></tr>
-      <tr><td><strong>②</strong></td><td>基本データ型 ⇄ ラッパー</td><td>ボクシング／アンボクシング。<strong>1段階だけ</strong>（<code>int</code>→<code>Long</code> は不可）</td><td><a href="#c2-s03">第2章 03</a></td></tr>
+      <tr><td><strong>①</strong></td><td>基本データ型どうし</td><td>親子関係は<strong>無い</strong>。あるのは<strong>変換の向き</strong>だけ（<code>int</code>→<code>long</code> は自動、逆はキャスト）</td><td><a href="#c2-s03">2-3</a></td></tr>
+      <tr><td><strong>②</strong></td><td>基本データ型 ⇄ ラッパー</td><td>ボクシング／アンボクシング。<strong>1段階だけ</strong>（<code>int</code>→<code>Long</code> は不可）</td><td><a href="#c2-s03">2-3</a></td></tr>
       <tr><td><strong>③</strong></td><td>参照型どうし</td><td><strong>親子関係</strong>。<code>extends</code> と <code>implements</code> を上にたどって出会えるか</td><td>この節</td></tr>
-      <tr><td><strong>④</strong></td><td>型引数（<code>&lt; &gt;</code> の中身）</td><td>中身の親子関係は<strong>持ち上がらない</strong>（<code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子ではない）</td><td><a href="#c2-s14">第2章 14</a></td></tr>
-      <tr><td><strong>⑤</strong></td><td>配列どうし</td><td>要素の親子関係が<strong>そのまま持ち上がる</strong>（<code>String[]</code> は <code>Object[]</code> の子）</td><td><a href="#c2-s11">第2章 11</a></td></tr>
+      <tr><td><strong>④</strong></td><td>型引数（<code>&lt; &gt;</code> の中身）</td><td>中身の親子関係は<strong>持ち上がらない</strong>（<code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子ではない）</td><td><a href="#c2-s14">2-14</a></td></tr>
+      <tr><td><strong>⑤</strong></td><td>配列どうし</td><td>要素の親子関係が<strong>そのまま持ち上がる</strong>（<code>String[]</code> は <code>Object[]</code> の子）</td><td><a href="#c2-s11">2-11</a></td></tr>
     </tbody>
   </table></div>
 
   <div class="point trap"><p><span class="mk">④ と ⑤ は逆向き</span>です。同じ「入れ物」なのに、配列は要素の親子をそのまま引き継ぎ、ジェネリクスは引き継ぎません。この1点だけで選択肢が2つ切れる問題が出ます。</p></div>
 
-  <h3>全体像 ── 型の世界は2つに分かれる</h3>
+  <h3 data-toc="全体像">全体像 ── 型の世界は2つに分かれる</h3>
 
 <figure class="fig"><svg viewBox="0 0 460 302" role="img" aria-label="上の箱に基本データ型、下の箱に参照型が並び、あいだをボクシングとアンボクシングの矢印がつないでいる">
   <defs><marker id="ah-t1" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker></defs>
@@ -43,7 +43,7 @@
 
   <div class="point"><p>「<code>int</code> は <code>Object</code> の子ですか」と聞かれたら<strong>いいえ</strong>です。<code>Object o = 1;</code> が書けるのは、<span class="mk">先に <code>int</code> が <code>Integer</code> に変わってから、親の <code>Object</code> に代入されている</span>からです。<br>基本データ型は 8 つで固定、参照型は無数にありますが、どれも必ず Object につながります。</p></div>
 
-  <h3>① 基本データ型どうし ── 親子ではなく「変換の向き」</h3>
+  <h3 data-toc="① 基本データ型どうし">① 基本データ型どうし ── 親子ではなく「変換の向き」</h3>
 
 <figure class="fig"><svg viewBox="0 0 460 156" role="img" aria-label="byte short int long float double が左から右へ矢印でつながり、char が int に合流している">
   <defs><marker id="ah-t2" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker></defs>
@@ -65,9 +65,9 @@
   <text class="lb" x="230" y="128" text-anchor="middle">この向きはキャストが必要（縮小変換）</text>
 </svg><figcaption><code>long → float</code> も自動です（精度は落ちますが表現できる範囲は広い）。<code>char</code> は <code>int</code> 以上へしか広がらず、<code>byte</code>・<code>short</code> との間は<strong>どちら向きもキャストが必要</strong>です</figcaption></figure>
 
-  <div class="point"><p>基本データ型に <code>instanceof</code>・キャストの失敗（ClassCastException）・オーバーライドの共変はありません。<span class="mk">あるのは「自動で広がるか、キャストが要るか」だけ</span>です。<br>この一本道の上で、さらに3つの規則が効きます ── <strong>byte・short・char の演算は int に昇格する</strong>、<strong>複合代入（<code>+=</code>）には暗黙のキャストが入る</strong>、<strong>final の定数は範囲内なら縮小代入できる</strong>（<a href="#c2-s03">第2章 03</a>）。</p></div>
+  <div class="point"><p>基本データ型に <code>instanceof</code>・キャストの失敗（ClassCastException）・オーバーライドの共変はありません。<span class="mk">あるのは「自動で広がるか、キャストが要るか」だけ</span>です。<br>この一本道の上で、さらに3つの規則が効きます ── <strong>byte・short・char の演算は int に昇格する</strong>、<strong>複合代入（<code>+=</code>）には暗黙のキャストが入る</strong>、<strong>final の定数は範囲内なら縮小代入できる</strong>（<a href="#c2-s03">2-3</a>）。</p></div>
 
-  <h3>② 基本データ型 ⇄ ラッパー ── 変換は1段階だけ</h3>
+  <h3 data-toc="② 基本データ型 ⇄ ラッパー">② 基本データ型 ⇄ ラッパー ── 変換は1段階だけ</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>2段階になると通らない<span class="tag">最頻出</span></div><pre><code>Integer a = 5;                 // OK  int → Integer（ボクシングだけ）
 Long    b = 5;                 // ×   int → long → Long の2段階
@@ -77,9 +77,9 @@ Object  e = 'a';               // OK  char → Character（1段階）→ 親へ
 long    f = Integer.valueOf(5);   // OK  アンボクシング → 拡大変換（この向きは2段階でも通る）
 double  g = 5;                 // OK  int → double（① の話）</code></pre></div>
 
-  <div class="point trap"><p>「<strong>ボクシングしてから広げる</strong>」（<code>Integer</code> → <code>Object</code>、<code>Integer</code> → <code>Number</code>）は通り、「<strong>広げてからボクシング</strong>」（<code>int</code> → <code>long</code> → <code>Long</code>）は通りません。オーバーロードの選択でも同じ順序が効きます（<a href="#c4-s06">第4章 06</a>）。<br>アンボクシングは逆で、<code>long f = Integer.valueOf(5)</code> のように<span class="mk">アンボクシングしてから広げるのは許されます</span>。</p></div>
+  <div class="point trap"><p>「<strong>ボクシングしてから広げる</strong>」（<code>Integer</code> → <code>Object</code>、<code>Integer</code> → <code>Number</code>）は通り、「<strong>広げてからボクシング</strong>」（<code>int</code> → <code>long</code> → <code>Long</code>）は通りません。オーバーロードの選択でも同じ順序が効きます（<a href="#c4-s06">4-6</a>）。<br>アンボクシングは逆で、<code>long f = Integer.valueOf(5)</code> のように<span class="mk">アンボクシングしてから広げるのは許されます</span>。</p></div>
 
-  <h3>③ 参照型どうし ── 判定のルールは3つだけ</h3>
+  <h3 data-toc="③ 参照型どうし">③ 参照型どうし ── 判定のルールは3つだけ</h3>
   <div class="tw"><table>
     <thead><tr><th>関係</th><th>代入</th><th>例</th></tr></thead>
     <tbody>
@@ -89,7 +89,7 @@ double  g = 5;                 // OK  int → double（① の話）</code></pre
     </tbody>
   </table></div>
 
-  <h3>クラスの木 ── すべての親は Object</h3>
+  <h3 data-toc="クラスの木">クラスの木 ── すべての親は Object</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>標準クラスの親子関係（上が親）<span class="tag">暗記</span></div>
   <ul class="ht">
@@ -109,7 +109,7 @@ double  g = 5;                 // OK  int → double（① の話）</code></pre
         <li><div class="ht-l"><span class="ht-n">Character</span><span class="ht-g ht-fn">final</span><span class="ht-d">Number の子ではない</span></div></li>
         <li><div class="ht-l"><span class="ht-n">String</span><span class="ht-g ht-fn">final</span><span class="ht-d">CharSequence・Comparable を実装</span></div></li>
         <li><div class="ht-l"><span class="ht-n">StringBuilder</span><span class="ht-g ht-fn">final</span><span class="ht-d">CharSequence を実装。String の子ではない</span></div></li>
-        <li><div class="ht-l"><span class="ht-n">Throwable</span><span class="ht-d">例外の木 → 第6章 01</span></div></li>
+        <li><div class="ht-l"><span class="ht-n">Throwable</span><span class="ht-d">例外の木 → 6-1</span></div></li>
         <li><div class="ht-l"><span class="ht-n">Record</span><span class="ht-g ht-ab">abstract</span><span class="ht-d">すべての record の親（暗黙に継承）</span></div></li>
         <li><div class="ht-l"><span class="ht-n">Enum</span><span class="ht-g ht-ab">abstract</span><span class="ht-d">すべての enum の親（暗黙に継承）</span></div></li>
         <li><div class="ht-l"><span class="ht-n ht-w">ArrayList / HashSet / HashMap など</span><span class="ht-d">コレクションの実装クラス（下のインタフェースの木）</span></div></li>
@@ -195,9 +195,9 @@ double  g = 5;                 // OK  int → double（① の話）</code></pre
   <div class="ht-legend"><span><span class="ht-g ht-if">インタフェース</span>インタフェース（new できない）</span><span><span class="ht-g ht-cl">クラス</span>クラス</span></div>
 </div>
 
-  <p>コレクションの詳しい違いは<a href="#c2-s14">第2章 14</a>、try-with-resources は<a href="#c6-s09">第6章 09</a>、配列の clone は<a href="#c2-s11">第2章 11</a>にあります。</p>
+  <p>コレクションの詳しい違いは<a href="#c2-s14">2-14</a>、try-with-resources は<a href="#c6-s09">6-9</a>、配列の clone は<a href="#c2-s11">2-11</a>にあります。</p>
 
-  <h3>代入できるか ── よく出る組み合わせ</h3>
+  <h3 data-toc="代入できるか">代入できるか ── よく出る組み合わせ</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>○ はコンパイルできる、× はコンパイルエラー<span class="tag">最頻出</span></div><pre><code>Number n = 1;                              // ○ int → Integer（ボクシング）→ Number（親へ）
 Object o = 1;                              // ○ 同上。Object はすべての親
@@ -216,7 +216,7 @@ Object[] oa = new int[1];                  // × int[] は Object[] の子では
 
 Iterable&lt;String&gt; it = new ArrayList&lt;String&gt;();          // ○ ArrayList → List → Collection → Iterable
 Collection&lt;String&gt; c = new HashMap&lt;String, String&gt;();  // × Map は Collection ではない
-List&lt;Object&gt; lo = new ArrayList&lt;String&gt;();             // × &lt; &gt; の中身は親子でも不可（第2章 14）
+List&lt;Object&gt; lo = new ArrayList&lt;String&gt;();             // × &lt; &gt; の中身は親子でも不可（2-14）
 
 AutoCloseable ac = new Scanner("x");       // ○ Scanner → Closeable → AutoCloseable
 Exception e = new FileNotFoundException(); // ○ 子孫 → 祖先
@@ -227,7 +227,7 @@ Integer i = (Integer) n;       // コンパイルは通るが ClassCastException
 
   <div class="point"><p>コンパイラが見るのは<strong>変数の型どうしの親子関係</strong>だけです（<a href="#c5-s05">節05</a>）。Number と Integer は親子なのでキャストは書けますが、実体が Long だったことは実行してみるまで分かりません。一方 Integer と Long は兄弟なので、実体を見るまでもなく<span class="mk">コンパイルの時点でエラー</span>になります。</p></div>
 
-  <h3>④ 型引数 ── <code>&lt; &gt;</code> の中身の親子は持ち上がらない</h3>
+  <h3 data-toc="④ 型引数">④ 型引数 ── <code>&lt; &gt;</code> の中身の親子は持ち上がらない</h3>
 
 <figure class="fig"><svg viewBox="0 0 460 196" role="img" aria-label="左は String 配列から Object 配列へ矢印がつながり、右は List の型引数どうしが線で結ばれずバツ印が付いている">
   <defs><marker id="ah-t3" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L8 4L0 8z"/></marker></defs>
@@ -258,9 +258,9 @@ List&lt;Object&gt; e = new ArrayList&lt;&gt;();
 e.add("a");                                      // ○ 要素として子を入れるのは自由
 e.add(1);                                        // ○</code></pre></div>
 
-  <div class="point"><p>もし <code>List&lt;Object&gt; a = new ArrayList&lt;String&gt;();</code> が書けてしまうと、<code>a.add(1)</code> で String 専用のリストに Integer が入ってしまいます。<span class="mk">それを防ぐために、<code>&lt; &gt;</code> の中身は左右で完全一致</span>と決められています。<br>「リストごと代入する」のと「要素として入れる」のは別の話です。<code>List&lt;Object&gt;</code> に <code>"a"</code> や <code>1</code> を add するのは何の問題もありません（<a href="#c2-s14">第2章 14</a>）。<br>コンパイル後に <code>&lt; &gt;</code> が消える（型消去）ため、<code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> は同じクラスに並べられません（<a href="#c5-s03">節03</a>）。</p></div>
+  <div class="point"><p>もし <code>List&lt;Object&gt; a = new ArrayList&lt;String&gt;();</code> が書けてしまうと、<code>a.add(1)</code> で String 専用のリストに Integer が入ってしまいます。<span class="mk">それを防ぐために、<code>&lt; &gt;</code> の中身は左右で完全一致</span>と決められています。<br>「リストごと代入する」のと「要素として入れる」のは別の話です。<code>List&lt;Object&gt;</code> に <code>"a"</code> や <code>1</code> を add するのは何の問題もありません（<a href="#c2-s14">2-14</a>）。<br>コンパイル後に <code>&lt; &gt;</code> が消える（型消去）ため、<code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> は同じクラスに並べられません（<a href="#c5-s03">節03</a>）。</p></div>
 
-  <h3>⑤ 配列 ── 要素の親子が、そのまま持ち上がる</h3>
+  <h3 data-toc="⑤ 配列">⑤ 配列 ── 要素の親子が、そのまま持ち上がる</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>持ち上がるのは参照型の要素だけ<span class="tag">要注意</span></div><pre><code>Object[] a = new String[1];      // ○ String は Object の子 → String[] も Object[] の子
 Number[] b = new Integer[1];     // ○ 同じ理由
@@ -270,27 +270,27 @@ Object   d = new int[1];         // ○ 配列はすべて Object の子
 Object[] e = new int[1];         // × 要素の int は参照型ではないので持ち上がらない
 long[]   f = new int[1];         // × int → long は① の変換であって親子ではない</code></pre></div>
 
-  <div class="point trap"><p><code>int[]</code> は <span class="mk">Object の子ではあるが、Object[] の子ではありません</span>。要素の <code>int</code> が Object の子でないからです。一方 <code>int[][]</code> は要素が <code>int[]</code>（参照型）なので <code>Object[]</code> に入ります。<br>持ち上がった結果、<code>Object[] a = new String[1];</code> のあとで <code>a[0] = 1;</code> と書くとコンパイルは通り、<strong>実行時に ArrayStoreException</strong> になります（<a href="#c2-s11">第2章 11</a>）。ジェネリクスが同じ事故をコンパイル時に止めるのと対照的です。</p></div>
+  <div class="point trap"><p><code>int[]</code> は <span class="mk">Object の子ではあるが、Object[] の子ではありません</span>。要素の <code>int</code> が Object の子でないからです。一方 <code>int[][]</code> は要素が <code>int[]</code>（参照型）なので <code>Object[]</code> に入ります。<br>持ち上がった結果、<code>Object[] a = new String[1];</code> のあとで <code>a[0] = 1;</code> と書くとコンパイルは通り、<strong>実行時に ArrayStoreException</strong> になります（<a href="#c2-s11">2-11</a>）。ジェネリクスが同じ事故をコンパイル時に止めるのと対照的です。</p></div>
 
-  <h3>場面別 ── どの関係が、どこで効くか</h3>
+  <h3 data-toc="場面別の効き方">場面別 ── どの関係が、どこで効くか</h3>
 
   <div class="tw"><table>
     <thead><tr><th>場面</th><th>効く関係と判定</th></tr></thead>
     <tbody>
       <tr><td>代入（<code>=</code>）</td><td>子 → 親はそのまま。親 → 子はキャスト。無関係は不可</td></tr>
       <tr><td>キャスト</td><td>親子ならコンパイルは通る（実体が違えば ClassCastException）。無関係なクラスどうしはコンパイルエラー。final でないクラス → インタフェースは通る（<a href="#c5-s06">節06</a>）</td></tr>
-      <tr><td><code>instanceof</code></td><td>無関係な型どうしはコンパイルエラー。<code>null</code> は常に false（<a href="#c4-s09">第4章 09</a>）</td></tr>
-      <tr><td>拡張 for 文</td><td>配列か <code>Iterable</code> の子孫だけ。<code>Map</code> と <code>String</code> は回せない（<a href="#c2-s14">第2章 14</a>）</td></tr>
-      <tr><td>try-with-resources</td><td><code>AutoCloseable</code> の子孫だけ（<a href="#c6-s09">第6章 09</a>）</td></tr>
-      <tr><td>catch の順番</td><td>子を上、親を下。逆だとコンパイルエラー（<a href="#c6-s04">第6章 04</a>）</td></tr>
-      <tr><td>multi-catch</td><td>親子関係にある2つは <code>|</code> で並べられない（<a href="#c6-s05">第6章 05</a>）</td></tr>
+      <tr><td><code>instanceof</code></td><td>無関係な型どうしはコンパイルエラー。<code>null</code> は常に false（<a href="#c4-s09">4-9</a>）</td></tr>
+      <tr><td>拡張 for 文</td><td>配列か <code>Iterable</code> の子孫だけ。<code>Map</code> と <code>String</code> は回せない（<a href="#c2-s14">2-14</a>）</td></tr>
+      <tr><td>try-with-resources</td><td><code>AutoCloseable</code> の子孫だけ（<a href="#c6-s09">6-9</a>）</td></tr>
+      <tr><td>catch の順番</td><td>子を上、親を下。逆だとコンパイルエラー（<a href="#c6-s04">6-4</a>）</td></tr>
+      <tr><td>multi-catch</td><td>親子関係にある2つは <code>|</code> で並べられない（<a href="#c6-s05">6-5</a>）</td></tr>
       <tr><td>オーバーライドの引数</td><td><strong>完全一致</strong>。<code>&lt; &gt;</code> の中身が違えば name clash（<a href="#c5-s03">節03</a>）</td></tr>
       <tr><td>オーバーライドの戻り値</td><td>同じか<strong>その子</strong>（共変戻り値）。効くのは <code>&lt; &gt;</code> の外側だけ</td></tr>
-      <tr><td>オーバーライドの例外</td><td>検査例外は<strong>子に狭める</strong>のは可、親に広げるのは不可（<a href="#c6-s10">第6章 10</a>）</td></tr>
-      <tr><td>オーバーロードの選択</td><td>拡大変換 → ボクシング → 可変長引数 の順に候補を探す（<a href="#c4-s06">第4章 06</a>）</td></tr>
+      <tr><td>オーバーライドの例外</td><td>検査例外は<strong>子に狭める</strong>のは可、親に広げるのは不可（<a href="#c6-s10">6-10</a>）</td></tr>
+      <tr><td>オーバーロードの選択</td><td>拡大変換 → ボクシング → 可変長引数 の順に候補を探す（<a href="#c4-s06">4-6</a>）</td></tr>
       <tr><td>配列への代入</td><td>要素の親子は持ち上がる。合わない型を入れると ArrayStoreException（⑤）</td></tr>
       <tr><td>ジェネリクスの代入</td><td><code>&lt; &gt;</code> の中身は完全一致（④）</td></tr>
-      <tr><td><code>record</code></td><td>暗黙に <code>Record</code> を継承しているので <code>extends</code> は書けない。<code>implements</code> は書ける（<a href="#c4-s10">第4章 10</a>）</td></tr>
+      <tr><td><code>record</code></td><td>暗黙に <code>Record</code> を継承しているので <code>extends</code> は書けない。<code>implements</code> は書ける（<a href="#c4-s10">4-10</a>）</td></tr>
       <tr><td><code>sealed</code></td><td>子になれるのは <code>permits</code> に挙げた型だけ（<a href="#c5-s11">節11</a>）</td></tr>
     </tbody>
   </table></div>
@@ -306,5 +306,5 @@ long[]   f = new int[1];         // × int → long は① の変換であって
     </tbody>
   </table></div>
 
-  <div class="point"><p>そのうえで、<code>&lt; &gt;</code> が付いていたら ④（中身は完全一致）、<code>[ ]</code> が付いていたら ⑤（要素の関係が持ち上がる）を重ねて考えます。<span class="mk">この順番を守れば、知らないクラス名が出てきても判定できます</span>。<br>例外の木は<a href="#c6-s01">第6章 01</a>、コレクションの木は<a href="#c2-s14">第2章 14</a>に、それぞれ詳しい図があります。</p></div>
+  <div class="point"><p>そのうえで、<code>&lt; &gt;</code> が付いていたら ④（中身は完全一致）、<code>[ ]</code> が付いていたら ⑤（要素の関係が持ち上がる）を重ねて考えます。<span class="mk">この順番を守れば、知らないクラス名が出てきても判定できます</span>。<br>例外の木は<a href="#c6-s01">6-1</a>、コレクションの木は<a href="#c2-s14">2-14</a>に、それぞれ詳しい図があります。</p></div>
 </section>

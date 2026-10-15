@@ -55,7 +55,7 @@ catch (Exception e) { System.out.println(y); }   // コンパイルエラー</co
     }
 }</code></pre></div>
 
-  <h3>自分自身で初期化する ── <code>int num = num;</code></h3>
+  <h3 data-toc="自分自身で初期化する">自分自身で初期化する ── <code>int num = num;</code></h3>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>右辺の num はもうローカル変数<span class="tag">頻出</span></div><pre><code>class Counter {
     int num = 10;
     void m() {
@@ -74,5 +74,5 @@ catch (Exception e) { System.out.println(y); }   // コンパイルエラー</co
 
   <div class="point trap"><p>ローカル変数のスコープは、<span class="mk">宣言したその場所（変数名を書いた位置）から</span>始まります。<code>=</code> の右側に書いた <code>num</code> の時点で、すでに「いま宣言しているローカル変数 num」がフィールドを隠しています。そのローカル変数にはまだ値が入っていないので、未初期化エラーです。<br>「右辺はフィールドの 10 だから 10 が入る」と読ませる引っかけです。フィールド同士でも <code>int x = x + 1;</code> は <code>self-reference in initializer</code> でエラーになります。</p></div>
 
-  <div class="point link"><p>コンストラクタの <code>name = name;</code>（<a href="#c4-s05">第4章 05</a>）はエラーにならず、引数に引数を代入するだけでした。<strong>引数はすでに値を持っている</strong>ので未初期化にならない、というのが違いです。</p></div>
+  <div class="point link"><p>コンストラクタの <code>name = name;</code>（<a href="#c4-s05">4-5</a>）はエラーにならず、引数に引数を代入するだけでした。<strong>引数はすでに値を持っている</strong>ので未初期化にならない、というのが違いです。</p></div>
 </section>

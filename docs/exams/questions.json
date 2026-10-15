@@ -1,5 +1,5 @@
 {
-  "description": "自作模擬試験の問題番号と、正解・統合ノートの論点（節）の対応表。build.mjs が src/exams/ から生成する。refs の先頭がその問題の主な論点",
+  "description": "自作模擬試験の問題番号と、正解・教材の論点（節）の対応表。build.mjs が src/exams/ から生成する。refs の先頭がその問題の主な論点",
   "exams": {
     "01": {
       "title": "自作模擬試験 1",
@@ -12,17 +12,17 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "サブインタフェースの default で、親インタフェースの抽象メソッドを実装できる"
             },
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "コマンドライン引数は args[0] から数える"
             },
             {
               "id": "c1-s01",
-              "section": "第1章 01「mainのシグネチャ」",
+              "section": "1-1「mainのシグネチャ」",
               "point": "main の引数は String... でもよい"
             }
           ]
@@ -36,12 +36,12 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "import はサブパッケージを含まない。static import は static メンバ用"
             },
             {
               "id": "c1-s05",
-              "section": "第1章 05「パッケージ宣言」",
+              "section": "1-5「パッケージ宣言」",
               "point": "パッケージ名とディレクトリの対応"
             }
           ]
@@ -54,12 +54,12 @@
           "refs": [
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "try-with-resources はリソースを宣言と逆の順に閉じ、その後で catch・finally へ進む"
             },
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "try-catch-finally の実行順"
             }
           ]
@@ -72,12 +72,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "intern() の戻り値はプールのインスタンス／定数式の連結はプールを使う"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "参照型の == は同じインスタンスかどうか"
             }
           ]
@@ -91,12 +91,12 @@
           "refs": [
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "トップレベルのクラスに付けられる修飾子は public と（アクセス以外の）abstract / final など"
             },
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed はサブクラスが必要、non-sealed は sealed の子にしか付けられない"
             }
           ]
@@ -109,7 +109,7 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var はローカル変数専用。戻り値型・引数・フィールドには使えない。var という名前の変数は作れる"
             }
           ]
@@ -123,12 +123,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "permits に書いたクラスだけが継承でき、サブクラスには final / sealed / non-sealed が必要"
             },
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record は暗黙に final で、ほかのクラスを継承できない"
             }
           ]
@@ -142,12 +142,12 @@
           "refs": [
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "Exception の子孫のうち RuntimeException の子孫でないものが検査例外"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "よく出る例外が検査か非検査か"
             }
           ]
@@ -161,17 +161,17 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドの戻り値は同じ型かサブクラス（共変戻り値）。アクセスは狭められない"
             },
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのメソッドは暗黙に public"
             },
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "引数の型が違えばオーバーロード（別のメソッド）になる"
             }
           ]
@@ -184,17 +184,17 @@
           "refs": [
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "instanceof のパターン変数（型が合ったときだけ変数が使える）"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "多態: 実体のクラスのメソッドが呼ばれる"
             },
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "private メソッドはそのクラスの中から呼べる"
             }
           ]
@@ -207,17 +207,17 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this を付けないと、同名の引数やローカル変数のほうが優先される"
             },
             {
               "id": "c3-s03",
-              "section": "第3章 03「代入と複合代入」",
+              "section": "3-3「代入と複合代入」",
               "point": "代入は右から順に行われ、a = b = c = 値 と連鎖できる"
             },
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "同名のローカル変数はフィールドを隠す"
             }
           ]
@@ -230,17 +230,17 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "コンストラクタの先頭には暗黙に super() が入る"
             },
             {
               "id": "c4-s04",
-              "section": "第4章 04「コンストラクタ」",
+              "section": "4-4「コンストラクタ」",
               "point": "コンストラクタを1つも書かないと既定のコンストラクタが作られる"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスも具象メソッドとコンストラクタを持てる"
             }
           ]
@@ -253,12 +253,12 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "多態: 変数の型ではなく実体のクラスのメソッドが呼ばれる"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドしていない子は親のメソッドを受け継ぐ"
             }
           ]
@@ -271,12 +271,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "for 文の3つの部分と、拡張 for 文との対応"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "i++ は使ってから増やす、++i は増やしてから使う"
             }
           ]
@@ -289,17 +289,17 @@
           "refs": [
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "== は参照の比較、equals は中身の比較"
             },
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "equals をオーバーライドしていないクラスは参照比較のまま"
             },
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "実行時に作られた文字列はプールのものとは別のインスタンス"
             }
           ]
@@ -312,12 +312,12 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "switch 式はすべての値を網羅（default が必要）し、末尾に ; を付ける。アローの右は式・ブロック・throw"
             },
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "従来の switch 文とフォールスルー"
             }
           ]
@@ -330,12 +330,12 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "default メソッドは暗黙に public"
             },
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "オーバーライドでアクセスを狭めることはできない"
             }
           ]
@@ -349,7 +349,7 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは引数の型・数・並びで区別する。戻り値型・引数名・アクセス修飾子・static では区別しない"
             }
           ]
@@ -363,17 +363,17 @@
           "refs": [
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final クラスは継承できず、abstract メソッドを持てない"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "abstract クラスは final メソッドや本体のあるメソッドも持てる"
             },
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed のサブクラスは final / sealed / non-sealed のどれか"
             }
           ]
@@ -388,12 +388,12 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record のフィールドは private final、アクセサはコンポーネント名そのもの、コンストラクタは全コンポーネントを受け取る"
             },
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "record の equals は中身で比較する"
             }
           ]
@@ -406,17 +406,17 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "for 文の初期化・条件・更新と、添字の範囲"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "++i と i++ の違い"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "配列の添字は 0 から length - 1 まで"
             }
           ]
@@ -429,12 +429,12 @@
           "refs": [
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "println は null なら \"null\" を表示し、そうでなければ toString() を呼ぶ"
             },
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "null に対してメソッドを呼ぶと NullPointerException"
             }
           ]
@@ -448,7 +448,7 @@
           "refs": [
             {
               "id": "c2-s04",
-              "section": "第2章 04「識別子の規則」",
+              "section": "2-4「識別子の規則」",
               "point": "識別子の1文字目は文字・_・$。数字で始められず、ハイフンは使えない。var は使える"
             }
           ]
@@ -461,12 +461,12 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのフィールドは暗黙に public static final（定数）"
             },
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static メソッドの中では this を使えない"
             }
           ]
@@ -479,12 +479,12 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "アロー形式の case はフォールスルーしない。カンマで複数の値を並べられる"
             },
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "コロン形式の switch 文は break が無いと下へ流れる"
             }
           ]
@@ -498,17 +498,17 @@
           "refs": [
             {
               "id": "c6-s08",
-              "section": "第6章 08「カスタム例外」",
+              "section": "6-8「カスタム例外」",
               "point": "Exception を継承した自作の例外は検査例外になる"
             },
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "検査例外は throws で宣言するか、呼び出し側で catch する"
             },
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "検査例外と非検査例外の分かれ目"
             }
           ]
@@ -521,12 +521,12 @@
           "refs": [
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "別パッケージのサブクラスが protected に届くのは、自分の型の参照を通したときだけ"
             },
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "protected の到達範囲"
             }
           ]
@@ -539,12 +539,12 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけで、全インスタンスで共有される"
             },
             {
               "id": "c4-s02",
-              "section": "第4章 02「フィールドとライフサイクル」",
+              "section": "4-2「フィールドとライフサイクル」",
               "point": "インスタンスフィールドはインスタンスごとに別々"
             }
           ]
@@ -557,17 +557,17 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドしたメソッドから super.メソッド() で親の処理を呼べる。親の中からの呼び出しも子のメソッドに飛ぶ"
             },
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "StringBuilder の append はつなげて呼べる"
             },
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "println は toString() を呼ぶ"
             }
           ]
@@ -580,12 +580,12 @@
           "refs": [
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "javac は、使われているクラスのソースを探し出して一緒にコンパイルする"
             },
             {
               "id": "c1-s03",
-              "section": "第1章 03「コンパイルと実行」",
+              "section": "1-3「コンパイルと実行」",
               "point": "ソース実行モードは SE 17 では1ファイル限定で、.class を作らない"
             }
           ]
@@ -598,7 +598,7 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "import はサブパッケージを含まない。java.lang は自動で取り込まれる"
             }
           ]
@@ -611,12 +611,12 @@
           "refs": [
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "同名のローカル変数はフィールドを隠す。ローカル変数は初期化してから使う"
             },
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドをクラス名で参照する書き方"
             }
           ]
@@ -629,12 +629,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "具象クラスは、受け継いだ abstract メソッドをすべて実装しなければならない"
             },
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "親クラスから受け継いだ public メソッドで、インタフェースのメソッドを実装したことになる"
             }
           ]
@@ -647,17 +647,17 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var の型は右辺（拡張 for 文なら取り出す要素）から決まる"
             },
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "可変長引数の実体は配列"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列を拡張 for 文で回すと、外側の変数は1次元の配列になる"
             }
           ]
@@ -670,12 +670,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "String は不変。戻り値を受け取らない限り元の文字列は変わらない"
             },
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "indexOf / lastIndexOf は 0 から数えた位置を返す"
             }
           ]
@@ -688,12 +688,12 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "switch に null を渡すと NullPointerException。default は null を受け止めない"
             },
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "フィールドの既定値。参照型（Integer を含む）は null"
             }
           ]
@@ -706,7 +706,7 @@
           "refs": [
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "-d で .class の書き出し先、-cp でクラスを探す場所を指定する。java には完全修飾名を渡す"
             }
           ]
@@ -719,12 +719,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼べるメソッドは変数の型（宣言型）で決まる"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "子のメソッドを呼ぶにはキャストが必要"
             }
           ]
@@ -737,12 +737,12 @@
           "refs": [
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "+ は左から評価され、String が現れるまでは数値の足し算。char + int は int になる"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "引数はフィールドより優先される"
             }
           ]
@@ -756,12 +756,12 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "多次元配列の宣言・生成・初期化。初期化子の入れ子の深さは次元と一致させる"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列は「配列を要素に持つ配列」"
             }
           ]
@@ -774,12 +774,12 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "super.メソッド() は直接の親のメソッドを呼ぶ"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドは多態しない。変数の型（宣言型）のフィールドが使われる"
             }
           ]
@@ -794,12 +794,12 @@
           "refs": [
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "オーバーロードはコンパイル時に変数の型で選ばれ、オーバーライドは実行時に実体の型で選ばれる"
             },
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "引数の型がより具体的なオーバーロードが優先される"
             }
           ]
@@ -812,7 +812,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "同じ default メソッドを2つのインタフェースから受け継いだら、オーバーライドして解決する。インタフェース名.super.メソッド() で各 default を呼べる"
             }
           ]
@@ -825,12 +825,12 @@
           "refs": [
             {
               "id": "c2-s14",
-              "section": "第2章 14「Iterable / Collection / Path」",
+              "section": "2-14「Iterable / Collection / Path」",
               "point": "List<親> には子を add できるが、List<子> に親は入れられない"
             },
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "型引数で要素の型が決まる"
             }
           ]
@@ -845,17 +845,17 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースは final にできない。abstract は付けても付けなくても同じ"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "abstract クラスは自分のクラスの中でも new できない"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "共変戻り値"
             }
           ]
@@ -868,12 +868,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "コンストラクタは親から順に実行される"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this() で同じクラスの別のコンストラクタを呼ぶ"
             }
           ]
@@ -886,12 +886,12 @@
           "refs": [
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "private メソッドは継承されず、同名のメソッドはオーバーライドにならない"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "多態が起きるのはオーバーライドしたメソッドだけ"
             }
           ]
@@ -905,12 +905,12 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "戻り値の型と return の規則"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "int は long に自動で拡大変換される"
             }
           ]
@@ -923,7 +923,7 @@
           "refs": [
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "コマンドライン引数は空白で区切られ、\" \" で囲むと空白を含む1つの引数になる。引用符そのものは引数に入らない"
             }
           ]
@@ -936,17 +936,17 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "複数のインタフェースから同じメソッドを受け継ぐとき、戻り値型は互換でなければならない"
             },
             {
               "id": "c2-s14",
-              "section": "第2章 14「Iterable / Collection / Path」",
+              "section": "2-14「Iterable / Collection / Path」",
               "point": "List・Set・Collection・Iterable の親子関係"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "共変戻り値"
             }
           ]
@@ -959,12 +959,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドは変数の型、メソッドは実体の型で決まる。フィールドは隠蔽されるだけ"
             },
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "protected コンストラクタは別パッケージの子から super() で呼べる"
             }
           ]
@@ -977,12 +977,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "暗黙の super() は引数なしのコンストラクタを呼ぶ"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "super() と this() はどちらもコンストラクタの先頭に1つだけ。両方は書けない"
             }
           ]
@@ -995,12 +995,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスはインタフェースのメソッドを実装しなくてよいが、具象クラスはすべて実装する必要がある"
             },
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースを実装したクラスの義務"
             }
           ]
@@ -1014,22 +1014,22 @@
           "refs": [
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "try には catch か finally が必要（try-with-resources は単独でも可）。finally は1つだけ"
             },
             {
               "id": "c6-s04",
-              "section": "第6章 04「catchの順序」",
+              "section": "6-4「catchの順序」",
               "point": "継承関係にある例外はサブクラスを先に catch する"
             },
             {
               "id": "c6-s05",
-              "section": "第6章 05「multi-catch」",
+              "section": "6-5「multi-catch」",
               "point": "multi-catch に継承関係のある例外は並べられない"
             },
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "リソースは catch より前に閉じられる"
             }
           ]
@@ -1042,12 +1042,12 @@
           "refs": [
             {
               "id": "c6-s04",
-              "section": "第6章 04「catchの順序」",
+              "section": "6-4「catchの順序」",
               "point": "スーパークラスの例外を先に catch すると、後ろのサブクラスの catch に到達できずコンパイルエラー"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "NumberFormatException は IllegalArgumentException のサブクラス"
             }
           ]
@@ -1060,12 +1060,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "new String は毎回新しいオブジェクト、リテラルと定数式は定数プール、intern() はプールの同じ内容の文字列を返す"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "== は参照の比較"
             }
           ]
@@ -1078,17 +1078,17 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列と拡張 for 文の入れ子"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "行ごとに長さの違う配列、要素 0 個の配列 {}"
             },
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "拡張 for 文の変数に var を使える"
             }
           ]
@@ -1101,12 +1101,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子のコンストラクタの先頭には暗黙の super() が入る。this(...) を書いたコンストラクタには入らない"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this(...) で同じクラスの別のコンストラクタを呼ぶ"
             }
           ]
@@ -1119,12 +1119,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列の for 文。行数は m.length、各行の長さは m[i].length"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "拡張 for 文の変数に代入しても配列は変わらない"
             }
           ]
@@ -1137,12 +1137,12 @@
           "refs": [
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "参照型の配列要素の初期値は null。null と文字列の + 連結は \"null\" になる"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "new String[3] の要素はすべて null で始まる"
             }
           ]
@@ -1160,17 +1160,17 @@
           "refs": [
             {
               "id": "c3-s03",
-              "section": "第3章 03「代入と複合代入」",
+              "section": "3-3「代入と複合代入」",
               "point": "複合代入演算子は、結果を左辺の型へ暗黙にキャストする"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "範囲を超えた値を縮小すると、上位ビットが捨てられる"
             },
             {
               "id": "c2-s01",
-              "section": "第2章 01「8つの基本データ型」",
+              "section": "2-1「8つの基本データ型」",
               "point": "byte は -128〜127、short は -32768〜32767"
             }
           ]
@@ -1184,17 +1184,17 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドはアクセスを狭めず、戻り値は同じかサブ型、検査例外は増やせない"
             },
             {
               "id": "c6-s10",
-              "section": "第6章 10「オーバーライド」",
+              "section": "6-10「オーバーライド」",
               "point": "オーバーライドで throws に書けるのは、親と同じか、その子の検査例外だけ"
             },
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "引数の型が違えばオーバーロードで、throws や戻り値の制約は受けない"
             }
           ]
@@ -1207,12 +1207,12 @@
           "refs": [
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "\" \" で囲んだ部分は空白を含めて1つの引数になる"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "NumberFormatException は数値に変換できない文字列を parseInt したときに出る"
             }
           ]
@@ -1225,12 +1225,12 @@
           "refs": [
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "static 初期化子はクラスを初めて使うときに1回だけ。インスタンス初期化子はコンストラクタの本体より先"
             },
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子を new すると、親のインスタンス初期化子とコンストラクタが先に実行される"
             }
           ]
@@ -1243,12 +1243,12 @@
           "refs": [
             {
               "id": "c3-s05",
-              "section": "第3章 05「論理演算子と短絡」",
+              "section": "3-5「論理演算子と短絡」",
               "point": "|| と && は左が決まれば右を評価しない（短絡評価）。右の ++ も実行されない"
             },
             {
               "id": "c3-s01",
-              "section": "第3章 01「優先順位」",
+              "section": "3-1「優先順位」",
               "point": "&& は || より優先順位が高い"
             }
           ]
@@ -1262,12 +1262,12 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var は右辺から型を1つに決められるときだけ使える。null だけ・初期化子だけ・複数宣言は不可"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "char と int の演算結果は int"
             }
           ]
@@ -1280,17 +1280,17 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子を new すると、子のフィールド初期化より先に親のコンストラクタが実行される"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼ばれるメソッドは実体の型で決まる（親のコンストラクタの中からでも）"
             },
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "フィールドの初期化子は super() の後に実行される。それまでは既定値"
             }
           ]
@@ -1303,12 +1303,12 @@
           "refs": [
             {
               "id": "c6-s06",
-              "section": "第6章 06「finallyとreturn」",
+              "section": "6-6「finallyとreturn」",
               "point": "return の値は finally の前に決まる。finally の中の return はそれを上書きし、例外も消す"
             },
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "参照型なら、値の中身（配列の要素）は後から書き換えられる"
             }
           ]
@@ -1321,7 +1321,7 @@
           "refs": [
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "isEmpty は長さ0か、isBlank は空白だけか。strip は前後の空白（タブ・改行も）を除く"
             }
           ]
@@ -1334,12 +1334,12 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this を付けない代入は引数に引数を入れるだけ。this(...) で別のコンストラクタを呼べる"
             },
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "同名の引数はフィールドを隠す。引数の無い場所では、名前はフィールドを指す"
             }
           ]
@@ -1353,7 +1353,7 @@
           "refs": [
             {
               "id": "c1-s01",
-              "section": "第1章 01「mainのシグネチャ」",
+              "section": "1-1「mainのシグネチャ」",
               "point": "起動に使えるのは public static void main(String[] 引数)。可変長・括弧の位置・修飾子の順は自由"
             }
           ]
@@ -1366,7 +1366,7 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "continue ラベル名 は外側のループの次の周へ、break ラベル名 は外側のループごと抜ける"
             }
           ]
@@ -1379,12 +1379,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドと static メソッドは宣言型で、インスタンスメソッドは実体の型で決まる"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "static メソッド同士の同名定義はオーバーライドではなく隠蔽"
             }
           ]
@@ -1397,12 +1397,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "定数式（リテラルや final 変数だけの連結）はコンパイル時に計算され、定数プールの文字列になる"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "== は同じインスタンスかどうかを比べる"
             }
           ]
@@ -1416,12 +1416,12 @@
           "refs": [
             {
               "id": "c6-s10",
-              "section": "第6章 10「オーバーライド」",
+              "section": "6-10「オーバーライド」",
               "point": "オーバーライドで throws に書ける検査例外は、親と同じか、その子だけ。非検査例外は自由"
             },
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "FileNotFoundException は IOException の子、SQLException と InterruptedException は無関係な検査例外"
             }
           ]
@@ -1434,12 +1434,12 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "解決順は 完全一致 → 拡大変換 → ボクシング → 可変長引数。比べるのは呼び出せる候補の中だけ"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "ボクシングした Integer は、親の型 Object の引数に渡せる"
             }
           ]
@@ -1452,12 +1452,12 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "remove(int) は位置で、remove(Object) は値で削除する。無い値の remove は false を返すだけ"
             },
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "int を渡すと、ボクシングより完全一致の remove(int) が選ばれる"
             }
           ]
@@ -1471,17 +1471,17 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "キャストは . より結合が弱い。(Dog) a.bark() は a.bark() の結果をキャストしようとする"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼べるメソッドは変数の型で決まる"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "final でないクラスからインタフェースへのキャストはコンパイルできる"
             }
           ]
@@ -1494,12 +1494,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "do-while は本体を先に1回実行する。while (条件); のセミコロンは空の本体"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "i-- は比べてから減らす、j++ は比べてから増やす"
             }
           ]
@@ -1512,12 +1512,12 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "コンパクトコンストラクタでは引数を加工でき、最後にフィールドへ自動で代入される。toString と equals は自動生成"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "equals は中身、== は同じインスタンスかを比べる"
             }
           ]
@@ -1532,12 +1532,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed の子は final / sealed / non-sealed のどれかを宣言する。permits に無い型は実装できない"
             },
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record は暗黙に final なので、そのまま sealed の子になれる"
             }
           ]
@@ -1550,17 +1550,17 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "-128〜127 のボクシングはキャッシュされた同じ Integer を返す"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "ラッパーと基本型を == で比べるとアンボクシングされて値の比較になる"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "Integer と Long は兄弟。Integer の equals は Integer 以外には false"
             }
           ]
@@ -1574,7 +1574,7 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "オンデマンド（*）で同じ名前が2つ入ると、使った時点であいまいでエラー。単一型インポートが優先される"
             }
           ]
@@ -1587,7 +1587,7 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "switch 式はすべての値を網羅しなければならない。int なら default が必要。ブロックでは yield で値を返す"
             }
           ]
@@ -1600,17 +1600,17 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "default メソッドの中から呼んだ抽象メソッドも、実体のクラスのものが動く"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスは、インタフェースのメソッドを実装してもしなくてもよい"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼ばれるメソッドは実体の型で決まる"
             }
           ]
@@ -1623,12 +1623,12 @@
           "refs": [
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "リソースは宣言と逆順に閉じる。閉じるのは初期化が済んだリソースだけで、catch より前"
             },
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "finally は例外の有無にかかわらず最後に実行される"
             }
           ]
@@ -1641,12 +1641,12 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var と new ArrayList<>() を組み合わせると、要素の型は Object になる"
             },
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "ArrayList の型引数で、add できるものと get で取り出す型が決まる"
             }
           ]
@@ -1660,7 +1660,7 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static メソッドには this が無い。インスタンスのメンバはインスタンスを通してだけ使える"
             }
           ]
@@ -1674,7 +1674,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "インタフェースの static メソッドは実装クラスに継承されない。インタフェース名で呼ぶ"
             }
           ]
@@ -1687,7 +1687,7 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "default は途中に書いてもよい。一致したラベル（なければ default）から break まで下へ流れる"
             }
           ]
@@ -1700,7 +1700,7 @@
           "refs": [
             {
               "id": "c2-s10",
-              "section": "第2章 10「テキストブロック・エスケープ」",
+              "section": "2-10「テキストブロック・エスケープ」",
               "point": "共通のインデントは取り除かれる。閉じる \"\"\" が最終行と同じ行なら末尾の改行は付かない。行末の \\ は改行を消す"
             }
           ]
@@ -1713,17 +1713,17 @@
           "refs": [
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "Number の子は Byte・Short・Integer・Long・Float・Double。Character と Boolean は Number ではない"
             },
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "null に instanceof を使うと false。パターン変数は && の右側で使える"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "基本データ型の値は、Object の配列に入れるときにボクシングされる"
             }
           ]
@@ -1736,17 +1736,17 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "引数は値渡し。参照型は指す先の中身の変更だけが呼び出し元に伝わり、差し替えは伝わらない"
             },
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "String は不変。s += \"!\" は新しい String を作って引数の変数を差し替えるだけ"
             },
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "StringBuilder の append は同じオブジェクトの中身を書き換える"
             }
           ]
@@ -1759,12 +1759,12 @@
           "refs": [
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "修飾子の無いクラスは同じパッケージからしか見えない。メンバが public でも、クラスが見えなければ使えない"
             },
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "import できるのは、そのパッケージの外から見える（public な）型だけ"
             }
           ]
@@ -1777,7 +1777,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "クラスから受け継いだメソッドは default に常に勝つ。直接実装しているインタフェースの default は 名前.super で呼べる"
             }
           ]
@@ -1790,12 +1790,12 @@
           "refs": [
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "int 同士の割り算は小数点以下を切り捨てる（0 に向かって）。% の符号は左オペランドに従う"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "片方が double なら計算全体が double になる"
             }
           ]
@@ -1808,17 +1808,17 @@
           "refs": [
             {
               "id": "c6-s04",
-              "section": "第6章 04「catchの順序」",
+              "section": "6-4「catchの順序」",
               "point": "同じ try に並べるなら、子の例外を上、親を下に書く"
             },
             {
               "id": "c6-s05",
-              "section": "第6章 05「multi-catch」",
+              "section": "6-5「multi-catch」",
               "point": "multi-catch の | には親子関係のある例外を並べられない"
             },
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "NoSuchFileException は IOException の子孫、NumberFormatException は IllegalArgumentException の子"
             }
           ]
@@ -1832,7 +1832,7 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record に追加できないのはインスタンスフィールドだけ。アクセサは同じ形なら上書きできる。別のコンストラクタは this(...) で正規コンストラクタへつなぐ"
             }
           ]
@@ -1845,12 +1845,12 @@
           "refs": [
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "StringBuilder のメソッドは自分自身を書き換えて自分を返すので、つなげて呼べる"
             },
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "StringBuilder は equals をオーバーライドしていないので、中身が同じでも別インスタンスなら false"
             }
           ]
@@ -1863,12 +1863,12 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親の型から子の型へのキャストはコンパイルできるが、実体が違えば実行時に ClassCastException"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスは new できないが、配列や変数の型としては使える"
             }
           ]
@@ -1881,12 +1881,12 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "switch の中の break は switch だけを抜ける。ループの中の switch なら continue でループの次の周へ進める"
             },
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "break が無い case は下へ流れる"
             }
           ]
@@ -1899,12 +1899,12 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは引数の型に最も近い候補が選ばれる。int は long へ拡大、double はボクシングして Object へ"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "int[] は Object の子だが Object[] の子ではない。Integer[] や int[][] は Object[] の子"
             }
           ]
@@ -1917,12 +1917,12 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "super.メソッド() は親のメソッドを呼ぶ。その中の呼び出しは、また実体の型で決まる"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "オーバーライドしていないメソッドは、親から受け継いだものがそのまま動く"
             }
           ]
@@ -1935,7 +1935,7 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "Arrays.asList は元の配列を包んだ固定長リスト。set は可（配列も変わる）、add / remove は UnsupportedOperationException"
             }
           ]
@@ -1948,7 +1948,7 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "static メンバを名前だけで使うには import static。* でまとめて、または1つずつ指定する"
             }
           ]
@@ -1961,12 +1961,12 @@
           "refs": [
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "catch の中で例外が発生しても、メソッドを抜ける前に finally が実行される"
             },
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "非検査例外は throws を書かずに投げられる"
             }
           ]
@@ -1979,7 +1979,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "インタフェースの private メソッドは default と private から呼べる。static メソッドからは private static しか呼べない"
             }
           ]
@@ -1993,12 +1993,12 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "戻り値のあるメソッドは、どの経路でも return するか例外で抜ける必要がある。for の中だけの return では足りない"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "for の条件が false なら本体は1回も実行されない"
             }
           ]
@@ -2012,12 +2012,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "for の初期化部で複数の変数を宣言するなら型は1回だけ。条件を省略すると無限ループ（true 扱い）"
             },
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "break・continue の直後の文や while (false) の本体は到達不能でコンパイルエラー"
             }
           ]
@@ -2030,12 +2030,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed を付けたクラスには、許可したサブクラスが1つ以上必要。子は final / sealed / non-sealed のどれか"
             },
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "abstract と sealed は同時に付けられる"
             }
           ]
@@ -2050,12 +2050,12 @@
           "refs": [
             {
               "id": "c2-s02",
-              "section": "第2章 02「リテラルの書き方」",
+              "section": "2-2「リテラルの書き方」",
               "point": "_ は数字と数字の間にだけ書ける。0b は2進、0x は16進、先頭の 0 は8進。小数リテラルは double"
             },
             {
               "id": "c2-s04",
-              "section": "第2章 04「識別子の規則」",
+              "section": "2-4「識別子の規則」",
               "point": "_ で始まる名前は識別子として扱われる"
             }
           ]
@@ -2068,7 +2068,7 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけ。どのインスタンス経由で書き換えても同じ1つが変わる"
             }
           ]
@@ -2081,17 +2081,17 @@
           "refs": [
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "修飾子なしのメソッドは別パッケージの子から見えないので、オーバーライドできない"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "@Override を付けたメソッドがオーバーライドになっていなければコンパイルエラー"
             },
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "修飾子なし（パッケージ）は同じパッケージからだけ見える"
             }
           ]
@@ -2104,7 +2104,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "2次元配列の clone は外側の箱だけが別。付け替えた行はその配列だけのもの、付け替えていない行は共有のまま"
             }
           ]
@@ -2119,12 +2119,12 @@
           "refs": [
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final 変数は再代入できない。final の参照型は中身なら変えられる。final メソッドはオーバーライドできないだけ"
             },
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "static final フィールドは、宣言時か static 初期化子で1回だけ代入できる"
             }
           ]
@@ -2137,7 +2137,7 @@
           "refs": [
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "if (!(o instanceof String s)) で抜ければ、その後ろでは s が使える。null の instanceof は false"
             }
           ]
@@ -2150,7 +2150,7 @@
           "refs": [
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "i++ は使ってから増やし、++i は増やしてから使う。式は左から順に評価される"
             }
           ]
@@ -2163,12 +2163,12 @@
           "refs": [
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "-d を付けると、パッケージ名どおりのディレクトリに .class が作られる。ソースの置き場所は関係ない"
             },
             {
               "id": "c1-s05",
-              "section": "第1章 05「パッケージ宣言」",
+              "section": "1-5「パッケージ宣言」",
               "point": "java に渡すのはパッケージ名付きのクラス名。-cp にはパッケージの一番上のディレクトリがある場所を書く"
             }
           ]
@@ -2181,12 +2181,12 @@
           "refs": [
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "equals の引数が Object でなければオーバーロード。コレクションや Objects.equals は equals(Object) を呼ぶ"
             },
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "オーバーロードは変数の型で、コンパイル時に選ばれる"
             }
           ]
@@ -2200,12 +2200,12 @@
           "refs": [
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "NumberFormatException は整数として読めない文字列（null・小数・空白入りなど）を parseInt したときに出る"
             },
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "NumberFormatException は IllegalArgumentException の子"
             }
           ]
@@ -2223,12 +2223,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子を new すると、まず親のコンストラクタが最後まで動き、そのあと子のフィールド初期化・初期化ブロック・本体の順に進む"
             },
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "インスタンス初期化子は super() を呼ぶコンストラクタで1回だけ動く。this(...) で始まるコンストラクタでは動かない"
             }
           ]
@@ -2241,12 +2241,12 @@
           "refs": [
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "indexOf の第2引数は探し始める位置。substring(開始, 終了) は終了の位置を含まない。lastIndexOf は最後に見つかった位置"
             },
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "String は不変。replace などの戻り値を代入しなければ、元の文字列は変わらない"
             }
           ]
@@ -2259,12 +2259,12 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "名前の見つけ方の強さは「名指しの import ＞ 同じパッケージのクラス ＞ * の import」。同じパッケージのクラスが * の import より優先される"
             },
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "修飾子なしのクラスは、同じパッケージのクラスからなら使える"
             }
           ]
@@ -2278,12 +2278,12 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドの戻り値は、親と同じ型かそのサブクラス（共変戻り値）"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "List<String> は Collection<String> の子。型引数が違う Collection<Object> や List<CharSequence> は親子にならない"
             }
           ]
@@ -2296,12 +2296,12 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "String の switch は equals で比べる。一致した case から break まで下へ流れ（フォールスルー）、途中の default も通り抜ける"
             },
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "new String で作った文字列は == では別物でも、equals では等しい"
             }
           ]
@@ -2314,12 +2314,12 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "フィールドと同じ名前の引数・ローカル変数があると、this を付けない名前はそちらを指す。フィールドに代入するには this.名前 が必要"
             },
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "メソッドの中で宣言したローカル変数は、メソッドを抜けると消える"
             }
           ]
@@ -2332,12 +2332,12 @@
           "refs": [
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "リソースは宣言と逆の順に閉じる。1つの close で例外が出ても残りも閉じ、そのあと catch へ進む。宣言済みの（実質的に）final な変数も ( ) に書ける"
             },
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "catch・finally は、リソースをすべて閉じたあとに実行される"
             }
           ]
@@ -2352,7 +2352,7 @@
           "refs": [
             {
               "id": "c2-s04",
-              "section": "第2章 04「識別子の規則」",
+              "section": "2-4「識別子の規則」",
               "point": "識別子の1文字目は文字・_・$。予約語（goto も含む）・リテラル（null・true・false）・_ 1文字は使えない。record や var などの文脈依存キーワードは変数名にできる"
             }
           ]
@@ -2365,12 +2365,12 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "インタフェース型から final でないクラス型へのキャストは、コンパイルが通る。実体がそのクラスでなければ実行時に ClassCastException"
             },
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "サブクラスがインタフェースを実装する可能性があるかどうかで、キャストできるかが決まる"
             }
           ]
@@ -2383,7 +2383,7 @@
           "refs": [
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "パターン変数が使えるのは、マッチしたことが確定している場所だけ。&& の右側では使えるが、|| の右側では使えない"
             }
           ]
@@ -2397,12 +2397,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "non-sealed の子は、ふつうのクラスと同じく自由に継承できる。final は継承できない。sealed にしたクラスにはサブクラスが必要"
             },
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record は暗黙に final で、extends を書けない"
             }
           ]
@@ -2415,12 +2415,12 @@
           "refs": [
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "StringBuilder の toString は呼ぶたびに新しい String を作る。StringBuilder は equals をオーバーライドしていない"
             },
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "intern() は定数プールにある同じ内容の文字列を返す。リテラルはプールの文字列"
             }
           ]
@@ -2433,12 +2433,12 @@
           "refs": [
             {
               "id": "c3-s05",
-              "section": "第3章 05「論理演算子と短絡」",
+              "section": "3-5「論理演算子と短絡」",
               "point": "&& と || は左だけで結果が決まれば右を評価しない（短絡評価）。& と | は両方を必ず評価する"
             },
             {
               "id": "c3-s01",
-              "section": "第3章 01「優先順位」",
+              "section": "3-1「優先順位」",
               "point": "優先順位は & ＞ | ＞ && ＞ ||。a || b && c は a || (b && c) の意味になる"
             }
           ]
@@ -2451,12 +2451,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼べるメソッドは変数の型（宣言型）で決まる。Speaker 型の変数からは、Speaker に無いメソッドは呼べない"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "キャストは . より結合が弱い。((Robot) s).charge() のように括弧で囲んでから呼ぶ"
             }
           ]
@@ -2469,12 +2469,12 @@
           "refs": [
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "-cp を省略すると、カレントディレクトリがクラスを探す起点になる。java にはパッケージ名付きのクラス名を渡す"
             },
             {
               "id": "c1-s05",
-              "section": "第1章 05「パッケージ宣言」",
+              "section": "1-5「パッケージ宣言」",
               "point": "パッケージ名はソースの package 宣言で決まり、ディレクトリの外から見た名前と一致していなければならない"
             }
           ]
@@ -2488,12 +2488,12 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは引数の型・数・並びで区別する。戻り値の型・引数名・アクセス修飾子・static では区別できない"
             },
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "可変長引数 int... は、メソッドの中では int[] として扱われる。シグネチャも int[] と同じ"
             }
           ]
@@ -2506,12 +2506,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドはオーバーライドされず隠蔽されるだけ。どちらの name を使うかは、参照の型（コードを書いたクラス）でコンパイル時に決まる"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "親クラスのメソッドの中で書いた name は、親のフィールドを指す"
             }
           ]
@@ -2524,12 +2524,12 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "new int[3][] は外側の配列だけを作り、各行は null のまま。2つ目以降の要素数は省略できるが、最初の要素数は省略できない"
             },
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "null の配列の length を読もうとすると NullPointerException"
             }
           ]
@@ -2542,12 +2542,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象メソッドはサブクラスでオーバーライドしてもらうためのもの。本体は書けず、private・static・final とは組み合わせられない"
             },
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final クラスは継承できないので、abstract とは両立しない。抽象クラスに final の具象メソッドは書ける"
             }
           ]
@@ -2560,12 +2560,12 @@
           "refs": [
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "配列の範囲外の添字は ArrayIndexOutOfBoundsException、整数の 0 での割り算は ArithmeticException"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "式は左から順に評価される。左のオペランドで例外が起きると、右のオペランドは評価されない"
             }
           ]
@@ -2578,12 +2578,12 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "switch 式でもコロン（:）の case を使える。コロンの case は switch 式でもフォールスルーし、yield で値を返して抜ける"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "メソッドの引数は、メソッドを呼ぶ前に左から順に評価される"
             }
           ]
@@ -2596,12 +2596,12 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record のフィールドは final で変えられない。値を変えたいときは新しい record を作って返す。static フィールドは宣言できる"
             },
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけ。どのインスタンスを作るときも同じ1つが増える"
             }
           ]
@@ -2616,17 +2616,17 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドしたメソッドは、親の型の変数から呼んでも子のものが動く。super.メソッド() で親の処理を呼べる。final メソッドはオーバーライドできない"
             },
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "private のフィールドは子から直接使えない。protected なら子から使える"
             },
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "toString をオーバーライドしていない子は、親でオーバーライドした toString を受け継ぐ"
             }
           ]
@@ -2640,12 +2640,12 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var の型は初期化の右辺で1つに決まり、あとから変わらない。以降の代入はその型のルールに従う"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "小さい型から大きい型へは暗黙に変換される。逆はキャストが必要。複合代入（+= など）は暗黙にキャストする"
             }
           ]
@@ -2658,12 +2658,12 @@
           "refs": [
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "別パッケージの子は、protected のコンストラクタを super(...) で呼べるが、new で直接は呼べない。protected メソッドは自分の型の参照を通せば呼べる"
             },
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子のコンストラクタの先頭で、親のコンストラクタを super(...) で呼ぶ"
             }
           ]
@@ -2676,12 +2676,12 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけ。インスタンス経由で読んでも同じ1つを指す"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "フィールドと同じ名前の引数があると、名前だけで書いたものは引数を指す。static フィールドはクラス名.名前 で指定する"
             }
           ]
@@ -2695,12 +2695,12 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "continue は残りの処理を飛ばして次の周へ進む。while では条件式へ、do-while では末尾の条件式へ、for では更新式へ飛ぶ"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "while・do-while・for の書き換え。i++ と ++i で条件の判定に使う値が変わる"
             }
           ]
@@ -2713,12 +2713,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed インタフェースを実装できるのは permits に書いた型だけ。final を付けても、permits に無ければ実装できない"
             },
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record は暗黙に final なので、sealed インタフェースの実装クラスにそのまま使える"
             }
           ]
@@ -2731,12 +2731,12 @@
           "refs": [
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "null の String を + でつなぐと \"null\" という文字になる。StringBuilder の append(null の String) も \"null\" を追加する。メソッドを呼ばない限り例外にならない"
             },
             {
               "id": "c4-s02",
-              "section": "第4章 02「フィールドとライフサイクル」",
+              "section": "4-2「フィールドとライフサイクル」",
               "point": "参照型のフィールドの既定値は null"
             }
           ]
@@ -2749,12 +2749,12 @@
           "refs": [
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "private は「同じクラスのコードの中からだけ」使える。インスタンス単位ではないので、同じクラスなら別のインスタンスの private フィールドも使える"
             },
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "参照型の引数は同じインスタンスを指すので、メソッドの中でフィールドを変えると呼び出し元にも伝わる"
             }
           ]
@@ -2767,12 +2767,12 @@
           "refs": [
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "引数の型が int と Integer で違えば、同じ名前でもオーバーライドではなくオーバーロード。親の型の変数からは親のメソッドしか選ばれない"
             },
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは、ボクシングなしで呼べる候補が先に選ばれる。Integer を渡したときは、そのまま受け取れる Integer 版が選ばれる"
             }
           ]
@@ -2786,12 +2786,12 @@
           "refs": [
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "検査例外を投げるメソッドを呼ぶときは、catch で捕まえるか、throws に書いて呼び出し元へ任せる。どちらも、その例外かその親の型で指定する"
             },
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "FileNotFoundException は IOException の子、IOException は Exception の子で検査例外。RuntimeException とは別の枝"
             }
           ]
@@ -2804,12 +2804,12 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "int 同士の割り算は int の結果（小数点以下は切り捨て）。キャストは割り算より先に結びつくので、(double) a / b は a を double にしてから割る"
             },
             {
               "id": "c3-s01",
-              "section": "第3章 01「優先順位」",
+              "section": "3-1「優先順位」",
               "point": "キャストは単項の演算子で、二項の / より優先順位が高い"
             }
           ]
@@ -2824,12 +2824,12 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのフィールドは暗黙に public static final なので、初期化が必要。メンバに protected は付けられない"
             },
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "本体が必要なのは default・static・private のメソッド。本体を書かない抽象メソッドに private や default は付けられない"
             }
           ]
@@ -2842,12 +2842,12 @@
           "refs": [
             {
               "id": "c4-s04",
-              "section": "第4章 04「コンストラクタ」",
+              "section": "4-4「コンストラクタ」",
               "point": "コンストラクタを1つでも書くと、引数なしのデフォルトコンストラクタは自動で作られない"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this(...) で同じクラスの別のコンストラクタを呼べる"
             }
           ]
@@ -2860,12 +2860,12 @@
           "refs": [
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "代入の左辺の添字は右辺より先に評価される。i++ は値を使ってから増やすので、右辺の i は増えた後の値になる"
             },
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "+ は左から評価され、String が出てくるまでは数値の足し算"
             }
           ]
@@ -2878,12 +2878,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子のコンストラクタの先頭には、暗黙に super()（引数なし）が入る。親の引数なしコンストラクタが private だと呼べない"
             },
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "private は宣言したクラスの中からしか使えない。コンストラクタも同じ"
             }
           ]
@@ -2896,7 +2896,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "型の後ろの [] は並べた変数すべてに、変数名の後ろの [] はその変数だけにかかる。int[] a, b[]; の b は int[][]"
             }
           ]
@@ -2910,12 +2910,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "permits に書いた型は sealed の型を直接継承（実装）しなければならない。sealed インタフェースの実装クラスにも final・sealed・non-sealed が必要（record は暗黙に final）"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "abstract と sealed は組み合わせられる"
             }
           ]
@@ -2928,12 +2928,12 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "変数を通して static メンバを使うと、変数の型だけを見てクラス名で使ったのと同じ扱いになる。中身が null でも例外にならない"
             },
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "null の変数でインスタンスのフィールドやメソッドを使うと NullPointerException"
             }
           ]
@@ -2946,12 +2946,12 @@
           "refs": [
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "args[0] はクラス名の次に書いた最初の引数。コマンドライン引数はすべて String として渡される"
             },
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "+ は左から評価される。String 同士や String と数値は連結、数値同士は足し算"
             }
           ]
@@ -2964,12 +2964,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスは new できない。抽象クラス型の変数や配列は作れるし、具象メソッドから抽象メソッドを呼ぶこともできる"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "抽象クラス型の配列に子のインスタンスを入れれば、実体の型のメソッドが呼ばれる"
             }
           ]
@@ -2982,12 +2982,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列の m[i][j] は i 行目の j 列目。内側のループの範囲を外側の変数で変えると、三角形の範囲を回れる"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "m.length は行の数、m[i].length はその行の要素数"
             }
           ]
@@ -3001,7 +3001,7 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "return の値は、代入と同じルールで戻り値の型に変換される。拡大変換はそのまま、int の定数は範囲内なら byte・short・char にも入る。int を Long にはボクシングできない"
             }
           ]
@@ -3014,12 +3014,12 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースの抽象メソッドは暗黙に public。親クラスから受け継いだ public メソッドでも実装になるが、修飾子なしのメソッドではアクセスが狭くて実装にならない"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライド（実装）では、アクセス修飾子を狭められない"
             }
           ]
@@ -3032,12 +3032,12 @@
           "refs": [
             {
               "id": "c6-s06",
-              "section": "第6章 06「finallyとreturn」",
+              "section": "6-6「finallyとreturn」",
               "point": "finally は例外が出ていても必ず実行される。finally の中で新しい例外が出ると、元の例外は消えて新しい例外が呼び出し元へ伝わる"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "NumberFormatException は IllegalArgumentException の子。IllegalStateException とは親子関係が無い"
             }
           ]
@@ -3050,12 +3050,12 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "this を返すメソッドは自分自身を返すので、つなげて呼ぶと同じインスタンスを書き換え続ける。new して返すメソッドは別のインスタンスを返す"
             },
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "private は同じクラスの中からなら、別のインスタンスのものでも使える"
             }
           ]
@@ -3069,12 +3069,12 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "親に引数なしのコンストラクタが無いときは、子のコンストラクタで super(引数) を明示するか、this(...) で super(引数) を呼ぶ別のコンストラクタへつなぐ"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this(...) と super(...) はコンストラクタの先頭にしか書けない。this(...) を書いたコンストラクタには暗黙の super() が入らない"
             }
           ]
@@ -3087,7 +3087,7 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "add(位置, 値) はその位置に割り込ませて後ろをずらす。set(位置, 値) は置き換えて、元の値を返す。remove(Object) は値で探して削除する"
             }
           ]
@@ -3102,12 +3102,12 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "実行される可能性が無い文（到達不能な文）はコンパイルエラー。条件が定数式の false のループ本体、条件が定数式の true で break の無いループの後ろ、throw の後ろが当てはまる"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "do-while の本体は必ず1回実行されるので、条件が false でも到達不能にならない"
             }
           ]
@@ -3121,12 +3121,12 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "private メソッドは受け継がれないので、子で同じ名前のメソッドを自由に書ける。final はオーバーライドできず、アクセスは狭められない"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "static メソッドは子の static メソッドで隠蔽される。static とインスタンスメソッドの間ではオーバーライドも隠蔽もできない"
             }
           ]
@@ -3139,12 +3139,12 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static メソッドには this が無いので、インスタンス変数を名前だけでは使えない。インスタンスを通せば使える"
             },
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "可変長引数は配列として受け取る"
             }
           ]
@@ -3157,12 +3157,12 @@
           "refs": [
             {
               "id": "c1-s04",
-              "section": "第1章 04「ファイル名とクラス」",
+              "section": "1-4「ファイル名とクラス」",
               "point": "public なクラスはファイル名と同じ名前にする。1つのファイルに複数のクラスを書け、.class はクラスごとに1つずつ作られる"
             },
             {
               "id": "c1-s05",
-              "section": "第1章 05「パッケージ宣言」",
+              "section": "1-5「パッケージ宣言」",
               "point": "書く順番は package → import → クラスの宣言。package を省略したクラスは名前の無いパッケージに属する"
             }
           ]
@@ -3175,12 +3175,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "具象クラスは、受け継いだ抽象メソッド（インタフェースのものも含む）をすべて実装する。抽象クラスなら実装を残してよい"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "実装するときもアクセスは狭められない。インタフェースのメソッドは public で実装する"
             }
           ]
@@ -3193,7 +3193,7 @@
           "refs": [
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "ローカル変数の範囲は、宣言した位置からそのブロック（{ }）の終わりまで。範囲が重なる同じ名前のローカル変数は宣言できない。フィールドと同じ名前のローカル変数は宣言できる"
             }
           ]
@@ -3206,12 +3206,12 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "do-while は本体を先に1回実行してから条件を調べる。while は先に条件を調べる"
             },
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "条件式の i++ は、判定に増やす前の値を使い、判定の結果にかかわらず i を増やす"
             }
           ]
@@ -3225,17 +3225,17 @@
           "refs": [
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "throw に書けるのは Throwable の子孫のインスタンスだけ。非検査例外（RuntimeException と Error の子孫）は throws に書かなくても外へ投げられる"
             },
             {
               "id": "c6-s05",
-              "section": "第6章 05「multi-catch」",
+              "section": "6-5「multi-catch」",
               "point": "multi-catch（| で区切る）なら、1つの catch で複数の種類の例外を捕まえられる"
             },
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "finally は、例外が捕まらずに外へ出ていくときも実行される"
             }
           ]
@@ -3248,12 +3248,12 @@
           "refs": [
             {
               "id": "c4-s02",
-              "section": "第4章 02「フィールドとライフサイクル」",
+              "section": "4-2「フィールドとライフサイクル」",
               "point": "フィールドは自動で既定値が入る。数値は 0（double は 0.0）、boolean は false、char は '\\u0000'、参照型は null"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "配列の要素にも、型の既定値が入る"
             }
           ]
@@ -3266,12 +3266,12 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "別々のインタフェースから同じシグネチャの default メソッドと抽象メソッドを受け継ぐと、default は実装として使われない。クラスでオーバーライドして解決する（インタフェース名.super.メソッド() で default を呼べる）"
             },
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "クラスでいくつものインタフェースを implements できる"
             }
           ]
@@ -3284,12 +3284,12 @@
           "refs": [
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "ローカル変数は、使う前に必ず値が入っていなければならない。if やループの中だけで代入していると、入らない経路があるのでコンパイルエラー"
             },
             {
               "id": "c4-s02",
-              "section": "第4章 02「フィールドとライフサイクル」",
+              "section": "4-2「フィールドとライフサイクル」",
               "point": "自動で既定値が入るのはフィールドと配列の要素だけ。ローカル変数には入らない"
             }
           ]
@@ -3307,7 +3307,7 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子のコンストラクタで super(...) を書くと、引数の合う親のコンストラクタが呼ばれる。書いたときは暗黙の super() は入らない"
             }
           ]
@@ -3320,7 +3320,7 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "String は不変。toUpperCase や concat は新しい文字列を返すだけで、戻り値を代入しなければ元の文字列は変わらない"
             }
           ]
@@ -3333,7 +3333,7 @@
           "refs": [
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "コマンドライン引数は、クラス名の後ろに書いたものが args[0] から順に入る。クラス名は args に入らない"
             }
           ]
@@ -3346,7 +3346,7 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "switch 文は一致した case から下へ流れ（フォールスルー）、break で抜ける"
             }
           ]
@@ -3360,7 +3360,7 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドでは、アクセス修飾子を親より狭くできない（広げるのはよい）。戻り値の型も合わせる"
             }
           ]
@@ -3373,7 +3373,7 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけで全インスタンスが共有する。どのインスタンスから代入しても同じ1つが書き換わる"
             }
           ]
@@ -3386,7 +3386,7 @@
           "refs": [
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "try で例外が起きると残りは飛ばして catch へ進む。finally は例外があってもなくても最後に実行される"
             }
           ]
@@ -3400,7 +3400,7 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "小さい型から大きい型への代入は自動で変換される（拡大変換）。大きい型から小さい型へはキャストが必要。整数の定数は範囲内なら byte などにも入る"
             }
           ]
@@ -3413,12 +3413,12 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親の型の変数を子の型にキャストすれば、子だけのメソッドを呼べる。キャストは . より結合が弱いので、括弧で囲んでから呼ぶ"
             },
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "呼び出せるメソッドは、変数の型（宣言型）で決まる"
             }
           ]
@@ -3431,7 +3431,7 @@
           "refs": [
             {
               "id": "c3-s02",
-              "section": "第3章 02「算術と++／--」",
+              "section": "3-2「算術と++／--」",
               "point": "a++ は今の値を使ってから増やし、++a は増やしてから使う"
             }
           ]
@@ -3444,7 +3444,7 @@
           "refs": [
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "instanceof のパターン変数は、型が合ったときだけ使える。&& の右側でも使える"
             }
           ]
@@ -3458,7 +3458,7 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed インタフェースを実装するクラスにも final・sealed・non-sealed のどれかが必要。インタフェースは extends ではなく implements する"
             }
           ]
@@ -3471,12 +3471,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "同じ内容のリテラルは定数プールの同じインスタンスを指す。new String は毎回新しいインスタンスを作る"
             },
             {
               "id": "c3-s04",
-              "section": "第3章 04「比較と等価性」",
+              "section": "3-4「比較と等価性」",
               "point": "== は同じインスタンスかどうか、equals は中身が同じかどうかを比べる"
             }
           ]
@@ -3489,7 +3489,7 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドは変数の型で決まり（隠蔽）、インスタンスメソッドは実体の型で決まる（オーバーライド）"
             }
           ]
@@ -3504,7 +3504,7 @@
           "refs": [
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "別パッケージの、サブクラスでないクラスから使えるのは public だけ。protected・修飾子なし・private は使えない"
             }
           ]
@@ -3517,7 +3517,7 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは、完全一致 → 拡大変換 → ボクシング の順に、呼び出せる候補を探す"
             }
           ]
@@ -3530,7 +3530,7 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "add(位置, 値) はその位置に割り込ませる。remove(Object) は値で探して削除する。size() は要素の数"
             }
           ]
@@ -3543,7 +3543,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "実装クラスは default メソッドを受け継ぐ。オーバーライドすれば、そのクラスのメソッドが使われる"
             }
           ]
@@ -3556,7 +3556,7 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "continue はその周の残りを飛ばして次の周へ、break はループを抜ける"
             }
           ]
@@ -3571,12 +3571,12 @@
           "refs": [
             {
               "id": "c6-s01",
-              "section": "第6章 01「階層と3分類」",
+              "section": "6-1「階層と3分類」",
               "point": "RuntimeException の子孫は非検査例外。IOException・FileNotFoundException・Exception は検査例外"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "NullPointerException・ClassCastException・ArithmeticException は RuntimeException の子"
             }
           ]
@@ -3591,7 +3591,7 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスには、抽象メソッド（本体なし）も具象メソッド（本体あり）も static メソッドも書ける。abstract と private は組み合わせられない"
             }
           ]
@@ -3604,7 +3604,7 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "フィールドと同じ名前の引数があると、this を付けない名前は引数を指す。フィールドに入れるには this.名前 が必要"
             }
           ]
@@ -3617,7 +3617,7 @@
           "refs": [
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "substring(開始, 終了) は終了の位置を含まない。indexOf は最初に見つかった位置、charAt はその位置の文字。位置は 0 から数える"
             }
           ]
@@ -3630,12 +3630,12 @@
           "refs": [
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "引数の型が同じならオーバーライド、違えばオーバーロード。@Override を付けたのにオーバーライドになっていないとコンパイルエラー"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドでは引数の名前は関係なく、アクセス修飾子は広げてもよい"
             }
           ]
@@ -3648,7 +3648,7 @@
           "refs": [
             {
               "id": "c3-s05",
-              "section": "第3章 05「論理演算子と短絡」",
+              "section": "3-5「論理演算子と短絡」",
               "point": "&& は左が false、|| は左が true なら右を評価しない。& と | は両方を必ず評価する"
             }
           ]
@@ -3662,7 +3662,7 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは引数の型・数・並びで区別する。戻り値の型・引数名・アクセス修飾子だけの違いは区別にならない"
             }
           ]
@@ -3676,7 +3676,7 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのメソッドは暗黙に public abstract。実装クラスは public で、引数と戻り値をそろえてオーバーライドする。抽象クラスなら実装しなくてよい"
             }
           ]
@@ -3689,7 +3689,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "2次元配列の a[i] は i 行目の配列。a[i].length はその行の要素数で、行ごとに違ってよい"
             }
           ]
@@ -3703,7 +3703,7 @@
           "refs": [
             {
               "id": "c1-s06",
-              "section": "第1章 06「import と import static」",
+              "section": "1-6「import と import static」",
               "point": "java.lang パッケージ（String・Math・Integer・System など）は自動で import される。java.util などは import が必要"
             }
           ]
@@ -3716,7 +3716,7 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドの戻り値は、親と同じ型かそのサブクラス（共変戻り値）。基本データ型は Object の子ではない"
             }
           ]
@@ -3729,7 +3729,7 @@
           "refs": [
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "try-with-resources のリソースは、try ブロックを抜けるときに自動で close される。close は catch・finally より先"
             }
           ]
@@ -3742,7 +3742,7 @@
           "refs": [
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "static 初期化ブロックはクラスを最初に使うときに1回だけ。インスタンス初期化ブロックは new のたびに、コンストラクタの本体より先に動く"
             }
           ]
@@ -3757,7 +3757,7 @@
           "refs": [
             {
               "id": "c2-s02",
-              "section": "第2章 02「リテラルの書き方」",
+              "section": "2-2「リテラルの書き方」",
               "point": "char のリテラルは ' ' で囲んだ1文字。\"a\" は String。int の定数は 0〜65535 の範囲なら char に代入できる"
             }
           ]
@@ -3770,7 +3770,7 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親の型から子の型へのキャストはコンパイルできるが、実体がその子でなければ実行時に ClassCastException"
             }
           ]
@@ -3783,7 +3783,7 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "do-while は本体を先に実行してから条件を調べる。条件が false になったところで抜ける"
             }
           ]
@@ -3796,7 +3796,7 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "引数は値のコピーが渡される。基本データ型を変えても呼び出し元は変わらないが、配列の中身を変えると呼び出し元の配列も変わる"
             }
           ]
@@ -3810,7 +3810,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "同じ default メソッドを2つのインタフェースから受け継いだら、オーバーライドしなければならない。インタフェース名.super.メソッド() で片方を呼べる"
             }
           ]
@@ -3823,7 +3823,7 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var で宣言した変数の型は、初期化の右辺で決まって変わらない。あとから別の型の値は入れられない"
             }
           ]
@@ -3836,7 +3836,7 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親の型の配列に子のインスタンスを入れても、呼ばれるのは実体のクラスでオーバーライドしたメソッド"
             }
           ]
@@ -3849,7 +3849,7 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this(...) で同じクラスの別のコンストラクタを呼べる。引数の合うコンストラクタへ順につながっていく"
             }
           ]
@@ -3862,7 +3862,7 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "2次元配列 m[i][j] の i は行、j は列。行を変えながら同じ列を読むと、縦に並んだ要素が取り出せる"
             }
           ]
@@ -3875,7 +3875,7 @@
           "refs": [
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "println や文字列の連結では toString() が呼ばれる。子が toString をオーバーライドしていなければ、親でオーバーライドしたものが使われる"
             }
           ]
@@ -3889,7 +3889,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "配列は new 型[要素数] で作るか、{ } の初期化子で作る。宣言の [] に要素数は書けず、初期化子を使うときは要素数を書かない"
             }
           ]
@@ -3902,7 +3902,7 @@
           "refs": [
             {
               "id": "c6-s06",
-              "section": "第6章 06「finallyとreturn」",
+              "section": "6-6「finallyとreturn」",
               "point": "return があっても finally は実行される。return する値は finally より前に決まっているので、finally で変数を変えても戻り値は変わらない"
             }
           ]
@@ -3915,7 +3915,7 @@
           "refs": [
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final メソッドはオーバーライドできない。final 変数は読むことはできるが、再代入できない"
             }
           ]
@@ -3929,7 +3929,7 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "戻り値が void なら return に値を書けない。戻り値の型があれば、どの経路でも値を return する。値は戻り値の型に代入できる型にする"
             }
           ]
@@ -3942,7 +3942,7 @@
           "refs": [
             {
               "id": "c1-s03",
-              "section": "第1章 03「コンパイルと実行」",
+              "section": "1-3「コンパイルと実行」",
               "point": "java ファイル名.java と書くと、コンパイルせずにそのまま実行できる（ソースファイルモード）。ファイル名の後ろに書いたものがコマンドライン引数になる"
             }
           ]
@@ -3955,7 +3955,7 @@
           "refs": [
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "equals をオーバーライドしていないクラスは、Object の equals（同じインスタンスかどうか）を使う。String は中身を比べるようにオーバーライドしている"
             }
           ]
@@ -3968,7 +3968,7 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "ボクシングは int ⇄ Integer のような対応する型の間だけ。int を long に広げてから Long に包むことはできない"
             }
           ]
@@ -3981,7 +3981,7 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスを継承した具象クラスは、すべての抽象メソッドをオーバーライドしなければならない"
             }
           ]
@@ -3994,7 +3994,7 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "continue ラベル名 は、内側のループを打ち切って外側のループの次の周へ進む"
             }
           ]
@@ -4007,7 +4007,7 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "record にはコンポーネントと同じ名前のアクセサ（x() など）と、「型名[名前=値, …]」の形の toString が自動で作られる"
             }
           ]
@@ -4021,7 +4021,7 @@
           "refs": [
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "別パッケージのサブクラスは、継承した protected のメンバを自分のものとして使える。修飾子なしのメンバは使えない。親の型のインスタンスを new して protected を使うことはできない"
             }
           ]
@@ -4034,7 +4034,7 @@
           "refs": [
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "StringBuilder は自分自身を書き換える。toString() で取り出した String は別物なので、そのあと StringBuilder を変えても影響しない"
             }
           ]
@@ -4047,7 +4047,7 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドしたメソッドの中で super.メソッド() と書くと、親のメソッドを呼べる"
             }
           ]
@@ -4061,7 +4061,7 @@
           "refs": [
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "検査例外（Exception など）を throw するメソッドは、catch するか throws に書く。非検査例外（RuntimeException など）は不要"
             }
           ]
@@ -4074,7 +4074,7 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static メソッドの中からは、インスタンスのフィールドやメソッドを名前だけでは使えない。インスタンスを作って、それを通して使う"
             }
           ]
@@ -4087,7 +4087,7 @@
           "refs": [
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "ブロック（{ }）の中で宣言した変数は、そのブロックの中でしか使えない"
             }
           ]
@@ -4100,7 +4100,7 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "アロー（->）の switch 式は一致した case の値を返し、下へ流れない。1つの case に複数の値をカンマで並べられる"
             }
           ]
@@ -4113,7 +4113,7 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed クラスは permits に書いたクラスだけに継承を許す。許可されたサブクラスには final・sealed・non-sealed のどれかを付ける"
             }
           ]
@@ -4131,7 +4131,7 @@
           "refs": [
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子のコンストラクタは、最初に親のコンストラクタを呼ぶ。super(...) で引数を渡せる。表示は親から順になる"
             }
           ]
@@ -4144,12 +4144,12 @@
           "refs": [
             {
               "id": "c2-s07",
-              "section": "第2章 07「Stringの不変性」",
+              "section": "2-7「Stringの不変性」",
               "point": "String は不変。toUpperCase や concat は新しい String を返すだけ。t = s としたあと s に別の String を入れても、t は元の String を指したまま"
             },
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "charAt(位置) はその位置の char を返す。String と char を + でつなぐと連結になる"
             }
           ]
@@ -4164,7 +4164,7 @@
           "refs": [
             {
               "id": "c1-s07",
-              "section": "第1章 07「アクセス修飾子」",
+              "section": "1-7「アクセス修飾子」",
               "point": "同じパッケージのクラスからは、public・protected・修飾子なしのメンバを使える。使えないのは private だけ"
             }
           ]
@@ -4177,7 +4177,7 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "switch 文は一致した case から break まで下へ流れる（フォールスルー）。どれにも一致しなければ default から"
             }
           ]
@@ -4190,7 +4190,7 @@
           "refs": [
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "クラスから受け継いだメソッドは default に常に勝つ。default の中から呼んだ抽象メソッドは実体のものが動く。インタフェース名.super.メソッド() で default を呼べる"
             }
           ]
@@ -4203,7 +4203,7 @@
           "refs": [
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "フィールドと同じ名前の引数があると、this を付けない名前は引数を指す。this を付けた代入だけがフィールドに入る"
             }
           ]
@@ -4216,7 +4216,7 @@
           "refs": [
             {
               "id": "c6-s04",
-              "section": "第6章 04「catchの順序」",
+              "section": "6-4「catchの順序」",
               "point": "catch は上から順に調べ、最初に型が合った1つだけが実行される。finally は最後に必ず実行される"
             }
           ]
@@ -4229,12 +4229,12 @@
           "refs": [
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "+ は左から評価される。char と int の + は数値の足し算になり、String が先にあれば文字列の連結になる"
             },
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "char は文字コードの数値として計算される（'a' は 97）"
             }
           ]
@@ -4248,7 +4248,7 @@
           "refs": [
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final の変数には再代入できない（引数も同じ）。final の参照型の変数は、指す先を変えられないだけで、中身は変えられる"
             }
           ]
@@ -4261,12 +4261,12 @@
           "refs": [
             {
               "id": "c3-s05",
-              "section": "第3章 05「論理演算子と短絡」",
+              "section": "3-5「論理演算子と短絡」",
               "point": "&& は左が false なら右を評価しない（短絡評価）。右に 0 での割り算があっても実行されない"
             },
             {
               "id": "c3-s01",
-              "section": "第3章 01「優先順位」",
+              "section": "3-1「優先順位」",
               "point": "&& は || より先に結びつく"
             }
           ]
@@ -4279,7 +4279,7 @@
           "refs": [
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは、完全一致 → 拡大変換 → ボクシング → 可変長引数 の順に、呼び出せる候補を探す"
             }
           ]
@@ -4292,7 +4292,7 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドは変数の型で決まり、メソッドは実体の型で決まる。キャストすると変数の型が変わるので、見えるフィールドも変わる"
             }
           ]
@@ -4305,7 +4305,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "new で作った配列の要素には既定値が入る。int は 0、boolean は false、参照型は null"
             }
           ]
@@ -4319,12 +4319,12 @@
           "refs": [
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "java の -cp（-classpath）にはクラスファイルを探す起点を書き、クラスはパッケージ名付きで指定する。オプションはクラス名より前に書く"
             },
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "クラス名の後ろに書いたものがコマンドライン引数になる。\" \" で囲むと1つの引数"
             }
           ]
@@ -4337,12 +4337,12 @@
           "refs": [
             {
               "id": "c5-s05",
-              "section": "第5章 05「宣言型か実体型か ★核心」",
+              "section": "5-5「宣言型か実体型か ★核心」",
               "point": "フィールドは変数の型で決まり（隠蔽）、メソッドは実体の型で決まる。親のメソッドの中の n は親のフィールド"
             },
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "子を new すると、親のコンストラクタが先に動き、そのあと子のフィールド初期化とコンストラクタが動く"
             }
           ]
@@ -4355,12 +4355,12 @@
           "refs": [
             {
               "id": "c4-s10",
-              "section": "第4章 10「record ★新」",
+              "section": "4-10「record ★新」",
               "point": "コンパクトコンストラクタには、値の確認などの処理を書ける。例外を投げれば record は作られない"
             },
             {
               "id": "c6-s03",
-              "section": "第6章 03「try-catch-finally」",
+              "section": "6-3「try-catch-finally」",
               "point": "try で例外が起きると、残りを飛ばして catch へ進む"
             }
           ]
@@ -4375,7 +4375,7 @@
           "refs": [
             {
               "id": "c3-s08",
-              "section": "第3章 08「switch文」",
+              "section": "3-8「switch文」",
               "point": "case のラベルは定数（リテラル・final の定数・定数式）でなければならない。switch に渡した値と同じ型で、long は使えない"
             }
           ]
@@ -4388,7 +4388,7 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象クラスは new できないが、コンストラクタは持てる（サブクラスの super() から呼ばれる）。抽象メソッドが無くても abstract にできる"
             }
           ]
@@ -4401,7 +4401,7 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "拡張 for 文の途中で remove すると、次の周で ConcurrentModificationException になる。ただし最後から2番目を削除したときだけは、例外にならずにそのまま終わる"
             }
           ]
@@ -4414,12 +4414,12 @@
           "refs": [
             {
               "id": "c6-s06",
-              "section": "第6章 06「finallyとreturn」",
+              "section": "6-6「finallyとreturn」",
               "point": "return があっても finally は実行される。return する値は finally より前に決まるので、finally で変数を変えても戻り値は変わらない"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "Integer.parseInt に数字でない文字列を渡すと NumberFormatException"
             }
           ]
@@ -4433,12 +4433,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "具象クラスは、受け継いだ抽象メソッド（インタフェースのものも含む）をすべて実装する。抽象クラスなら実装を残してよい"
             },
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのメソッドは暗黙に public。実装するときも public にする"
             }
           ]
@@ -4451,7 +4451,7 @@
           "refs": [
             {
               "id": "c4-s02",
-              "section": "第4章 02「フィールドとライフサイクル」",
+              "section": "4-2「フィールドとライフサイクル」",
               "point": "フィールドは初期化しなくても既定値が入る。int は 0、boolean は false、参照型は null、double は 0.0"
             }
           ]
@@ -4464,7 +4464,7 @@
           "refs": [
             {
               "id": "c2-s06",
-              "section": "第2章 06「var（型推論）」",
+              "section": "2-6「var（型推論）」",
               "point": "var の型は右辺の式の型で決まる。int と double の計算は double、char と int の計算は int"
             }
           ]
@@ -4477,12 +4477,12 @@
           "refs": [
             {
               "id": "c3-s09",
-              "section": "第3章 09「switch式 ★新」",
+              "section": "3-9「switch式 ★新」",
               "point": "アローの switch 式は一致した case の値を返す。ブロックのときは yield で返す。default で残りをすべて受ける"
             },
             {
               "id": "c3-s03",
-              "section": "第3章 03「代入と複合代入」",
+              "section": "3-3「代入と複合代入」",
               "point": "total += 式 は total = total + 式 と同じ"
             }
           ]
@@ -4495,12 +4495,12 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースは別のインタフェースを extends できる。実装クラスは、親インタフェースの抽象メソッドも含めてすべて実装する"
             },
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "default メソッドの中から抽象メソッドを呼ぶと、実体のクラスのメソッドが動く"
             }
           ]
@@ -4514,7 +4514,7 @@
           "refs": [
             {
               "id": "c4-s04",
-              "section": "第4章 04「コンストラクタ」",
+              "section": "4-4「コンストラクタ」",
               "point": "コンストラクタを書いたクラスには、引数なしのデフォルトコンストラクタは作られない。引数の型と数が合うコンストラクタしか呼べない"
             }
           ]
@@ -4527,7 +4527,7 @@
           "refs": [
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "配列の変数には配列への参照が入る。b = a とすると、同じ配列を2つの変数が指す。a に別の配列を入れ直しても、b は元の配列を指したまま"
             }
           ]
@@ -4542,17 +4542,17 @@
           "refs": [
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドしたメソッドは、親の型の変数から呼んでも子のものが動く。super.メソッド() で親の処理を呼べる"
             },
             {
               "id": "c5-s12",
-              "section": "第5章 12「アクセス修飾子と継承」",
+              "section": "5-12「アクセス修飾子と継承」",
               "point": "private のフィールドは子から直接使えない。protected なら使える"
             },
             {
               "id": "c5-s02",
-              "section": "第5章 02「コンストラクタと super()」",
+              "section": "5-2「コンストラクタと super()」",
               "point": "親に引数なしのコンストラクタが無ければ、子のコンストラクタで super(引数) を書く必要がある"
             }
           ]
@@ -4565,7 +4565,7 @@
           "refs": [
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "for 文は「初期化 → 条件 → 本体 → 更新 → 条件 …」の順に回り、条件が false になったら抜ける"
             }
           ]
@@ -4578,7 +4578,7 @@
           "refs": [
             {
               "id": "c6-s09",
-              "section": "第6章 09「try-with-resources」",
+              "section": "6-9「try-with-resources」",
               "point": "リソースは宣言と逆の順に閉じる。本体で例外が出たときも、先にすべて閉じてから catch・finally へ進む"
             }
           ]
@@ -4591,12 +4591,12 @@
           "refs": [
             {
               "id": "c4-s09",
-              "section": "第4章 09「instanceof ★新」",
+              "section": "4-9「instanceof ★新」",
               "point": "instanceof は、実体がその型か、その子のときに true になる"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "子のインスタンスは親の型でもある。親のインスタンスは子の型ではない"
             }
           ]
@@ -4609,12 +4609,12 @@
           "refs": [
             {
               "id": "c5-s08",
-              "section": "第5章 08「final」",
+              "section": "5-8「final」",
               "point": "final の参照型のフィールドは、指す先を変えられないだけで、配列の中身は変えられる"
             },
             {
               "id": "c2-s11",
-              "section": "第2章 11「配列」",
+              "section": "2-11「配列」",
               "point": "配列を返すメソッドは参照を返す。受け取った側で中身を変えると、元の配列も変わる。変数に別の配列を入れ直しても元の配列は変わらない"
             }
           ]
@@ -4627,7 +4627,7 @@
           "refs": [
             {
               "id": "c2-s12",
-              "section": "第2章 12「ArrayList」",
+              "section": "2-12「ArrayList」",
               "point": "remove(位置) で要素を削除すると、後ろの要素が1つずつ前へ詰まり、size() も減る。前から順に削除すると、詰まった要素を飛ばしてしまう"
             }
           ]
@@ -4641,12 +4641,12 @@
           "refs": [
             {
               "id": "c5-s14",
-              "section": "第5章 14「型の関係 総まとめ」",
+              "section": "5-14「型の関係 総まとめ」",
               "point": "List<Animal> には子の Dog を入れられる。しかし List<Dog> は List<Animal> の子ではないので、代入できない"
             },
             {
               "id": "c2-s14",
-              "section": "第2章 14「Iterable / Collection / Path」",
+              "section": "2-14「Iterable / Collection / Path」",
               "point": "リストから取り出した要素は、宣言した要素の型（またはその親）の変数に入れられる"
             }
           ]
@@ -4659,12 +4659,12 @@
           "refs": [
             {
               "id": "c1-s02",
-              "section": "第1章 02「コマンドライン引数」",
+              "section": "1-2「コマンドライン引数」",
               "point": "\" \" で囲んだ部分は、空白を含めて1つの引数になる"
             },
             {
               "id": "c6-s02",
-              "section": "第6章 02「覚える例外名」",
+              "section": "6-2「覚える例外名」",
               "point": "Integer.parseInt は、空白や文字が入った文字列を読めないと NumberFormatException を投げる"
             }
           ]
@@ -4677,7 +4677,7 @@
           "refs": [
             {
               "id": "c3-s06",
-              "section": "第3章 06「三項演算子」",
+              "section": "3-6「三項演算子」",
               "point": "三項演算子 条件 ? A : B は、条件が true なら A、false なら B。続けて書くと右側から組み立てられる"
             }
           ]
@@ -4692,12 +4692,12 @@
           "refs": [
             {
               "id": "c5-s11",
-              "section": "第5章 11「sealed ★新」",
+              "section": "5-11「sealed ★新」",
               "point": "sealed クラスの子は final・sealed・non-sealed のどれかを付ける。sealed の子は、さらに permits で継承できるクラスを限定する"
             },
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "abstract と sealed は組み合わせられる。抽象クラスは new できない"
             }
           ]
@@ -4710,7 +4710,7 @@
           "refs": [
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "インスタンス変数の初期化と初期化ブロックは、書いた順に、コンストラクタの本体より先に実行される"
             }
           ]
@@ -4723,7 +4723,7 @@
           "refs": [
             {
               "id": "c3-s12",
-              "section": "第3章 12「進数とビット演算」",
+              "section": "3-12「進数とビット演算」",
               "point": "0b で始まると2進数、先頭が 0 だけだと8進数、0x で始まると16進数。010 は 8"
             }
           ]
@@ -4736,12 +4736,12 @@
           "refs": [
             {
               "id": "c5-s04",
-              "section": "第5章 04「オーバーロードとの区別」",
+              "section": "5-4「オーバーロードとの区別」",
               "point": "どのメソッドを呼ぶかはコンパイル時に変数の型と引数の型で決まり、オーバーライドされていれば実行時に実体のものが動く"
             },
             {
               "id": "c4-s06",
-              "section": "第4章 06「オーバーロード」",
+              "section": "4-6「オーバーロード」",
               "point": "オーバーロードは、引数の型に完全一致するものが拡大変換より優先される"
             }
           ]
@@ -4755,12 +4755,12 @@
           "refs": [
             {
               "id": "c6-s08",
-              "section": "第6章 08「カスタム例外」",
+              "section": "6-8「カスタム例外」",
               "point": "Exception を継承した自作の例外は検査例外、RuntimeException を継承したものは非検査例外になる"
             },
             {
               "id": "c6-s07",
-              "section": "第6章 07「throw / throws」",
+              "section": "6-7「throw / throws」",
               "point": "検査例外を投げるなら、catch するか throws に書く。catch の型はその例外かその親でなければ捕まえられない"
             }
           ]
@@ -4773,7 +4773,7 @@
           "refs": [
             {
               "id": "c2-s09",
-              "section": "第2章 09「StringBuilder」",
+              "section": "2-9「StringBuilder」",
               "point": "delete(開始, 終了) は終了の位置を含まずに削除する。StringBuilder のメソッドは自分自身を返すのでつなげて呼べる"
             }
           ]
@@ -4786,7 +4786,7 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親子関係のある型どうしのキャストはコンパイルが通る（実体が違えば実行時に ClassCastException）。親子関係の無いクラスどうしのキャストはコンパイルエラー"
             }
           ]
@@ -4799,7 +4799,7 @@
           "refs": [
             {
               "id": "c4-s07",
-              "section": "第4章 07「static」",
+              "section": "4-7「static」",
               "point": "static フィールドはクラスに1つだけ。static メソッドで変えても、インスタンス経由で読んでも、同じ1つを指す"
             }
           ]
@@ -4812,12 +4812,12 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "continue はその周の残りを飛ばして次の周へ進む。do-while では末尾の条件の判定へ進む"
             },
             {
               "id": "c3-s10",
-              "section": "第3章 10「繰り返しと2次元配列」",
+              "section": "3-10「繰り返しと2次元配列」",
               "point": "do-while は本体を実行してから条件を調べ、false になったら抜ける"
             }
           ]
@@ -4830,12 +4830,12 @@
           "refs": [
             {
               "id": "c5-s07",
-              "section": "第5章 07「抽象クラス」",
+              "section": "5-7「抽象クラス」",
               "point": "抽象メソッドの実装は、最初の具象クラスまでに済ませればよい。途中の抽象クラスは実装しなくてよい"
             },
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "親のメソッドの中から呼んだメソッドも、実体のクラスのものが動く"
             }
           ]
@@ -4849,12 +4849,12 @@
           "refs": [
             {
               "id": "c2-s03",
-              "section": "第2章 03「型変換」",
+              "section": "2-3「型変換」",
               "point": "int を char にキャストすると、その文字コードの文字になる。char と int の計算結果は int"
             },
             {
               "id": "c2-s08",
-              "section": "第2章 08「Stringのメソッド」",
+              "section": "2-8「Stringのメソッド」",
               "point": "String と + でつなぐと文字列の連結になる"
             }
           ]
@@ -4867,7 +4867,7 @@
           "refs": [
             {
               "id": "c4-s08",
-              "section": "第4章 08「初期化の順序」",
+              "section": "4-8「初期化の順序」",
               "point": "static 初期化ブロックはクラスを使い始めるとき（main より前）に1回だけ。インスタンス初期化ブロックは new のたびに、コンストラクタの本体より先に動く"
             }
           ]
@@ -4880,7 +4880,7 @@
           "refs": [
             {
               "id": "c5-s06",
-              "section": "第5章 06「多態とキャスト」",
+              "section": "5-6「多態とキャスト」",
               "point": "インタフェース型の配列にも、実装クラスのインスタンスを入れられる。呼ばれるのは実体のクラスのメソッド"
             }
           ]
@@ -4894,12 +4894,12 @@
           "refs": [
             {
               "id": "c6-s10",
-              "section": "第6章 10「オーバーライド」",
+              "section": "6-10「オーバーライド」",
               "point": "オーバーライドで throws に書ける検査例外は、親と同じか、その子だけ。書かないのは自由"
             },
             {
               "id": "c5-s03",
-              "section": "第5章 03「オーバーライド」",
+              "section": "5-3「オーバーライド」",
               "point": "オーバーライドでは、アクセスを狭められず、戻り値の型も合わせる"
             }
           ]
@@ -4912,7 +4912,7 @@
           "refs": [
             {
               "id": "c2-s05",
-              "section": "第2章 05「宣言・初期化・スコープ」",
+              "section": "2-5「宣言・初期化・スコープ」",
               "point": "ローカル変数は使う前に値が入っていなければならない。if と else の両方で代入していれば、どちらを通っても代入済みなので使える"
             }
           ]
@@ -4925,7 +4925,7 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのメソッドは暗黙に public。実装クラスで修飾子を付けないと、アクセスを狭めたことになってエラー"
             }
           ]
@@ -4938,7 +4938,7 @@
           "refs": [
             {
               "id": "c3-s11",
-              "section": "第3章 11「break / continue / ラベル」",
+              "section": "3-11「break / continue / ラベル」",
               "point": "break ラベル名 は、ラベルを付けた外側のループごと抜ける。ラベルなしの break は内側のループだけを抜ける"
             }
           ]
@@ -4952,12 +4952,12 @@
           "refs": [
             {
               "id": "c4-s04",
-              "section": "第4章 04「コンストラクタ」",
+              "section": "4-4「コンストラクタ」",
               "point": "コンストラクタはクラスと同じ名前で、戻り値の型を書かない。値を return できず、static や final は付けられない。アクセス修飾子は4種類とも付けられる"
             },
             {
               "id": "c4-s05",
-              "section": "第4章 05「this と this()」",
+              "section": "4-5「this と this()」",
               "point": "this(...) で呼べるのは、そのクラスにあるコンストラクタだけ"
             }
           ]
@@ -4970,7 +4970,7 @@
           "refs": [
             {
               "id": "c5-s13",
-              "section": "第5章 13「toString / equals / hashCode」",
+              "section": "5-13「toString / equals / hashCode」",
               "point": "List を println すると [要素, 要素] の形で表示され、各要素は toString() で文字列になる"
             }
           ]
@@ -4984,12 +4984,12 @@
           "refs": [
             {
               "id": "c1-s03",
-              "section": "第1章 03「コンパイルと実行」",
+              "section": "1-3「コンパイルと実行」",
               "point": "javac には拡張子 .java まで付けたファイル名、java にはクラス名（.class は付けない）を渡す。java ファイル名.java ならクラスファイルを作らずに実行できる"
             },
             {
               "id": "c1-s08",
-              "section": "第1章 08「-d と -cp」",
+              "section": "1-8「-d と -cp」",
               "point": "クラスファイルの書き出し先を決める -d は javac のオプション"
             }
           ]
@@ -5002,7 +5002,7 @@
           "refs": [
             {
               "id": "c6-s05",
-              "section": "第6章 05「multi-catch」",
+              "section": "6-5「multi-catch」",
               "point": "multi-catch は | で例外の型を並べ、変数は最後に1つだけ書く。継承関係のある型は並べられず、変数は暗黙に final"
             }
           ]
@@ -5015,7 +5015,7 @@
           "refs": [
             {
               "id": "c2-s13",
-              "section": "第2章 13「nullとの付き合い方」",
+              "section": "2-13「nullとの付き合い方」",
               "point": "null を文字列につなぐと \"null\" になる。メソッドを呼ばない限り例外にはならない"
             }
           ]
@@ -5029,12 +5029,12 @@
           "refs": [
             {
               "id": "c5-s09",
-              "section": "第5章 09「インタフェース」",
+              "section": "5-9「インタフェース」",
               "point": "インタフェースのフィールドは暗黙に public static final の定数。実装クラスから名前だけで読めるが、代入はできない"
             },
             {
               "id": "c5-s10",
-              "section": "第5章 10「default / static / private」",
+              "section": "5-10「default / static / private」",
               "point": "インタフェースの static メソッドは実装クラスに受け継がれないので、インタフェース名を付けて呼ぶ"
             }
           ]
@@ -5047,7 +5047,7 @@
           "refs": [
             {
               "id": "c4-s03",
-              "section": "第4章 03「メソッドと引数」",
+              "section": "4-3「メソッドと引数」",
               "point": "引数には参照のコピーが渡る。指す先のフィールドを変えると呼び出し元にも伝わるが、引数に別のインスタンスを入れ直しても伝わらない"
             }
           ]

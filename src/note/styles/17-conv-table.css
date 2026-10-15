@@ -1,4 +1,4 @@
-/* 型変換の判定を色で分ける表（第2章 03）。
+/* 型変換の判定を色で分ける表（2-3）。
    .cv-i 暗黙でよい / .cv-c キャストが必要 / .cv-x 変換できない（エラー・例外） / .cv-s 同じ型。
    コードの色分けが .c .s などを使っているので、cv- を付けて衝突させない */
 .cvm th, .cvm td { text-align: center; padding: 7px 4px; font-family: var(--mono); font-size: 13px; }

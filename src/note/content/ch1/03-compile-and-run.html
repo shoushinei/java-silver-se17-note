@@ -19,7 +19,7 @@ Main.class         バイトコード（JVM 用の中間コード。機種に依
 
   <div class="point"><p>バイトコードは<span class="mk">どの機種でも同じ内容</span>です。機種ごとの違いは JVM 側が吸収します。Windows には Windows 用の JVM、Mac には Mac 用の JVM があり、同じ <code>.class</code> をそれぞれが自分の CPU 向けに動かす。これが「一度書けばどこでも動く」（Write Once, Run Anywhere）の実体です。<br><code>java</code> コマンドの正体は<strong>この JVM を起動するプログラム</strong>です。</p></div>
 
-  <h3>なぜ javac はファイル名、java はクラス名なのか</h3>
+  <h3 data-toc="javac はファイル名、java はクラス名">なぜ javac はファイル名、java はクラス名なのか</h3>
 
   <p>2つのコマンドは<strong>見ている世界が違います</strong>。</p>
 
@@ -129,9 +129,9 @@ $ java Main.java        → VERSION 2     // .java を読んでいる</code></pr
     </tbody>
   </table></div>
 
-  <div class="point link"><p><code>-d</code> と <code>-cp</code> の仕組み、どこに .class ができてどこを探すのか、選択肢の判定の手順は<a href="#c1-s08">第1章 08</a>で詳しく扱っています。</p></div>
+  <div class="point link"><p><code>-d</code> と <code>-cp</code> の仕組み、どこに .class ができてどこを探すのか、選択肢の判定の手順は<a href="#c1-s08">1-8</a>で詳しく扱っています。</p></div>
 
-  <h3>問題文の読み分け ── 同じ選択肢が正解にも誤りにもなる</h3>
+  <h3 data-toc="問題文の読み分け">問題文の読み分け ── 同じ選択肢が正解にも誤りにもなる</h3>
 
   <p>この節でいちばん落とし穴になるのが、<strong>同じコマンドが問題によって正解にも不正解にもなる</strong>ことです。</p>
 

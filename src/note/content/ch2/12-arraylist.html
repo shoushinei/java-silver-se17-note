@@ -10,7 +10,7 @@ List&lt;String&gt; list = new ArrayList&lt;&gt;();</code></pre></div>
 
   <p><code>java.util</code> パッケージなので、<span class="mk">import が必要</span>です。<code>java.lang</code> と違い自動 import されません。</p>
 
-  <div class="point link"><p><code>List</code> と <code>ArrayList</code> の関係、<code>Collection</code> や <code>Iterable</code> 型の変数に入れたとき何が呼べるか、拡張for文で回せる型は<a href="#c2-s14">第2章 14</a>にまとめています。</p></div>
+  <div class="point link"><p><code>List</code> と <code>ArrayList</code> の関係、<code>Collection</code> や <code>Iterable</code> 型の変数に入れたとき何が呼べるか、拡張for文で回せる型は<a href="#c2-s14">2-14</a>にまとめています。</p></div>
 
   <h3>型引数のルール</h3>
 
@@ -55,7 +55,7 @@ String u = (String) list.get(1);   // ClassCastException（実行時）</code></
     </tbody>
   </table></div>
 
-  <h3>add と set ── 割り込むか上書きするか</h3>
+  <h3 data-toc="add と set">add と set ── 割り込むか上書きするか</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>要素数が変わるかどうかで見分ける<span class="tag">最重要</span></div><pre><code>List&lt;String&gt; a = new ArrayList&lt;&gt;(List.of("A","B","C"));
 a.add(1, "X");
@@ -67,7 +67,7 @@ b.set(1, "X");
 System.out.println(b);          // [A, X, C]     ← B が消える
 System.out.println(b.size());   // 3</code></pre></div>
 
-  <h3>位置の境界 ── add は size まで、set は size-1 まで</h3>
+  <h3 data-toc="位置の境界（add と set）">位置の境界 ── add は size まで、set は size-1 まで</h3>
 
 <div class="code" data-v="run"><div class="cap"><span class="dot run"></span>飛び地は作れない<span class="tag">最重要</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;();
 list.add("A");                 // [A]   size 1
@@ -80,7 +80,7 @@ list.set(2, "X");              // IndexOutOfBoundsException</code></pre></div>
 
   <p>ArrayList は連続した並びなので、<span class="mk">途中に空きを作れません</span>。配列と違い「まだ存在しない位置」に代入することはできません。</p>
 
-  <h3>remove ── 同じ名前のメソッドが2つある</h3>
+  <h3 data-toc="remove の2つの形">remove ── 同じ名前のメソッドが2つある</h3>
 
   <p>ArrayList には、<code>remove</code> という名前のメソッドが<strong>2つ</strong>用意されています。「何番目を消すか」を渡すものと、「どの値を消すか」を渡すものです。</p>
 
@@ -92,7 +92,7 @@ list.set(2, "X");              // IndexOutOfBoundsException</code></pre></div>
     </tbody>
   </table></div>
 
-  <div class="point"><p>このように<span class="mk">名前が同じで、引数の型だけが違うメソッドを並べること</span>を<strong>オーバーロード</strong>といいます（詳しくは<a href="#c4-s06">第4章 06</a>）。呼ぶ側は名前だけを書き、Java が <code>( )</code> の中に書いた値の<strong>型</strong>を見て、どちらを使うかをコンパイルの時点で決めます。</p></div>
+  <div class="point"><p>このように<span class="mk">名前が同じで、引数の型だけが違うメソッドを並べること</span>を<strong>オーバーロード</strong>といいます（詳しくは<a href="#c4-s06">4-6</a>）。呼ぶ側は名前だけを書き、Java が <code>( )</code> の中に書いた値の<strong>型</strong>を見て、どちらを使うかをコンパイルの時点で決めます。</p></div>
 
   <div class="ws">
     <div class="ws-sec"><div class="ws-lb"><code>list.remove(1);</code> ── 1 は int なので「位置」</div>
@@ -115,7 +115,7 @@ list.set(2, "X");              // IndexOutOfBoundsException</code></pre></div>
 
   <p>箱の中が値、箱の下の数字が位置です。どちらの例も、元は <code>[10, 20, 30]</code> のリストです。</p>
 
-  <h3>どちらが呼ばれるか ── ( ) の中の型で決まる</h3>
+  <h3 data-toc="どちらの remove が呼ばれるか">どちらが呼ばれるか ── ( ) の中の型で決まる</h3>
 
   <div class="tw"><table>
     <thead><tr><th>呼び出し（元は [10, 20, 30]）</th><th>( ) の中の型</th><th>呼ばれるもの</th><th>結果</th></tr></thead>
@@ -162,7 +162,7 @@ for (String s : list) {
 
   <div class="point"><p>名前に "Concurrent（並行）" と入っていますが、<span class="mk">スレッドとは無関係</span>です。「読んでいる最中に対象を作り変えた」ことを検知しているだけです。</p></div>
 
-  <h3>仕組み ── cursor と size の一致</h3>
+  <h3 data-toc="壊れる仕組み（cursor と size）">仕組み ── cursor と size の一致</h3>
 
   <p>拡張for文は内部で <code>Iterator</code> を使っています。</p>
 

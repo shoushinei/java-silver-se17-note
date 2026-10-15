@@ -1,7 +1,7 @@
 <section id="c4-s05">
   <div class="sh"><span class="num">05</span><h2>this と this()</h2></div>
 
-  <h3>this ── 自分自身への参照</h3>
+  <h3 data-toc="this">this ── 自分自身への参照</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>同名の変数を区別する<span class="tag">頻出</span></div><pre><code>class Car {
     String name;
@@ -13,7 +13,7 @@
 
   <div class="point"><p>ローカル変数（引数を含む）とフィールドが同名のとき、<span class="mk">近い方＝ローカル変数が優先されます</span>（シャドーイング）。フィールドを指したいときは <code>this.</code> が必須です。<br><code>name = name;</code> はコンパイルエラーにならず、<strong>フィールドは既定値のまま</strong>になります。出力を問う問題で <code>null</code> や <code>0</code> が正解になるパターン。</p></div>
 
-  <h3>this() ── 別のコンストラクタを呼ぶ</h3>
+  <h3 data-toc="this()">this() ── 別のコンストラクタを呼ぶ</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化処理をまとめる<span class="tag">OK</span></div><pre><code>class Car {
     String name;

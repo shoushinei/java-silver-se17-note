@@ -5,7 +5,7 @@
  *
  *   ---
  *   answer: B              複数選択なら "A, C"
- *   refs:                  統合ノートの節 id と、その問題で使う論点のひとこと
+ *   refs:                  教材の節 id と、その問題で使う論点のひとこと
  *     - c5-s10 サブインタフェースの default でも抽象メソッドを実装できる
  *   ---
  *   問題文の段落。`code` と **強調** が使える。
@@ -136,7 +136,7 @@ export function parseQuestion(text, file) {
     else if (line.trim()) throw new Error(`${file}: 設定の行が読めません: ${line}`);
   }
   if (!meta.answer.length) throw new Error(`${file}: answer がありません`);
-  if (!meta.refs.length) throw new Error(`${file}: refs（統合ノートの参照）がありません`);
+  if (!meta.refs.length) throw new Error(`${file}: refs（教材の参照）がありません`);
 
   const rest = src.slice(fm[0].length);
   const [body, explainAndVerify = ""] = rest.split(/^## 解説\s*$/m);

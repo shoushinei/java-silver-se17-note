@@ -34,7 +34,7 @@ int[] b = new int[3]{1, 2, 3};     // エラー: 両方は指定できない</co
 
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
-  <h3>既定値 ── 基本データ型と参照型で扱いが違う</h3>
+  <h3 data-toc="要素の既定値">既定値 ── 基本データ型と参照型で扱いが違う</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>基本データ型はそのまま使える<span class="tag">OK</span></div><pre><code>int[] nums = new int[3];
 System.out.println(nums[0]);       // 0
@@ -134,7 +134,7 @@ System.out.println(arr[0]);   // "a"</code></pre></div>
 
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
-  <h3>配列の表示 ── println では中身が出ない</h3>
+  <h3 data-toc="配列の表示（println）">配列の表示 ── println では中身が出ない</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>ハッシュ形式になる<span class="tag">最重要</span></div><pre><code>int[] a = {1, 2, 3};
 
@@ -144,7 +144,7 @@ System.out.println(new int[0]);     // [I@... ← 要素数0でも同じ形式</
 
   <p>配列は <code>toString()</code> を<strong>オーバーライドしていない</strong>ので、<code>Object</code> の既定実装（クラス名＋@＋ハッシュコード）がそのまま使われます。<span class="mk">println は中身を見に行きません。</span></p>
 
-  <div class="point link"><p>なぜ「クラス名@ハッシュ値」になるのか、自作クラスではどうなるのか、null を println するとどうなるのかは<a href="#c5-s13">第5章 13「Object から受け継ぐ toString / equals / hashCode」</a>にまとめています。</p></div>
+  <div class="point link"><p>なぜ「クラス名@ハッシュ値」になるのか、自作クラスではどうなるのか、null を println するとどうなるのかは<a href="#c5-s13">5-13「Object から受け継ぐ toString / equals / hashCode」</a>にまとめています。</p></div>
 
   <div class="tw"><table>
     <thead><tr><th>記号</th><th>意味</th></tr></thead>
@@ -170,7 +170,7 @@ System.out.println("" + c);     // [C@1b6d3586 ← 連結すると変わる</cod
 
   <hr style="border:none;border-top:1px solid var(--rule);margin:34px 0">
 
-  <h3>コピー ── 代入と clone は別物</h3>
+  <h3 data-toc="代入と clone">コピー ── 代入と clone は別物</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>代入は参照のコピー<span class="tag">最重要</span></div><pre><code>int[] a = {1, 2, 3};
 int[] b = a;              // 同じ配列を指すだけ
@@ -183,9 +183,9 @@ System.out.println(c[0]); // 1  ← c は無関係
 System.out.println(a == b);   // true
 System.out.println(a == c);   // false</code></pre></div>
 
-  <p>配列の <code>clone()</code> は <code>public</code> で、戻り値は<strong>元と同じ配列型</strong>です（<code>int[]</code> の clone は <code>int[]</code>）。キャストも例外処理も要りません。クラスの clone との違いは<a href="#c5-s13">第5章 13</a>にあります。</p>
+  <p>配列の <code>clone()</code> は <code>public</code> で、戻り値は<strong>元と同じ配列型</strong>です（<code>int[]</code> の clone は <code>int[]</code>）。キャストも例外処理も要りません。クラスの clone との違いは<a href="#c5-s13">5-13</a>にあります。</p>
 
-  <h3>clone で「一部が共有される」── 浅いコピー</h3>
+  <h3 data-toc="clone は浅いコピー">clone で「一部が共有される」── 浅いコピー</h3>
 
   <p><code>clone()</code> が作るのは<strong>新しい箱（配列）</strong>だけです。箱の中身は、そのまま書き写されます。書き写されるものが「値」なのか「矢印（参照）」なのかで、共有されるかどうかが決まります。</p>
 
@@ -210,7 +210,7 @@ System.out.println(a == b);              // false  配列（箱）は別
 System.out.println(a[0] == b[0]);        // true   中のオブジェクトは同じ
 System.out.println(a[1] == b[1]);        // false  差し替えたので別</code></pre></div>
 
-  <div class="point trap"><p>判定は1つだけです。<span class="mk"><code>b[i].メソッド()</code> や <code>b[i].フィールド = …</code> で指す先を書き換えたら、元の配列にも伝わる</span>。<code>b[i] = …</code> で要素そのものに代入したら、b の箱が変わるだけで元の配列には伝わりません。<br><a href="#c4-s03">第4章 03</a>の「参照を渡したメソッドの中で、中身の書き換えは伝わるが、差し替えは伝わらない」とまったく同じ仕組みです。</p></div>
+  <div class="point trap"><p>判定は1つだけです。<span class="mk"><code>b[i].メソッド()</code> や <code>b[i].フィールド = …</code> で指す先を書き換えたら、元の配列にも伝わる</span>。<code>b[i] = …</code> で要素そのものに代入したら、b の箱が変わるだけで元の配列には伝わりません。<br><a href="#c4-s03">4-3</a>の「参照を渡したメソッドの中で、中身の書き換えは伝わるが、差し替えは伝わらない」とまったく同じ仕組みです。</p></div>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>String の配列は、共有されていても困らない<span class="tag">対比</span></div><pre><code>String[] s = {"p", "q"};
 String[] t = s.clone();
@@ -302,8 +302,8 @@ System.out.println(p[1][0][0]);   // 5</code></pre></div>
     <thead><tr><th>場面</th><th>変数・枠そのものに代入</th><th><code>.</code> や <code>[ ]</code> で先を触る</th></tr></thead>
     <tbody>
       <tr><td>clone した配列</td><td><code>b[1] = …</code> → 元に伝わらない</td><td><code>b[1][0] = …</code> → 伝わる</td></tr>
-      <tr><td>メソッドの引数（<a href="#c4-s03">第4章 03</a>）</td><td><code>arr = …</code> → 呼び出し元に伝わらない</td><td><code>arr[0] = …</code> → 伝わる</td></tr>
-      <tr><td><code>final int[] arr</code>（<a href="#c5-s08">第5章 08</a>）</td><td><code>arr = …</code> → コンパイルエラー</td><td><code>arr[0] = …</code> → できる</td></tr>
+      <tr><td>メソッドの引数（<a href="#c4-s03">4-3</a>）</td><td><code>arr = …</code> → 呼び出し元に伝わらない</td><td><code>arr[0] = …</code> → 伝わる</td></tr>
+      <tr><td><code>final int[] arr</code>（<a href="#c5-s08">5-8</a>）</td><td><code>arr = …</code> → コンパイルエラー</td><td><code>arr[0] = …</code> → できる</td></tr>
     </tbody>
   </table></div></div>
 
@@ -341,5 +341,5 @@ n[0] = 1.5;                     // ArrayStoreException: java.lang.Double</code><
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>ジェネリクスは最初からコンパイルで弾く<span class="tag">対比</span></div><pre><code>List&lt;Object&gt; list = new ArrayList&lt;String&gt;();   // コンパイルエラー
 // ArrayList&lt;String&gt; は List&lt;Object&gt; に変換できない</code></pre></div>
 
-  <div class="point link"><p>配列は実行時に「自分は String の配列だ」と覚えているので、<strong>入れた瞬間に検査できます</strong>。一方ジェネリクスは実行時に型の情報を持たないため、危険な代入を<strong>最初からコンパイルエラーにして</strong>防ぎます。<br><code>ArrayStoreException</code> は <code>RuntimeException</code> の子（非検査例外）なので、catch も throws も義務ではありません。第6章 02 の一覧にも載せています。</p></div>
+  <div class="point link"><p>配列は実行時に「自分は String の配列だ」と覚えているので、<strong>入れた瞬間に検査できます</strong>。一方ジェネリクスは実行時に型の情報を持たないため、危険な代入を<strong>最初からコンパイルエラーにして</strong>防ぎます。<br><code>ArrayStoreException</code> は <code>RuntimeException</code> の子（非検査例外）なので、catch も throws も義務ではありません。6-2 の一覧にも載せています。</p></div>
 </section>

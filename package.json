@@ -2,7 +2,7 @@
   "name": "java-silver-se17-note",
   "version": "1.0.0",
   "private": true,
-  "description": "Java Silver SE 17 (1Z0-825) 統合ノート",
+  "description": "Java Silver SE 17 試験対策ノート ── 1Z0-825 対策の教材と模擬試験",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",

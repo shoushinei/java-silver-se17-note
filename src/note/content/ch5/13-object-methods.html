@@ -14,7 +14,7 @@
 
   <div class="point"><p><span class="mk">3つとも「オーバーライドされる前提」で用意された仮の実装です。</span>Object は、あなたのクラスの「中身」が何なのかを知りません。だから文字列にするときは型の名前と識別用の番号しか出せず、比べるときは「同じインスタンスかどうか」しか判定できません。</p></div>
 
-  <h3>println はオブジェクトを受け取ると toString() を呼ぶ</h3>
+  <h3 data-toc="println と toString()">println はオブジェクトを受け取ると toString() を呼ぶ</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>println(Object) がしていること<span class="tag">最重要</span></div><pre><code>// System.out.println(x) は、おおむね次のように動く
 String s = (x == null) ? "null" : x.toString();   // String.valueOf(x) と同じ
@@ -22,7 +22,7 @@ String s = (x == null) ? "null" : x.toString();   // String.valueOf(x) と同じ
 
   <p>ポイントは2つです。<strong>null のときは toString() を呼ばずに "null" と表示する</strong>ので、例外になりません。null でなければ、そのオブジェクトの <code>toString()</code> が呼ばれます。<strong>オーバーライドしていれば自分の実装、していなければ Object の既定の実装</strong>です。文字列連結の <code>"値: " + x</code> も同じ仕組みで <code>toString()</code> を呼び、null なら <code>"値: null"</code> になります。</p>
 
-  <div class="point link"><p>反対に、<strong>null を確かめずにメソッドを呼んでしまう</strong>のが switch です。<code>switch (s)</code> は裏で <code>s.hashCode()</code> を呼ぶので、s が null なら NullPointerException になります（<a href="#sw-null">第3章 08</a>）。</p></div>
+  <div class="point link"><p>反対に、<strong>null を確かめずにメソッドを呼んでしまう</strong>のが switch です。<code>switch (s)</code> は裏で <code>s.hashCode()</code> を呼ぶので、s が null なら NullPointerException になります（<a href="#sw-null">3-8</a>）。</p></div>
 
   <h3>自作クラスで確かめる</h3>
 
@@ -43,7 +43,7 @@ System.out.println(boxes[3]);         // null  ← null なので toString() は
 <div class="code" data-v="run"><div class="cap"><span class="dot run"></span>null に「ドット」を付けた瞬間に例外<span class="tag">対比</span></div><pre><code>System.out.println(boxes[3].label);        // NullPointerException
 System.out.println(boxes[3].toString());   // NullPointerException</code></pre></div>
 
-  <p>println 自身は null を確かめてから <code>toString()</code> を呼びます。しかし <code>boxes[3].label</code> や <code>boxes[3].toString()</code> は、<strong>println に渡す前に自分で null をたどってしまう</strong>ので例外になります。<a href="#c2-s13">第2章 13「null との付き合い方」</a>と同じ判定です。</p>
+  <p>println 自身は null を確かめてから <code>toString()</code> を呼びます。しかし <code>boxes[3].label</code> や <code>boxes[3].toString()</code> は、<strong>println に渡す前に自分で null をたどってしまう</strong>ので例外になります。<a href="#c2-s13">2-13「null との付き合い方」</a>と同じ判定です。</p>
 
   <h3>なぜハッシュ値になるのか</h3>
 
@@ -57,7 +57,7 @@ p.getClass().getName() + "@" + Integer.toHexString(p.hashCode());   // Plain@18b
 
   <p><code>@</code> の後ろは <code>hashCode()</code> の値を16進数で書いたものです。<strong>実行するたびに変わる</strong>ので、選択肢に出てくる <code>@7344699f</code> のような数字そのものに意味はありません。「この形になるかどうか」だけを判定してください。</p>
 
-  <p>配列も同じです。配列は <code>toString()</code> をオーバーライドしていないので、<code>int[]</code> なら <code>[I@...</code>、<code>String[]</code> なら <code>[Ljava.lang.String;@...</code> になります。記号の読み方は<a href="#c2-s11">第2章 11「配列」</a>にあります。</p>
+  <p>配列も同じです。配列は <code>toString()</code> をオーバーライドしていないので、<code>int[]</code> なら <code>[I@...</code>、<code>String[]</code> なら <code>[Ljava.lang.String;@...</code> になります。記号の読み方は<a href="#c2-s11">2-11「配列」</a>にあります。</p>
 
   <h3>ハッシュ値にしない方法</h3>
 
@@ -68,7 +68,7 @@ p.getClass().getName() + "@" + Integer.toHexString(p.hashCode());   // Plain@18b
       <tr><td>配列</td><td><code>Arrays.toString(配列)</code>。2次元なら <code>Arrays.deepToString</code></td></tr>
       <tr><td><code>ArrayList</code> などのコレクション</td><td>そのままで <code>[a, b]</code> と出る（オーバーライド済み）</td></tr>
       <tr><td><code>String</code> / <code>StringBuilder</code> / ラッパークラス</td><td>そのままで中身が出る（オーバーライド済み）</td></tr>
-      <tr><td><code>record</code></td><td>そのままで <code>Point[x=1, y=2]</code> と出る（自動生成。<a href="#c4-s10">第4章 10</a>）</td></tr>
+      <tr><td><code>record</code></td><td>そのままで <code>Point[x=1, y=2]</code> と出る（自動生成。<a href="#c4-s10">4-10</a>）</td></tr>
     </tbody>
   </table></div>
 
@@ -89,7 +89,7 @@ class B { public void toString() { } }
 class C { @Override public String tostring() { return "c"; } }
 // error: method does not override or implement a method from a supertype</code></pre></div>
 
-  <div class="point trap"><p><span class="mk">public を付け忘れると、アクセスを狭めたことになってコンパイルエラー</span>です。Object の <code>toString()</code> が public なので、オーバーライドする側も public 以外は書けません（<a href="#c5-s12">第5章 12</a> の「狭めるのは不可」）。<br><code>C</code> のように綴りを間違えた場合、<code>@Override</code> が無ければ<strong>コンパイルは通ります</strong>。ただしそれは新しい別メソッドなので、println するとハッシュ値が出ます。</p></div>
+  <div class="point trap"><p><span class="mk">public を付け忘れると、アクセスを狭めたことになってコンパイルエラー</span>です。Object の <code>toString()</code> が public なので、オーバーライドする側も public 以外は書けません（<a href="#c5-s12">5-12</a> の「狭めるのは不可」）。<br><code>C</code> のように綴りを間違えた場合、<code>@Override</code> が無ければ<strong>コンパイルは通ります</strong>。ただしそれは新しい別メソッドなので、println するとハッシュ値が出ます。</p></div>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>null を直接渡すと、どのオーバーロードか決まらない<span class="tag">要注意</span></div><pre><code>System.out.println(null);            // コンパイルエラー
 // error: reference to println is ambiguous
@@ -99,7 +99,7 @@ System.out.println((Object) null);   // OK。"null" と出る</code></pre></div>
 
   <p><code>String</code> 型や <code>Object</code> 型の変数に入った null なら "null" と出ます。<code>null</code> と直接書いたときだけ、どのオーバーロードを呼ぶか決められずにエラーになります。<br>ただし <code>char[] c = null;</code> を <code>println(c)</code> すると、<code>char[]</code> 専用のオーバーロードが中身を読みに行くので <strong>NullPointerException</strong> です。</p>
 
-  <h3>equals() ── オーバーライドとオーバーロードの取り違え</h3>
+  <h3 data-toc="equals() の取り違え">equals() ── オーバーライドとオーバーロードの取り違え</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>引数の型が Object でなければオーバーライドではない<span class="tag">最頻出</span></div><pre><code>class P {
     int x;
@@ -121,7 +121,7 @@ public boolean equals(Object o) {                   // 引数は Object
     return o instanceof P p &amp;&amp; x == p.x;            // 型を確かめてから比べる
 }</code></pre></div>
 
-  <h3>hashCode() ── equals を変えたら一緒に変える</h3>
+  <h3 data-toc="hashCode()">hashCode() ── equals を変えたら一緒に変える</h3>
 
   <p>決まりは1つだけです。<strong><code>equals</code> で等しいと判定される2つのオブジェクトは、<code>hashCode()</code> も同じ値を返さなければなりません</strong>。<code>HashSet</code> や <code>HashMap</code> は、まず <code>hashCode()</code> で候補を絞ってから <code>equals</code> で比べるためです。</p>
 
@@ -142,7 +142,7 @@ class R {        // equals(Object) と hashCode() の両方をオーバーライ
 
   <div class="point"><p>逆向きは成り立たなくて構いません。<span class="mk">hashCode が同じでも equals が false</span> ということはあり得ます（別の中身が、たまたま同じ値になる）。「hashCode が等しいなら equals も true」という選択肢は誤りです。</p></div>
 
-  <h3>clone() ── 配列以外は、そのままでは呼べない</h3>
+  <h3 data-toc="clone()">clone() ── 配列以外は、そのままでは呼べない</h3>
 
   <p>Object にはもう1つ、コピーを作る <code>clone()</code> があります。ただし <strong><code>protected</code></strong> なので、普通のクラスのインスタンスに対して外から呼ぶとコンパイルエラーです。</p>
 
@@ -180,7 +180,7 @@ System.out.println(p.x + " " + q.x + " " + (p == q));   // 5 9 false
 
 // ① を忘れると、コンパイルは通るが実行時に CloneNotSupportedException</code></pre></div>
 
-  <div class="point"><p><span class="mk">試験で問われるのは、ほぼ配列の clone です</span>（<a href="#c2-s11">第2章 11「clone で一部が共有される」</a>）。自作クラスの clone は、「Object の clone は protected なのでそのままでは呼べない」とだけ押さえておけば十分です。<br>オーバーライドで戻り値を <code>Point</code> にできるのは<a href="#c5-s03">共変戻り値</a>、<code>protected</code> を <code>public</code> に広げられるのは<a href="#c5-s03">アクセスを広げるのは自由</a>という規則のおかげです。</p></div>
+  <div class="point"><p><span class="mk">試験で問われるのは、ほぼ配列の clone です</span>（<a href="#c2-s11">2-11「clone で一部が共有される」</a>）。自作クラスの clone は、「Object の clone は protected なのでそのままでは呼べない」とだけ押さえておけば十分です。<br>オーバーライドで戻り値を <code>Point</code> にできるのは<a href="#c5-s03">共変戻り値</a>、<code>protected</code> を <code>public</code> に広げられるのは<a href="#c5-s03">アクセスを広げるのは自由</a>という規則のおかげです。</p></div>
 
   <h3>まとめ</h3>
 

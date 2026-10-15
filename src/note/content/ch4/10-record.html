@@ -7,7 +7,7 @@
 
   <p>「値を運ぶだけのクラス」を書くと、フィールド・コンストラクタ・ゲッター・<code>equals</code>・<code>hashCode</code>・<code>toString</code> で毎回50行ほどになります。<code>record</code> はそれを<strong>1行に畳む</strong>ための構文です。</p>
 
-  <h3>コンパイル結果を覗く ── ここに全部書いてある</h3>
+  <h3 data-toc="コンパイル結果を覗く">コンパイル結果を覗く ── ここに全部書いてある</h3>
 
   <p>規則を暗記する必要はありません。<code>javap</code> でコンパイル結果を見れば、<strong>試験に出る事実がそのまま並んでいます</strong>。</p>
 
@@ -192,7 +192,7 @@ public record I(int x) { private I { } }
 
   <div class="point"><p>用途は<span class="mk">検証と正規化</span>の2つだけです。record は不変オブジェクトなので、<strong>生成の瞬間が値を検査できる唯一のタイミング</strong>。ここを通さずにインスタンスを作る経路が無いよう設計されています。<br>実務では②でできることは③でもできるうえ、③のほうが短く代入漏れの心配もありません。<strong>コンパクト形式が第一選択</strong>です。</p></div>
 
-  <h3>3種類の外側 ── オーバーロードされたコンストラクタ</h3>
+  <h3 data-toc="オーバーロードしたコンストラクタ">3種類の外側 ── オーバーロードされたコンストラクタ</h3>
 
   <p>引数リストが<strong>コンポーネントと一致しない</strong>ものは、上の3種類のどれでもありません。普通のクラスと同じ<span class="mk">コンストラクタのオーバーロード</span>です。</p>
 
@@ -279,7 +279,7 @@ public Data() { System.out.println("x"); this("a"); }
 
   <div class="point"><p>正誤の分かれ目は<span class="mk">this に引数を渡しているか</span>だけです。<code>"sample"</code> という文字列自体に意味はなく、<strong>合流先が要求する String を埋める</strong>ための値。<code>""</code> でも <code>null</code> でも動きます。<br><code>super</code> 系は<strong>常に誤り</strong>。record は暗黙に <code>java.lang.Record</code> を継承していますが、書き手が <code>super()</code> を触る余地はありません。</p></div>
 
-  <h3>出題パターン③ コンパクト形式で this.value を読む</h3>
+  <h3 data-toc="出題パターン③ this.value">出題パターン③ コンパクト形式で this.value を読む</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>this. が1つ付いているだけ<span class="tag">最頻出</span></div><pre><code>public record Data(String value) {
     public Data {
@@ -297,7 +297,7 @@ public Data() { System.out.println("x"); this("a"); }
 new Data(null);                     // value is null
 new Data(null).value();             // null（自動代入で null が入る）</code></pre></div>
 
-  <h3>出題パターン④ アクセサとインタフェースの衝突</h3>
+  <h3 data-toc="出題パターン④ アクセサの衝突">出題パターン④ アクセサとインタフェースの衝突</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>戻り値型が食い違う<span class="tag">頻出</span></div><pre><code>public interface Test {
     default void value() { System.out.println("A"); }   // 戻り値 void

@@ -1,10 +1,9 @@
-/* ノート全文の絞り込み検索。
+/* 教材全文の絞り込み検索。
 
-   1. 各 section の textContent を一度だけ取り出してキャッシュし、
-   2. 語を含む節だけ目次に残して件数バッジを出し、
+   1. 各 section と、その中の小さい論点（h3 から次の h3 まで）の文字列を一度だけ取り出してキャッシュし、
+   2. 語を含む節と論点だけ目次に残して件数バッジを出し、
    3. 本文の該当文字列を <mark class="hit"> で囲む。
 
-   論点インデックス（06-topic-index.js）からも呼ぶので、
    apply / jump / cache を NoteApp.search として公開する。 */
 NoteApp.search = (function () {
   var main = document.querySelector("main");
@@ -15,6 +14,15 @@ NoteApp.search = (function () {
     .filter(function (s) { return s.id !== "idx"; });
   var cache = secs.map(function (s) {
     return { el: s, id: s.id, txt: s.textContent.toLowerCase() };
+  });
+  // 小さい論点ごとの文字列。h3 はすべて section の直下にある（build-note.mjs が番号を振る単位）
+  var pcache = [];
+  secs.forEach(function (s) {
+    var cur = null;
+    Array.prototype.forEach.call(s.children, function (el) {
+      if (el.tagName === "H3" && el.id) { cur = { id: el.id, txt: "" }; pcache.push(cur); }
+      if (cur) cur.txt += " " + el.textContent.toLowerCase();
+    });
   });
 
   var linkOf = {};
@@ -91,6 +99,13 @@ NoteApp.search = (function () {
         var b = a.querySelector(".cnt");
         if (b) b.remove();
       });
+      pcache.forEach(function (c) {
+        var a = linkOf[c.id];
+        if (!a) return;
+        a.classList.remove("qhide");
+        var b = a.querySelector(".cnt");
+        if (b) b.remove();
+      });
       heads.forEach(function (h) { h.parentNode.classList.remove("qhide"); });
       hits.style.display = "none";
       clr.style.display = "none";
@@ -115,12 +130,25 @@ NoteApp.search = (function () {
         if (b) b.remove();
       }
     });
+    var npt = 0;
+    pcache.forEach(function (c) {
+      var a = linkOf[c.id];
+      if (!a) return;
+      var n = count(c.txt, q);
+      var b = a.querySelector(".cnt");
+      a.classList.toggle("qhide", n === 0);
+      if (n > 0) {
+        npt++;
+        if (!b) { b = document.createElement("span"); b.className = "cnt"; a.appendChild(b); }
+        b.textContent = n;
+      } else if (b) b.remove();
+    });
     heads.forEach(function (h) {
       var group = h.parentNode;
-      group.classList.toggle("qhide", !group.querySelector("a:not(.qhide)"));
+      group.classList.toggle("qhide", !group.querySelector("a.sec:not(.qhide)"));
     });
     hits.style.display = "block";
-    hits.textContent = nsec === 0 ? "該当なし" : nsec + " 節 / " + nhit + " 箇所";
+    hits.textContent = nsec === 0 ? "該当なし" : nsec + " 節" + (npt ? "・" + npt + " 論点" : "") + " / " + nhit + " 箇所";
     markAll(q);
     notify(q);
   }

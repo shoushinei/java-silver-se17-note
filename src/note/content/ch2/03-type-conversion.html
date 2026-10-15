@@ -14,7 +14,7 @@
 
   <p>どれになるかは、<strong>変換の種類</strong>で決まります。まず種類の地図を見て、そのあと1つずつ説明します。罠はこの節の最後にまとめてあります。</p>
 
-  <h3>全体の地図 ── 変換は5種類</h3>
+  <h3 data-toc="変換は5種類（全体の地図）">全体の地図 ── 変換は5種類</h3>
 
   <div class="tw"><table>
     <thead><tr><th>種類</th><th>向き</th><th>書き方</th><th>例</th></tr></thead>
@@ -28,7 +28,7 @@
     </tbody>
   </table></div>
 
-  <h3>① ② 基本データ型どうし ── 変換表</h3>
+  <h3 data-toc="基本データ型どうしの変換表">① ② 基本データ型どうし ── 変換表</h3>
 
   <p>行が変換<strong>元</strong>、列が変換<strong>先</strong>です。変数どうしの代入（<code>short s = b;</code> のような形）で確かめた結果です。</p>
 
@@ -87,7 +87,7 @@ System.out.println((int) f);   // 123456792 ← 元の 123456789 に戻らない
 
   <p>「拡大変換は値が変わらない」は、整数どうし（<code>int → long</code> など）と <code>float → double</code> の話です。<code>int → float</code>・<code>long → float</code>・<code>long → double</code> は、暗黙でできても<strong>細かい桁が丸められる</strong>ことがあります。</p>
 
-  <h3>② 縮小変換 ── キャストすると値はどうなるか</h3>
+  <h3 data-toc="縮小変換で値はどうなるか">② 縮小変換 ── キャストすると値はどうなるか</h3>
 
   <p>キャストは「範囲を超えるかもしれないが、承知の上で変換する」という宣言です。<span class="mk">コンパイルは通り、実行時の例外にもならず、値のほうが変わります</span>。</p>
 
@@ -110,7 +110,7 @@ System.out.println((double) 7 / 2);    // 3.5   7 を double にしてから割�
 System.out.println((double) (7 / 2));  // 3.0   先に int どうしで割って 3、それを double に
 System.out.println(7 / 2.0);           // 3.5   片方が double なので double で計算（④）</code></pre></div>
 
-  <h3>② の続き ── キャストを書かなくても縮小できる3つの場面</h3>
+  <h3 data-toc="キャスト不要で縮小できる3場面">② の続き ── キャストを書かなくても縮小できる3つの場面</h3>
 
   <div class="tw"><table>
     <thead><tr><th>場面</th><th>例</th><th>条件・注意</th></tr></thead>
@@ -144,7 +144,7 @@ int i = 5;
 i += 1.5;        // OK i = (int)(i + 1.5) → 6
 i = i + 1.5;     // ×  i + 1.5 は double</code></pre></div>
 
-  <h3>演算するときの型 ── 数値昇格</h3>
+  <h3 data-toc="数値昇格（演算するときの型）">演算するときの型 ── 数値昇格</h3>
 
   <p>2つの数を計算するとき、Java は計算の前に<strong>両方を同じ型にそろえます</strong>。そろえ先は上から順に決まります。</p>
 
@@ -179,7 +179,7 @@ System.out.println(c);              // B     ++ にはキャストが組み込�
 System.out.println('a' + 'b');      // 195   char + char → int（97 + 98）
 System.out.println("" + 'a' + 'b'); // ab    左に String があると連結になる</code></pre></div>
 
-  <h3>③ ④ ボクシングとアンボクシング</h3>
+  <h3 data-toc="ボクシングとアンボクシング">③ ④ ボクシングとアンボクシング</h3>
 
   <p>基本データ型にはそれぞれ、値をオブジェクトとして包む<strong>ラッパークラス</strong>があります。コレクション（<code>List&lt;Integer&gt;</code>）や <code>Object</code> 型の変数には基本データ型を直接入れられないので、包む必要があります。</p>
 
@@ -240,7 +240,7 @@ System.out.println("" + 'a' + 'b'); // ab    左に String があると連結に
     </tbody>
   </table></div>
 
-  <div class="point trap"><p>まとめると、<span class="mk">包む・ほどく以外に進めるのは「包んだあと親へ」と「ほどいたあと広げる」だけ</span>です。「広げてから包む」（<code>Long a = 5;</code>）と「ほどいてから狭める」はできません。<br>オーバーロードでどのメソッドが選ばれるかにも、この規則がそのまま効きます（<a href="#c4-s06">第4章 06</a>）。</p></div>
+  <div class="point trap"><p>まとめると、<span class="mk">包む・ほどく以外に進めるのは「包んだあと親へ」と「ほどいたあと広げる」だけ</span>です。「広げてから包む」（<code>Long a = 5;</code>）と「ほどいてから狭める」はできません。<br>オーバーロードでどのメソッドが選ばれるかにも、この規則がそのまま効きます（<a href="#c4-s06">4-6</a>）。</p></div>
 
   <h4 class="cv-h4">ラッパーの比較と null</h4>
 
@@ -261,7 +261,7 @@ Integer n = null;
 int x = n;                         // コンパイルは通り、実行時に NullPointerException
                                    // n.intValue() を呼ぶのと同じだから</code></pre></div>
 
-  <h3>⑤ 参照型どうし</h3>
+  <h3 data-toc="参照型どうしの変換">⑤ 参照型どうし</h3>
 
   <p>クラスやインタフェースの型どうしは、<strong>親子関係</strong>で決まります。基本データ型の「広い・狭い」の代わりに「親・子」を使う、と考えると同じ形です。</p>
 
@@ -278,7 +278,7 @@ int x = n;                         // コンパイルは通り、実行時に Nu
 Long l = (Long) o;         // コンパイルは通るが ClassCastException（Integer は Long ではない）
 long m = (long) 1;         // 基本データ型なら、値を変換するので問題ない</code></pre></div>
 
-  <p>参照型のキャストは<strong>値を作り変えません</strong>。「この変数の中身は本当はこの型のはずだ」と伝えるだけなので、違っていれば実行時に失敗します。詳しくは<a href="#c5-s06">第5章 06</a>、型の親子関係は<a href="#c5-s14">第5章 14</a>にあります。</p>
+  <p>参照型のキャストは<strong>値を作り変えません</strong>。「この変数の中身は本当はこの型のはずだ」と伝えるだけなので、違っていれば実行時に失敗します。詳しくは<a href="#c5-s06">5-6</a>、型の親子関係は<a href="#c5-s14">5-14</a>にあります。</p>
 
   <h3>変換できないもの</h3>
 
@@ -306,7 +306,7 @@ long m = (long) 1;         // 基本データ型なら、値を変換するの�
     </tbody>
   </table></div>
 
-  <h3>よく出る罠 ── ここまでのまとめ</h3>
+  <h3 data-toc="よく出る罠のまとめ">よく出る罠 ── ここまでのまとめ</h3>
 
   <div class="tw"><table>
     <thead><tr><th>コード</th><th>結果</th><th>理由</th></tr></thead>

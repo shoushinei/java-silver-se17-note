@@ -7,8 +7,4 @@
 .toc a.on .cnt{color:var(--marker)}
 .qhide{display:none!important}
 mark.hit{background:var(--marker);color:inherit;padding:0 1px;border-radius:2px}
-.chip{display:inline-block;font-family:var(--body);font-size:12.5px;padding:5px 11px;border:1px solid var(--rule);border-radius:999px;margin:0 6px 7px 0;cursor:pointer;background:var(--washi);color:var(--sumi-2);transition:background .15s,color .15s}
-.chip:hover{background:var(--sumi);color:var(--washi);border-color:var(--sumi)}
-.chip b{font-weight:400;opacity:.45;margin-left:5px;font-size:11px}
-.idx-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.03em;margin:22px 0 10px;padding-left:8px;border-left:3px solid var(--err)}
-.idx-h:first-child{margin-top:0}
+

@@ -9,9 +9,9 @@
  *   01/index.html       テストモード（開始画面と受験記録・受験・採点結果と見直し）
  *   01/review.html      振り返りモード（テストをせずに 1 問ずつ正解・解説を読む）
  *   どちらも _engine/exam.html と exam.js から作る
- *   questions.json      問題番号 → 正解・論点（ノートの節）の対応表。backend/ が弱点の集計に使う
+ *   questions.json      問題番号 → 正解・論点（教材の節）の対応表。backend/ が弱点の集計に使う
  *
- * 問題の解説にある「統合ノートの参照」は、ノートの manifest.json で節が
+ * 問題の解説にある「教材の参照」は、教材の manifest.json で節が
  * 実在するかを確かめ、無ければビルドを止める。
  */
 import { readFile, readdir } from "node:fs/promises";
@@ -23,11 +23,11 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const EXAMS = path.join(ROOT, "src", "exams");
 const ENGINE = path.join(EXAMS, "_engine");
 const NOTE = path.join(ROOT, "src", "note");
-const NOTE_HREF = "../../index.html";   // docs/exams/01/ から見た統合ノート
+const NOTE_HREF = "../../note/index.html";   // docs/exams/01/ から見た教材
 
-const QUESTIONS_JSON_NOTE = "自作模擬試験の問題番号と、正解・統合ノートの論点（節）の対応表。build.mjs が src/exams/ から生成する。refs の先頭がその問題の主な論点";
+const QUESTIONS_JSON_NOTE = "自作模擬試験の問題番号と、正解・教材の論点（節）の対応表。build.mjs が src/exams/ から生成する。refs の先頭がその問題の主な論点";
 
-// ノートと同じ色・フォント・コード表示を使う
+// 教材と同じ色・フォント・コード表示を使う
 const SHARED_STYLES = ["01-tokens.css", "02-base.css", "07-code.css", "09-table.css", "10-list.css"];
 
 async function styles() {
@@ -49,13 +49,13 @@ function fill(template, slots, name) {
   return html;
 }
 
-/** ノートの節 id → 「第5章 10「default / static / private」」のような表示名 */
+/** 教材の節 id → 「5-10「default / static / private」」のような表示名（教材の論点番号と同じ形） */
 function sectionIndex(manifest) {
   const map = {};
   for (const ch of manifest.chapters) {
     const chNo = ch.num.replace(/\D/g, "");
     for (const s of ch.sections) {
-      const label = /^\d+$/.test(s.tn) ? `第${chNo}章 ${s.tn}「${s.label}」` : `第${chNo}章「${s.label}」`;
+      const label = `${chNo}-${+s.tn}「${s.label}」`;
       map[s.id] = { label, chapter: ch.key };
     }
   }
@@ -92,7 +92,7 @@ ${mode === "review" ? '<button type="button" class="btn reveal">答えを見る<
 <div class="explain">
 <p class="ans">正解：<b>${q.answer.join(", ")}</b></p>
 ${q.explainHtml}
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul>${refs}</ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul>${refs}</ul></div>
 </div>
 </article>`;
 }
@@ -106,7 +106,7 @@ export async function loadExam(id, manifest) {
   for (const f of files) {
     const q = parseQuestion(await readFile(path.join(dir, f), "utf8"), `${id}/${f}`);
     for (const r of q.refs) {
-      if (!sections[r.id]) throw new Error(`${id}/${f}: 統合ノートに節 ${r.id} がありません`);
+      if (!sections[r.id]) throw new Error(`${id}/${f}: 教材に節 ${r.id} がありません`);
     }
     questions.push({ ...q, file: f });
   }
@@ -130,6 +130,7 @@ export async function buildExams(manifest) {
 
   const files = {};
   const cards = [];
+  const list = [];   // トップページ（build-site.mjs）に渡す試験の一覧
   const catalog = {};
   let questionCount = 0;
 
@@ -137,6 +138,7 @@ export async function buildExams(manifest) {
     const { meta, questions, sections } = await loadExam(id, manifest);
     questionCount += questions.length;
     const total = questions.length;
+    list.push({ id, title: meta.title, total, minutes: meta.minutes });
     const common = {
       "{{title}}": escapeHtml(meta.title),
       "{{description}}": escapeHtml(meta.description),
@@ -198,5 +200,5 @@ export async function buildExams(manifest) {
     "<!--{{styles}}-->": css, "<!--{{cards}}-->": cards.join("\n"), "<!--{{records}}-->": recordsJs,
   }, "list.html");
   files["questions.json"] = JSON.stringify({ description: QUESTIONS_JSON_NOTE, exams: catalog }, null, 2) + "\n";
-  return { files, summary: `${ids.length} 回 / ${questionCount} 問` };
+  return { files, list, questionCount, summary: `${ids.length} 回 / ${questionCount} 問` };
 }

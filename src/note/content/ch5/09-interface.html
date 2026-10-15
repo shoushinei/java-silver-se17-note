@@ -81,7 +81,7 @@ I i = new Impl();           // OK。型として使うのは自由</code></pre><
 
   <div class="point"><p><code>new I(){ ... }</code> のように後ろに <code>{ }</code> が続く形（匿名クラス）は通りますが、これは<strong>インタフェースを実装した名前の無いクラスをその場で定義している</strong>だけで、インタフェースのインスタンス化ではありません。<span class="mk">匿名クラスは SE 17 の出題範囲外</span>です。</p></div>
 
-  <h3>同じメソッドを2つのインタフェースから受け継ぐとき</h3>
+  <h3 data-toc="2つのインタフェースから同じメソッド">同じメソッドを2つのインタフェースから受け継ぐとき</h3>
 
   <p>同じ名前・同じ引数の抽象メソッドを、2つのインタフェースから受け継ぐことがあります。<strong>1つのメソッドで両方の約束を満たせるか</strong>で決まります。</p>
 
@@ -108,7 +108,7 @@ interface B { Set&lt;String&gt; items(); }
 interface AB extends A, B { }      // コンパイルエラー: types B and A are incompatible
 class C implements A, B { ... }    // 同じくコンパイルエラー</code></pre></div>
 
-  <div class="point"><p>List でもあり Set でもあるものを返すメソッドは書けないので、<span class="mk">受け継いだ時点で</span>エラーになります。実装クラスだけでなく、<code>extends A, B</code> と書いた<strong>インタフェース自身</strong>がエラーになるのがポイントです。<br>戻り値の親子関係は<a href="#c5-s03">節03 共変戻り値</a>、List・Set・Collection の関係は<a href="#c2-s14">第2章 14</a>で確認できます。基本データ型には親子関係が無いので、<code>int</code> と <code>long</code> も両立しません。</p></div>
+  <div class="point"><p>List でもあり Set でもあるものを返すメソッドは書けないので、<span class="mk">受け継いだ時点で</span>エラーになります。実装クラスだけでなく、<code>extends A, B</code> と書いた<strong>インタフェース自身</strong>がエラーになるのがポイントです。<br>戻り値の親子関係は<a href="#c5-s03">節03 共変戻り値</a>、List・Set・Collection の関係は<a href="#c2-s14">2-14</a>で確認できます。基本データ型には親子関係が無いので、<code>int</code> と <code>long</code> も両立しません。</p></div>
 
   <div class="point link"><p>片方が <code>default</code> でもう片方が抽象メソッドの場合（<code>interface A { void run(); }</code> と <code>interface B { default void run(){ } }</code>）、<code>class C implements A, B { }</code> はコンパイルエラーです。<strong>クラスでオーバーライドすれば</strong>解決します。コード例と、2つとも default の場合は<a href="#c5-s10">節10「default が衝突したら」</a>を参照。</p></div>
 </section>

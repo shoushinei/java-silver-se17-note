@@ -51,7 +51,7 @@ class B extends A { static void m(){} } // error（非static を static で）</
 
   <div class="point"><p><code>@Override</code> はアノテーションであり必須ではありませんが、<span class="mk">付けておくと綴り間違いをコンパイラが検出</span>してくれます。付けたのにオーバーライドになっていなければ <code>method does not override or implement a method from a supertype</code>。</p></div>
 
-  <h3>戻り値型は「同じ」ではなく「同じかサブ型」</h3>
+  <h3 data-toc="戻り値型は同じかサブ型">戻り値型は「同じ」ではなく「同じかサブ型」</h3>
 
   <p>ここを「同じでなければいけない」と覚えると、選択肢を1つ間違えます。</p>
 
@@ -109,9 +109,9 @@ class B extends A {   // 下の4つは、どれか1つだけを書いた場合�
     List&lt;Number&gt;      get(TreeSet&lt;String&gt; s)   { return null; }  // OK。引数の型が違うのでオーバーロード
 }</code></pre></div>
 
-  <div class="point"><p>戻り値の共変は <strong><code>&lt; &gt;</code> の外側</strong>だけで効きます。ArrayList は List の子なので <code>ArrayList&lt;Number&gt;</code> は OK ですが、中身の Integer と Number に親子関係があっても <code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子になりません（<a href="#c2-s14">第2章 14</a>）。<br>引数の <code>Set&lt;String&gt;</code> と <code>Set&lt;CharSequence&gt;</code> は、コンパイル後に <code>&lt; &gt;</code> が消える（型消去）と<strong>どちらも Set</strong> になります。引数リストが「違う」のでオーバーライドにならず、消した後は「同じ」なのでオーバーロードとしても共存できず、<span class="mk"><code>name clash</code> というコンパイルエラー</span>になります。同じクラスの中に <code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> を並べても同じエラーです。</p></div>
+  <div class="point"><p>戻り値の共変は <strong><code>&lt; &gt;</code> の外側</strong>だけで効きます。ArrayList は List の子なので <code>ArrayList&lt;Number&gt;</code> は OK ですが、中身の Integer と Number に親子関係があっても <code>List&lt;Integer&gt;</code> は <code>List&lt;Number&gt;</code> の子になりません（<a href="#c2-s14">2-14</a>）。<br>引数の <code>Set&lt;String&gt;</code> と <code>Set&lt;CharSequence&gt;</code> は、コンパイル後に <code>&lt; &gt;</code> が消える（型消去）と<strong>どちらも Set</strong> になります。引数リストが「違う」のでオーバーライドにならず、消した後は「同じ」なのでオーバーロードとしても共存できず、<span class="mk"><code>name clash</code> というコンパイルエラー</span>になります。同じクラスの中に <code>m(List&lt;String&gt;)</code> と <code>m(List&lt;Integer&gt;)</code> を並べても同じエラーです。</p></div>
 
-  <h3>「サブクラスに定義できるメソッドはどれか」の解き方</h3>
+  <h3 data-toc="定義できるメソッドの解き方">「サブクラスに定義できるメソッドはどれか」の解き方</h3>
 
   <p>親のメソッドを1つ見せて、子に書ける宣言を選ばせる形式です。<code>&lt; &gt;</code> が付くと急に難しく見えますが、<strong>引数 → 戻り値 → 修飾子</strong>の順に見れば機械的に切れます。</p>
 
@@ -138,5 +138,5 @@ class B extends A {   // 下の4つは、どれか1つだけを書いた場合�
     </tbody>
   </table></div>
 
-  <div class="point trap"><p>2つ選ばせる問題では、<span class="mk">オーバーロードに逃げたもの（引数の外側を変える）と、共変戻り値で通るもの（戻り値の外側だけ子にする）が1つずつ</span>という作りがよく出ます。<br>エラーメッセージも見分けの助けになります。引数で外したときは <code>name clash ... have the same erasure, yet neither overrides the other</code>、戻り値で外したときは <code>attempting to use incompatible return type</code> です。<br>唱えるのは1つだけ ── <strong><code>&lt; &gt;</code> の中身は引数でも戻り値でも完全一致。緩められるのは外側だけ</strong>（<a href="#c5-s14">第5章 14</a>の④）。</p></div>
+  <div class="point trap"><p>2つ選ばせる問題では、<span class="mk">オーバーロードに逃げたもの（引数の外側を変える）と、共変戻り値で通るもの（戻り値の外側だけ子にする）が1つずつ</span>という作りがよく出ます。<br>エラーメッセージも見分けの助けになります。引数で外したときは <code>name clash ... have the same erasure, yet neither overrides the other</code>、戻り値で外したときは <code>attempting to use incompatible return type</code> です。<br>唱えるのは1つだけ ── <strong><code>&lt; &gt;</code> の中身は引数でも戻り値でも完全一致。緩められるのは外側だけ</strong>（<a href="#c5-s14">5-14</a>の④）。</p></div>
 </section>

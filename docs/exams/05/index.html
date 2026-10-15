@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>自作模擬試験 5 ── Java Silver SE 17 模擬試験</title>
-<meta name="description" content="試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本とノートの範囲だけです。">
+<title>自作模擬試験 5 ── Java Silver SE 17 試験対策ノート</title>
+<meta name="description" content="試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本と教材の範囲だけです。">
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +73,7 @@ li{margin-bottom:7px}
 .tight li{margin-bottom:3px}
 
 /* ---- exams/_engine/exam.css ---- */
-/* 模擬試験ページの見た目。色とフォントは統合ノートの 01-tokens.css を共有する。
+/* 模擬試験ページの見た目。色とフォントは教材の 01-tokens.css を共有する。
    body のクラスで画面を切り替える（exam.js の先頭を参照）:
      mode-intro / mode-test / mode-result（at-summary）/ mode-review
    受験・採点結果・振り返りは、どれも「1 問ずつ表示＋問題一覧」の同じ形。 */
@@ -459,16 +459,16 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
   <button type="button" class="btn ghost only-result" id="to-intro">記録一覧へ</button>
   <a class="btn ghost only-intro" href="review.html">振り返り</a>
   <a class="btn primary only-review" href="./">テストを受ける</a>
-  <a class="btn ghost only-intro-review" href="../../index.html">統合ノート</a>
+  <a class="btn ghost only-intro-review" href="../../note/index.html">教材</a>
 </header>
 
 <div class="wrap">
 
   <!-- 開始前 -->
   <section class="intro only-intro">
-    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 自作模擬試験</div>
+    <div class="eyebrow">JAVA SILVER SE 17 &nbsp;/&nbsp; 1Z0-825 模擬試験</div>
     <h1>自作模擬試験 5</h1>
-    <p class="lead">試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本とノートの範囲だけです。</p>
+    <p class="lead">試験 3 は難しすぎ、試験 4 は易しすぎたため、黒本（Java Silver SE 17 問題集）の模擬試験①・②の120問を「基本・標準・応用」の3段階に分け直し、その割合（およそ 16・32・12 問）にそろえて作ったオリジナル問題です。論点は黒本と教材の範囲だけです。</p>
     <div class="facts">
       <div class="fact"><b>60</b><span>問</span></div>
       <div class="fact"><b>90</b><span>分</span></div>
@@ -531,7 +531,7 @@ textarea.report { width: 100%; box-sizing: border-box; font-family: var(--mono);
           </div>
         </div>
         <div class="tally" id="r-tally"></div>
-        <h2 class="sub-h">章ごとの正答率 <small>章名を押すと統合ノートのその章へ</small></h2>
+        <h2 class="sub-h">章ごとの正答率 <small>章名を押すと教材のその章へ</small></h2>
         <div class="bars" id="r-bars"></div>
         <div class="actions-row">
           <button type="button" class="btn primary" id="review-start">問1から見直す</button>
@@ -609,7 +609,7 @@ public class Main {
 <p><code>new C()</code> から、各コンストラクタの先頭で親のコンストラクタへさかのぼります。</p>
 <p>1. C() の <code>super(5)</code> で B(int) へ2. B(int) の <code>super()</code> で A() へ。「A」3. B(int) に戻って「5」4. C() に戻って「C」</p>
 <p>親のコンストラクタが先に終わるので、表示は「A5C」です。B には引数なしのコンストラクタがありませんが、C は <code>super(5)</code> で B(int) を呼んでいるので問題ありません。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s02">第5章 02「コンストラクタと super()」</a> <span>── 子のコンストラクタは、最初に親のコンストラクタを呼ぶ。super(...) で引数を渡せる。表示は親から順になる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s02">5-2「コンストラクタと super()」</a> <span>── 子のコンストラクタは、最初に親のコンストラクタを呼ぶ。super(...) で引数を渡せる。表示は親から順になる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q2" data-no="2" data-answer="D" data-pick="1" data-ch="c2">
@@ -648,7 +648,7 @@ public class Main {
 <div class="tw"><table><thead><tr><th>行</th><th>処理</th><th>s</th><th>t</th></tr></thead><tbody><tr><td>3・4</td><td>t は s と同じ &quot;Java&quot; を指す</td><td>&quot;Java&quot;</td><td>&quot;Java&quot;</td></tr><tr><td>5</td><td>toUpperCase は新しい &quot;JAVA&quot; を返し、<strong>s だけ</strong>に入れ直す</td><td>&quot;JAVA&quot;</td><td>&quot;Java&quot;（元のまま）</td></tr><tr><td>6</td><td>concat の戻り値を代入していないので、何も変わらない</td><td>&quot;JAVA&quot;</td><td>&quot;Java&quot;</td></tr><tr><td>7</td><td>s.charAt(1) は 'A'。&quot;Java&quot; + 'A'</td><td>&quot;JAVA&quot;</td><td>&quot;JavaA&quot;</td></tr></tbody></table></div>
 <p>t と s は別の String なので <code>t == s</code> は false。よって「JAVA JavaA false」です。</p>
 <ul><li>A: t が s と一緒に大文字になると考えた誤りです。String は不変で、s に入れ直しても t は元の &quot;Java&quot; を指したままです。</li><li>B: concat の戻り値を代入していないことを見落とした誤りです。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s07">第2章 07「Stringの不変性」</a> <span>── String は不変。toUpperCase や concat は新しい String を返すだけ。t = s としたあと s に別の String を入れても、t は元の String を指したまま</span></li><li><a href="../../index.html#c2-s08">第2章 08「Stringのメソッド」</a> <span>── charAt(位置) はその位置の char を返す。String と char を + でつなぐと連結になる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s07">2-7「Stringの不変性」</a> <span>── String は不変。toUpperCase や concat は新しい String を返すだけ。t = s としたあと s に別の String を入れても、t は元の String を指したまま</span></li><li><a href="../../note/index.html#c2-s08">2-8「Stringのメソッド」</a> <span>── charAt(位置) はその位置の char を返す。String と char を + でつなぐと連結になる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q3" data-no="3" data-answer="A,B,D" data-pick="3" data-ch="c1">
@@ -698,7 +698,7 @@ public class Main {
 <p class="ans">正解：<b>A, B, D</b></p>
 <p>Main は Item と<strong>同じパッケージ</strong>にあります。同じパッケージからは、public・protected・修飾子なしのメンバをすべて使えます。</p>
 <ul><li>A: public。OK。</li><li>B: protected は「同じパッケージ ＋ 別パッケージのサブクラス」から使えます。同じパッケージなので OK。</li><li>C: private は Item の中からしか使えません。エラー。</li><li>D: 修飾子なしは同じパッケージから使えます。OK。</li><li>E: name はインスタンスのフィールドなので、クラス名では使えません。エラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s07">第1章 07「アクセス修飾子」</a> <span>── 同じパッケージのクラスからは、public・protected・修飾子なしのメンバを使える。使えないのは private だけ</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c1-s07">1-7「アクセス修飾子」</a> <span>── 同じパッケージのクラスからは、public・protected・修飾子なしのメンバを使える。使えないのは private だけ</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q4" data-no="4" data-answer="C" data-pick="1" data-ch="c3">
@@ -757,7 +757,7 @@ public class Main {
 <p>文字ごとに、一致した case から <code>break</code> まで下へ流れます。</p>
 <div class="tw"><table><thead><tr><th>文字</th><th>実行される case</th><th>足す数</th><th>n</th></tr></thead><tbody><tr><td>'a'</td><td>a → b → c（break）</td><td>1 + 2 + 3</td><td>6</td></tr><tr><td>'b'</td><td>b → c（break）</td><td>2 + 3</td><td>11</td></tr><tr><td>'d'</td><td>一致なし → default</td><td>4</td><td>15</td></tr></tbody></table></div>
 <p>よって「15」です。A の「7」は、フォールスルーせずに一致した case だけを実行すると考えた場合（1 + 2 + 4）です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s08">第3章 08「switch文」</a> <span>── switch 文は一致した case から break まで下へ流れる（フォールスルー）。どれにも一致しなければ default から</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s08">3-8「switch文」</a> <span>── switch 文は一致した case から break まで下へ流れる（フォールスルー）。どれにも一致しなければ default から</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q5" data-no="5" data-answer="A" data-pick="1" data-ch="c5">
@@ -838,7 +838,7 @@ public class Main {
 <p class="ans">正解：<b>A</b></p>
 <ul><li><strong>P</strong>: 親クラス Base の <code>greet()</code> と、Greeter の default の <code>greet()</code> を両方受け継ぎます。<strong>クラスから受け継いだメソッドが常に勝つ</strong>ので、エラーにはならず Base の greet が使われ「Hello」。</li><li><strong>Q</strong>: 自分で greet をオーバーライドし、<code>Greeter.super.greet()</code> で Greeter の default を呼んでいます（直接 implements しているインタフェースの default は、この書き方で呼べます）。default の中の <code>name()</code> は、実体の Q の name() なので &quot;Hi Q&quot;。そこに &quot;!&quot; を足して「Hi Q!」。</li></ul>
 <p>よって「Hello,Hi Q!」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s10">第5章 10「default / static / private」</a> <span>── クラスから受け継いだメソッドは default に常に勝つ。default の中から呼んだ抽象メソッドは実体のものが動く。インタフェース名.super.メソッド() で default を呼べる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s10">5-10「default / static / private」</a> <span>── クラスから受け継いだメソッドは default に常に勝つ。default の中から呼んだ抽象メソッドは実体のものが動く。インタフェース名.super.メソッド() で default を呼べる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q6" data-no="6" data-answer="E" data-pick="1" data-ch="c4">
@@ -890,7 +890,7 @@ public class Main {
 <p class="ans">正解：<b>E</b></p>
 <ul><li><code>this.x = x;</code>: 左はフィールド、右は引数なので、フィールドの x は 1 になります。</li><li><code>y = y;</code>: this が無いので、左も右も<strong>引数</strong>の y です。フィールドの y には何も入らず、既定値の 0 のままです。</li><li><code>move(3)</code>: move には引数 dx しかないので、x はフィールドです。1 + 3 = 4。</li></ul>
 <p>よって「4,0」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s05">第4章 05「this と this()」</a> <span>── フィールドと同じ名前の引数があると、this を付けない名前は引数を指す。this を付けた代入だけがフィールドに入る</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s05">4-5「this と this()」</a> <span>── フィールドと同じ名前の引数があると、this を付けない名前は引数を指す。this を付けた代入だけがフィールドに入る</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q7" data-no="7" data-answer="B" data-pick="1" data-ch="c6">
@@ -940,7 +940,7 @@ public class Main {
 <p class="ans">正解：<b>B</b></p>
 <p>1. 「1」を表示2. null の s で <code>length()</code> を呼ぶので NullPointerException。try の残り（「2」）は飛ばされる3. catch は上から順に調べ、最初に合った <code>catch (NullPointerException e)</code> だけが実行されて「3」。NullPointerException は RuntimeException の子でもありますが、2つ目の catch は実行されません4. finally で「5」</p>
 <p>よって「135」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s04">第6章 04「catchの順序」</a> <span>── catch は上から順に調べ、最初に型が合った1つだけが実行される。finally は最後に必ず実行される</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s04">6-4「catchの順序」</a> <span>── catch は上から順に調べ、最初に型が合った1つだけが実行される。finally は最後に必ず実行される</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q8" data-no="8" data-answer="C" data-pick="1" data-ch="c2">
@@ -971,7 +971,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>C</b></p>
 <ul><li>4 行目: <code>s.charAt(1)</code> は char の 'a'、<code>s.length()</code> は int の 4 です。String が出てこないので、char と int の<strong>足し算</strong>になります。'a' の文字コード 97 に 4 を足して「101」。</li><li>5 行目: 先頭の <code>&quot;&quot;</code> が String なので、左から順に<strong>連結</strong>されます。&quot;&quot; + 'a' で &quot;a&quot;、そこに 4 をつないで「a4」。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s08">第2章 08「Stringのメソッド」</a> <span>── + は左から評価される。char と int の + は数値の足し算になり、String が先にあれば文字列の連結になる</span></li><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── char は文字コードの数値として計算される（'a' は 97）</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s08">2-8「Stringのメソッド」</a> <span>── + は左から評価される。char と int の + は数値の足し算になり、String が先にあれば文字列の連結になる</span></li><li><a href="../../note/index.html#c2-s03">2-3「型変換」</a> <span>── char は文字コードの数値として計算される（'a' は 97）</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q9" data-no="9" data-answer="C,D" data-pick="2" data-ch="c5">
@@ -1011,7 +1011,7 @@ public class Main {
 <p class="ans">正解：<b>C, D</b></p>
 <ul><li>4 行目: a は final ですが、変えているのは配列の<strong>中身</strong>（a[0]）なので OK。</li><li>6 行目: final の y を読むだけなので OK。</li><li>7 行目: 引数 x は final です。<code>x++</code> は x への再代入なので<strong>エラー</strong>。</li><li>8 行目: a に別の配列を入れ直そうとしているので<strong>エラー</strong>。final の参照型は、指す先を変えられません。</li><li>9 行目: OK。</li></ul>
 <p>（javac は、8 行目のようなエラーを先に見つけると、7 行目のエラーを同時には表示しないことがあります。どちらもコンパイルエラーです。）</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s08">第5章 08「final」</a> <span>── final の変数には再代入できない（引数も同じ）。final の参照型の変数は、指す先を変えられないだけで、中身は変えられる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s08">5-8「final」</a> <span>── final の変数には再代入できない（引数も同じ）。final の参照型の変数は、指す先を変えられないだけで、中身は変えられる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q10" data-no="10" data-answer="D" data-pick="1" data-ch="c3">
@@ -1042,7 +1042,7 @@ public class Main {
 <p class="ans">正解：<b>D</b></p>
 <p>1. 括弧の中の <code>b != 0</code> は false です。<code>&amp;&amp;</code> は左が false なら結果が false に決まるので、右の <code>a / b &gt; 1</code> は<strong>評価されません</strong>。0 で割る計算は実行されないので、例外は起きません（A は誤り）。2. 括弧の結果は false なので、<code>||</code> の右の <code>a &gt; 3</code> を評価します。true。3. r は true、b は 0 のままです。</p>
 <p>よって「true 0」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s05">第3章 05「論理演算子と短絡」</a> <span>── &amp;&amp; は左が false なら右を評価しない（短絡評価）。右に 0 での割り算があっても実行されない</span></li><li><a href="../../index.html#c3-s01">第3章 01「優先順位」</a> <span>── &amp;&amp; は || より先に結びつく</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s05">3-5「論理演算子と短絡」</a> <span>── &amp;&amp; は左が false なら右を評価しない（短絡評価）。右に 0 での割り算があっても実行されない</span></li><li><a href="../../note/index.html#c3-s01">3-1「優先順位」</a> <span>── &amp;&amp; は || より先に結びつく</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q11" data-no="11" data-answer="A" data-pick="1" data-ch="c4">
@@ -1082,7 +1082,7 @@ public class Main {
 <p class="ans">正解：<b>A</b></p>
 <div class="tw"><table><thead><tr><th>呼び出し</th><th>引数の型</th><th>選ばれるもの</th><th>表示</th></tr></thead><tbody><tr><td><code>f(b)</code></td><td>byte</td><td>byte → long の拡大変換で <code>f(long)</code></td><td>L</td></tr><tr><td><code>f(1.5)</code></td><td>double</td><td>long には広げられない。Double にボクシングして <code>f(Object)</code></td><td>O</td></tr><tr><td><code>f(Integer.valueOf(1))</code></td><td>Integer</td><td><code>f(Integer)</code> に完全一致</td><td>I</td></tr><tr><td><code>f()</code></td><td>引数なし</td><td>0個で呼べるのは可変長の <code>f(int...)</code> だけ</td><td>V</td></tr><tr><td><code>f('c')</code></td><td>char</td><td>char → long の拡大変換で <code>f(long)</code></td><td>L</td></tr></tbody></table></div>
 <p>拡大変換はボクシングより先に試されるので、byte や char は Integer ではなく long のほうへ行きます（B は誤り）。よって「LOIVL」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは、完全一致 → 拡大変換 → ボクシング → 可変長引数 の順に、呼び出せる候補を探す</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s06">4-6「オーバーロード」</a> <span>── オーバーロードは、完全一致 → 拡大変換 → ボクシング → 可変長引数 の順に、呼び出せる候補を探す</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q12" data-no="12" data-answer="B" data-pick="1" data-ch="c5">
@@ -1136,7 +1136,7 @@ public class Main {
 <p class="ans">正解：<b>B</b></p>
 <ul><li><code>p.v</code>: フィールドは変数の型で決まります。p は Parent 型なので Parent の v で「1」。</li><li><code>((Child) p).v</code>: Child 型にキャストしたので、Child の v で「2」。</li><li><code>p.get()</code>: メソッドは実体の型で決まります。実体は Child なので Child の get() が動き、その中の v は Child の v で「2」。</li></ul>
 <p>よって「1 2 2」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── フィールドは変数の型で決まり、メソッドは実体の型で決まる。キャストすると変数の型が変わるので、見えるフィールドも変わる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s05">5-5「宣言型か実体型か ★核心」</a> <span>── フィールドは変数の型で決まり、メソッドは実体の型で決まる。キャストすると変数の型が変わるので、見えるフィールドも変わる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q13" data-no="13" data-answer="C" data-pick="1" data-ch="c2">
@@ -1169,7 +1169,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>C</b></p>
 <p>new で作った配列の要素には、型ごとの既定値が入ります。int は 0、String（参照型）は null、boolean は false です。null を文字列につなぐと「null」と表示されます（空文字にはなりません）。a.length は作ったときの要素数 3 です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s11">第2章 11「配列」</a> <span>── new で作った配列の要素には既定値が入る。int は 0、boolean は false、参照型は null</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s11">2-11「配列」</a> <span>── new で作った配列の要素には既定値が入る。int は 0、boolean は false、参照型は null</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q14" data-no="14" data-answer="A,E" data-pick="2" data-ch="c1">
@@ -1203,7 +1203,7 @@ public class Main {
 <p class="ans">正解：<b>A, E</b></p>
 <p>クラスファイルは out/app/Main.class にできています。-cp で起点の out を指定し、パッケージ名付きの <code>app.Main</code> を渡します。</p>
 <ul><li>A: 正しい形。引数は x と y の2つで「2」。</li><li>B: クラス名はパッケージ名付き（app.Main）で書く必要があります。実行できません。</li><li>C: out はパッケージ名ではありません。実行できません。</li><li>D: java のオプションは<strong>クラス名より前</strong>に書きます。クラス名の後ろの <code>-cp out</code> は引数として扱われ、-cp が無いのでカレントディレクトリから app.Main を探して見つかりません。</li><li>E: <code>-classpath</code> は <code>-cp</code> の長い書き方です。「2」。</li><li>F: <code>&quot;x y&quot;</code> は1つの引数なので「1」と表示されます。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s08">第1章 08「-d と -cp」</a> <span>── java の -cp（-classpath）にはクラスファイルを探す起点を書き、クラスはパッケージ名付きで指定する。オプションはクラス名より前に書く</span></li><li><a href="../../index.html#c1-s02">第1章 02「コマンドライン引数」</a> <span>── クラス名の後ろに書いたものがコマンドライン引数になる。&quot; &quot; で囲むと1つの引数</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c1-s08">1-8「-d と -cp」</a> <span>── java の -cp（-classpath）にはクラスファイルを探す起点を書き、クラスはパッケージ名付きで指定する。オプションはクラス名より前に書く</span></li><li><a href="../../note/index.html#c1-s02">1-2「コマンドライン引数」</a> <span>── クラス名の後ろに書いたものがコマンドライン引数になる。&quot; &quot; で囲むと1つの引数</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q15" data-no="15" data-answer="E" data-pick="1" data-ch="c5">
@@ -1274,7 +1274,7 @@ public class Main {
 <p>1. <code>new Sub()</code> で、まず Base() が動き、Base の n が 10 になる2. 次に Sub のフィールド初期化と Sub() が動き、Sub の n が 20 になる</p>
 <ul><li><code>b.value()</code>: value() は Base にしかありません。Base のメソッドの中の n は Base の n なので「10」。</li><li><code>b.value(1)</code>: Sub がオーバーライドした value(int) が動き、Sub の n（20）+ 1 で「21」。</li><li><code>b.n</code>: フィールドは変数の型（Base）で決まるので、Base の n で「10」。</li></ul>
 <p>よって「10 21 10」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s05">第5章 05「宣言型か実体型か ★核心」</a> <span>── フィールドは変数の型で決まり（隠蔽）、メソッドは実体の型で決まる。親のメソッドの中の n は親のフィールド</span></li><li><a href="../../index.html#c5-s02">第5章 02「コンストラクタと super()」</a> <span>── 子を new すると、親のコンストラクタが先に動き、そのあと子のフィールド初期化とコンストラクタが動く</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s05">5-5「宣言型か実体型か ★核心」</a> <span>── フィールドは変数の型で決まり（隠蔽）、メソッドは実体の型で決まる。親のメソッドの中の n は親のフィールド</span></li><li><a href="../../note/index.html#c5-s02">5-2「コンストラクタと super()」</a> <span>── 子を new すると、親のコンストラクタが先に動き、そのあと子のフィールド初期化とコンストラクタが動く</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q16" data-no="16" data-answer="A" data-pick="1" data-ch="c4">
@@ -1337,7 +1337,7 @@ public class Main {
 <p><code>Range { ... }</code> は引数リストを省略したコンパクトコンストラクタで、new のたびに動きます。</p>
 <p>1. <code>new Range(2, 5)</code>: min ≤ max なので問題なく作られ、width() は 5 − 2 = 3。「3」2. <code>new Range(5, 2)</code>: min &gt; max なので IllegalArgumentException(&quot;bad&quot;) が投げられる。try の残り（「!」）は飛ばされる3. catch でメッセージ「bad」を表示</p>
 <p>よって「3bad」です。record にもコンストラクタの処理やメソッドを書けるので、コンパイルエラーにはなりません。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s10">第4章 10「record ★新」</a> <span>── コンパクトコンストラクタには、値の確認などの処理を書ける。例外を投げれば record は作られない</span></li><li><a href="../../index.html#c6-s03">第6章 03「try-catch-finally」</a> <span>── try で例外が起きると、残りを飛ばして catch へ進む</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s10">4-10「record ★新」</a> <span>── コンパクトコンストラクタには、値の確認などの処理を書ける。例外を投げれば record は作られない</span></li><li><a href="../../note/index.html#c6-s03">6-3「try-catch-finally」</a> <span>── try で例外が起きると、残りを飛ばして catch へ進む</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q17" data-no="17" data-answer="B,D,F" data-pick="3" data-ch="c3">
@@ -1384,7 +1384,7 @@ public class Main {
 <p class="ans">正解：<b>B, D, F</b></p>
 <p>case のラベルには、コンパイルの時点で値が決まる<strong>定数</strong>しか書けません。また、switch に渡した値（int）と合う型でなければなりません。</p>
 <ul><li>A: k は final の付いていないふつうの変数なので、定数ではありません。エラー。</li><li>B: カンマで複数の値を並べられます。OK。</li><li>C: &quot;1&quot; は String で、int の switch には書けません。エラー。</li><li>D: MAX は <code>static final</code> で、定数で初期化されているので定数です。OK。</li><li>E: 3L は long です。long は switch に使えず、int のラベルにもなりません。エラー。</li><li>F: <code>1 + 4</code> はリテラルだけの計算（定数式）なので、5 という定数として扱われます。OK。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s08">第3章 08「switch文」</a> <span>── case のラベルは定数（リテラル・final の定数・定数式）でなければならない。switch に渡した値と同じ型で、long は使えない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s08">3-8「switch文」</a> <span>── case のラベルは定数（リテラル・final の定数・定数式）でなければならない。switch に渡した値と同じ型で、long は使えない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q18" data-no="18" data-answer="D" data-pick="1" data-ch="c5">
@@ -1401,7 +1401,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>D</b></p>
 <ul><li>A: 誤り。抽象クラスは new できません。</li><li>B: 誤り。抽象メソッドが1つも無いクラスにも abstract を付けられます（new させたくないときなど）。</li><li>C: 誤り。受け継いだ抽象メソッドをすべてオーバーライドすれば、ふつうのクラス（具象クラス）にできます。</li><li>D: 正しい。抽象クラスもコンストラクタを持てます。サブクラスのコンストラクタの先頭の super() から呼ばれ、フィールドの初期化などに使います。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── 抽象クラスは new できないが、コンストラクタは持てる（サブクラスの super() から呼ばれる）。抽象メソッドが無くても abstract にできる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s07">5-7「抽象クラス」</a> <span>── 抽象クラスは new できないが、コンストラクタは持てる（サブクラスの super() から呼ばれる）。抽象メソッドが無くても abstract にできる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q19" data-no="19" data-answer="B" data-pick="1" data-ch="c2">
@@ -1451,7 +1451,7 @@ public class Main {
 <p>1. &quot;a&quot; を表示2. &quot;b&quot; を表示し、&quot;b&quot; を削除。リストは [a, c]（要素数 2）になる3. 次の周に進む前の確認で、今の位置（2 つ取り出したので 2）と要素数（2）が同じなので、「もう次は無い」と判断して<strong>ループが終わる</strong></p>
 <p>&quot;b&quot; は<strong>最後から2番目</strong>の要素だったので、例外にならずに静かに終わり、&quot;c&quot; は表示されません。最後に「 [a, c]」を表示して「ab [a, c]」です。</p>
 <p>最後から2番目以外（たとえば &quot;a&quot;）を削除すると、次の周で ConcurrentModificationException がスローされます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s12">第2章 12「ArrayList」</a> <span>── 拡張 for 文の途中で remove すると、次の周で ConcurrentModificationException になる。ただし最後から2番目を削除したときだけは、例外にならずにそのまま終わる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s12">2-12「ArrayList」</a> <span>── 拡張 for 文の途中で remove すると、次の周で ConcurrentModificationException になる。ただし最後から2番目を削除したときだけは、例外にならずにそのまま終わる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q20" data-no="20" data-answer="C" data-pick="1" data-ch="c6">
@@ -1506,7 +1506,7 @@ public class Main {
 <ul><li><code>f(&quot;7&quot;)</code>: r は 7 になり、<code>return r;</code> の時点で戻り値 7 が決まる。そのあと finally で r を 100 にして「F」を表示するが、戻り値は 7 のまま。</li><li><code>f(&quot;x&quot;)</code>: parseInt で NumberFormatException が発生し、catch へ。r を -1 にして <code>return r;</code> で戻り値 -1 が決まる。finally で「F」。</li></ul>
 <p>main の println は、引数の <code>f(&quot;7&quot;) + f(&quot;x&quot;)</code> を計算し終えてから表示します。計算の途中で「F」が2回表示され、そのあと 7 + (−1) = 6 が表示されるので「FF6」です。</p>
 <ul><li>B・D: finally で r を 100 にしても、すでに決まった戻り値は変わりません。</li><li>E: 例外は f の中の catch で処理されています。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s06">第6章 06「finallyとreturn」</a> <span>── return があっても finally は実行される。return する値は finally より前に決まるので、finally で変数を変えても戻り値は変わらない</span></li><li><a href="../../index.html#c6-s02">第6章 02「覚える例外名」</a> <span>── Integer.parseInt に数字でない文字列を渡すと NumberFormatException</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s06">6-6「finallyとreturn」</a> <span>── return があっても finally は実行される。return する値は finally より前に決まるので、finally で変数を変えても戻り値は変わらない</span></li><li><a href="../../note/index.html#c6-s02">6-2「覚える例外名」</a> <span>── Integer.parseInt に数字でない文字列を渡すと NumberFormatException</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q21" data-no="21" data-answer="A,C" data-pick="2" data-ch="c5">
@@ -1547,7 +1547,7 @@ class Circle extends Base {
 <p class="ans">正解：<b>A, C</b></p>
 <p>Base は Shape の name() だけを実装し、area() は残しています。Circle は abstract が付いていないので、残っている <strong>area() を実装しなければなりません</strong>。</p>
 <ul><li>A: area() を public で実装するので OK。</li><li>B: インタフェースのメソッドは暗黙に public です。修飾子なしは狭くなるのでエラー。</li><li>C: Circle を抽象クラスにすれば、area() を実装しないままでかまいません。OK。</li><li>D: name() も実装されていない状態になり、エラーが増えるだけです。</li><li>E: name() は Base で実装済みです。area() が無いままなのでエラーは消えません。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── 具象クラスは、受け継いだ抽象メソッド（インタフェースのものも含む）をすべて実装する。抽象クラスなら実装を残してよい</span></li><li><a href="../../index.html#c5-s09">第5章 09「インタフェース」</a> <span>── インタフェースのメソッドは暗黙に public。実装するときも public にする</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s07">5-7「抽象クラス」</a> <span>── 具象クラスは、受け継いだ抽象メソッド（インタフェースのものも含む）をすべて実装する。抽象クラスなら実装を残してよい</span></li><li><a href="../../note/index.html#c5-s09">5-9「インタフェース」</a> <span>── インタフェースのメソッドは暗黙に public。実装するときも public にする</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q22" data-no="22" data-answer="D" data-pick="1" data-ch="c4">
@@ -1587,7 +1587,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>D</b></p>
 <p>フィールドは、初期化しなくても型ごとの既定値が自動で入ります（ローカル変数とは違います）。int は 0、boolean は false、String は null、double は 0.0 です。double の 0 は「0.0」と表示されます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s02">第4章 02「フィールドとライフサイクル」</a> <span>── フィールドは初期化しなくても既定値が入る。int は 0、boolean は false、参照型は null、double は 0.0</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s02">4-2「フィールドとライフサイクル」</a> <span>── フィールドは初期化しなくても既定値が入る。int は 0、boolean は false、参照型は null、double は 0.0</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q23" data-no="23" data-answer="E" data-pick="1" data-ch="c2">
@@ -1625,7 +1625,7 @@ public class Main {
 <p>var の型は、右辺の式の型で決まります。</p>
 <ul><li><code>y = x / 4.0</code>: int と double の計算なので double。10 / 4.0 = 2.5</li><li><code>z = 'A' + 1</code>: char と int の計算なので <strong>int</strong>。'A' の文字コード 65 + 1 = 66（char の 'B' にはならない）</li><li><code>w = x / 4</code>: int 同士なので int。10 / 4 = 2（切り捨て）</li></ul>
 <p>よって「2.5 66 2」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s06">第2章 06「var（型推論）」</a> <span>── var の型は右辺の式の型で決まる。int と double の計算は double、char と int の計算は int</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s06">2-6「var（型推論）」</a> <span>── var の型は右辺の式の型で決まる。int と double の計算は double、char と int の計算は int</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q24" data-no="24" data-answer="A" data-pick="1" data-ch="c3">
@@ -1678,7 +1678,7 @@ public class Main {
 <p>1周ずつ total を追います。</p>
 <div class="tw"><table><thead><tr><th>c</th><th>switch 式の値</th><th>total</th></tr></thead><tbody><tr><td>1</td><td>10</td><td>0 + 10 = 10</td></tr><tr><td>2</td><td>t = 10 なので 11</td><td>10 + 11 = 21</td></tr><tr><td>3</td><td>default で −21</td><td>21 − 21 = 0</td></tr><tr><td>2</td><td>t = 0 なので 1</td><td>0 + 1 = 1</td></tr></tbody></table></div>
 <p>よって「1」です。アローの switch 式は一致した case の値を1つ返すだけで、下へ流れません。ブロック <code>{ }</code> の中では yield で値を返します。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s09">第3章 09「switch式 ★新」</a> <span>── アローの switch 式は一致した case の値を返す。ブロックのときは yield で返す。default で残りをすべて受ける</span></li><li><a href="../../index.html#c3-s03">第3章 03「代入と複合代入」</a> <span>── total += 式 は total = total + 式 と同じ</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s09">3-9「switch式 ★新」</a> <span>── アローの switch 式は一致した case の値を返す。ブロックのときは yield で返す。default で残りをすべて受ける</span></li><li><a href="../../note/index.html#c3-s03">3-3「代入と複合代入」</a> <span>── total += 式 は total = total + 式 と同じ</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q25" data-no="25" data-answer="B" data-pick="1" data-ch="c5">
@@ -1741,7 +1741,7 @@ public class Main {
 <p>B は A を extends しているので、B を実装する X は、A の a() と B の b() の両方を実装する必要があり、実際に実装しています。X は B を通して A の子でもあるので、A を直接書かなくてもかまいません（D は誤り）。B 型の x を A 型の変数に入れるのも、子から親への代入なので OK です（E は誤り）。</p>
 <ul><li><code>x.c()</code>: default メソッド c() の中で a() と b() を呼ぶ。実体は X なので「a」「b」</li><li><code>y.a()</code>: 実体は同じ X なので「a」</li></ul>
 <p>よって「aba」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s09">第5章 09「インタフェース」</a> <span>── インタフェースは別のインタフェースを extends できる。実装クラスは、親インタフェースの抽象メソッドも含めてすべて実装する</span></li><li><a href="../../index.html#c5-s10">第5章 10「default / static / private」</a> <span>── default メソッドの中から抽象メソッドを呼ぶと、実体のクラスのメソッドが動く</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s09">5-9「インタフェース」</a> <span>── インタフェースは別のインタフェースを extends できる。実装クラスは、親インタフェースの抽象メソッドも含めてすべて実装する</span></li><li><a href="../../note/index.html#c5-s10">5-10「default / static / private」</a> <span>── default メソッドの中から抽象メソッドを呼ぶと、実体のクラスのメソッドが動く</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q26" data-no="26" data-answer="A,E" data-pick="2" data-ch="c4">
@@ -1779,7 +1779,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>A, E</b></p>
 <ul><li>A: <code>Item(String)</code> に合うので OK。</li><li>B: コンストラクタを書いているので、引数なしのデフォルトコンストラクタは作られません。エラー。</li><li>C: 1L は long です。long は int に暗黙では変換できないので、<code>Item(int)</code> には渡せません。エラー。</li><li>D: int と String の2つを受け取るコンストラクタはありません。エラー。</li><li>E: <code>Item(int)</code> に合うので OK。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s04">第4章 04「コンストラクタ」</a> <span>── コンストラクタを書いたクラスには、引数なしのデフォルトコンストラクタは作られない。引数の型と数が合うコンストラクタしか呼べない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s04">4-4「コンストラクタ」</a> <span>── コンストラクタを書いたクラスには、引数なしのデフォルトコンストラクタは作られない。引数の型と数が合うコンストラクタしか呼べない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q27" data-no="27" data-answer="D" data-pick="1" data-ch="c2">
@@ -1817,7 +1817,7 @@ public class Main {
 <p class="ans">正解：<b>D</b></p>
 <div class="tw"><table><thead><tr><th>行</th><th>処理</th><th>a が指す配列</th><th>b が指す配列</th></tr></thead><tbody><tr><td>3・4</td><td>b は a と<strong>同じ配列</strong>を指す</td><td>{1, 2, 3}</td><td>同じもの</td></tr><tr><td>5</td><td>b[0] = 9（共有している配列が変わる）</td><td>{9, 2, 3}</td><td>同じもの</td></tr><tr><td>6</td><td>a に<strong>新しい配列</strong>を入れ直す</td><td>{4, 5, 6}</td><td>{9, 2, 3}（元のまま）</td></tr><tr><td>7</td><td>b[1] = a[1]</td><td>{4, 5, 6}</td><td>{9, 5, 3}</td></tr></tbody></table></div>
 <p>最後の行は、先頭の a[0] と &quot;&quot; をつなぐので文字列の連結になり、4・9・5 をつないで「495」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s11">第2章 11「配列」</a> <span>── 配列の変数には配列への参照が入る。b = a とすると、同じ配列を2つの変数が指す。a に別の配列を入れ直しても、b は元の配列を指したまま</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s11">2-11「配列」</a> <span>── 配列の変数には配列への参照が入る。b = a とすると、同じ配列を2つの変数が指す。a に別の配列を入れ直しても、b は元の配列を指したまま</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q28" data-no="28" data-answer="A,C,F" data-pick="3" data-ch="c5">
@@ -1911,7 +1911,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>A, C, F</b></p>
 <ul><li>A: 正しい。実体は Alarm なので Alarm の tick() が動き、super.tick() で seconds が 0 になります。label は Alarm のコンストラクタで &quot;alarm&quot; に変わっているので &quot;alarm:0&quot;。</li><li>B: 誤り。seconds は Timer の private フィールドなので、子の Alarm から直接は使えません（left() を通して読みます）。</li><li>C: 正しい。2 → 1 になるだけで 0 ではないので、rang は false のままです。</li><li>D: 誤り。<code>Alarm(int)</code> があるので、<code>new Alarm(5)</code> は問題ありません。</li><li>E: 誤り。変数の型は Timer で、Timer に rang() はありません。呼べるメソッドは変数の型で決まります。</li><li>F: 正しい。消すと暗黙の <code>super()</code> が入りますが、Timer には引数なしのコンストラクタが無いのでエラーです。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドしたメソッドは、親の型の変数から呼んでも子のものが動く。super.メソッド() で親の処理を呼べる</span></li><li><a href="../../index.html#c5-s12">第5章 12「アクセス修飾子と継承」</a> <span>── private のフィールドは子から直接使えない。protected なら使える</span></li><li><a href="../../index.html#c5-s02">第5章 02「コンストラクタと super()」</a> <span>── 親に引数なしのコンストラクタが無ければ、子のコンストラクタで super(引数) を書く必要がある</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s03">5-3「オーバーライド」</a> <span>── オーバーライドしたメソッドは、親の型の変数から呼んでも子のものが動く。super.メソッド() で親の処理を呼べる</span></li><li><a href="../../note/index.html#c5-s12">5-12「アクセス修飾子と継承」</a> <span>── private のフィールドは子から直接使えない。protected なら使える</span></li><li><a href="../../note/index.html#c5-s02">5-2「コンストラクタと super()」</a> <span>── 親に引数なしのコンストラクタが無ければ、子のコンストラクタで super(引数) を書く必要がある</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q29" data-no="29" data-answer="A" data-pick="1" data-ch="c3">
@@ -1943,7 +1943,7 @@ public class Main {
 <p>i は 10 から始まり、本体のあとで 3 ずつ減ります。</p>
 <ul><li>i = 10, 7, 4, 1 のときは <code>i &gt; 0</code> が true なので表示</li><li>1 − 3 = −2 で <code>i &gt; 0</code> が false になり終了</li></ul>
 <p>表示は 10・7・4・1 をつないで「10741」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s10">第3章 10「繰り返しと2次元配列」</a> <span>── for 文は「初期化 → 条件 → 本体 → 更新 → 条件 …」の順に回り、条件が false になったら抜ける</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s10">3-10「繰り返しと2次元配列」</a> <span>── for 文は「初期化 → 条件 → 本体 → 更新 → 条件 …」の順に回り、条件が false になったら抜ける</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q30" data-no="30" data-answer="C" data-pick="1" data-ch="c6">
@@ -2005,7 +2005,7 @@ public class Main {
 <p class="ans">正解：<b>C</b></p>
 <p>1. ( ) の中で a、b の順に作られる。「O1 O2」2. 本体で「B」を表示し、例外を投げる3. try ブロックを抜けるときに、<strong>作ったのと逆の順</strong>（b → a）に閉じる。「C2 C1」4. 閉じたあとで catch へ。「E」5. 最後に finally。「F」</p>
 <p>よって「O1 O2 B C2 C1 E F」です。閉じる処理は catch や finally より先です（B・D は誤り）。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s09">第6章 09「try-with-resources」</a> <span>── リソースは宣言と逆の順に閉じる。本体で例外が出たときも、先にすべて閉じてから catch・finally へ進む</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s09">6-9「try-with-resources」</a> <span>── リソースは宣言と逆の順に閉じる。本体で例外が出たときも、先にすべて閉じてから catch・finally へ進む</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q31" data-no="31" data-answer="C" data-pick="1" data-ch="c4">
@@ -2046,7 +2046,7 @@ public class Main {
 <p>instanceof は、変数の型ではなく<strong>実体</strong>がその型（またはその子）かを調べます。</p>
 <ul><li><code>a instanceof Dog</code>: a の型は Animal ですが、実体は Dog なので true。</li><li><code>b instanceof Dog</code>: 実体は Animal です。Animal は Dog の子ではないので false。</li><li><code>d instanceof Animal</code>: Dog は Animal の子なので true。</li></ul>
 <p>よって「true false true」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s09">第4章 09「instanceof ★新」</a> <span>── instanceof は、実体がその型か、その子のときに true になる</span></li><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 子のインスタンスは親の型でもある。親のインスタンスは子の型ではない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s09">4-9「instanceof ★新」</a> <span>── instanceof は、実体がその型か、その子のときに true になる</span></li><li><a href="../../note/index.html#c5-s06">5-6「多態とキャスト」</a> <span>── 子のインスタンスは親の型でもある。親のインスタンスは子の型ではない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q32" data-no="32" data-answer="B" data-pick="1" data-ch="c5">
@@ -2100,7 +2100,7 @@ public class Main {
 <p class="ans">正解：<b>B</b></p>
 <p>1. <code>getScores()</code> は Team の中の配列そのもの（への参照）を返すので、s は Team の scores と<strong>同じ配列</strong>を指す2. <code>s[0] = 10</code> で、その共有している配列の中身が {10, 2} になる。scores は final ですが、final が禁止するのは scores に別の配列を入れ直すことだけで、中身の変更は許されます（E は誤り）3. <code>s = new int[] {0, 0}</code> は、ローカル変数 s に別の配列を入れ直しただけ。Team の scores は {10, 2} のまま</p>
 <p>total() は 10 + 2 で「12」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s08">第5章 08「final」</a> <span>── final の参照型のフィールドは、指す先を変えられないだけで、配列の中身は変えられる</span></li><li><a href="../../index.html#c2-s11">第2章 11「配列」</a> <span>── 配列を返すメソッドは参照を返す。受け取った側で中身を変えると、元の配列も変わる。変数に別の配列を入れ直しても元の配列は変わらない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s08">5-8「final」</a> <span>── final の参照型のフィールドは、指す先を変えられないだけで、配列の中身は変えられる</span></li><li><a href="../../note/index.html#c2-s11">2-11「配列」</a> <span>── 配列を返すメソッドは参照を返す。受け取った側で中身を変えると、元の配列も変わる。変数に別の配列を入れ直しても元の配列は変わらない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q33" data-no="33" data-answer="D" data-pick="1" data-ch="c2">
@@ -2143,7 +2143,7 @@ public class Main {
 <p>remove で要素を削除すると、後ろの要素が前へ詰まり、size() も減ります。</p>
 <div class="tw"><table><thead><tr><th>i</th><th>削除前のリスト</th><th>remove(i) で消える要素</th><th>削除後</th><th>条件 i &lt; size()</th></tr></thead><tbody><tr><td>0</td><td>[a, b, c, d]</td><td>a</td><td>[b, c, d]</td><td>1 &lt; 3 で続ける</td></tr><tr><td>1</td><td>[b, c, d]</td><td>c</td><td>[b, d]</td><td>2 &lt; 2 で終わる</td></tr></tbody></table></div>
 <p>b と d は、前へ詰まったことで飛ばされて残ります。よって「[b, d]」です。毎回 size() を調べ直すので、範囲外の位置は指定されません（E は誤り）。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s12">第2章 12「ArrayList」</a> <span>── remove(位置) で要素を削除すると、後ろの要素が1つずつ前へ詰まり、size() も減る。前から順に削除すると、詰まった要素を飛ばしてしまう</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s12">2-12「ArrayList」</a> <span>── remove(位置) で要素を削除すると、後ろの要素が1つずつ前へ詰まり、size() も減る。前から順に削除すると、詰まった要素を飛ばしてしまう</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q34" data-no="34" data-answer="A,D" data-pick="2" data-ch="c5">
@@ -2187,7 +2187,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>A, D</b></p>
 <ul><li>A: Dog は Animal の子なので、<code>List&lt;Animal&gt;</code> に入れられます。OK。</li><li>B: Animal は Dog ではないので、<code>List&lt;Dog&gt;</code> には入れられません。エラー。</li><li>C: <code>List&lt;Dog&gt;</code> は <code>List&lt;Animal&gt;</code> の子ではありません（型引数が違うと親子にならない）。エラー。</li><li>D: dogs から取り出すのは Dog で、Dog は Animal に代入できます。OK（実行するとリストが空なので例外になりますが、コンパイルは通ります）。</li><li>E: animals から取り出すのは Animal です。親から子への代入にはキャストが必要です。エラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s14">第5章 14「型の関係 総まとめ」</a> <span>── List&lt;Animal&gt; には子の Dog を入れられる。しかし List&lt;Dog&gt; は List&lt;Animal&gt; の子ではないので、代入できない</span></li><li><a href="../../index.html#c2-s14">第2章 14「Iterable / Collection / Path」</a> <span>── リストから取り出した要素は、宣言した要素の型（またはその親）の変数に入れられる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s14">5-14「型の関係 総まとめ」</a> <span>── List&lt;Animal&gt; には子の Dog を入れられる。しかし List&lt;Dog&gt; は List&lt;Animal&gt; の子ではないので、代入できない</span></li><li><a href="../../note/index.html#c2-s14">2-14「Iterable / Collection / Path」</a> <span>── リストから取り出した要素は、宣言した要素の型（またはその親）の変数に入れられる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q35" data-no="35" data-answer="E" data-pick="1" data-ch="c1">
@@ -2235,7 +2235,7 @@ public class Main {
 <p><code>&quot;4 5&quot;</code> は引用符で囲まれているので、空白を含めて<strong>1つの引数</strong>です。args は {&quot;3&quot;, &quot;4 5&quot;, &quot;x&quot;} で、args.length は 3 です。</p>
 <div class="tw"><table><thead><tr><th>引数</th><th>parseInt</th><th>sum</th></tr></thead><tbody><tr><td>&quot;3&quot;</td><td>3</td><td>3</td></tr><tr><td>&quot;4 5&quot;</td><td>空白があるので NumberFormatException → catch で 100</td><td>103</td></tr><tr><td>&quot;x&quot;</td><td>数字ではないので NumberFormatException → catch で 100</td><td>203</td></tr></tbody></table></div>
 <p>よって「3:203」です。例外はループの中の catch で処理されるので、外には出ません（F は誤り）。A は、引用符を無視して4つの引数と考えた場合の結果です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s02">第1章 02「コマンドライン引数」</a> <span>── &quot; &quot; で囲んだ部分は、空白を含めて1つの引数になる</span></li><li><a href="../../index.html#c6-s02">第6章 02「覚える例外名」</a> <span>── Integer.parseInt は、空白や文字が入った文字列を読めないと NumberFormatException を投げる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c1-s02">1-2「コマンドライン引数」</a> <span>── &quot; &quot; で囲んだ部分は、空白を含めて1つの引数になる</span></li><li><a href="../../note/index.html#c6-s02">6-2「覚える例外名」</a> <span>── Integer.parseInt は、空白や文字が入った文字列を読めないと NumberFormatException を投げる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q36" data-no="36" data-answer="A" data-pick="1" data-ch="c3">
@@ -2267,7 +2267,7 @@ public class Main {
 <p><code>n % 2 == 0 ? &quot;even&quot; : (n &gt; 5 ? &quot;big&quot; : &quot;small&quot;)</code> と読みます。</p>
 <p>1. 7 % 2 は 1 なので <code>n % 2 == 0</code> は false。後ろの式へ2. <code>n &gt; 5</code> は true なので &quot;big&quot;</p>
 <p>よって「big」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s06">第3章 06「三項演算子」</a> <span>── 三項演算子 条件 ? A : B は、条件が true なら A、false なら B。続けて書くと右側から組み立てられる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s06">3-6「三項演算子」</a> <span>── 三項演算子 条件 ? A : B は、条件が true なら A、false なら B。続けて書くと右側から組み立てられる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q37" data-no="37" data-answer="B,D,E" data-pick="3" data-ch="c5">
@@ -2308,7 +2308,7 @@ final class Credit extends Card {
 <div class="explain">
 <p class="ans">正解：<b>B, D, E</b></p>
 <ul><li>A: 誤り。sealed クラスの子には final・sealed・non-sealed のどれかが必要です。abstract はその代わりになりません。</li><li>B: 正しい。抽象クラスは new できません。</li><li>C: 誤り。sealed と abstract はふつうに組み合わせられます（「子は限定するが、親自身は new させない」）。</li><li>D: 正しい。Credit は final なので、継承できません。</li><li>E: 正しい。Card は <code>permits Credit</code> なので、Card を直接継承できるのは Credit だけです。</li><li>F: 誤り。Credit も sealed クラス Card の子なので、final・sealed・non-sealed のどれかが必要です。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s11">第5章 11「sealed ★新」</a> <span>── sealed クラスの子は final・sealed・non-sealed のどれかを付ける。sealed の子は、さらに permits で継承できるクラスを限定する</span></li><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── abstract と sealed は組み合わせられる。抽象クラスは new できない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s11">5-11「sealed ★新」</a> <span>── sealed クラスの子は final・sealed・non-sealed のどれかを付ける。sealed の子は、さらに permits で継承できるクラスを限定する</span></li><li><a href="../../note/index.html#c5-s07">5-7「抽象クラス」</a> <span>── abstract と sealed は組み合わせられる。抽象クラスは new できない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q38" data-no="38" data-answer="C" data-pick="1" data-ch="c4">
@@ -2363,7 +2363,7 @@ public class Main {
 <p>new A() では、コンストラクタの本体より先に、インスタンス変数の初期化と初期化ブロックが<strong>書いた順に</strong>実行されます。</p>
 <p>1. <code>int x = init(&quot;F&quot;);</code> で init が呼ばれて「F」2. 初期化ブロックで「B」3. コンストラクタの本体で「C」</p>
 <p>よって「FBC」です。フィールドの初期化式からメソッドを呼ぶこともできます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s08">第4章 08「初期化の順序」</a> <span>── インスタンス変数の初期化と初期化ブロックは、書いた順に、コンストラクタの本体より先に実行される</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s08">4-8「初期化の順序」</a> <span>── インスタンス変数の初期化と初期化ブロックは、書いた順に、コンストラクタの本体より先に実行される</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q39" data-no="39" data-answer="B" data-pick="1" data-ch="c3">
@@ -2391,7 +2391,7 @@ public class Main {
 <p class="ans">正解：<b>B</b></p>
 <div class="tw"><table><thead><tr><th>リテラル</th><th>進数</th><th>10進数の値</th></tr></thead><tbody><tr><td><code>0b11</code></td><td>2進数</td><td>3</td></tr><tr><td><code>010</code></td><td>8進数（先頭が 0）</td><td>8</td></tr><tr><td><code>0x10</code></td><td>16進数</td><td>16</td></tr></tbody></table></div>
 <p>どれも int なので足し算になり、3 + 8 + 16 = 27 です。A は 010 を 10 と読んだ場合、C は 0x10 を 10 と読んだ場合の値です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s12">第3章 12「進数とビット演算」</a> <span>── 0b で始まると2進数、先頭が 0 だけだと8進数、0x で始まると16進数。010 は 8</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s12">3-12「進数とビット演算」</a> <span>── 0b で始まると2進数、先頭が 0 だけだと8進数、0x で始まると16進数。010 は 8</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q40" data-no="40" data-answer="D" data-pick="1" data-ch="c5">
@@ -2450,7 +2450,7 @@ public class Main {
 <p>B がオーバーライドしているのは <code>f(long)</code> だけで、<code>f(int)</code> は A のものを受け継いでいます。</p>
 <ul><li><code>a.f(1)</code>: 引数は int なので、完全一致の <code>f(int)</code> が選ばれます。B はこれをオーバーライドしていないので「A-int」。</li><li><code>a.f(1L)</code>: <code>f(long)</code> が選ばれ、実体の B がオーバーライドしているので「B-long」。</li><li><code>b.f(1)</code>: B 型から見えるのは、受け継いだ <code>f(int)</code> と自分の <code>f(long)</code> です。int の 1 には完全一致の <code>f(int)</code> が選ばれ「A-int」。</li></ul>
 <p>よって「A-int B-long A-int」です。C は、int を long に広げて B の f(long) が選ばれると考えた場合の誤りです。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s04">第5章 04「オーバーロードとの区別」</a> <span>── どのメソッドを呼ぶかはコンパイル時に変数の型と引数の型で決まり、オーバーライドされていれば実行時に実体のものが動く</span></li><li><a href="../../index.html#c4-s06">第4章 06「オーバーロード」</a> <span>── オーバーロードは、引数の型に完全一致するものが拡大変換より優先される</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s04">5-4「オーバーロードとの区別」</a> <span>── どのメソッドを呼ぶかはコンパイル時に変数の型と引数の型で決まり、オーバーライドされていれば実行時に実体のものが動く</span></li><li><a href="../../note/index.html#c4-s06">4-6「オーバーロード」</a> <span>── オーバーロードは、引数の型に完全一致するものが拡大変換より優先される</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q41" data-no="41" data-answer="C,E" data-pick="2" data-ch="c6">
@@ -2477,7 +2477,7 @@ class AppError extends RuntimeException {
 <p class="ans">正解：<b>C, E</b></p>
 <p>AppException は Exception の子なので<strong>検査例外</strong>、AppError は RuntimeException の子なので<strong>非検査例外</strong>です。</p>
 <ul><li>A: 検査例外を投げるのに、catch も throws もありません。エラー。</li><li>B: throws に書いた AppError は AppException の親ではないので、AppException を任せたことになりません。エラー。</li><li>C: 非検査例外は throws なしで投げられます。OK。</li><li>D: catch の AppError では AppException を捕まえられません。エラー。</li><li>E: throws AppException と書いているので OK。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s08">第6章 08「カスタム例外」</a> <span>── Exception を継承した自作の例外は検査例外、RuntimeException を継承したものは非検査例外になる</span></li><li><a href="../../index.html#c6-s07">第6章 07「throw / throws」</a> <span>── 検査例外を投げるなら、catch するか throws に書く。catch の型はその例外かその親でなければ捕まえられない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s08">6-8「カスタム例外」</a> <span>── Exception を継承した自作の例外は検査例外、RuntimeException を継承したものは非検査例外になる</span></li><li><a href="../../note/index.html#c6-s07">6-7「throw / throws」</a> <span>── 検査例外を投げるなら、catch するか throws に書く。catch の型はその例外かその親でなければ捕まえられない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q42" data-no="42" data-answer="A" data-pick="1" data-ch="c2">
@@ -2508,7 +2508,7 @@ class AppError extends RuntimeException {
 <p class="ans">正解：<b>A</b></p>
 <p>1. <code>delete(1, 3)</code>: 位置 1 から、位置 3 の<strong>手前</strong>まで（b と c）を削除して &quot;adef&quot;2. <code>.append(&quot;X&quot;)</code>: delete は自分自身を返すので、続けて &quot;adefX&quot; になる</p>
 <p>StringBuilder は自分自身を書き換えるので、戻り値を代入しなくても sb は &quot;adefX&quot;、長さは 5 です。B は終了の位置まで含めて削除した場合、D は StringBuilder が変わらないと考えた場合です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s09">第2章 09「StringBuilder」</a> <span>── delete(開始, 終了) は終了の位置を含まずに削除する。StringBuilder のメソッドは自分自身を返すのでつなげて呼べる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s09">2-9「StringBuilder」</a> <span>── delete(開始, 終了) は終了の位置を含まずに削除する。StringBuilder のメソッドは自分自身を返すのでつなげて呼べる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q43" data-no="43" data-answer="C" data-pick="1" data-ch="c5">
@@ -2543,7 +2543,7 @@ class AppError extends RuntimeException {
 <div class="explain">
 <p class="ans">正解：<b>C</b></p>
 <ul><li>4 行目: Object から子の String へのキャスト。コンパイルは通り、実体も String なので実行時も OK。</li><li>5 行目: Object から Integer へのキャスト。Object は Integer の親なので<strong>コンパイルは通ります</strong>（実行すると、実体が String なので ClassCastException）。</li><li>6 行目: String と Integer は親子関係の無いクラスどうしです。String 型の値が Integer であることはありえないので、<strong>コンパイルエラー</strong>。</li><li>7 行目: 子から親へのキャストは、書かなくてもできるので OK。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 親子関係のある型どうしのキャストはコンパイルが通る（実体が違えば実行時に ClassCastException）。親子関係の無いクラスどうしのキャストはコンパイルエラー</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s06">5-6「多態とキャスト」</a> <span>── 親子関係のある型どうしのキャストはコンパイルが通る（実体が違えば実行時に ClassCastException）。親子関係の無いクラスどうしのキャストはコンパイルエラー</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q44" data-no="44" data-answer="B" data-pick="1" data-ch="c4">
@@ -2597,7 +2597,7 @@ public class Main {
 <p>total は static フィールドで、クラスに1つしかありません。</p>
 <p>1. 2回 new して total は 42. <code>Counter.reset()</code> で total は 03. もう1回 new して total は 2</p>
 <p><code>Counter.total</code> も <code>c.total</code> も同じ1つの total を読むので、「2 2」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s07">第4章 07「static」</a> <span>── static フィールドはクラスに1つだけ。static メソッドで変えても、インスタンス経由で読んでも、同じ1つを指す</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s07">4-7「static」</a> <span>── static フィールドはクラスに1つだけ。static メソッドで変えても、インスタンス経由で読んでも、同じ1つを指す</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q45" data-no="45" data-answer="F" data-pick="1" data-ch="c3">
@@ -2643,7 +2643,7 @@ public class Main {
 <p>x を 1 増やしてから、3 の倍数のときは <code>continue</code> で足し算を飛ばし、末尾の条件 <code>x &lt; 7</code> へ進みます。</p>
 <div class="tw"><table><thead><tr><th>x</th><th>3 の倍数か</th><th>count</th><th>条件 x &lt; 7</th></tr></thead><tbody><tr><td>1</td><td>いいえ</td><td>1</td><td>true</td></tr><tr><td>2</td><td>いいえ</td><td>3</td><td>true</td></tr><tr><td>3</td><td>はい（飛ばす）</td><td>3</td><td>true</td></tr><tr><td>4</td><td>いいえ</td><td>7</td><td>true</td></tr><tr><td>5</td><td>いいえ</td><td>12</td><td>true</td></tr><tr><td>6</td><td>はい（飛ばす）</td><td>12</td><td>true</td></tr><tr><td>7</td><td>いいえ</td><td>19</td><td>false で終了</td></tr></tbody></table></div>
 <p>よって「19」です。x を増やす処理は continue より前にあるので、無限ループにはなりません（E は誤り）。A は 3 の倍数も足した場合（1〜7 の合計）です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s11">第3章 11「break / continue / ラベル」</a> <span>── continue はその周の残りを飛ばして次の周へ進む。do-while では末尾の条件の判定へ進む</span></li><li><a href="../../index.html#c3-s10">第3章 10「繰り返しと2次元配列」</a> <span>── do-while は本体を実行してから条件を調べ、false になったら抜ける</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s11">3-11「break / continue / ラベル」</a> <span>── continue はその周の残りを飛ばして次の周へ進む。do-while では末尾の条件の判定へ進む</span></li><li><a href="../../note/index.html#c3-s10">3-10「繰り返しと2次元配列」</a> <span>── do-while は本体を実行してから条件を調べ、false になったら抜ける</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q46" data-no="46" data-answer="D" data-pick="1" data-ch="c5">
@@ -2705,7 +2705,7 @@ public class Main {
 <p class="ans">正解：<b>D</b></p>
 <p>B は抽象クラスなので、A の抽象メソッド a() を実装しなくてかまいません（E は誤り）。最初の具象クラスである C が a() を実装しています。</p>
 <p><code>x.run()</code> は A の run() で、その中の <code>a()</code> は実体の C のものが動きます。C の a() は &quot;c&quot; に b() の &quot;b&quot; をつないで「cb」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s07">第5章 07「抽象クラス」</a> <span>── 抽象メソッドの実装は、最初の具象クラスまでに済ませればよい。途中の抽象クラスは実装しなくてよい</span></li><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── 親のメソッドの中から呼んだメソッドも、実体のクラスのものが動く</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s07">5-7「抽象クラス」</a> <span>── 抽象メソッドの実装は、最初の具象クラスまでに済ませればよい。途中の抽象クラスは実装しなくてよい</span></li><li><a href="../../note/index.html#c5-s06">5-6「多態とキャスト」</a> <span>── 親のメソッドの中から呼んだメソッドも、実体のクラスのものが動く</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q47" data-no="47" data-answer="B,E" data-pick="2" data-ch="c2">
@@ -2723,7 +2723,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>B, E</b></p>
 <ul><li>A: char と int の計算なので int になり、65 + 1 で「66」。</li><li>B: 66 を char にキャストすると、文字コード 66 の「B」。</li><li>C: String と int の連結で「A1」。</li><li>D: 'B' を int にキャストすると、文字コードの「66」。</li><li>E: 括弧の中の 'A' + 1 は int の 66。それを char にキャストして「B」。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s03">第2章 03「型変換」</a> <span>── int を char にキャストすると、その文字コードの文字になる。char と int の計算結果は int</span></li><li><a href="../../index.html#c2-s08">第2章 08「Stringのメソッド」</a> <span>── String と + でつなぐと文字列の連結になる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s03">2-3「型変換」</a> <span>── int を char にキャストすると、その文字コードの文字になる。char と int の計算結果は int</span></li><li><a href="../../note/index.html#c2-s08">2-8「Stringのメソッド」</a> <span>── String と + でつなぐと文字列の連結になる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q48" data-no="48" data-answer="A" data-pick="1" data-ch="c4">
@@ -2771,7 +2771,7 @@ public class Main {
 <p class="ans">正解：<b>A</b></p>
 <p>1. main を実行するために Main クラスが準備され、そのときに static 初期化ブロックが動く。「S」2. main の中で「M」3. <code>new Main()</code> で、インスタンス初期化ブロック「I」、コンストラクタの本体「C」</p>
 <p>よって「SMIC」です。static 初期化ブロックは main より先に動きます（B・D は誤り）。インスタンス側は new したときに初めて動きます（C は誤り）。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s08">第4章 08「初期化の順序」</a> <span>── static 初期化ブロックはクラスを使い始めるとき（main より前）に1回だけ。インスタンス初期化ブロックは new のたびに、コンストラクタの本体より先に動く</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s08">4-8「初期化の順序」</a> <span>── static 初期化ブロックはクラスを使い始めるとき（main より前）に1回だけ。インスタンス初期化ブロックは new のたびに、コンストラクタの本体より先に動く</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q49" data-no="49" data-answer="C" data-pick="1" data-ch="c5">
@@ -2826,7 +2826,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>C</b></p>
 <p>インタフェースは new できませんが、インタフェース型の<strong>配列</strong>は作れ、実装クラスのインスタンスを入れられます（D は誤り）。各要素の area() は実体のクラスのものが動くので、4.0 + 6.0 = 10.0 です。sum は double なので「10.0」と表示されます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s06">第5章 06「多態とキャスト」</a> <span>── インタフェース型の配列にも、実装クラスのインスタンスを入れられる。呼ばれるのは実体のクラスのメソッド</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s06">5-6「多態とキャスト」</a> <span>── インタフェース型の配列にも、実装クラスのインスタンスを入れられる。呼ばれるのは実体のクラスのメソッド</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q50" data-no="50" data-answer="B,D" data-pick="2" data-ch="c6">
@@ -2863,7 +2863,7 @@ public class TextReader extends Reader {
 <p class="ans">正解：<b>B, D</b></p>
 <p>親の read() は IOException を throws に書いています。オーバーライドするメソッドの throws には、<strong>親と同じか、その子の検査例外</strong>しか書けません。</p>
 <ul><li>A: Exception は IOException の親なので、広げることになりエラー。</li><li>B: throws を書かない（例外を投げない）のは自由です。OK。</li><li>C: 修飾子なし → private とアクセスを狭めているのでエラー。</li><li>D: FileNotFoundException は IOException の子なので OK。</li><li>E: 引数が同じで戻り値の型だけが違う（void と int）のでエラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s10">第6章 10「オーバーライド」</a> <span>── オーバーライドで throws に書ける検査例外は、親と同じか、その子だけ。書かないのは自由</span></li><li><a href="../../index.html#c5-s03">第5章 03「オーバーライド」</a> <span>── オーバーライドでは、アクセスを狭められず、戻り値の型も合わせる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s10">6-10「オーバーライド」</a> <span>── オーバーライドで throws に書ける検査例外は、親と同じか、その子だけ。書かないのは自由</span></li><li><a href="../../note/index.html#c5-s03">5-3「オーバーライド」</a> <span>── オーバーライドでは、アクセスを狭められず、戻り値の型も合わせる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q51" data-no="51" data-answer="B" data-pick="1" data-ch="c2">
@@ -2903,7 +2903,7 @@ public class TextReader extends Reader {
 <p class="ans">正解：<b>B</b></p>
 <p>ローカル変数 x は宣言しただけで値が入っていませんが、if と else の<strong>両方</strong>で代入しているので、どちらを通っても代入済みになります。コンパイラもそう判断するので、コンパイルエラーにはなりません（else が無ければエラーです）。</p>
 <p>引数なしで実行すると args.length は 0 なので、else 側で x に 2 が入り「2」と表示されます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s05">第2章 05「宣言・初期化・スコープ」</a> <span>── ローカル変数は使う前に値が入っていなければならない。if と else の両方で代入していれば、どちらを通っても代入済みなので使える</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s05">2-5「宣言・初期化・スコープ」</a> <span>── ローカル変数は使う前に値が入っていなければならない。if と else の両方で代入していれば、どちらを通っても代入済みなので使える</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q52" data-no="52" data-answer="E" data-pick="1" data-ch="c5">
@@ -2938,7 +2938,7 @@ class Laser implements Printer {
 <p class="ans">正解：<b>E</b></p>
 <p>インタフェースの抽象メソッドは、書かなくても<strong>暗黙に public</strong> です。実装はオーバーライドの一種なので、アクセスを狭められません。Laser の print は修飾子なし（public より狭い）なので、エラーになります。<code>public void print(String s)</code> と書けば通ります。</p>
 <ul><li>A: Printer の print は public を書かなくても public です。Printer の側は正しく書けています。</li><li>B: 戻り値の型は Printer と同じ void なので問題ありません。</li><li>C: 抽象メソッドをすべて public で実装すれば、ふつうのクラスにできます。</li><li>D: インタフェースのメソッドの実装に static は付けません。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s09">第5章 09「インタフェース」</a> <span>── インタフェースのメソッドは暗黙に public。実装クラスで修飾子を付けないと、アクセスを狭めたことになってエラー</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s09">5-9「インタフェース」</a> <span>── インタフェースのメソッドは暗黙に public。実装クラスで修飾子を付けないと、アクセスを狭めたことになってエラー</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q53" data-no="53" data-answer="A" data-pick="1" data-ch="c3">
@@ -2988,7 +2988,7 @@ class Laser implements Printer {
 <p class="ans">正解：<b>A</b></p>
 <p>4 で割り切れる最初の要素を探します。行 0 の {1, 2, 3} には無く、行 1 の最初の 4（i = 1, j = 0）で見つかります。found は 1 × 10 + 0 = 10 になり、<code>break search;</code> で<strong>外側のループごと</strong>抜けます。</p>
 <p>B の「21」は、break が内側のループだけを抜けると考えた場合です。そのときは行 2 も調べ、8（i = 2, j = 1）で found が 21 に上書きされます。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c3-s11">第3章 11「break / continue / ラベル」</a> <span>── break ラベル名 は、ラベルを付けた外側のループごと抜ける。ラベルなしの break は内側のループだけを抜ける</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c3-s11">3-11「break / continue / ラベル」</a> <span>── break ラベル名 は、ラベルを付けた外側のループごと抜ける。ラベルなしの break は内側のループだけを抜ける</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q54" data-no="54" data-answer="A,E" data-pick="2" data-ch="c4">
@@ -3014,7 +3014,7 @@ class Laser implements Printer {
 <div class="explain">
 <p class="ans">正解：<b>A, E</b></p>
 <ul><li>A: 正しいコンストラクタ。OK。</li><li>B: コンストラクタは値を return できません。エラー。</li><li>C: コンストラクタに static は付けられません。エラー。</li><li>D: <code>this(0)</code> は int を受け取るコンストラクタを呼びますが、このクラスにはそのコンストラクタがありません（挿入するのはこの1つだけ）。エラー。</li><li>E: コンストラクタは private にもできます（クラスの外から new させたくないとき）。OK。</li><li>F: コンストラクタに final は付けられません。エラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s04">第4章 04「コンストラクタ」</a> <span>── コンストラクタはクラスと同じ名前で、戻り値の型を書かない。値を return できず、static や final は付けられない。アクセス修飾子は4種類とも付けられる</span></li><li><a href="../../index.html#c4-s05">第4章 05「this と this()」</a> <span>── this(...) で呼べるのは、そのクラスにあるコンストラクタだけ</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s04">4-4「コンストラクタ」</a> <span>── コンストラクタはクラスと同じ名前で、戻り値の型を書かない。値を return できず、static や final は付けられない。アクセス修飾子は4種類とも付けられる</span></li><li><a href="../../note/index.html#c4-s05">4-5「this と this()」</a> <span>── this(...) で呼べるのは、そのクラスにあるコンストラクタだけ</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q55" data-no="55" data-answer="D" data-pick="1" data-ch="c5">
@@ -3068,7 +3068,7 @@ public class Main {
 <p class="ans">正解：<b>D</b></p>
 <p>List を println すると、<code>[要素, 要素]</code> の形で表示されます。各要素は toString() で文字列にされ、Item は toString をオーバーライドしているので &quot;Item:a&quot; と &quot;Item:b&quot; になります。よって「[Item:a, Item:b]」です。</p>
 <p>C の形になるのは、Item が toString をオーバーライドしていない場合です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s13">第5章 13「toString / equals / hashCode」</a> <span>── List を println すると [要素, 要素] の形で表示され、各要素は toString() で文字列になる</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s13">5-13「toString / equals / hashCode」</a> <span>── List を println すると [要素, 要素] の形で表示され、各要素は toString() で文字列になる</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q56" data-no="56" data-answer="C,E" data-pick="2" data-ch="c1">
@@ -3086,7 +3086,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>C, E</b></p>
 <ul><li>A: 誤り。java にはクラス名だけを渡します（<code>java Hello</code>）。<code>java Hello.class</code> は「Hello.class というクラス」を探して失敗します。</li><li>B: 誤り。.class ファイルが新しく作られるだけで、.java ファイルはそのまま残ります。</li><li>C: 正しい。<code>javac Hello.java</code> のように拡張子まで書きます。<code>javac Hello</code> ではエラーです。</li><li>D: 誤り。-d はクラスファイルの書き出し先を指定する <strong>javac</strong> のオプションです。</li><li>E: 正しい。ソースファイルモードと呼ばれ、メモリの中でコンパイルしてそのまま実行します。.class は作られません。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c1-s03">第1章 03「コンパイルと実行」</a> <span>── javac には拡張子 .java まで付けたファイル名、java にはクラス名（.class は付けない）を渡す。java ファイル名.java ならクラスファイルを作らずに実行できる</span></li><li><a href="../../index.html#c1-s08">第1章 08「-d と -cp」</a> <span>── クラスファイルの書き出し先を決める -d は javac のオプション</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c1-s03">1-3「コンパイルと実行」</a> <span>── javac には拡張子 .java まで付けたファイル名、java にはクラス名（.class は付けない）を渡す。java ファイル名.java ならクラスファイルを作らずに実行できる</span></li><li><a href="../../note/index.html#c1-s08">1-8「-d と -cp」</a> <span>── クラスファイルの書き出し先を決める -d は javac のオプション</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q57" data-no="57" data-answer="B" data-pick="1" data-ch="c6">
@@ -3118,7 +3118,7 @@ public class Main {
 <div class="explain">
 <p class="ans">正解：<b>B</b></p>
 <ul><li>A: IllegalArgumentException は RuntimeException の子です。継承関係のある型は multi-catch に並べられません（親だけで足りるため）。エラー。</li><li>B: 親子関係の無い2つの型を並べた正しい形。OK。</li><li>C: multi-catch の変数は暗黙に final なので、代入できません。エラー。</li><li>D: 変数は最後に1つだけ書きます。型ごとに変数名は書けません。エラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c6-s05">第6章 05「multi-catch」</a> <span>── multi-catch は | で例外の型を並べ、変数は最後に1つだけ書く。継承関係のある型は並べられず、変数は暗黙に final</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c6-s05">6-5「multi-catch」</a> <span>── multi-catch は | で例外の型を並べ、変数は最後に1つだけ書く。継承関係のある型は並べられず、変数は暗黙に final</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q58" data-no="58" data-answer="C" data-pick="1" data-ch="c2">
@@ -3151,7 +3151,7 @@ public class Main {
 <p class="ans">正解：<b>C</b></p>
 <p>配列の2つ目の要素は null です。null を文字列と + でつなぐと &quot;null&quot; という文字になり、例外にはなりません（例外になるのは、null に対してメソッドを呼んだときなどです）。拡張 for 文も、null の要素を飛ばさずに取り出します。</p>
 <p>よって「A,null,C,」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c2-s13">第2章 13「nullとの付き合い方」</a> <span>── null を文字列につなぐと &quot;null&quot; になる。メソッドを呼ばない限り例外にはならない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c2-s13">2-13「nullとの付き合い方」</a> <span>── null を文字列につなぐと &quot;null&quot; になる。メソッドを呼ばない限り例外にはならない</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q59" data-no="59" data-answer="B,C" data-pick="2" data-ch="c5">
@@ -3191,7 +3191,7 @@ public class App implements Config {
 <div class="explain">
 <p class="ans">正解：<b>B, C</b></p>
 <ul><li>A・E: MAX は暗黙に final の定数なので、代入も <code>++</code> もできません。エラー。</li><li>B: インタフェースの定数は、実装クラスから名前だけで読めます。OK。</li><li>C: static メソッドをインタフェース名で呼ぶ正しい形。OK。</li><li>D: インタフェースの static メソッドは実装クラスに受け継がれないので、名前だけでは呼べません。エラー。</li></ul>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c5-s09">第5章 09「インタフェース」</a> <span>── インタフェースのフィールドは暗黙に public static final の定数。実装クラスから名前だけで読めるが、代入はできない</span></li><li><a href="../../index.html#c5-s10">第5章 10「default / static / private」</a> <span>── インタフェースの static メソッドは実装クラスに受け継がれないので、インタフェース名を付けて呼ぶ</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c5-s09">5-9「インタフェース」</a> <span>── インタフェースのフィールドは暗黙に public static final の定数。実装クラスから名前だけで読めるが、代入はできない</span></li><li><a href="../../note/index.html#c5-s10">5-10「default / static / private」</a> <span>── インタフェースの static メソッドは実装クラスに受け継がれないので、インタフェース名を付けて呼ぶ</span></li></ul></div>
 </div>
 </article>
 <article class="q" id="q60" data-no="60" data-answer="A" data-pick="1" data-ch="c4">
@@ -3241,7 +3241,7 @@ public class Main {
 <p>update には、x が指している Box への参照のコピーが渡ります。</p>
 <p>1. <code>b.size = 5</code>: b は x と同じ Box を指しているので、x.size も 5 になる2. <code>b = new Box()</code>: 引数 b に別の Box を入れ直す。x は元の Box を指したまま3. <code>b.size = 9</code>: 新しい Box の size が 9 になるだけ</p>
 <p>よって「5」です。</p>
-<div class="refs"><p class="refs-h">統合ノートで確認する</p><ul><li><a href="../../index.html#c4-s03">第4章 03「メソッドと引数」</a> <span>── 引数には参照のコピーが渡る。指す先のフィールドを変えると呼び出し元にも伝わるが、引数に別のインスタンスを入れ直しても伝わらない</span></li></ul></div>
+<div class="refs"><p class="refs-h">教材で確認する</p><ul><li><a href="../../note/index.html#c4-s03">4-3「メソッドと引数」</a> <span>── 引数には参照のコピーが渡る。指す先のフィールドを変えると呼び出し元にも伝わるが、引数に別のインスタンスを入れ直しても伝わらない</span></li></ul></div>
 </div>
 </article>
       </main>
@@ -3268,7 +3268,7 @@ public class Main {
 <div class="scrim" id="scrim" hidden></div>
 <div class="modal" id="modal" hidden><div class="dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
 
-<script type="application/json" id="exam-meta">{"id":"05","title":"自作模擬試験 5","minutes":90,"passRate":0.65,"total":60,"chapters":{"c1":"第1章 概要とプログラム作成","c2":"第2章 基本データ型と文字列","c3":"第3章 演算子と制御構造","c4":"第4章 クラスとインスタンス","c5":"第5章 継承とインタフェース","c6":"第6章 例外処理"},"noteHref":"../../index.html"}</script>
+<script type="application/json" id="exam-meta">{"id":"05","title":"自作模擬試験 5","minutes":90,"passRate":0.65,"total":60,"chapters":{"c1":"第1章 概要とプログラム作成","c2":"第2章 基本データ型と文字列","c3":"第3章 演算子と制御構造","c4":"第4章 クラスとインスタンス","c5":"第5章 継承とインタフェース","c6":"第6章 例外処理"},"noteHref":"../../note/index.html"}</script>
 <script>
 /* コードブロックの簡易シンタックスハイライト。
    pre code の textContent を読み、キーワード／文字列／行コメント／数値だけを
@@ -3409,7 +3409,7 @@ var ExamRecords = (function () {
     var obj;
     try { obj = JSON.parse(text); } catch (e) { throw new Error("JSON として読めないファイルです。"); }
     if (!obj || obj.format !== FORMAT || !obj.exams || typeof obj.exams !== "object") {
-      throw new Error("このノートの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
+      throw new Error("このサイトの受験記録のファイルではありません（「記録を書き出す」で作ったファイルを選んでください）。");
     }
     return obj;
   }
@@ -3495,20 +3495,29 @@ var ExamRecords = (function () {
    サーバー（backend/ の受験記録 API）
      backend/ からこのページを開いたとき（http://localhost:8080/exams/02/ など）だけ使う。
      提出した回をサーバーにも保存し（受験記録の serverId）、振り返りメモも書き込み、弱点レポートを取り出せる。
-     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。 */
+     GitHub Pages で開いたときやサーバーが止まっているときは、今までどおり localStorage だけで動く。
+
+   使い方の見本（?guide を付けて開いたとき。../guide/ のページが中に表示する）
+     localStorage には一切書かず、ページを開いているあいだだけのメモリに保存する。
+     受験記録には見本の 2 回分を入れておく。本物の受験記録は読みも書きもしない。 */
 (function () {
   var meta = JSON.parse(document.getElementById("exam-meta").textContent);
   var KEY = "java-silver-exam:" + meta.id + ":";
   var LIMIT_MS = meta.minutes * 60 * 1000;
   var MAX_HISTORY = 100;
+  var GUIDE = /[?&]guide\b/.test(location.search);
+  var MEM = GUIDE ? {} : null;   // 使い方の見本のときの保存先
 
   function load(k) {
+    if (MEM) return MEM[k] === undefined ? null : JSON.parse(MEM[k]);
     try { return JSON.parse(localStorage.getItem(KEY + k)); } catch (e) { return null; }
   }
   function save(k, v) {
+    if (MEM) { MEM[k] = JSON.stringify(v); return true; }
     try { localStorage.setItem(KEY + k, JSON.stringify(v)); return true; } catch (e) { return false; /* 保存できなくても受験は続けられる */ }
   }
   function drop(k) {
+    if (MEM) { delete MEM[k]; return; }
     try { localStorage.removeItem(KEY + k); } catch (e) { /* 同上 */ }
   }
 
@@ -3528,6 +3537,26 @@ var ExamRecords = (function () {
     };
   });
   var N = qs.length;
+
+  // 使い方の見本に入れておく受験記録。何問かに 1 問を間違えた回と、時間切れの回
+  function sampleRecord(no, daysAgo, wrongEvery, usedMin, timeUp) {
+    var answers = {}, right = 0;
+    qs.forEach(function (q) {
+      if (timeUp && q.no > N - 8) return;             // 時間切れで最後の数問は未回答
+      if (q.no % wrongEvery === 0) {
+        var other = q.choices.map(function (c) { return c.dataset.key; })
+          .filter(function (k) { return q.answer.indexOf(k) < 0; })[0];
+        answers[q.no] = q.answer.slice(1).concat(other).sort();
+      } else { answers[q.no] = q.answer.slice(); right++; }
+    });
+    return { no: no, at: Date.now() - daysAgo * 86400000, usedMs: usedMin * 60000, correct: right, total: N, rate: right / N,
+             passed: right / N >= meta.passRate, answers: answers, flags: [4, 17, 38], timeUp: !!timeUp, pauses: 0,
+             notes: { 3: "（見本のメモ）B と C で迷った。教材の論点をもう一度読む" }, origin: "sample" };
+  }
+  if (GUIDE) {
+    MEM.history = JSON.stringify([sampleRecord(2, 2, 3, 82, false), sampleRecord(1, 9, 2, 90, true)]);
+    MEM.seq = "2";
+  }
   var mode = "";
   var cur = 1;           // 表示中の問題番号。採点結果では 0 が「結果の概要」
   var filter = "all";    // 問題一覧の絞り込み
@@ -3598,7 +3627,7 @@ var ExamRecords = (function () {
   }
 
   function usedText(r) { return r.usedMs == null ? "—" : fmt(r.usedMs); }
-  var ORIGIN = { manual: "手入力", import: "読み込み" };
+  var ORIGIN = { manual: "手入力", import: "読み込み", sample: "見本" };
   function noteOf(r) {          // 所要時間に添える但し書き
     var a = [];
     if (r.timeUp) a.push("時間切れ");
@@ -4164,7 +4193,7 @@ var ExamRecords = (function () {
 
   // localhost で開いていて、サーバーがこの試験を知っているときだけ使う。GitHub Pages では問い合わせもしない
   function probeServer() {
-    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
+    if (GUIDE || !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || !window.fetch) return Promise.resolve(false);
     return api("GET", "/exams/" + meta.id + "/questions/1")
       .then(function () { return true; }, function () { return false; });
   }
@@ -4317,7 +4346,9 @@ var ExamRecords = (function () {
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   var OK_BTN = '<div class="actions"><button type="button" class="btn primary" data-ok>閉じる</button></div>';
 
+  var GUIDE_ONLY = "<h2>使い方の見本です</h2><p>この画面は使い方の説明用で、記録は保存されません。記録の書き出し・読み込みは、模擬試験のページで行ってください。</p>";
   $("rec-export").addEventListener("click", function () {
+    if (GUIDE) { showModal(GUIDE_ONLY + OK_BTN); return; }
     var file = ExamRecords.pack([{ id: meta.id, title: meta.title }]);
     if (!ExamRecords.count(file)) {
       showModal("<h2>書き出す記録がありません</h2><p>この試験の受験記録は、このブラウザにまだありません。</p>" + OK_BTN);
@@ -4326,6 +4357,7 @@ var ExamRecords = (function () {
     ExamRecords.download(file, ExamRecords.fileName(meta.id));
   });
   $("rec-file").addEventListener("change", function () {
+    if (GUIDE) { this.value = ""; showModal(GUIDE_ONLY + OK_BTN); return; }
     var f = this.files[0];
     this.value = "";           // 同じファイルをもう一度選んでも反応するように
     if (!f) return;

@@ -1,7 +1,7 @@
 <section id="c5-s12">
   <div class="sh"><span class="num">12</span><h2>アクセス修飾子と継承 ── 総まとめ</h2></div>
 
-  <p>アクセス修飾子そのものは第1章 07 で扱いました。ここでは<strong>継承と組み合わさったとき</strong>、特に<strong>親と子でパッケージが違うとき</strong>に何が起きるかをまとめます。以下の例は、親 <code>lib.Parent</code> と子 <code>app.Child</code> が別のパッケージにある前提です。</p>
+  <p>アクセス修飾子そのものは1-7 で扱いました。ここでは<strong>継承と組み合わさったとき</strong>、特に<strong>親と子でパッケージが違うとき</strong>に何が起きるかをまとめます。以下の例は、親 <code>lib.Parent</code> と子 <code>app.Child</code> が別のパッケージにある前提です。</p>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>以下の説明で使う親クラス<span class="tag">前提</span></div><pre><code>package lib;
 
@@ -52,7 +52,7 @@ new Child().call();   // Parent</code></pre></div>
 
   <div class="point trap"><p><code>Child</code> の <code>priv()</code> は親の <code>priv()</code> を<span class="mk">オーバーライドしていません</span>。<code>private</code> は継承されないので、たまたま同じ名前の別メソッドです。だから親の <code>call()</code> から呼ばれるのは親の <code>priv()</code> で、多態は起きません。子の方に <code>@Override</code> を付けるとコンパイルエラーになります。</p></div>
 
-  <h3>2. 修飾子なしは、パッケージが違うと継承されない</h3>
+  <h3 data-toc="2. 修飾子なしと別パッケージ">2. 修飾子なしは、パッケージが違うと継承されない</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>別パッケージの子からは見えない<span class="tag">NG</span></div><pre><code>package app;
 import lib.Parent;
@@ -87,7 +87,7 @@ public class Child extends Parent {
 
   <div class="point trap"><p>「自分のインスタンスなら OK、別のインスタンスは NG」と覚えると、上の2か所で外します。<span class="mk">判定の基準はインスタンスではなく、参照の型</span>です。<strong>自分のクラス（またはその子孫）の型の参照を通したときだけ</strong>届きます。<code>other</code> は別のインスタンスでも <code>Child</code> 型なので OK、<code>p</code> は <code>this</code> そのものなのに <code>Parent</code> 型なので NG です。</p></div>
 
-  <h3>4. 子と同じパッケージでも、子クラスでなければ届かない</h3>
+  <h3 data-toc="4. 同じパッケージの他クラス">4. 子と同じパッケージでも、子クラスでなければ届かない</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>子と同じパッケージの、継承していないクラスから<span class="tag">最頻出</span></div><pre><code>package app;
 
@@ -126,7 +126,7 @@ public class Sub extends lib.Base {
 
   <p>コンストラクタも同じ考え方です。別パッケージの子に許されるのは、<strong>自分を作る途中で親の部分を初期化する</strong> <code>super()</code> だけです。親を単独で <code>new</code> することはできません。</p>
 
-  <h3>6. オーバーライドで広げるのは可、狭めるのは不可</h3>
+  <h3 data-toc="6. オーバーライドと公開範囲">6. オーバーライドで広げるのは可、狭めるのは不可</h3>
 
   <div class="tw"><table>
     <thead><tr><th>親の修飾子</th><th>子で書ける修飾子</th></tr></thead>
@@ -138,5 +138,5 @@ public class Sub extends lib.Base {
     </tbody>
   </table></div>
 
-  <div class="point link"><p>狭めてはいけない理由は第5章 03 のとおりです。親の型で扱ったときに呼べるはずのメソッドが、子の実体では呼べなくなってしまいます。</p></div>
+  <div class="point link"><p>狭めてはいけない理由は5-3 のとおりです。親の型で扱ったときに呼べるはずのメソッドが、子の実体では呼べなくなってしまいます。</p></div>
 </section>

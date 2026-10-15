@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>はじめての方へ（使い方） ── Java Silver SE 17 試験対策ノート</title>
+<meta name="description" content="Java Silver SE 17 試験対策ノートの使い方。教材・模擬試験・受験記録の使い方を、実際の画面を動かしながら1歩ずつ説明します。">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1A1C23;
+  --sumi-2:#3D414F;
+  --sumi-3:#6E7382;
+  --washi:#FCFBF8;
+  --washi-2:#F3F1EA;
+  --rule:#E2DED2;
+  --marker:#FFE873;
+  --marker-2:#FFD5E6;
+  --ok:#0F7B5A;
+  --ok-bg:#EAF6F1;
+  --err:#C4304A;
+  --err-bg:#FCEDEF;
+  --run:#A96A00;
+  --run-bg:#FCF3E3;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Shippori Mincho B1",serif;
+  --body:"Noto Sans JP",system-ui,sans-serif;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--washi);color:var(--sumi);font-family:var(--body);font-size:16px;line-height:1.9;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+
+/* トップ（ポータル）・使い方・このサイトについて の 3 ページで共通の見た目。
+   色とフォントは教材の 01-tokens.css を共有する（build-site.mjs が先に連結する）。 */
+body.site{line-height:1.8}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--rule);background:#fff;cursor:pointer;font:inherit;font-size:14px;font-weight:700;text-decoration:none;color:var(--sumi);flex:none}
+.btn:hover{border-color:var(--sumi-3)}
+.btn.primary{background:var(--sumi);color:var(--washi);border-color:var(--sumi)}
+.btn.primary:hover{background:var(--sumi-2)}
+.btn[disabled]{opacity:.4;cursor:default}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--sumi-3);margin-bottom:14px}
+
+/* ---- 上のバー ---- */
+.sbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;padding:10px max(16px,calc((100vw - 1100px) / 2));background:rgba(252,251,248,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.sbar-brand{font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:.03em;color:var(--sumi);text-decoration:none;margin-right:auto}
+.sbar-brand span{color:var(--sumi-2)}
+.sbar-nav{display:flex;gap:4px;flex-wrap:wrap}
+.sbar-nav a{font-size:13px;font-weight:500;color:var(--sumi-2);text-decoration:none;padding:5px 10px;border-radius:6px}
+.sbar-nav a:hover{background:var(--washi-2)}
+.sbar-nav a[aria-current]{background:var(--sumi);color:var(--washi)}
+
+/* ---- 下 ---- */
+.sfoot{max-width:1100px;margin:70px auto 0;padding:22px 16px 40px;border-top:3px solid var(--sumi);font-size:12.5px;color:var(--sumi-3);line-height:1.8}
+.sfoot p{margin:0 0 6px}
+.sfoot a{color:var(--sumi-2)}
+
+/* ---- トップ ---- */
+.pt{max-width:1100px;margin:0 auto;padding:0 16px}
+.pt-hero{padding:64px 0 34px}
+.pt-hero h1{font-family:var(--disp);font-weight:800;font-size:clamp(32px,6vw,54px);line-height:1.25;margin:0;letter-spacing:.01em}
+.pt-sub{font-family:var(--disp);font-weight:600;font-size:clamp(16px,2.4vw,20px);color:var(--sumi-2);margin:12px 0 0}
+.pt-lead{max-width:60ch;color:var(--sumi-2);font-size:15px;margin:22px 0 0}
+.pt-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px}
+.pt-card{display:flex;flex-direction:column;background:#fff;border:2px solid var(--sumi);border-radius:12px;padding:22px 22px 20px}
+.pt-k{font-family:var(--disp);font-weight:800;font-size:22px;letter-spacing:.03em;margin-bottom:6px}
+.pt-d{font-size:14px;color:var(--sumi-2);margin:0 0 14px}
+.pt-now{display:flex;flex-direction:column;gap:2px;background:var(--washi-2);border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:14px}
+.pt-lbl{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--sumi-3)}
+.pt-v a{color:var(--sumi);font-weight:500}
+.pt-v small{color:var(--sumi-3);margin-left:4px}
+.pt-no{font-family:var(--mono);color:var(--err)}
+.pt-j{display:inline-block;font-size:11.5px;font-weight:700;border-radius:4px;padding:0 6px;margin-left:8px}
+.pt-j.pass{background:var(--ok-bg);color:var(--ok)}
+.pt-j.fail{background:var(--err-bg);color:var(--err)}
+.pt-exams{list-style:none;margin:0 0 14px;padding:0;font-size:13.5px}
+.pt-exams li{display:flex;align-items:baseline;gap:10px;padding:5px 0;border-bottom:1px dashed var(--rule)}
+.pt-exams li:last-child{border-bottom:none}
+.pt-exams a{color:var(--sumi);text-decoration:none;font-weight:500}
+.pt-exams a:hover{text-decoration:underline}
+.pt-x-s{margin-left:auto;color:var(--sumi-3);font-size:12px;text-align:right}
+.pt-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.pt-flow{margin:46px 0 0}
+.pt-flow h2,.gd-more h2{font-family:var(--disp);font-weight:800;font-size:20px;margin:0 0 14px}
+.pt-flow ol{list-style:none;counter-reset:f;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.pt-flow li{counter-increment:f;position:relative;background:#fff;border:1px solid var(--rule);border-radius:10px;padding:16px 16px 14px 54px;font-size:13.5px;color:var(--sumi-2)}
+.pt-flow li::before{content:counter(f);position:absolute;left:16px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--sumi);color:var(--washi);font-family:var(--mono);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.pt-flow li b{display:block;color:var(--sumi);font-size:15px;margin-bottom:2px}
+.pt-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin:34px 0 0}
+.pt-link{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--sumi);border:1px solid var(--rule);background:#fff;border-radius:10px;padding:14px 16px}
+.pt-link:hover{border-color:var(--sumi)}
+.pt-link b{font-size:15px}
+.pt-link span{font-size:12.5px;color:var(--sumi-3)}
+.pt-link:first-child{border:2px solid var(--err)}
+.pt-link:first-child b{color:var(--err)}
+
+/* ---- このサイトについて ---- */
+.doc{max-width:760px;margin:0 auto;padding:56px 16px 0}
+.doc h1{font-family:var(--disp);font-weight:800;font-size:clamp(28px,5vw,40px);margin:0 0 26px}
+.doc h2{font-family:var(--disp);font-weight:800;font-size:19px;margin:38px 0 10px;padding-left:10px;border-left:4px solid var(--err)}
+.doc p,.doc li{font-size:15px;color:var(--sumi-2)}
+.doc ul{padding-left:1.3em;margin:0 0 14px}
+.doc li{margin-bottom:6px}
+
+/* ---- 使い方 ---- */
+.gd{max-width:1240px;margin:0 auto;padding:0 16px}
+.gd-head{padding:32px 0 14px}
+.gd-head h1{font-family:var(--disp);font-weight:800;font-size:clamp(28px,5vw,42px);margin:0}
+.gd-lead{max-width:70ch;color:var(--sumi-2);font-size:14.5px;margin:12px 0 0}
+.gd-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.gd-tabs button{font:inherit;font-size:14px;font-weight:700;color:var(--sumi-2);background:#fff;border:1px solid var(--rule);border-radius:999px;padding:6px 16px;cursor:pointer}
+.gd-tabs button:hover{border-color:var(--sumi-3)}
+.gd-tabs button[aria-selected=true]{background:var(--sumi);color:var(--washi);border-color:var(--sumi)}
+.gd-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
+.gd-steps{list-style:none;counter-reset:s;margin:0;padding:0;position:sticky;top:70px}
+.gd-steps li{counter-increment:s}
+.gd-steps button{display:flex;gap:8px;width:100%;text-align:left;font:inherit;font-size:13px;line-height:1.5;color:var(--sumi-2);background:none;border:none;border-radius:6px;padding:7px 8px;cursor:pointer}
+.gd-steps button::before{content:counter(s);flex:none;width:20px;height:20px;border-radius:50%;border:1px solid var(--rule);background:#fff;font-family:var(--mono);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.gd-steps button:hover{background:var(--washi-2)}
+.gd-steps li.done button::before{background:var(--washi-2);color:var(--sumi-3)}
+.gd-steps li.on button{background:var(--sumi);color:var(--washi)}
+.gd-steps li.on button::before{background:var(--marker);border-color:var(--marker);color:var(--sumi)}
+.gd-stage{min-width:0}
+.gd-frame{position:relative;overflow:hidden;max-width:100%;border:2px solid var(--sumi);border-radius:12px;background:var(--washi)}
+.gd-frame iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:var(--washi)}
+.gd-spot{position:absolute;pointer-events:none;border:3px solid var(--err);border-radius:8px;box-shadow:0 0 0 9999px rgba(26,28,35,.38);transition:left .25s,top .25s,width .25s,height .25s}
+.gd-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--sumi-3);background:var(--washi)}
+.gd-loading[hidden]{display:none}
+.gd-cap{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.gd-cap-n{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--err);letter-spacing:.06em}
+.gd-cap h2{font-family:var(--disp);font-weight:800;font-size:20px;margin:2px 0 6px}
+.gd-cap p{font-size:14.5px;color:var(--sumi-2);margin:0 0 10px;min-height:3.4em}
+.gd-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.gd-open{margin-left:auto;font-size:12.5px;color:var(--sumi-3)}
+.gd-more{margin:40px 0 0;max-width:800px}
+.gd-more li{font-size:14px;color:var(--sumi-2);margin-bottom:8px}
+
+@media (max-width:860px){
+  .sbar{padding:8px 12px}
+  .sbar-brand{font-size:14px;width:100%}
+  .sbar-nav a{padding:4px 8px}
+  .pt-hero{padding:36px 0 24px}
+  .gd-head{padding:28px 0 12px}
+  .gd-body{grid-template-columns:minmax(0,1fr)}
+  .gd-steps{position:static;order:2;display:flex;flex-wrap:wrap;gap:4px}
+  .gd-steps li{flex:none}
+  .gd-steps button{padding:5px 8px;font-size:12px}
+  .gd-open{margin-left:0;width:100%}
+}
+</style>
+</head>
+<body class="site">
+
+<header class="sbar">
+  <a class="sbar-brand" href="../">Java Silver SE 17 <span>試験対策ノート</span></a>
+  <nav class="sbar-nav" aria-label="サイト内のページ">
+    <a href="../note/">教材</a>
+    <a href="../exams/">模擬試験</a>
+    <a href="../guide/" aria-current="page">使い方</a>
+    <a href="../about/">このサイトについて</a>
+  </nav>
+</header>
+
+
+<main class="gd">
+  <div class="gd-head">
+    <div class="eyebrow">HOW TO USE</div>
+    <h1>はじめての方へ</h1>
+    <p class="gd-lead">このサイトの使い方を、<b>実際の画面を動かしながら</b>1歩ずつ説明します。右の画面は本物のページです（説明用に開いているので、ここで操作しても受験記録は保存されません）。「次へ」か → キーで進みます。</p>
+  </div>
+
+  <div class="gd-tabs" role="tablist" id="gd-tabs"></div>
+
+  <div class="gd-body">
+    <ol class="gd-steps" id="gd-steps" aria-label="手順"></ol>
+
+    <div class="gd-stage">
+      <div class="gd-cap" aria-live="polite">
+        <div class="gd-cap-n" id="gd-n"></div>
+        <h2 id="gd-t"></h2>
+        <p id="gd-d"></p>
+        <div class="gd-ctl">
+          <button type="button" class="btn" id="gd-prev">← 戻る</button>
+          <button type="button" class="btn primary" id="gd-next">次へ →</button>
+          <a class="gd-open" id="gd-open" href="#" target="_blank" rel="noopener">この画面を別のタブで開く ↗</a>
+        </div>
+      </div>
+      <div class="gd-frame" id="gd-frame">
+        <iframe id="gd-view" title="説明している画面" tabindex="-1"></iframe>
+        <div class="gd-spot" id="gd-spot" hidden></div>
+        <div class="gd-loading" id="gd-loading">画面を読み込んでいます…</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="gd-more">
+    <h2>もっと詳しく</h2>
+    <ul>
+      <li><b>キーボード</b> ── 教材では <code>/</code> で検索窓へ、<code>Esc</code> で検索を解除。模擬試験では <code>←</code> <code>→</code> で前後の問題、<code>A</code>〜<code>H</code> で選択、<code>M</code> で見直しマーク。</li>
+      <li><b>スマホ</b> ── 教材の目次は左上の「目次」から、模擬試験の問題一覧は「問題一覧」から開きます。画面の上のバーに、いま読んでいる章と論点が出ます。</li>
+      <li><b>記録の保存先</b> ── 受験記録・メモ・続きの位置は、このブラウザの中だけに保存されます（<a href="../about/">このサイトについて</a>）。</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="sfoot">
+  <p>Java Silver SE 17 試験対策ノートは、Oracle 認定資格 Java Programmer, Silver SE 17（1Z0-825）の学習を目的とした非公式のサイトです。Oracle 社とは関係ありません。Oracle と Java は、Oracle Corporation およびその関連会社の登録商標です。</p>
+  <p><a href="../about/">このサイトについて</a> ・ <a href="https://github.com/shoushinei/java-silver-se17-note">GitHub</a> ・ <a href="https://github.com/shoushinei/java-silver-se17-note/issues">誤りを報告する</a></p>
+</footer>
+
+
+<script>
+window.GuideConf = {"exam":"05"};
+/* はじめての方へ（使い方）のページの動き。
+
+   右の枠（iframe）に本物のページを「?guide」付きで開き、説明している部品に枠（.gd-spot）を重ねる。
+   ?guide を付けたページは、受験記録などを localStorage に書かず、見本の値を出す（exam.js・03-scrollspy.js・トップページ）。
+
+   手順（step）
+     url  開くページ。省略すると前の手順と同じページのまま続ける
+     act  そのページで行う操作（ボタンを押す・検索する など）。戻るときは、ページを開き直して最初から操作をやり直す
+     sel  枠を重ねる要素（CSS セレクタか、要素を返す関数）。m に書いたものは、狭い画面（スマホの表示）のときだけ使う
+   file:// で開いたときなど、枠の中のページを触れない環境では、操作と枠を省いて説明だけを出す。 */
+(function () {
+  var EXAM = (window.GuideConf && window.GuideConf.exam) || "05";
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------------- 枠の中のページへの操作 ---------------- */
+
+  function q(c, sel) { return typeof sel === "function" ? sel(c) : c.doc.querySelector(sel); }
+  function click(sel) { return function (c) { var el = q(c, sel); if (el) el.click(); }; }
+  function jump(id) {
+    return function (c) {
+      var el = c.doc.getElementById(id);
+      if (el) c.win.scrollTo({ top: el.getBoundingClientRect().top + c.win.scrollY - 70, behavior: "instant" });
+      // 目次の現在地は scroll イベントの次のフレームで動くので、待たずにここで合わせておく
+      if (c.win.NoteApp && c.win.NoteApp.spy) c.win.NoteApp.spy();
+    };
+  }
+  function drawer(open) {      // 教材の目次。スマホの表示のときだけ開け閉めする
+    return function (c) {
+      if (!c.mobile) return;
+      var nav = c.doc.getElementById("toc-nav");
+      if (nav && nav.classList.contains("open") !== open) c.doc.getElementById(open ? "mnav-open" : "mnav-close").click();
+    };
+  }
+  function search(word) {
+    return function (c) {
+      var s = c.win.NoteApp && c.win.NoteApp.search;
+      if (!s) return;
+      s.input.value = word;
+      s.apply(word);
+    };
+  }
+  function all() {
+    var fns = Array.prototype.slice.call(arguments);
+    return function (c) { fns.forEach(function (f) { f(c); }); };
+  }
+  // 模擬試験：問 1 は前の手順で選んであるので、残りに答えを入れて提出する（4 問に 1 問はわざと間違える）
+  function fillAndSubmit(c) {
+    Array.prototype.forEach.call(c.doc.querySelectorAll("#qlist .q"), function (art) {
+      var no = +art.dataset.no;
+      if (no === 1) return;
+      var ans = art.dataset.answer.split(",");
+      var keys = Array.prototype.map.call(art.querySelectorAll(".choice"), function (x) { return x.dataset.key; });
+      var pick = no % 4 === 0 ? [keys.filter(function (k) { return ans.indexOf(k) < 0; })[0]] : ans;
+      pick.forEach(function (k) { var ch = art.querySelector('.choice[data-key="' + k + '"]'); if (ch) ch.click(); });
+    });
+    c.doc.getElementById("submit").click();
+    var ok = c.doc.querySelector("#modal [data-submit]");
+    if (ok) ok.click();
+  }
+  function chooseRight(c) {
+    var art = c.doc.getElementById("q1");
+    if (!art) return;
+    var ch = art.querySelector('.choice[data-key="' + art.dataset.answer.split(",")[0] + '"]');
+    if (ch && !ch.classList.contains("is-sel")) ch.click();
+  }
+  function indexEntry(word) {
+    return function (c) {
+      return Array.prototype.filter.call(c.doc.querySelectorAll("#idx .ix-e"), function (e) {
+        return e.querySelector(".ix-t").textContent === word;
+      })[0] || null;
+    };
+  }
+
+  /* ---------------- 説明の中身 ---------------- */
+
+  var EXAM_URL = "../exams/" + EXAM + "/?guide";
+  var TOURS = [
+    { id: "all", name: "全体の流れ", steps: [
+      { url: "../?guide", sel: ".pt-hero", t: "トップページ",
+        d: "サイトの入口です。ここから「教材」と「模擬試験」に分かれます。上のメニューからも、いつでも行き来できます。" },
+      { sel: "#card-note", t: "教材で学ぶ",
+        d: "試験範囲をまとめた教材です。前に読んだところが「続きから」に出るので、そこからすぐ再開できます。" },
+      { sel: "#card-exam", t: "模擬試験を解く",
+        d: "本番と同じ 90 分・60 問の模擬試験です。いちばん最近の結果と、試験ごとの受験回数・最高点が出ます。" },
+      { sel: "#pt-flow", t: "おすすめの進め方",
+        d: "教材を読む → 模擬試験を解く → 間違えた論点を教材で読み直す、の繰り返しで仕上げます。" },
+      { sel: ".pt-links", t: "使い方と注意事項",
+        d: "このページ（使い方）・注意事項・GitHub はここから開けます。誤りを見つけたら GitHub の Issues で教えてください。" },
+    ] },
+    { id: "note", name: "教材", steps: [
+      { url: "../note/?guide", act: drawer(true), sel: "#toc-nav", t: "目次",
+        d: "左が目次です。章 → 節（2-3 型変換）→ 小さい論点（2-3-4 …）の順に並び、読んでいる節の論点だけが開きます。スマホでは左上の「目次」から開きます。" },
+      { act: all(drawer(false), jump("p2-3-4")), sel: "#p2-3-4", t: "論点番号",
+        d: "見出しの左の 2-3-4 が論点番号です。「第2章・3節・4つ目の論点」という意味で、模擬試験の解説や索引も、この番号で教材を指します。" },
+      { act: drawer(true), sel: ".toc-pts.open", t: "目次も一緒に動く",
+        d: "本文を読み進めると、目次の現在地（黒い帯）も一緒に動きます。目次の論点を押せば、その論点へ飛べます。" },
+      { act: all(drawer(false), function (c) {
+          var el = c.doc.querySelector('#c2-s03 .code[data-v="err"]');
+          if (el) c.win.scrollTo({ top: el.getBoundingClientRect().top + c.win.scrollY - 120, behavior: "instant" });
+        }), sel: '#c2-s03 .code[data-v="err"]', t: "コード例は3色",
+        d: "コード例は、緑＝コンパイルも実行も通る、赤＝コンパイルエラー、橙＝実行時に例外、に色分けしてあります。試験は実質この三択の判定です。" },
+      { act: all(drawer(true), search("フォールスルー")), sel: ".search", t: "検索",
+        d: "目次の上の検索窓に語句を入れると、その語句がある節と論点だけが目次に残り、それぞれの件数が出ます（/ キーで検索窓へ）。" },
+      { act: drawer(false), sel: "mark.hit", t: "本文の該当箇所",
+        d: "本文の該当箇所には黄色の印が付きます。検索窓で Enter を押すと最初の箇所へ飛び、Esc で検索を解除します。" },
+      { act: all(search(""), jump("idx")), sel: "#idx .ix-jump", t: "索引",
+        d: "教材の最後には索引があります。記号・数字・A〜Z・50音の順に並び、上の文字を押すとその見出しへ飛べます。" },
+      { sel: indexEntry("ArrayList"), t: "索引の番号から論点へ",
+        d: "語句の右の番号が論点番号です。押すとその論点へ飛び、見出しが黄色く光ります。太字の番号は、見出しにその語句がある論点です。" },
+    ] },
+    { id: "exam", name: "模擬試験", steps: [
+      { url: EXAM_URL, sel: ".facts", t: "試験の概要",
+        d: "どの試験も 60 問・90 分・合格ラインの目安 65% です。下に、時間を計るテストモードと、問題と解説を読む振り返りモードがあります。" },
+      { sel: ".modes", t: "2つのモード",
+        d: "本番の練習は「テストを始める」から。時間を気にせず問題と解説を読みたいときは「問題と解説を読む」を使います。" },
+      { act: click("#start"), sel: "#timer", t: "残り時間",
+        d: "テストが始まると、上のバーに残り時間が出ます。0 になると自動で提出されます。用事ができたら「中断」で時計を止められます。" },
+      { act: chooseRight, sel: "#q1 .choices", t: "答えを選ぶ",
+        d: "選択肢を押して答えを選びます。「2つ選択」の問題は2つ選びます。キーボードの A〜H でも選べます。" },
+      { act: function (c) { var f = c.doc.querySelector("#q1 .flag"); if (f && f.getAttribute("aria-pressed") !== "true") f.click(); },
+        sel: "#q1 .flag", t: "見直しマーク",
+        d: "自信がない問題には「見直し」を押してマークを付けます。あとで問題一覧から、マークした問題だけを見直せます。" },
+      { act: function (c) { if (c.mobile) c.doc.getElementById("navopen").click(); }, sel: ".navpanel", t: "問題一覧",
+        d: "問題番号の一覧です。回答済み・未回答・見直しマークが色で分かり、押すとその問題へ飛べます。未回答やマーク付きだけに絞り込めます。スマホでは「問題一覧」から開きます。" },
+      { act: function (c) { if (c.mobile) c.doc.getElementById("navclose").click(); }, sel: "#submit", t: "提出",
+        d: "解き終わったら「提出」を押します。未回答が残っていても、その数を確かめてから提出できます。" },
+      { act: fillAndSubmit, sel: "#summary .score", t: "採点結果",
+        d: "提出すると、すぐに得点と合否が出ます（ここでは説明のため、自動で答えを入れて提出しました）。" },
+      { sel: "#r-bars", t: "章ごとの正答率",
+        d: "どの章で点を落としたかが分かります。章名を押すと、教材のその章へ飛びます。" },
+      { act: click("#review-wrong"), sel: ".q.is-cur .refs", t: "解説から教材へ",
+        d: "間違えた問題を1問ずつ見直せます。解説の下の「教材で確認する」から、その問題の論点（5-10 など）を教材で読み直せます。" },
+      { sel: ".q.is-cur .memo", t: "振り返りメモ",
+        d: "なぜ間違えたか、次に気をつけることをメモできます。メモはこの回の受験記録に保存され、あとで読み返せます。" },
+    ] },
+    { id: "records", name: "受験記録", steps: [
+      { url: EXAM_URL, sel: "#history", t: "受験記録",
+        d: "提出した回は受験記録に残ります（ここに出ているのは見本の2回分です）。得点・合否・所要時間・メモの数が並び、いちばん良い回に「最高」が付きます。" },
+      { sel: "#history [data-open]", t: "結果を開く",
+        d: "「結果を開く」で、その回の ○× と解説・振り返りメモを、いつでも見直せます。" },
+      { sel: ".hist-tools", t: "別のパソコンへ移す",
+        d: "記録はこのブラウザにだけ保存されます。別のパソコンの記録は、そちらで「記録を書き出す」（JSON ファイル）→ こちらで「記録を読み込む」と、今の記録に追加できます。" },
+      { act: click("#manual-open"), sel: "#dialog", t: "結果を手で入力する",
+        d: "紙やスクリーンショットに ○× だけが残っている回は、番号を押して ○・×・未回答を付ければ記録にできます。" },
+      { url: "../?guide", sel: "#card-exam", t: "トップにも出る",
+        d: "いちばん最近の結果は、トップページの「前回の結果」にも出ます。押すとその回の結果が開きます。" },
+    ] },
+  ];
+
+  /* ---------------- 枠（iframe）の大きさ ---------------- */
+
+  var view = $("gd-view"), frame = $("gd-frame"), spot = $("gd-spot"), loading = $("gd-loading");
+  var W = 1200, H = 760, scale = 1, mobile = false;
+
+  function layout() {
+    var w = frame.parentNode.clientWidth;
+    var m = w < 620;
+    W = m ? 390 : 1200;
+    H = m ? 600 : 760;
+    scale = w / W;
+    if (!m) {        // PC では、上のバーと説明の下に、枠がまるごと収まる大きさにする
+      var room = window.innerHeight - 64 - document.querySelector(".gd-cap").offsetHeight - 24;
+      scale = Math.max(0.45, Math.min(scale, room / H));
+    }
+    frame.style.width = Math.round(W * scale) + "px";
+    view.style.width = W + "px";
+    view.style.height = H + "px";
+    view.style.transform = "scale(" + scale + ")";
+    frame.style.height = Math.round(H * scale) + "px";
+    var changed = m !== mobile;
+    mobile = m;
+    return changed;
+  }
+
+  function ctx() {
+    try {
+      var d = view.contentDocument;
+      if (!d || !d.body) return null;
+      return { doc: d, win: view.contentWindow, mobile: mobile };
+    } catch (e) { return null; }    // file:// など、中のページに触れない環境
+  }
+
+  /* ---------------- 枠を重ねる ---------------- */
+
+  var target = null;
+
+  function reveal(el, c) {
+    // 目次や問題一覧のように、それ自体がスクロールする箱の中にあれば、先に箱を動かす
+    for (var p = el.parentElement; p && p !== c.doc.body; p = p.parentElement) {
+      var st = c.win.getComputedStyle(p);
+      if (/(auto|scroll)/.test(st.overflowY) && p.scrollHeight > p.clientHeight + 4) {
+        var pr = p.getBoundingClientRect(), er = el.getBoundingClientRect();
+        if (er.top < pr.top || er.bottom > pr.bottom) p.scrollTop += er.top - pr.top - Math.max(0, (pr.height - er.height) / 3);
+      }
+    }
+    var r = el.getBoundingClientRect();
+    if (r.top < 64 || r.bottom > H - 16) {
+      c.win.scrollTo({ top: Math.max(0, c.win.scrollY + r.top - Math.max(64, (H - r.height) / 2)), behavior: "instant" });
+    }
+  }
+
+  function place() {
+    if (!target || !target.isConnected) { spot.hidden = true; return; }
+    var r = target.getBoundingClientRect();
+    var x1 = Math.max(0, r.left - 6), y1 = Math.max(0, r.top - 6);
+    var x2 = Math.min(W, r.right + 6), y2 = Math.min(H, r.bottom + 6);
+    if (x2 <= x1 || y2 <= y1) { spot.hidden = true; return; }
+    spot.hidden = false;
+    spot.style.left = x1 * scale + "px";
+    spot.style.top = y1 * scale + "px";
+    spot.style.width = (x2 - x1) * scale + "px";
+    spot.style.height = (y2 - y1) * scale + "px";
+  }
+  var placeQueued = false;
+  function queuePlace() {
+    if (placeQueued) return;
+    placeQueued = true;
+    requestAnimationFrame(function () { placeQueued = false; place(); });
+  }
+
+  function point(s) {
+    var c = ctx();
+    target = null;
+    if (!c) { spot.hidden = true; return; }
+    var el = null;
+    try { el = q(c, (mobile && s.m && s.m.sel) || s.sel); } catch (e) { el = null; }
+    if (!el) { spot.hidden = true; return; }
+    target = el;
+    reveal(el, c);
+    place();
+    // スマホの目次や問題一覧は、引き出しが開くアニメーションのあいだ位置が動く。終わるころに測り直す
+    [120, 450, 900].forEach(function (ms) { setTimeout(function () { if (target === el) place(); }, ms); });
+  }
+
+  /* ---------------- 手順を進める ---------------- */
+
+  var tour = 0, step = -1, scene = -1, busy = false, nonce = 0;
+
+  function steps() { return TOURS[tour].steps; }
+  function sceneOf(k) { while (k > 0 && !steps()[k].url) k--; return k; }
+  function wait(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+
+  function load(url) {
+    return new Promise(function (res) {
+      loading.hidden = false;
+      spot.hidden = true;
+      view.onload = function () {
+        loading.hidden = true;
+        var c = ctx();
+        if (c) {
+          c.win.addEventListener("scroll", queuePlace, true);
+          c.win.addEventListener("resize", queuePlace);
+          c.win.addEventListener("transitionend", function () { place(); }, true);   // 引き出しが開き終わったとき
+        }
+        wait(250).then(res);
+      };
+      view.src = url + "&n=" + (++nonce);
+    });
+  }
+
+  function act(k) {
+    var s = steps()[k], c = ctx();
+    if (!s.act || !c) return Promise.resolve();
+    try { s.act(c); } catch (e) { /* 画面が想定と違っても、説明は続ける */ }
+    return wait(320);
+  }
+  function chain(from, to) {
+    var p = Promise.resolve();
+    for (var k = from; k <= to; k++) (function (k) { p = p.then(function () { return act(k); }); })(k);
+    return p;
+  }
+
+  function go(k, force) {
+    var list = steps();
+    k = Math.max(0, Math.min(list.length - 1, k));
+    if (busy || (k === step && !force)) return;
+    busy = true;
+    var sc = sceneOf(k);
+    var p;
+    if (force || sc !== scene || k < step) {
+      var url = list[sc].url;
+      p = load(url).then(function () { return chain(sc, k); });
+    } else {
+      p = chain(step + 1, k);
+    }
+    scene = sc;
+    step = k;
+    paintCaption();
+    p.then(function () { point(list[k]); busy = false; paintCaption(); }, function () { busy = false; });
+  }
+
+  // 説明と画面がそろって見える位置まで、このページを送る（ボタンを押したときだけ）
+  function toStage() {
+    var st = document.querySelector(".gd-stage");
+    var top = st.getBoundingClientRect().top;
+    if (top > 80 || top < 0) window.scrollTo({ top: Math.max(0, top + window.scrollY - 64), behavior: "smooth" });
+  }
+
+  function paintCaption() {
+    var list = steps(), s = list[step];
+    $("gd-n").textContent = TOURS[tour].name + "　" + (step + 1) + " / " + list.length;
+    $("gd-t").textContent = s.t;
+    $("gd-d").textContent = s.d;
+    $("gd-prev").disabled = step === 0 || busy;
+    $("gd-next").disabled = busy;
+    var next = tour < TOURS.length - 1 ? TOURS[tour + 1].name : null;
+    $("gd-next").textContent = step < list.length - 1 ? "次へ →" : next ? "「" + next + "」へ →" : "最初に戻る";
+    $("gd-open").href = list[sceneOf(step)].url.replace(/\?guide$/, "");
+    Array.prototype.forEach.call($("gd-steps").children, function (li, i) {
+      li.classList.toggle("on", i === step);
+      li.classList.toggle("done", i < step);
+    });
+    layout();          // 説明の長さで、枠に使える高さが変わる
+    place();
+  }
+
+  function paintTour() {
+    Array.prototype.forEach.call($("gd-tabs").children, function (b, i) { b.setAttribute("aria-selected", String(i === tour)); });
+    $("gd-steps").innerHTML = "";
+    steps().forEach(function (s, i) {
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = s.t;
+      b.addEventListener("click", function () { toStage(); go(i); });
+      li.appendChild(b);
+      $("gd-steps").appendChild(li);
+    });
+  }
+
+  function openTour(i) {
+    if (busy) return;
+    tour = i;
+    step = -1;
+    scene = -1;
+    try { history.replaceState(null, "", "#" + TOURS[i].id); } catch (e) { /* 表示には影響しない */ }
+    paintTour();
+    go(0, true);
+  }
+
+  TOURS.forEach(function (t, i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.textContent = t.name;
+    b.addEventListener("click", function () { openTour(i); });
+    $("gd-tabs").appendChild(b);
+  });
+
+  $("gd-prev").addEventListener("click", function () { toStage(); go(step - 1); });
+  $("gd-next").addEventListener("click", function () {
+    toStage();
+    if (step < steps().length - 1) go(step + 1);
+    else openTour(tour < TOURS.length - 1 ? tour + 1 : 0);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.closest && e.target.closest("input, textarea")) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); $("gd-next").click(); }
+    if (e.key === "ArrowLeft" && step > 0) { e.preventDefault(); go(step - 1); }
+  });
+  window.addEventListener("resize", function () {
+    if (layout() && step >= 0 && !busy) go(step, true);   // PC とスマホの表示が切り替わったら、開き直す
+    else queuePlace();
+  });
+
+  function fromHash() {
+    var start = 0;
+    TOURS.forEach(function (t, i) { if (location.hash === "#" + t.id) start = i; });
+    return start;
+  }
+  window.addEventListener("hashchange", function () { if (fromHash() !== tour) openTour(fromHash()); });
+
+  layout();
+  openTour(fromHash());
+})();
+</script>
+</body>
+</html>

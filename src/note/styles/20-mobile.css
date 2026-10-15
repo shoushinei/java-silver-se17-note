@@ -140,7 +140,6 @@
      スクロールの連鎖を止めている。 */
   .mscrim { touch-action: none; }
 
-  .toc-brand { font-size: 14px; padding-right: 40px; }
   .toc-sub { margin-bottom: 16px; }
   .toc-close {
     display: block;
@@ -195,9 +194,13 @@
     border-radius: 2px;
     background: var(--err);
   }
-  .toc-ch:not(.open) > a { display: none; }
+  .toc-ch:not(.open) > a,
+  .toc-ch:not(.open) > .toc-pts { display: none; }
   /* 検索中は畳んだ章の中の結果も見えないと困るので、すべて開く */
   .toc.searching .toc-ch > a { display: flex; }
+  .toc.searching .toc-ch > .toc-pts { display: block; }
+  .toc .toc-pts { margin-left: 22px; }
+  .toc .toc-pts a { font-size: 13px; padding: 9px 8px; }
 
   .toc a {
     font-size: 14px;
@@ -205,8 +208,9 @@
     border-radius: 6px;
   }
   .toc a .cnt { margin-left: auto; }
-  .toc a.toc-exam { padding-left: 10px; }
-  .toc-ch > a:last-child { margin-bottom: 8px; }
+  .toc-out a { padding: 9px 4px; font-size: 13px; }
+  .toc a.toc-brand { padding: 0 40px 0 0; font-size: 14px; }
+  .toc-ch > :last-child { margin-bottom: 8px; }
 
   /* ---------------- 本文 ---------------- */
   .hero { padding: 30px 0 28px; }
@@ -264,13 +268,9 @@
   li code:not(pre code),
   summary code:not(pre code) { white-space: normal; overflow-wrap: anywhere; }
 
-  .qa { padding-left: 16px; }
-  .q > summary { padding: 13px 14px; }
   .point { padding: 15px 14px; }
   .legend { gap: 8px; }
   .lg { padding: 7px 11px; font-size: 12px; }
-  .chip { padding: 8px 13px; font-size: 13px; margin: 0 6px 8px 0; }
-  .ck li { padding: 13px 12px; }
 }
 
 /* 極端に狭い端末 */

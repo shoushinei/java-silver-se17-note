@@ -1,4 +1,4 @@
-/* クラスの親子関係の木（第2章 14・第5章 14・第6章 01）。クラス名は ht- で始める（ほかと衝突させない）。
+/* クラスの親子関係の木（2-14・5-14・6-1）。クラス名は ht- で始める（ほかと衝突させない）。
    罫線文字（├ └ │）は Web フォントに含まれておらず、環境によって幅がずれて列が崩れるので、
    線は CSS の枠線で描く。説明は名前の後ろに並べ、狭い画面では折り返す。 */
 .code .ht{list-style:none;margin:0;padding:14px 16px 12px;font-size:13px;line-height:1.55;overflow-x:auto;-webkit-overflow-scrolling:touch}

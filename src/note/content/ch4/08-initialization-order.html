@@ -66,7 +66,7 @@ System.out.println(Sample.num);       // 100</code></pre></div>
 
   <div class="point trap"><p>この2問は組で出ます。判定手順は次の2段階です。<br>① <span class="mk">new があるか</span> ── 無ければインスタンス側は一切動かない<br>② <span class="mk">初期化ブロック → コンストラクタ本体</span> ── 位置に関係なくこの順<br>選択肢に「コンパイルエラー」が並びますが、どちらも文法上は正しいコードです。</p></div>
 
-  <h3>罠③ this(...) で始まるコンストラクタでは動かない</h3>
+  <h3 data-toc="罠③ this(...) で始まる場合">罠③ this(...) で始まるコンストラクタでは動かない</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>初期化ブロックは1回の new で1回だけ<span class="tag">要注意</span></div><pre><code>class Box {
     { System.out.print("I "); }       // インスタンス初期化ブロック
@@ -83,5 +83,5 @@ new Box();
 
 // 出力: I B10 A    ← I は1回だけ。Box(int) の中で、その本体より先に動く</code></pre></div>
 
-  <div class="point trap"><p>初期化ブロックとインスタンス変数の初期化がコピーされるのは、<span class="mk">super(...)（書かなければ暗黙の super()）を呼ぶコンストラクタだけ</span>です。<code>this(...)</code> で始まるコンストラクタにはコピーされません。もしコピーされたら、1回の new で同じ初期化が2回動いてしまうからです。<br>流れは「Box() → this(10) で Box(int) へ → 暗黙の super() → 初期化ブロック → Box(int) の本体 → Box() の残り」です。継承と組み合わせた順番は<a href="#c5-s02">第5章 02</a>で確認できます。</p></div>
+  <div class="point trap"><p>初期化ブロックとインスタンス変数の初期化がコピーされるのは、<span class="mk">super(...)（書かなければ暗黙の super()）を呼ぶコンストラクタだけ</span>です。<code>this(...)</code> で始まるコンストラクタにはコピーされません。もしコピーされたら、1回の new で同じ初期化が2回動いてしまうからです。<br>流れは「Box() → this(10) で Box(int) へ → 暗黙の super() → 初期化ブロック → Box(int) の本体 → Box() の残り」です。継承と組み合わせた順番は<a href="#c5-s02">5-2</a>で確認できます。</p></div>
 </section>

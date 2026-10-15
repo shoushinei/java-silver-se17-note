@@ -34,9 +34,9 @@ int j = i;           // ④ アンボクシング ← ドットは無いが裏�
 
 switch (s) { case "a": break; }   // ⑤ switch ← ドットは無いが裏で s.hashCode() が呼ばれる</code></pre></div>
 
-  <div class="point trap"><p>④と⑤は<strong>ドットが無いのに例外になる</strong>ものです。どちらも<span class="mk">裏でメソッドが呼ばれている</span>のが理由で、④は<span class="mk">ラッパー型から基本データ型への代入</span>（第3節のボクシング）、⑤は switch が分岐のために <code>hashCode()</code> などを呼ぶためです（<a href="#sw-null">第3章 08</a>）。<br>逆に <code>System.out.println(s)</code> が落ちないのは、println が<strong>中で null を確かめてから</strong>文字列にしているからです。</p></div>
+  <div class="point trap"><p>④と⑤は<strong>ドットが無いのに例外になる</strong>ものです。どちらも<span class="mk">裏でメソッドが呼ばれている</span>のが理由で、④は<span class="mk">ラッパー型から基本データ型への代入</span>（第3節のボクシング）、⑤は switch が分岐のために <code>hashCode()</code> などを呼ぶためです（<a href="#sw-null">3-8</a>）。<br>逆に <code>System.out.println(s)</code> が落ちないのは、println が<strong>中で null を確かめてから</strong>文字列にしているからです。</p></div>
 
-  <h3>「配列そのもの」と「配列の中身」を区別する</h3>
+  <h3 data-toc="配列そのものと配列の中身">「配列そのもの」と「配列の中身」を区別する</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>length が動くかどうかで見分ける<span class="tag">最重要</span></div><pre><code>String[] a = new String[3];    // 配列はある。中身が null
 a.length;          // 3        ← OK

@@ -28,7 +28,7 @@
 
   <p>ソースの上の数字は、左端から何文字目か（0 から数える）の目盛りです。「できる文字列」の箱の数がそのまま <code>length()</code>、箱の下の数字は <code>charAt</code> で使う位置です。</p>
 
-  <h3>基本形 ── 開始の """ の直後の改行は入らない</h3>
+  <h3 data-toc="基本形">基本形 ── 開始の """ の直後の改行は入らない</h3>
 
 <div class="ws">
   <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<span class="dl">&quot;&quot;&quot;;</span></div></div></div>
@@ -39,14 +39,14 @@
 
   <p>中身は <code>Hello</code> の行と <code>World</code> の行の2行です。改行（↵）が入るのは <code>Hello</code> の行末だけで、開始の <code>"""</code> の直後の改行は文字列に<strong>入りません</strong>。閉じる <code>"""</code> が <code>World</code> と同じ行にあるので、末尾にも改行は付きません。<span class="mk">5 + 1 + 5 = 11 文字</span>です。</p>
 
-  <h3>ルール1 ── 開始の """ の後は改行が必須</h3>
+  <h3 data-toc="ルール1 開始の &quot;&quot;&quot; の後は改行">ルール1 ── 開始の """ の後は改行が必須</h3>
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ行に文字を書けない<span class="tag">NG</span></div><pre><code>String s = """Hello
     """;
 // error: illegal text block open delimiter sequence, missing line terminator</code></pre></div>
 
   <p>閉じる <code>"""</code> は中身と同じ行に置けます。<span class="mk">改行が必須なのは開始側だけ</span>です。</p>
 
-  <h3>ルール2 ── 字下げの基準は「一番浅い行」</h3>
+  <h3 data-toc="ルール2 字下げの基準">ルール2 ── 字下げの基準は「一番浅い行」</h3>
 
 <div class="ws">
   <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:6"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="sp"> </i><i class="sp"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="sp"> </i><i class="sp"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
@@ -90,7 +90,7 @@
 
   <p>真ん中の行は空白2文字だけの行です。こうした行は<strong>基準の計算に入らず</strong>（入れば基準が2になってしまう）、中身は空になって改行1文字だけが残ります。</p>
 
-  <h3>ルール3 ── 末尾の改行は、閉じる """ の場所で決まる</h3>
+  <h3 data-toc="ルール3 末尾の改行">ルール3 ── 末尾の改行は、閉じる """ の場所で決まる</h3>
 
 <div class="ws">
   <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
@@ -103,7 +103,7 @@
 
   <div class="point trap"><p>末尾に改行がある文字列を <code>println</code> すると、println 自身の改行と合わせて<span class="mk">最後に空行が1つ見えます</span>。「何行表示されるか」は、文字列の中の <code>\n</code> の数 ＋ 1 で数えます。</p></div>
 
-  <h3>ルール4 ── 行末の空白は消える。残したいときは \s</h3>
+  <h3 data-toc="ルール4 行末の空白と s">ルール4 ── 行末の空白は消える。残したいときは \s</h3>
 
 <div class="ws">
   <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>A<i class="cut tr"> </i><i class="cut tr"> </i><i class="cut tr"> </i><b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>B<i class="sp"> </i><i class="sp"> </i><em class="esc">\s</em><b class="nl">↵</b></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><span class="dl">&quot;&quot;&quot;;</span></div></div></div>
@@ -114,7 +114,7 @@
 
   <p><code>A</code> の後ろの空白3文字は<strong>行末の空白</strong>なので消えます。<code>B</code> の行は末尾が <code>\s</code>（空白ではなく2文字の記号）なので、その手前の空白2文字は行末の空白ではなくなり、<strong>残ります</strong>。最後に <code>\s</code> が空白1文字になり、<code>B</code> の後ろには空白が3文字並びます。</p>
 
-  <h3>ルール5 ── 行末の \ で、改行を消す</h3>
+  <h3 data-toc="ルール5 行末の  で改行を消す">ルール5 ── 行末の \ で、改行を消す</h3>
 
 <div class="ws">
   <div class="ws-sec"><div class="ws-lb">ソース</div><div class="ws-src"><div class="ws-row ruler" aria-hidden="true">01234567890123</div><div class="ws-row open">String s = &quot;&quot;&quot;</div><div class="ws-grid" style="--k:4"><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>Hello<i class="sp"> </i><em class="esc">\</em></div><div class="ws-row"><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i><i class="cut"> </i>World<span class="dl">&quot;&quot;&quot;;</span></div></div></div>
@@ -125,7 +125,7 @@
 
   <p>行末の <code>\</code> は「ここで改行しない」という意味で、次の行とつながります。<code>\</code> の手前の空白は行末の空白ではないので残ります。<code>World</code> の行の字下げは、ルール2 ですでに消えているので入りません。</p>
 
-  <h3>エスケープシーケンス ── 2文字で書いて、1文字になる</h3>
+  <h3 data-toc="エスケープシーケンス">エスケープシーケンス ── 2文字で書いて、1文字になる</h3>
 
   <p><code>\</code> で始まる書き方は、普通の文字列リテラル（<code>"..."</code>）でもテキストブロックでも使えます。ソースでは2文字ですが、<strong>文字列の中では1文字</strong>で、<code>length()</code> もそう数えます。</p>
 

@@ -53,9 +53,9 @@
     </tbody>
   </table></div>
 
-  <div class="point trap"><p><code>Iterable</code> は <code>java.lang</code> パッケージなので <strong>import なしで使えます</strong>。<code>Collection</code> と <code>List</code> は <code>java.util</code>、<code>Path</code> は <code>java.nio.file</code> なので import が必要です。import が無いと <code>cannot find symbol</code> のコンパイルエラーになります（第1章 06）。</p></div>
+  <div class="point trap"><p><code>Iterable</code> は <code>java.lang</code> パッケージなので <strong>import なしで使えます</strong>。<code>Collection</code> と <code>List</code> は <code>java.util</code>、<code>Path</code> は <code>java.nio.file</code> なので import が必要です。import が無いと <code>cannot find symbol</code> のコンパイルエラーになります（1-6）。</p></div>
 
-  <h3>親の型の変数に入れられる。呼べるメソッドは変数の型で決まる</h3>
+  <h3 data-toc="親の型の変数に入れる">親の型の変数に入れられる。呼べるメソッドは変数の型で決まる</h3>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>同じ ArrayList でも、変数の型で呼べるものが変わる<span class="tag">最頻出</span></div><pre><code>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("a", "b"));
 Collection&lt;String&gt; col = list;          // OK（子 → 親）
@@ -69,7 +69,7 @@ it.size();                               // コンパイルエラー: Iterable �
 List&lt;String&gt; l2 = col;                   // コンパイルエラー: 親 → 子はキャストが必要
 List&lt;String&gt; l3 = (List&lt;String&gt;) col;    // OK（実体が ArrayList なので）</code></pre></div>
 
-  <p>変数 <code>col</code> が指しているのは <code>ArrayList</code> で、実物は <code>get</code> を持っています。それでも <code>col.get(0)</code> がエラーになるのは、<strong>コンパイラは変数の型（<code>Collection</code>）しか見ない</strong>からです。<a href="#c5-s05">第5章 05「宣言型か実体型か」</a>と同じ規則で、クラスの継承だけでなくインタフェースでも同じように働きます。</p>
+  <p>変数 <code>col</code> が指しているのは <code>ArrayList</code> で、実物は <code>get</code> を持っています。それでも <code>col.get(0)</code> がエラーになるのは、<strong>コンパイラは変数の型（<code>Collection</code>）しか見ない</strong>からです。<a href="#c5-s05">5-5「宣言型か実体型か」</a>と同じ規則で、クラスの継承だけでなくインタフェースでも同じように働きます。</p>
 
 <div class="code" data-v="err"><div class="cap"><span class="dot err"></span>インタフェースは new できない<span class="tag">NG</span></div><pre><code>List&lt;String&gt; a = new List&lt;&gt;();          // コンパイルエラー: List is abstract; cannot be instantiated
 Collection&lt;String&gt; b = new Collection&lt;&gt;();   // コンパイルエラー
@@ -78,7 +78,7 @@ Path c = new Path("a.txt");              // コンパイルエラー
 List&lt;String&gt; d = new ArrayList&lt;&gt;();     // OK
 Path e = Path.of("a.txt");               // OK</code></pre></div>
 
-  <h3>型引数に親子関係は無い ── <code>List&lt;Animal&gt;</code> と <code>List&lt;Dog&gt;</code></h3>
+  <h3 data-toc="型引数に親子関係は無い">型引数に親子関係は無い ── <code>List&lt;Animal&gt;</code> と <code>List&lt;Dog&gt;</code></h3>
 
   <p><code>class Dog extends Animal</code> のとき、<strong>要素として</strong>入れるのと、<strong>リストごと</strong>代入するのとで結果が変わります。</p>
 
@@ -97,9 +97,9 @@ Collection&lt;Dog&gt; c = new ArrayList&lt;Dog&gt;();    // OK ← 変わるの�
 
   <div class="point trap"><p>Dog が Animal の子でも、<span class="mk"><code>List&lt;Dog&gt;</code> は <code>List&lt;Animal&gt;</code> の子ではありません</span>。もし代入できると、<code>a2.add(new Animal())</code> で Dog 専用のリストに Animal が紛れ込んでしまうからです。<br>親子関係を使えるのは <strong><code>&lt; &gt;</code> の外側</strong>（<code>ArrayList</code> → <code>List</code> → <code>Collection</code>）だけで、<strong><code>&lt; &gt;</code> の中身は左右で完全に一致</strong>させます（右辺を <code>&lt;&gt;</code> にすれば自動で一致します）。</p></div>
 
-  <div class="point link"><p>配列は逆に <code>Animal[] arr = new Dog[1];</code> が<strong>コンパイルできてしまい</strong>、Animal を入れたときに実行時の ArrayStoreException で止まります（<a href="#c2-s11">第2章 11 配列</a>）。ジェネリクスは同じ事故を<span class="mk">コンパイルの時点で</span>防ぐ設計です。</p></div>
+  <div class="point link"><p>配列は逆に <code>Animal[] arr = new Dog[1];</code> が<strong>コンパイルできてしまい</strong>、Animal を入れたときに実行時の ArrayStoreException で止まります（<a href="#c2-s11">2-11 配列</a>）。ジェネリクスは同じ事故を<span class="mk">コンパイルの時点で</span>防ぐ設計です。</p></div>
 
-  <h3>拡張for文で回せるのは「配列」か「Iterable」だけ</h3>
+  <h3 data-toc="拡張for文で回せるもの">拡張for文で回せるのは「配列」か「Iterable」だけ</h3>
 
   <div class="tw"><table>
     <thead><tr><th>型</th><th>拡張for文</th><th>理由</th></tr></thead>
@@ -127,7 +127,7 @@ for (Path p : path) {
 
   <div class="point trap"><p><code>Path</code> は「ファイルの場所」なので、回せると思わない人が多い型です。<span class="mk">Path は Iterable&lt;Path&gt; を継承しているので、拡張for文に使えます</span>。取り出されるのはファイルの中身ではなく、<strong>パスを区切った各部分</strong>（<code>dir</code>、<code>sub</code>、<code>file.txt</code>）です。反対に、名前から回せそうに見える <code>Map</code> と <code>String</code> は回せません。</p></div>
 
-  <h3>Path ── ファイルの「場所」を表す型</h3>
+  <h3 data-toc="Path">Path ── ファイルの「場所」を表す型</h3>
 
 <div class="code" data-v="ok"><div class="cap"><span class="dot ok"></span>作り方と主なメソッド<span class="tag">OK</span></div><pre><code>import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -155,7 +155,7 @@ void read2() throws IOException {          // throws で宣言すれば OK（imp
     Files.readAllLines(Path.of("a.txt"));  // ファイルが無ければ実行時に NoSuchFileException
 }</code></pre></div>
 
-  <div class="point link"><p><code>Files</code> のメソッドはファイル操作に失敗する可能性があるので、<strong>検査例外の IOException</strong> を投げると宣言されています。だから catch するか throws で宣言しないとコンパイルエラーです。無いファイルを読んだときの <code>NoSuchFileException</code> は IOException の子です。検査例外とは何かは<a href="#c6-s01">第6章 01</a>、throws の書き方は<a href="#c6-s07">第6章 07</a>、try-with-resources は<a href="#c6-s09">第6章 09</a>にあります。</p></div>
+  <div class="point link"><p><code>Files</code> のメソッドはファイル操作に失敗する可能性があるので、<strong>検査例外の IOException</strong> を投げると宣言されています。だから catch するか throws で宣言しないとコンパイルエラーです。無いファイルを読んだときの <code>NoSuchFileException</code> は IOException の子です。検査例外とは何かは<a href="#c6-s01">6-1</a>、throws の書き方は<a href="#c6-s07">6-7</a>、try-with-resources は<a href="#c6-s09">6-9</a>にあります。</p></div>
 
   <h3>名前が似ているもの</h3>
 

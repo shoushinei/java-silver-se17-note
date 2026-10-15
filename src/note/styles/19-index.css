@@ -1,0 +1,16 @@
+/* 教材の最後の索引（build-note.mjs が data/index-terms.json から作る）。
+   市販の問題集の索引と同じく、語句と番号のあいだを点線でつなぐ。 */
+.ix-lead{color:var(--sumi-2);font-size:14px;max-width:62ch}
+.ix-jump{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 26px}
+.ix-jump a{font-family:var(--mono);font-size:12px;font-weight:700;text-decoration:none;color:var(--sumi-2);border:1px solid var(--rule);border-radius:4px;background:#fff;padding:3px 0;min-width:30px;text-align:center}
+.ix-jump a:hover{background:var(--sumi);color:var(--washi);border-color:var(--sumi)}
+.ix-cols{columns:2 300px;column-gap:40px}
+.ix-g{break-inside:avoid-column;margin:0 0 18px;scroll-margin-top:80px}
+.ix-h{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.06em;background:var(--washi-2);border-left:3px solid var(--err);padding:3px 10px;margin:0 0 6px}
+.ix-e{display:flex;align-items:baseline;gap:6px;font-size:13.5px;line-height:1.6;padding:3px 0;break-inside:avoid}
+.ix-t{flex:0 1 auto;min-width:0;max-width:62%;overflow-wrap:anywhere}
+.ix-d{flex:1 1 12px;min-width:12px;border-bottom:1.5px dotted var(--sumi-3);opacity:.5;transform:translateY(-4px)}
+.ix-r{flex:0 1 auto;min-width:0;max-width:60%;text-align:right;font-family:var(--mono);font-size:12px;line-height:1.7}
+.ix-r a{color:var(--sumi-2);text-decoration:none;border-bottom:1px solid transparent}
+.ix-r a:hover{color:var(--err);border-bottom-color:var(--err)}
+.ix-r a.h{color:var(--sumi);font-weight:700}

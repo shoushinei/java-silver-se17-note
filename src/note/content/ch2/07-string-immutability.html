@@ -37,7 +37,7 @@ System.out.println(a == f + "lo");       // true  ← final なら定数式</cod
 
   <div class="point link"><p>ここでも <code>final</code> の1語で結果が反転します。<span class="mk pink">コンパイル時に値が確定するか</span>という同じ判定基準が、型変換・String 比較・第6章の multi-catch すべてに共通して効いています。</p></div>
 
-  <h3>intern() ── 定数プールにある同じ中身のインスタンスを取り出す</h3>
+  <h3 data-toc="intern() と定数プール">intern() ── 定数プールにある同じ中身のインスタンスを取り出す</h3>
 
 <div class="code" data-v="ok" id="str-intern"><div class="cap"><span class="dot ok"></span>戻り値はプールのインスタンス<span class="tag">要注意</span></div><pre><code>String a = "Hello";                 // プールのインスタンス
 String b = new String("Hello");     // new で新しく作られた別のインスタンス
